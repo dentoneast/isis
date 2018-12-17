@@ -41,8 +41,8 @@ import org.apache.isis.commons.internal.collections._Lists;
  * @see SwitchUserFixture
  * @deprecated - use {@link FixtureScript} instead.
  */
-@Deprecated
-public class LogonFixture implements InstallableFixture {
+@Deprecated //TODO[2040] remove
+class LogonFixture implements InstallableFixture {
 
     private final String username;
     private final List<String> roles;

@@ -27,10 +27,9 @@ import javax.inject.Inject;
 
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.annotation.Programmatic;
-import org.apache.isis.applib.fixtures.LogonFixture;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.title.TitleService;
-import org.apache.isis.commons.internal.context._Context;
+import org.apache.isis.commons.internal.base._Blackhole;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.commons.components.ApplicationScopedComponent;
@@ -39,7 +38,6 @@ import org.apache.isis.core.metamodel.services.appmanifest.AppManifestProvider;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.ServiceInitializer;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-import org.apache.isis.core.plugins.environment.DeploymentType;
 import org.apache.isis.core.runtime.fixtures.FixturesInstallerFromConfiguration;
 import org.apache.isis.core.runtime.system.MessageRegistry;
 import org.apache.isis.core.runtime.system.context.IsisContext;
@@ -122,16 +120,7 @@ implements ApplicationScopedComponent, AppManifestProvider {
             //
 
             IsisTransactionManager transactionManager = getCurrentSessionTransactionManager();
-            transactionManager.startTransaction();
-            try {
-                serviceInitializer.postConstruct();
-            } catch(RuntimeException ex) {
-                transactionManager.getCurrentTransaction().setAbortCause(new IsisTransactionManagerException(ex));
-            } finally {
-                // will commit or abort
-                transactionManager.endTransaction();
-            }
-
+            transactionManager.executeWithinTransaction(serviceInitializer::postConstruct);
 
             //
             // installFixturesIfRequired
@@ -140,11 +129,6 @@ implements ApplicationScopedComponent, AppManifestProvider {
                     new FixturesInstallerFromConfiguration(this);
             fixtureInstaller.installFixtures();
 
-            // only allow logon fixtures if not in production mode.
-            if (_Context.isPrototyping()) {
-                logonFixture = fixtureInstaller.getLogonFixture();
-            }
-
             //
             // translateServicesAndEnumConstants
             //
@@ -152,8 +136,8 @@ implements ApplicationScopedComponent, AppManifestProvider {
             final List<Object> services = servicesInjector.streamServices().collect(Collectors.toList());
             final TitleService titleService = servicesInjector.lookupServiceElseFail(TitleService.class);
             for (Object service : services) {
-                @SuppressWarnings("unused")
                 final String unused = titleService.titleOf(service);
+                _Blackhole.consume(unused);
             }
 
             // (previously we took a protective copy to avoid a concurrent modification exception,
@@ -163,14 +147,14 @@ implements ApplicationScopedComponent, AppManifestProvider {
                 if(correspondingClass.isEnum()) {
                     final Object[] enumConstants = correspondingClass.getEnumConstants();
                     for (Object enumConstant : enumConstants) {
-                        @SuppressWarnings("unused")
                         final String unused = titleService.titleOf(enumConstant);
+                        _Blackhole.consume(unused);
                     }
                 }
             }
 
             // as used by the Wicket UI
-            final TranslationService translationService = servicesInjector.lookupService(TranslationService.class).orElse(null);;
+            final TranslationService translationService = servicesInjector.lookupServiceElseFail(TranslationService.class);
 
             final String context = IsisSessionFactoryBuilder.class.getName();
             final MessageRegistry messageRegistry = new MessageRegistry();
@@ -222,24 +206,6 @@ implements ApplicationScopedComponent, AppManifestProvider {
         persistenceSessionFactory.shutdown();
         authenticationManager.shutdown();
         specificationLoader.shutdown();
-    }
-
-
-
-    // -- logonFixture
-
-    private LogonFixture logonFixture;
-
-    /**
-     * The {@link LogonFixture}, if any, obtained by running fixtures.
-     *
-     * <p>
-     * Intended to be used when for {@link DeploymentType#SERVER_PROTOTYPE prototype} deployments 
-     * (saves logging in). Should be <i>ignored</i> in other {@link DeploymentType}s.
-     */
-    @Programmatic
-    public LogonFixture getLogonFixture() {
-        return logonFixture;
     }
 
     // -- openSession, closeSession, currentSession, inSession

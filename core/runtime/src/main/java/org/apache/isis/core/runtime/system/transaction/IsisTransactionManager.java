@@ -154,7 +154,7 @@ public class IsisTransactionManager implements SessionScopedComponent {
                 }
             } else {
                 // ensure that this xactn cannot be committed
-                getCurrentTransaction().setAbortCause(new IsisException(ex));
+                getCurrentTransaction().setAbortCause(new IsisTransactionManagerException(ex));
             }
             throw ex;
         }

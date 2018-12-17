@@ -19,9 +19,6 @@
 
 package org.apache.isis.core.runtime.system.session;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.core.commons.components.SessionScopedComponent;
 import org.apache.isis.core.commons.util.ToString;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
@@ -40,7 +37,7 @@ import org.apache.isis.core.security.authentication.AuthenticationSession;
  */
 public class IsisSession implements SessionScopedComponent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(IsisSession.class);
+    // private static final Logger LOG = LoggerFactory.getLogger(IsisSession.class);
 
     // -- constructor, fields
 

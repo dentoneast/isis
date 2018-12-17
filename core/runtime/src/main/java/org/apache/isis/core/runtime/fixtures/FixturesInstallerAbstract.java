@@ -22,7 +22,6 @@ package org.apache.isis.core.runtime.fixtures;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.isis.applib.fixtures.LogonFixture;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 
@@ -46,10 +45,6 @@ public abstract class FixturesInstallerAbstract {
      * delegate}; these are then installed.
      */
     protected abstract void addFixturesTo(FixturesInstallerDelegate delegate);
-
-    public LogonFixture getLogonFixture() {
-        return delegate.getLogonFixture();
-    }
 
     public List<Class<?>> getTypes() {
         return Collections.emptyList();

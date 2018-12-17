@@ -23,12 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.isis.applib.fixtures.LogonFixture;
 import org.apache.isis.config.WebAppConstants;
-import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
-import org.apache.isis.core.security.authentication.fixtures.AuthenticationRequestLogonFixture;
 import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
 
 /**
@@ -66,21 +62,24 @@ public class AuthenticationSessionStrategyDefault extends AuthenticationSessionS
             }
         }
 
-        // otherwise, look for LogonFixture and try to authenticate
-        final IsisSessionFactory sessionFactory;
-        try {
-            sessionFactory = IsisContext.getSessionFactory();
-        } catch (Exception e) {
-            // not expected to happen (is set up either by IsisWebAppBootstrapper or in IsisWicketApplication).
-            return null;
-        }
-        final LogonFixture logonFixture = sessionFactory.getLogonFixture();
+      //TODO[2040] remove        
+//        // otherwise, look for LogonFixture and try to authenticate
+//        final IsisSessionFactory sessionFactory;
+//        try {
+//            sessionFactory = IsisContext.getSessionFactory();
+//        } catch (Exception e) {
+//            // not expected to happen (is set up either by IsisWebAppBootstrapper or in IsisWicketApplication).
+//            return null;
+//        }
 
-        final boolean loggedInUsingLogonFixture = httpSession.getAttribute(WebAppConstants.HTTP_SESSION_LOGGED_ON_PREVIOUSLY_USING_LOGON_FIXTURE_KEY) != null;
-        if (logonFixture != null && !loggedInUsingLogonFixture) {
-            httpSession.setAttribute(WebAppConstants.HTTP_SESSION_LOGGED_ON_PREVIOUSLY_USING_LOGON_FIXTURE_KEY, true);
-            return authenticationManager.authenticate(new AuthenticationRequestLogonFixture(logonFixture));
-        }
+//TODO[2040] remove        
+//        final LogonFixture logonFixture = sessionFactory.getLogonFixture();
+//
+//        final boolean loggedInUsingLogonFixture = httpSession.getAttribute(WebAppConstants.HTTP_SESSION_LOGGED_ON_PREVIOUSLY_USING_LOGON_FIXTURE_KEY) != null;
+//        if (logonFixture != null && !loggedInUsingLogonFixture) {
+//            httpSession.setAttribute(WebAppConstants.HTTP_SESSION_LOGGED_ON_PREVIOUSLY_USING_LOGON_FIXTURE_KEY, true);
+//            return authenticationManager.authenticate(new AuthenticationRequestLogonFixture(logonFixture));
+//        }
 
         return null;
     }

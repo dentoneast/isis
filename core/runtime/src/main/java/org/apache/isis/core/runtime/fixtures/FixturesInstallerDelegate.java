@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.apache.isis.applib.fixtures.CompositeFixture;
 import org.apache.isis.applib.fixtures.FixtureType;
 import org.apache.isis.applib.fixtures.InstallableFixture;
-import org.apache.isis.applib.fixtures.LogonFixture;
 import org.apache.isis.applib.fixturescripts.events.FixturesInstalledEvent;
 import org.apache.isis.applib.fixturescripts.events.FixturesInstallingEvent;
 import org.apache.isis.applib.services.eventbus.EventBusService;
@@ -37,7 +36,6 @@ import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.commons.lang.ObjectExtensions;
 import org.apache.isis.core.metamodel.services.ServicesInjector;
-import org.apache.isis.core.plugins.environment.DeploymentType;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
@@ -128,7 +126,7 @@ public class FixturesInstallerDelegate {
             LOG.info("installing fixture: {}", fixture);
             getTransactionManager().startTransaction();
             installFixture(fixture);
-            saveLogonFixtureIfRequired(fixture);
+          //TODO[2040] remove ... saveLogonFixtureIfRequired(fixture);
             getTransactionManager().endTransaction();
             LOG.info("fixture installed");
         } catch (final RuntimeException e) {
@@ -164,10 +162,7 @@ public class FixturesInstallerDelegate {
                 installableFixture.install();
             }
         }
-
-        if (fixture instanceof LogonFixture) {
-            this.logonFixture = (LogonFixture) fixture;
-        }
+        
     }
 
     private boolean shouldInstallFixture(final InstallableFixture installableFixture) {
@@ -179,41 +174,6 @@ public class FixturesInstallerDelegate {
         // fixtureType is OTHER; always install.
         return true;
     }
-
-
-
-    // -- logonFixture
-
-    /**
-     * The requested {@link LogonFixture}, if any.
-     *
-     * <p>
-     * Each fixture is inspected as it is {@link #installFixture(Object)}; if it
-     * implements {@link LogonFixture} then it is remembered so that it can be
-     * used later to automatically logon.
-     */
-    private LogonFixture logonFixture;
-
-
-    /**
-     * The {@link LogonFixture}, if any.
-     *
-     * <p>
-     * Used to automatically logon if in {@link DeploymentType#SERVER_PROTOTYPE} mode.
-     */
-    LogonFixture getLogonFixture() {
-        return logonFixture;
-    }
-
-    private void saveLogonFixtureIfRequired(final Object fixture) {
-        if (fixture instanceof LogonFixture) {
-            if (logonFixture != null) {
-                LOG.warn("Already specified logon fixture, using latest provided");
-            }
-            this.logonFixture = (LogonFixture) fixture;
-        }
-    }
-
 
 
     // -- dependencies (derived)

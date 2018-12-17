@@ -19,7 +19,6 @@
 
 package org.apache.isis.core.security.authentication.manager;
 
-import org.apache.isis.applib.fixtures.LogonFixture;
 import org.apache.isis.core.security.authentication.fixtures.LogonFixtureAuthenticator;
 import org.apache.isis.core.security.authentication.standard.AuthenticationManagerStandard;
 import org.apache.isis.core.security.authentication.standard.AuthenticationManagerStandardInstallerAbstract;
@@ -39,8 +38,8 @@ extends AuthenticationManagerStandardInstallerAbstract {
      * <p>
      * Specifically:
      * <ul>
-     * <li> the {@link LogonFixtureAuthenticator} will set up a session using the login provided by a
-     *      {@link LogonFixture}, provided running in prototyping mode.
+     * <li> the {@link LogonFixtureAuthenticator} will set up a session (using credentials and roles), 
+     * provided running in prototyping mode.
      * </ul>
      */
     @Override
