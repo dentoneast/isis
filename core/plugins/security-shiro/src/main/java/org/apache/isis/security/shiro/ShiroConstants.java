@@ -23,7 +23,8 @@ import org.apache.isis.config.ConfigurationConstants;
 import org.apache.isis.core.security.authentication.manager.AuthenticationManagerInstaller;
 import org.apache.isis.security.shiro.authentication.ShiroAuthenticationManagerInstaller;
 
-public final class ShiroConstants {
+//not used
+final class ShiroConstants {
 
     public static final String ROOT_AUTHENTICATION = ConfigurationConstants.ROOT + AuthenticationManagerInstaller.TYPE + "." + ShiroAuthenticationManagerInstaller.NAME + ".";
 
