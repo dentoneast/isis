@@ -16,26 +16,25 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.apache.isis.security.shiro.authentication;
+package org.apache.isis.security.pac4j.authentication;
 
 import java.util.List;
 
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.security.authentication.manager.AuthenticationManagerStandardInstallerAbstractForDfltRuntime;
 import org.apache.isis.core.security.authentication.standard.Authenticator;
-import org.apache.isis.security.shiro.ShiroAuthenticatorOrAuthorizor;
 
-public class ShiroAuthenticationManagerInstaller
+public class Pac4jAuthenticationManagerInstaller 
 extends AuthenticationManagerStandardInstallerAbstractForDfltRuntime {
 
-    public static String NAME = "shiro";
+    public static String NAME = "pac4j";
 
-    public ShiroAuthenticationManagerInstaller() {
+    public Pac4jAuthenticationManagerInstaller() {
         super(NAME);
     }
 
     @Override
     protected List<Authenticator> createAuthenticators() {
-        return _Lists.singleton(new ShiroAuthenticatorOrAuthorizor());
+        return _Lists.singleton(new Pac4jAuthenticator());
     }
 }

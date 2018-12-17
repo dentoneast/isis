@@ -36,6 +36,7 @@ import org.apache.isis.core.plugins.environment.IsisSystemEnvironment;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import org.apache.isis.core.security.authentication.AuthenticationSession;
 
 /**
  * Provides static access to current context's singletons
@@ -166,6 +167,15 @@ public interface IsisContext {
     public static Optional<PersistenceSession> getPersistenceSession() {
         return Optional.ofNullable(getSessionFactory().getCurrentSession())
                 .map(IsisSession::getPersistenceSession);
+    }
+    
+    /**
+     * @return framework's current AuthenticationSession (if any)
+     * @throws IllegalStateException if IsisSessionFactory not initialized
+     */
+    public static Optional<AuthenticationSession> getAuthenticationSession() {
+        return Optional.ofNullable(getSessionFactory().getCurrentSession())
+                .map(IsisSession::getAuthenticationSession);
     }
 
     /**

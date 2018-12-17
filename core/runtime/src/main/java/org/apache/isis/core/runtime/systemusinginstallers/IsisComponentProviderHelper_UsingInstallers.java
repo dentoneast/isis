@@ -110,7 +110,7 @@ class IsisComponentProviderHelper_UsingInstallers  {
      * @deprecated - intention is to replace in future using CDI
      */
     
-    @Deprecated
+    @Deprecated //FIXME [2039] remove installers
     static class InstallerLookup implements ApplicationScopedComponent {
 
         private static final Logger LOG = LoggerFactory.getLogger(InstallerLookup.class);
@@ -124,8 +124,12 @@ class IsisComponentProviderHelper_UsingInstallers  {
 
             final List<String> installerClassNames = _Lists.of(
                     "org.apache.isis.core.security.authentication.BypassAuthenticationManagerInstaller", // bypass
-                    "org.apache.isis.security.shiro.authentication.ShiroAuthenticationManagerInstaller", // shiro
                     "org.apache.isis.core.security.authorization.BypassAuthorizationManagerInstaller",   // bypass
+                    
+                    "org.apache.isis.security.pac4j.authentication.Pac4jAuthenticationManagerInstaller", // pac4j
+                    "org.apache.isis.security.pac4j.authorization.Pac4jAuthorizationManagerInstaller",    // pac4j
+                    
+                    "org.apache.isis.security.shiro.authentication.ShiroAuthenticationManagerInstaller", // shiro
                     "org.apache.isis.security.shiro.authorization.ShiroAuthorizationManagerInstaller"    // shiro
                     );
 
