@@ -16,22 +16,36 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.apache.isis.security.shiro.authorization;
+package org.apache.isis.core.security.authspi;
 
-import org.apache.isis.core.security.authorization.standard.AuthorizationManagerStandardInstallerAbstract;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.isis.commons.internal.context._Plugin;
+import org.apache.isis.core.security.authentication.standard.Authenticator;
 import org.apache.isis.core.security.authorization.standard.Authorizor;
 
-public class ShiroAuthorizationManagerInstaller extends AuthorizationManagerStandardInstallerAbstract {
+/**
+ * @since 2.0.0-M2
+ * 
+ * For now this is just a stub, meant to replace Installers. 
+ * 
+ */
+public interface SecurityAuthPlugin {
 
-    public static String NAME = "shiro";
-
-    public ShiroAuthorizationManagerInstaller() {
-        super(NAME);
+    // -- INTERFACE
+    
+    public List<Authenticator> getAuthenticators();
+    public List<Authorizor> getAuthorizors();
+    
+    // -- LOOKUP
+    
+    /**
+     * not cached
+     * @return
+     */
+    public static Set<SecurityAuthPlugin> loadAll() {
+        return _Plugin.loadAll(SecurityAuthPlugin.class);
     }
-
-    @Override
-    protected Authorizor createAuthorizor() {
-        return new ShiroAuthorizor();
-    }
-
+    
 }

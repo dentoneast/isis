@@ -27,15 +27,12 @@ import java.util.SortedSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.commons.internal.collections._Sets;
 
 final class ServicesInstallerUtils  {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ServicesInstallerFromConfiguration.class);
+    //private static final Logger LOG = LoggerFactory.getLogger(ServicesInstallerFromConfiguration.class);
 
     private static final char DELIMITER = '#';
 

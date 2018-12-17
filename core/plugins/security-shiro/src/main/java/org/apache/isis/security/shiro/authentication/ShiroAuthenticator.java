@@ -16,7 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.apache.isis.security.shiro;
+package org.apache.isis.security.shiro.authentication;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.UnavailableSecurityManagerException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -43,7 +42,6 @@ import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.isis.applib.Identifier;
 import org.apache.isis.commons.internal.collections._Sets;
 import org.apache.isis.core.security.authentication.AuthenticationRequest;
 import org.apache.isis.core.security.authentication.AuthenticationRequestPassword;
@@ -53,22 +51,23 @@ import org.apache.isis.core.security.authentication.standard.Authenticator;
 import org.apache.isis.core.security.authentication.standard.SimpleSession;
 import org.apache.isis.core.security.authorization.manager.AuthorizationManagerInstaller;
 import org.apache.isis.core.security.authorization.standard.Authorizor;
-import org.apache.isis.security.shiro.authorization.IsisPermission;
+import org.apache.isis.security.shiro.ShiroSecurityContext;
 
 import static org.apache.isis.config.internal._Config.getConfiguration;
 
 /**
  * If Shiro is configured for both {@link AuthenticationManagerInstaller authentication} and
  * {@link AuthorizationManagerInstaller authorization} (as recommended), then this class is
- * instantiated twice, once in the role of {@link Authenticator} and once in the role of the {@link Authorizor}.
+ * in the role of {@link Authenticator}.
  *
  * <p>
- * However, although there are two objects, they are set up to share the same {@link SecurityManager Shiro SecurityManager}
+ * However, although there are two objects, they are set up to share the same 
+ * {@link SecurityManager Shiro SecurityManager}
  * (bound to a thread-local).
  */
-public class ShiroAuthenticatorOrAuthorizor implements Authenticator, Authorizor {
+public class ShiroAuthenticator implements Authenticator {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ShiroAuthenticatorOrAuthorizor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ShiroAuthenticator.class);
 
     private static final String ISIS_AUTHENTICATION_SHIRO_AUTO_LOGOUT_KEY = "isis.authentication.shiro.autoLogoutIfAlreadyAuthenticated";
     private static final boolean ISIS_AUTHENTICATION_SHIRO_AUTO_LOGOUT_DEFAULT = false;
@@ -76,7 +75,7 @@ public class ShiroAuthenticatorOrAuthorizor implements Authenticator, Authorizor
     // -- constructor and fields
     private final boolean autoLogout;
 
-    public ShiroAuthenticatorOrAuthorizor() {
+    public ShiroAuthenticator() {
         autoLogout = getConfiguration().getBoolean(
                 ISIS_AUTHENTICATION_SHIRO_AUTO_LOGOUT_KEY,
                 ISIS_AUTHENTICATION_SHIRO_AUTO_LOGOUT_DEFAULT);
@@ -223,93 +222,13 @@ public class ShiroAuthenticatorOrAuthorizor implements Authenticator, Authorizor
         return new UsernamePasswordToken(username, password);
     }
 
-
-    // -- Authorizor API
-
-    @Override
-    public boolean isVisibleInAnyRole(Identifier identifier) {
-        return isPermitted(identifier, "r");
-    }
-
-    @Override
-    public boolean isUsableInAnyRole(Identifier identifier) {
-        return isPermitted(identifier, "w");
-    }
-
-    private boolean isPermitted(Identifier identifier, String qualifier) {
-        
-        RealmSecurityManager securityManager = getSecurityManager();
-        if(securityManager == null) {
-            // since a security manager will always be present for regular web requests, presumably the user
-            // is running in fixtures during bootstrapping.  We therefore permit the interaction.
-            return true;
-        }
-
-        String permission = asPermissionsString(identifier) + ":" + qualifier;
-
-        Subject subject = SecurityUtils.getSubject();
-
-        try {
-            return subject.isPermitted(permission);
-        } finally {
-            IsisPermission.resetVetoedPermissions();
-        }
-    }
-
-    private static String asPermissionsString(Identifier identifier) {
-        String fullyQualifiedClassName = identifier.getClassName();
-        int lastDot = fullyQualifiedClassName.lastIndexOf('.');
-        String packageName;
-        String className;
-        if(lastDot > 0) {
-            packageName =fullyQualifiedClassName.substring(0, lastDot);
-            className = fullyQualifiedClassName.substring(lastDot+1);
-        } else {
-            packageName = "";
-            className = fullyQualifiedClassName;
-        }
-        return packageName + ":" + className + ":" + identifier.getMemberName();
-    }
-
-    /**
-     * Returns <tt>false</tt> because the checking across all roles is done in
-     * {@link #isVisibleInAnyRole(Identifier)}, which is always called prior to this.
-     */
-    @Override
-    public boolean isVisibleInRole(String role, Identifier identifier) {
-        return false;
-    }
-
-    /**
-     * Returns <tt>false</tt> because the checking across all roles is done in
-     * {@link #isUsableInAnyRole(Identifier)}, which is always called prior to this.
-     */
-    @Override
-    public boolean isUsableInRole(String role, Identifier identifier) {
-        return false;
-    }
-
-
-
-    // -- Injected (via Shiro service locator)
-
     /**
      * The {@link SecurityManager} is shared between both the {@link Authenticator} and the {@link Authorizor}
      * (if shiro is configured for both components).
      */
     protected RealmSecurityManager getSecurityManager() {
-        SecurityManager securityManager;
-        try {
-            securityManager = SecurityUtils.getSecurityManager();
-        } catch(UnavailableSecurityManagerException ex) {
-            return null;
-        }
-        if(!(securityManager instanceof RealmSecurityManager)) {
-            return null;
-        }
-        return (RealmSecurityManager) securityManager;
+        return ShiroSecurityContext.getSecurityManager();
     }
-
-
+    
 
 }
