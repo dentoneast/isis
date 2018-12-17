@@ -25,7 +25,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.isis.applib.fixtures.CompositeFixture;
 import org.apache.isis.applib.fixtures.FixtureType;
 import org.apache.isis.applib.fixtures.InstallableFixture;
 import org.apache.isis.applib.fixturescripts.events.FixturesInstalledEvent;
@@ -119,14 +118,11 @@ public class FixturesInstallerDelegate {
     private void installFixtureInTransaction(final Object fixture) {
         getServicesInjector().injectServicesInto(fixture);
 
-        installFixtures(getFixtures(fixture));
-
         // now, install the fixture itself
         try {
             LOG.info("installing fixture: {}", fixture);
             getTransactionManager().startTransaction();
             installFixture(fixture);
-          //TODO[2040] remove ... saveLogonFixtureIfRequired(fixture);
             getTransactionManager().endTransaction();
             LOG.info("fixture installed");
         } catch (final RuntimeException e) {
@@ -138,19 +134,6 @@ public class FixturesInstallerDelegate {
             }
             throw e;
         }
-    }
-
-    /**
-     * Obtain any child fixtures for this fixture.
-     *
-     * @param fixture
-     */
-    private List<Object> getFixtures(final Object fixture) {
-        if (fixture instanceof CompositeFixture) {
-            final CompositeFixture compositeFixture = (CompositeFixture) fixture;
-            return compositeFixture.getFixtures();
-        }
-        return Collections.emptyList();
     }
 
     private void installFixture(final Object fixture) {

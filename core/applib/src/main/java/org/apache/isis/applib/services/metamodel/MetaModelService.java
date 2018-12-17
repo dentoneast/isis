@@ -154,10 +154,6 @@ public interface MetaModelService {
             this.mask = mask;
             this.packagePrefixes = Collections.unmodifiableList(packagePrefixes);
         }
-        private Config(final int mask) {
-            this(mask, null);
-        }
-
 
         public Config withIgnoreNoop() {
             return newConfigWith(IGNORE_NOOP_FACETS);

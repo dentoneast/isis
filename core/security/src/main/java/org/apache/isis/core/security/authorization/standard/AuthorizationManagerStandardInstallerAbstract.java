@@ -50,7 +50,7 @@ implements AuthorizationManagerInstaller {
         }
     }
     
-    //TODO[2040] maybe, there's a way to this more straight forward, without resorting to reflection 
+    //TODO [2040] maybe, there's a way to this more straight forward, without resorting to reflection 
     private AuthorizationManager createAuthorizationManagerReflective() 
             throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, 
             InvocationTargetException, 
@@ -74,7 +74,7 @@ implements AuthorizationManagerInstaller {
         return authorizationManager;
     }
     
-    //TODO[2040] first attempt to decouple modules 'security' and 'metamodel' left us with having
+    //TODO [2040] first attempt to decouple modules 'security' and 'metamodel' left us with having
     // to replace this direct code with a reflective one
 //    @Override
 //    public AuthorizationManager createAuthorizationManager() {

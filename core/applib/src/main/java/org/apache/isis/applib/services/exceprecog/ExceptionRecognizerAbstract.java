@@ -48,16 +48,6 @@ public abstract class ExceptionRecognizerAbstract implements ExceptionRecognizer
     public static final Logger LOG = LoggerFactory.getLogger(ExceptionRecognizerAbstract.class);
 
     /**
-     * Normally recognized exceptions are not logged (because they are expected and handled).
-     *
-     * <p>
-     * This key is primarily for diagnostic purposes, to log the exception regardless.
-     */
-    private static final String KEY_LOG_RECOGNIZED_EXCEPTIONS = 
-            "isis.services.exceprecog.logRecognizedExceptions";
-
-
-    /**
      * Convenience for subclass implementations that always return a fixed message.
      */
     protected static Function<String, String> constant(final String message) {

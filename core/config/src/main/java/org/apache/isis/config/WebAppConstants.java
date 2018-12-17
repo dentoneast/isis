@@ -28,14 +28,6 @@ public final class WebAppConstants {
     public final static String HTTP_SESSION_AUTHENTICATION_SESSION_KEY = 
             WebAppConstants.class.getPackage().getName() + ".authenticationSession";
 
-  //TODO[2040] remove    
-//    /**
-//     * Key used to determine if a logon has already been performed implicitly
-//     * using the {@link LogonFixture}, meaning that a Logout should be followed
-//     * by the Logon page.
-//     */
-//    public final static String HTTP_SESSION_LOGGED_ON_PREVIOUSLY_USING_LOGON_FIXTURE_KEY = WebAppConstants.class.getPackage().getName() + ".loggedOnPreviouslyUsingLogonFixture";
-
     /**
      * Property name given to the web app directory.
      */

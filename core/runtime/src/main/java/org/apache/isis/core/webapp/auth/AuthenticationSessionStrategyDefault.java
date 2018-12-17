@@ -62,25 +62,6 @@ public class AuthenticationSessionStrategyDefault extends AuthenticationSessionS
             }
         }
 
-      //TODO[2040] remove        
-//        // otherwise, look for LogonFixture and try to authenticate
-//        final IsisSessionFactory sessionFactory;
-//        try {
-//            sessionFactory = IsisContext.getSessionFactory();
-//        } catch (Exception e) {
-//            // not expected to happen (is set up either by IsisWebAppBootstrapper or in IsisWicketApplication).
-//            return null;
-//        }
-
-//TODO[2040] remove        
-//        final LogonFixture logonFixture = sessionFactory.getLogonFixture();
-//
-//        final boolean loggedInUsingLogonFixture = httpSession.getAttribute(WebAppConstants.HTTP_SESSION_LOGGED_ON_PREVIOUSLY_USING_LOGON_FIXTURE_KEY) != null;
-//        if (logonFixture != null && !loggedInUsingLogonFixture) {
-//            httpSession.setAttribute(WebAppConstants.HTTP_SESSION_LOGGED_ON_PREVIOUSLY_USING_LOGON_FIXTURE_KEY, true);
-//            return authenticationManager.authenticate(new AuthenticationRequestLogonFixture(logonFixture));
-//        }
-
         return null;
     }
 
