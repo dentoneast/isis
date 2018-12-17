@@ -60,13 +60,6 @@
                     <groupId>org.apache.isis.core</groupId>
                     <artifactId>isis-core-security</artifactId>
                 </dependency>
-                
-                <!-- FIXME[ISIS-1976] plugins are optional -->
-                <dependency>
-                    <groupId>org.apache.isis.core</groupId>
-                    <artifactId>isis-core-plugins-security-shiro</artifactId>
-                </dependency>
-                
             </dependencies>
         </profile>
         <profile>

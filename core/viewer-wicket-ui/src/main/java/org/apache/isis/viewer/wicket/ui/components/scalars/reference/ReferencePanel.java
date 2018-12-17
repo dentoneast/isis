@@ -68,22 +68,12 @@ public class ReferencePanel extends ScalarPanelSelect2Abstract implements PanelW
     private static final String ID_AUTO_COMPLETE = "autoComplete";
     private static final String ID_ENTITY_ICON_TITLE = "entityIconAndTitle";
 
-
-    /**
-     * Determines the behaviour of dependent choices for the dependent; either to autoselect the first available choice, or to select none.
-     */
-    //TODO [ahuber] not used, remove?
-    //private static final String KEY_DISABLE_DEPENDENT_CHOICE_AUTO_SELECTION = "isis.viewer.wicket.disableDependentChoiceAutoSelection";
-
     private EntityLinkSelect2Panel entityLink;
-
     private EntityLinkSimplePanel entitySimpleLink;
-
 
     public ReferencePanel(final String id, final ScalarModel scalarModel) {
         super(id, scalarModel);
     }
-
 
     Select2 getSelect2() {
         return select2;

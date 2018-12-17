@@ -70,12 +70,5 @@ public class PublisherServiceLogging implements PublisherService {
         LOG.debug(ChangesDtoUtils.toXml(changesDto));
     }
 
-    //TODO [ahuber] not used, remove?
-    //    @javax.inject.Inject
-    //    private CommandContext commandContext;
-    //
-    //    @javax.inject.Inject
-    //    private UserService userService;
-
 }
 
