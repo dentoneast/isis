@@ -21,9 +21,7 @@ package org.apache.isis.core.metamodel.services.user;
 
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.Stack;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -91,9 +89,9 @@ public class UserServiceDefault implements UserService {
             this(user, null);
         }
 
-        UserAndRoleOverrides(final String user, final Set<String> roles) {
+        UserAndRoleOverrides(final String user, final Stream<String> roles) {
             this.user = user;
-            this.roles = roles;
+            this.roles = stream(roles).collect(Collectors.toSet());
         }
 
         public String getUser() {
@@ -119,8 +117,7 @@ public class UserServiceDefault implements UserService {
                 ? stream(rolesIfAny)
                         : inheritRoles();
         
-        final SortedSet<String> rolesSorted = roles.collect(Collectors.toCollection(TreeSet::new));
-        this.overrides.get().push(new UserAndRoleOverrides(user, rolesSorted));
+        this.overrides.get().push(new UserAndRoleOverrides(user, roles));
     }
 
     private void resetOverrides() {
