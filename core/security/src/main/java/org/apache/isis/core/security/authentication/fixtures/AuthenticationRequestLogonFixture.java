@@ -19,8 +19,8 @@
 
 package org.apache.isis.core.security.authentication.fixtures;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.security.authentication.AuthenticationRequestAbstract;
@@ -41,9 +41,9 @@ public class AuthenticationRequestLogonFixture extends AuthenticationRequestAbst
                         : _Lists.of(roles));
     }
     
-    public AuthenticationRequestLogonFixture(final String name, final List<String> roles) {
+    public AuthenticationRequestLogonFixture(final String name, final Collection<String> roles) {
         super(name);
-        setRoles(roles);
+        addRoles(roles);
     }
 
 }

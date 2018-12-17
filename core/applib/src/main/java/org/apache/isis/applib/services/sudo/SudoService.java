@@ -61,13 +61,13 @@ public interface SudoService {
      * Executes the supplied block, with the {@link DomainObjectContainer} returning the specified user with the specified roles.
      */
     @Programmatic
-    void sudo(String username, List<String> roles, final Runnable runnable);
+    void sudo(String username, Iterable<String> roles, final Runnable runnable);
 
     /**
      * Executes the supplied block, with the {@link DomainObjectContainer} returning the specified user with the specified roles.
      */
     @Programmatic
-    <T> T sudo(String username, List<String> roles, final Callable<T> callable);
+    <T> T sudo(String username, Iterable<String> roles, final Callable<T> callable);
 
     /**
      * Allows the {@link SudoService} to notify other services/components that the effective user has been changed.
@@ -83,7 +83,7 @@ public interface SudoService {
          * </p>
          */
         @Programmatic
-        void runAs(String username, List<String> roles);
+        void runAs(String username, Iterable<String> roles);
 
         /**
          *

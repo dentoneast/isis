@@ -19,12 +19,16 @@
 
 package org.apache.isis.core.runtime.authentication.standard;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import java.util.stream.Stream;
 
+import org.apache.isis.commons.internal.collections._Arrays;
 import org.apache.isis.core.commons.encoding.EncodabilityContractTest;
 import org.apache.isis.core.security.authentication.standard.SimpleSession;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertThat;
 
 public abstract class SimpleSessionEncodabilityTestAbstract extends EncodabilityContractTest {
 
@@ -34,7 +38,16 @@ public abstract class SimpleSessionEncodabilityTestAbstract extends Encodability
         final SimpleSession original = (SimpleSession) originalEncodable;
 
         assertThat(decoded.getUserName(), is(equalTo(original.getUserName())));
-        assertThat(decoded.getRoles(), is(equalTo(original.getRoles())));
+        assertArrayEquals(
+                orderedArray(decoded.streamRoles()),
+                orderedArray(original.streamRoles()));
     }
 
+    // -- HELPER
+    
+    private final String[] orderedArray(Stream<String> stream) {
+        return stream.sorted()
+        .collect(_Arrays.toArray(String.class));
+    }
+    
 }

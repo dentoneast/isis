@@ -26,7 +26,6 @@ import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.sudo.SudoService;
-import org.apache.isis.applib.services.user.UserService;
 
 @DomainService(
         nature = NatureOfService.DOMAIN,
@@ -60,7 +59,7 @@ public class SudoServiceDefault implements SudoService {
 
     @Programmatic
     @Override
-    public void sudo(final String username, final List<String> roles, final Runnable runnable) {
+    public void sudo(final String username, final Iterable<String> roles, final Runnable runnable) {
         try {
             runAs(username, roles);
             runnable.run();
@@ -71,7 +70,7 @@ public class SudoServiceDefault implements SudoService {
 
     @Programmatic
     @Override
-    public <T> T sudo(final String username, final List<String> roles, final Callable<T> callable) {
+    public <T> T sudo(final String username, final Iterable<String> roles, final Callable<T> callable) {
         try {
             runAs(username, roles);
             return callable.call();
@@ -82,7 +81,7 @@ public class SudoServiceDefault implements SudoService {
         }
     }
 
-    private void runAs(final String username, final List<String> roles) {
+    private void runAs(final String username, final Iterable<String> roles) {
         if(spiServices != null) {
             for (SudoService.Spi spiService : spiServices) {
                 spiService.runAs(username, roles);
@@ -97,10 +96,6 @@ public class SudoServiceDefault implements SudoService {
             }
         }
     }
-
-
-    @javax.inject.Inject
-    private UserService userService;
 
     @javax.inject.Inject
     private List<Spi> spiServices;

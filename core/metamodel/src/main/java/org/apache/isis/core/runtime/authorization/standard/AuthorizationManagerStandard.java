@@ -19,8 +19,6 @@
 
 package org.apache.isis.core.runtime.authorization.standard;
 
-import java.util.List;
-
 import org.apache.isis.applib.Identifier;
 import org.apache.isis.applib.services.sudo.SudoService;
 import org.apache.isis.core.metamodel.progmodel.ProgrammingModel;
@@ -72,11 +70,12 @@ public class AuthorizationManagerStandard extends AuthorizationManagerAbstract {
         if (authorizor.isUsableInAnyRole(identifier)) {
             return true;
         }
-        for (final String roleName : session.getRoles()) {
-            if (authorizor.isUsableInRole(roleName, identifier)) {
-                return true;
-            }
+        
+        if(session.streamRoles()
+                .anyMatch(roleName->authorizor.isUsableInRole(roleName, identifier)) ) {
+            return true;
         }
+        
         return false;
     }
 
@@ -97,17 +96,15 @@ public class AuthorizationManagerStandard extends AuthorizationManagerAbstract {
         if (authorizor.isVisibleInAnyRole(identifier)) {
             return true;
         }
-        for (final String roleName : session.getRoles()) {
-            if (authorizor.isVisibleInRole(roleName, identifier)) {
-                return true;
-            }
+        if(session.streamRoles()
+                .anyMatch(roleName->authorizor.isVisibleInRole(roleName, identifier)) ) {
+            return true;
         }
         return false;
     }
 
     private static boolean containsSudoSuperuserRole(final AuthenticationSession session) {
-        final List<String> roles = session.getRoles();
-        return roles != null && roles.contains(SudoService.ACCESS_ALL_ROLE);
+        return session.hasRole(SudoService.ACCESS_ALL_ROLE);
     }
 
     private boolean isPerspectiveMember(final Identifier identifier) {

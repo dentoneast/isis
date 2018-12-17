@@ -19,9 +19,13 @@
 
 package org.apache.isis.core.metamodel.services.user;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.Stack;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -34,6 +38,8 @@ import org.apache.isis.applib.services.sudo.SudoService;
 import org.apache.isis.applib.services.user.UserService;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
+
+import static org.apache.isis.commons.internal.base._NullSafe.stream;
 
 @DomainService(
         nature = NatureOfService.DOMAIN,
@@ -51,12 +57,12 @@ public class UserServiceDefault implements UserService {
 
             final String username = userAndRoleOverrides.user;
 
-            final List<String> roles;
+            final Stream<String> roles;
             if (userAndRoleOverrides.roles != null) {
-                roles = userAndRoleOverrides.roles;
+                roles = userAndRoleOverrides.streamRoles();
             } else {
                 // preserve the roles if were not overridden
-                roles = previousRoles();
+                roles = streamPreviousRoles();
             }
 
             final List<RoleMemento> roleMementos = asRoleMementos(roles);
@@ -69,25 +75,23 @@ public class UserServiceDefault implements UserService {
         }
     }
 
-    private List<String> previousRoles() {
-        final List<String> roles;
-
+    private Stream<String> streamPreviousRoles() {
         final AuthenticationSession session =
                 authenticationSessionProvider.getAuthenticationSession();
-        roles = session.getRoles();
-        return roles;
+        
+        return session.streamRoles();
     }
 
     public static class UserAndRoleOverrides {
         final String user;
-        final List<String> roles;
+        final Set<String> roles;
 
 
         UserAndRoleOverrides(final String user) {
             this(user, null);
         }
 
-        UserAndRoleOverrides(final String user, final List<String> roles) {
+        UserAndRoleOverrides(final String user, final Set<String> roles) {
             this.user = user;
             this.roles = roles;
         }
@@ -96,8 +100,8 @@ public class UserServiceDefault implements UserService {
             return user;
         }
 
-        public List<String> getRoles() {
-            return roles;
+        public Stream<String> streamRoles() {
+            return stream(roles);
         }
     }
 
@@ -109,9 +113,14 @@ public class UserServiceDefault implements UserService {
     };
 
 
-    private void overrideUserAndRoles(final String user, final List<String> rolesIfAny) {
-        final List<String> roles = rolesIfAny != null ? rolesIfAny : inheritRoles();
-        this.overrides.get().push(new UserAndRoleOverrides(user, roles));
+    private void overrideUserAndRoles(final String user, final Iterable<String> rolesIfAny) {
+        
+        final Stream<String> roles = rolesIfAny != null 
+                ? stream(rolesIfAny)
+                        : inheritRoles();
+        
+        final SortedSet<String> rolesSorted = roles.collect(Collectors.toCollection(TreeSet::new));
+        this.overrides.get().push(new UserAndRoleOverrides(user, rolesSorted));
     }
 
     private void resetOverrides() {
@@ -129,20 +138,18 @@ public class UserServiceDefault implements UserService {
                         : null;
     }
 
-    private List<String> inheritRoles() {
+    private Stream<String> inheritRoles() {
         final UserAndRoleOverrides currentOverridesIfAny = currentOverridesIfAny();
         return currentOverridesIfAny != null
-                ? currentOverridesIfAny.getRoles()
-                        : authenticationSessionProvider.getAuthenticationSession().getRoles();
+                ? currentOverridesIfAny.streamRoles()
+                        : authenticationSessionProvider.getAuthenticationSession().streamRoles();
     }
 
-    private static List<RoleMemento> asRoleMementos(final List<String> roles) {
-        final List<RoleMemento> mementos = new ArrayList<RoleMemento>();
-        if (roles != null) {
-            for (final String role : roles) {
-                mementos.add(new RoleMemento(role));
-            }
-        }
+    private static List<RoleMemento> asRoleMementos(final Stream<String> roles) {
+        final List<RoleMemento> mementos = stream(roles)
+                .map(RoleMemento::new)
+                .collect(Collectors.toList());
+        
         return mementos;
     }
 
@@ -154,7 +161,7 @@ public class UserServiceDefault implements UserService {
     public static class SudoServiceSpi implements SudoService.Spi {
 
         @Override
-        public void runAs(final String username, final List<String> roles) {
+        public void runAs(final String username, final Iterable<String> roles) {
             userServiceDefault.overrideUserAndRoles(username, roles);
         }
 

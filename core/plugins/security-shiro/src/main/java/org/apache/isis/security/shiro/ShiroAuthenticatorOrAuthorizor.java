@@ -20,8 +20,8 @@ package org.apache.isis.security.shiro;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.UnavailableSecurityManagerException;
@@ -44,7 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.isis.applib.Identifier;
-import org.apache.isis.commons.internal.collections._Lists;
+import org.apache.isis.commons.internal.collections._Sets;
 import org.apache.isis.core.security.authentication.AuthenticationRequest;
 import org.apache.isis.core.security.authentication.AuthenticationRequestPassword;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -162,12 +162,19 @@ public class ShiroAuthenticatorOrAuthorizor implements Authenticator, Authorizor
         }
     }
 
-    AuthenticationSession authenticationSessionFor(AuthenticationRequest request, String code, AuthenticationToken token, Subject currentSubject) {
-        List<String> roles = getRoles(currentSubject, token);
-        // copy over any roles passed in
-        // (this is used by the Wicket viewer, for example).
-        roles.addAll(request.getRoles());
-
+    AuthenticationSession authenticationSessionFor(
+            AuthenticationRequest request, 
+            String code, 
+            AuthenticationToken token, 
+            Subject currentSubject) {
+        
+        final Stream<String> roles = Stream.concat(
+                streamRoles(currentSubject, token),
+                
+                // copy over any roles passed in
+                // (this is used by the Wicket viewer, for example).
+                request.streamRoles());
+        
         return new SimpleSession(request.getName(), roles, code);
     }
 
@@ -176,12 +183,12 @@ public class ShiroAuthenticatorOrAuthorizor implements Authenticator, Authorizor
      * in the future that might obtain the list of roles for a principal from
      * somewhere other than Shiro's {@link RealmSecurityManager}.
      */
-    protected List<String> getRoles(final Subject subject, final AuthenticationToken token) {
-        final List<String> roles = _Lists.newArrayList();
+    protected Stream<String> streamRoles(final Subject subject, final AuthenticationToken token) {
+        final Set<String> roles = _Sets.newHashSet();
 
         RealmSecurityManager securityManager = getSecurityManager();
         if(securityManager == null) {
-            return roles;
+            return Stream.empty();
         }
 
         final Set<String> realmNames = realmNamesOf(subject);
@@ -200,7 +207,7 @@ public class ShiroAuthenticatorOrAuthorizor implements Authenticator, Authorizor
                 }
             }
         }
-        return roles;
+        return roles.stream();
     }
 
     private static Set<String> realmNamesOf(final Subject subject) {

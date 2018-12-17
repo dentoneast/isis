@@ -16,7 +16,7 @@
  */
 package org.apache.isis.core.runtime.services.authsess;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.NatureOfService;
@@ -50,7 +50,7 @@ public class AuthenticationSessionProviderDefault implements AuthenticationSessi
 
         if(userAndRoleOverrides != null) {
             final String user = userAndRoleOverrides.getUser();
-            final List<String> roles = userAndRoleOverrides.getRoles();
+            final Stream<String> roles = userAndRoleOverrides.streamRoles();
             return new SimpleSession(user, roles);
         }
 
