@@ -42,7 +42,7 @@ import org.apache.wicket.core.request.handler.RenderPageRequestHandler.RedirectP
 import org.apache.wicket.protocol.http.PageExpiredException;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.component.IRequestablePage;
-import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
+import org.apache.wicket.request.cycle.IRequestCycleListener;
 import org.apache.wicket.request.cycle.PageRequestHandlerTracker;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -77,7 +77,7 @@ import org.apache.isis.viewer.wicket.ui.panels.PromptFormAbstract;
  * automatically opening a {@link IsisSession} at the beginning of the request
  * and committing the transaction and closing the session at the end.
  */
-public class WebRequestCycleForIsis extends AbstractRequestCycleListener {
+public class WebRequestCycleForIsis implements IRequestCycleListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(WebRequestCycleForIsis.class);
 
