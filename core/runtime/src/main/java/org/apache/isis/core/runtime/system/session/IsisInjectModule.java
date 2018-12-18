@@ -17,36 +17,29 @@
  *  under the License.
  */
 
-package org.apache.isis.viewer.wicket.viewer.integration.isis;
+package org.apache.isis.core.runtime.system.session;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.config.IsisConfiguration;
-import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.metamodel.services.ServicesInjector;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactoryBuilder;
+import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.systemusinginstallers.IsisComponentProvider;
 
-public class IsisInjectModule extends AbstractModule {
+public class IsisInjectModule {
 
-    @Override
-    protected void configure() {
-        bind(IsisConfiguration.class).toProvider(_Config::getConfiguration);
-    }
-
-    @Provides
-    @com.google.inject.Inject
-    @Singleton
-    protected IsisSessionFactory provideIsisSessionFactory(IsisConfiguration isisConfiguration) {
+    @Inject private IsisConfiguration isisConfiguration;
+    
+    @Produces @ApplicationScoped
+    protected IsisSessionFactory provideIsisSessionFactory() {
         
         final AppManifest appManifest = isisConfiguration.getAppManifest();
         
         final IsisComponentProvider componentProvider = IsisComponentProvider
-                .builderUsingInstallers(appManifest)
+                .builder(appManifest)
                 .build();
         
         final IsisSessionFactoryBuilder builder =
@@ -58,13 +51,27 @@ public class IsisInjectModule extends AbstractModule {
         
         return sessionFactory;
     }
-
-    @Provides
-    @com.google.inject.Inject
-    @Singleton
-    protected ServicesInjector provideServicesInjector(final IsisSessionFactory isisSessionFactory) {
-        return isisSessionFactory.getServicesInjector();
+    
+    public static class Nested {
+        
+        @Inject private IsisSessionFactory isisSessionFactory;
+    
+        @Produces @ApplicationScoped
+        protected ServicesInjector getServicesInjector() {
+            return isisSessionFactory.getServicesInjector();
+        }
+        
+        @Produces @ApplicationScoped
+        protected SpecificationLoader getSpecificationLoader() {
+            return isisSessionFactory.getSpecificationLoader();
+        }
+        
     }
+    
+    
+    
+    
+    
 
 
 }

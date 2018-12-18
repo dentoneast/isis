@@ -21,6 +21,8 @@ package org.apache.isis.viewer.wicket.ui.components.scalars;
 
 import java.io.Serializable;
 
+import javax.inject.Inject;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -346,7 +348,7 @@ public abstract class ScalarPanelTextFieldAbstract<T extends Serializable> exten
         return facet != null ? facet.value() : null;
     }
 
-    @com.google.inject.Inject
+    @Inject
     WicketViewerSettings settings;
     @Override
     protected WicketViewerSettings getSettings() {

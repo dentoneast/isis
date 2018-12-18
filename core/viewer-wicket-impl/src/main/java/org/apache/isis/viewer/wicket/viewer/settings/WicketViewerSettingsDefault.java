@@ -19,7 +19,7 @@
 
 package org.apache.isis.viewer.wicket.viewer.settings;
 
-import com.google.inject.Singleton;
+import javax.ejb.Singleton;
 
 import org.apache.isis.applib.annotation.PromptStyle;
 import org.apache.isis.config.IsisConfiguration;

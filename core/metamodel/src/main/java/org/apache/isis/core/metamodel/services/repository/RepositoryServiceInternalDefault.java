@@ -25,11 +25,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
 
 import org.apache.isis.applib.PersistFailedException;
 import org.apache.isis.applib.RepositoryException;
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.query.Query;
 import org.apache.isis.applib.query.QueryFindAllInstances;
@@ -44,10 +43,7 @@ import org.apache.isis.core.metamodel.services.persistsession.PersistenceSession
 
 import static org.apache.isis.config.internal._Config.getConfiguration;
 
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Singleton
 public class RepositoryServiceInternalDefault implements RepositoryService {
 
     private boolean autoFlush;

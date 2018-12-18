@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-import com.google.inject.name.Named;
+import javax.inject.Inject;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -64,6 +64,7 @@ import org.slf4j.LoggerFactory;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizerComposite;
 import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.config.beans.WebAppConfigBean;
 import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
@@ -138,34 +139,9 @@ public abstract class PageAbstract extends WebPage implements ActionPromptProvid
     public static ThreadLocal<ExceptionModel> EXCEPTION = new ThreadLocal<>();
 
     private final List<ComponentType> childComponentIds;
-
-    /**
-     * {@link com.google.inject.Inject Inject}ed when {@link #init() initialized}.
-     */
-    @com.google.inject.Inject
-    @Named("applicationName")
-    private String applicationName;
-
-    /**
-     * {@link com.google.inject.Inject Inject}ed when {@link #init() initialized}.
-     */
-    @com.google.inject.Inject(optional = true)
-    @Named("applicationCss")
-    private String applicationCss;
-
-    /**
-     * {@link com.google.inject.Inject Inject}ed when {@link #init() initialized}.
-     *///
-    @com.google.inject.Inject(optional = true)
-    @Named("applicationJs")
-    private String applicationJs;
-
-    /**
-     * {@link com.google.inject.Inject Inject}ed when {@link #init() initialized}.
-     */
-    @com.google.inject.Inject
-    private PageClassRegistry pageClassRegistry;
-
+    
+    @Inject private WebAppConfigBean webAppConfigBean;
+    @Inject private PageClassRegistry pageClassRegistry;
 
     /**
      * Top-level &lt;div&gt; to which all content is added.
@@ -192,6 +168,7 @@ public abstract class PageAbstract extends WebPage implements ActionPromptProvid
 
             themeDiv = new WebMarkupContainer(ID_THEME);
             add(themeDiv);
+            String applicationName = webAppConfigBean.getApplicationName();
             if(applicationName != null) {
                 themeDiv.add(new CssClassAppender(CssClassAppender.asCssStyle(applicationName)));
             }
@@ -275,7 +252,9 @@ public abstract class PageAbstract extends WebPage implements ActionPromptProvid
 
 
     protected void setTitle(final String title) {
-        addOrReplace(new Label(ID_PAGE_TITLE, title != null? title: applicationName));
+        addOrReplace(new Label(ID_PAGE_TITLE, title != null
+                ? title
+                        : webAppConfigBean.getApplicationName()));
     }
 
     private Class<? extends Page> getSignInPage() {
@@ -300,9 +279,11 @@ public abstract class PageAbstract extends WebPage implements ActionPromptProvid
         final JGrowlBehaviour jGrowlBehaviour = new JGrowlBehaviour();
         jGrowlBehaviour.renderFeedbackMessages(response);
 
+        String applicationCss = webAppConfigBean.getApplicationCss();
         if(applicationCss != null) {
             response.render(CssReferenceHeaderItem.forUrl(applicationCss));
         }
+        String applicationJs = webAppConfigBean.getApplicationJs();
         if(applicationJs != null) {
             response.render(JavaScriptReferenceHeaderItem.forUrl(applicationJs));
         }

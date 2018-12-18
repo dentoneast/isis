@@ -20,16 +20,19 @@
 package org.apache.isis.applib;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import javax.jdo.annotations.PersistenceCapable;
 
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.fixturescripts.FixtureScript;
+import org.apache.isis.commons.internal.collections._Lists;
 
 /**
  * Programmatic specification of the constituent parts of an application, most specifically the modules that contain
@@ -254,7 +257,25 @@ public interface AppManifest {
         public void setXmlElementTypes(final Set<Class<?>> xmlElementTypes) {
             this.xmlElementTypes = xmlElementTypes;
         }
-        //endregion
+       
+        // -- STREAM ALL
+        
+        /**
+         * @since 2.0.0-M2
+         */
+        public Stream<Class<?>> streamAllTypes() {
+
+            return _Lists.of(persistenceCapableTypes,
+                    mixinTypes,
+                    fixtureScriptTypes,
+                    domainServiceTypes,
+                    domainObjectTypes,
+                    viewModelTypes,
+                    xmlElementTypes)
+            .stream()
+            .flatMap(Collection::stream)
+            ;
+        }
 
     }
     

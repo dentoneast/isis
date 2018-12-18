@@ -23,6 +23,8 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import javax.ejb.Singleton;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -46,10 +48,8 @@ import org.apache.isis.commons.internal.collections._Sets;
 import org.apache.isis.core.security.authentication.AuthenticationRequest;
 import org.apache.isis.core.security.authentication.AuthenticationRequestPassword;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
-import org.apache.isis.core.security.authentication.manager.AuthenticationManagerInstaller;
 import org.apache.isis.core.security.authentication.standard.Authenticator;
 import org.apache.isis.core.security.authentication.standard.SimpleSession;
-import org.apache.isis.core.security.authorization.manager.AuthorizationManagerInstaller;
 import org.apache.isis.core.security.authorization.standard.Authorizor;
 import org.apache.isis.security.shiro.ShiroSecurityContext;
 
@@ -65,6 +65,7 @@ import static org.apache.isis.config.internal._Config.getConfiguration;
  * {@link SecurityManager Shiro SecurityManager}
  * (bound to a thread-local).
  */
+@Singleton
 public class ShiroAuthenticator implements Authenticator {
 
     private static final Logger LOG = LoggerFactory.getLogger(ShiroAuthenticator.class);

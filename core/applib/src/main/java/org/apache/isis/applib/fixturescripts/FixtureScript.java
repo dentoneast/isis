@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
@@ -1013,30 +1015,13 @@ implements InstallableFixture {
 
     // -- injected services
 
-    @javax.inject.Inject
-    protected FixtureScripts fixtureScripts;
-
-    @javax.inject.Inject
-    protected FactoryService factoryService;
-
-    @javax.inject.Inject
-    protected ServiceRegistry serviceRegistry;
-
-    @javax.inject.Inject
-    protected RepositoryService repositoryService;
-
-    @javax.inject.Inject
-    protected UserService userService;
-
-    @javax.inject.Inject
-    protected WrapperFactory wrapperFactory;
-
-    @javax.inject.Inject
-    protected TransactionService transactionService;
-
-    @javax.inject.Inject
-    protected SessionManagementService sessionManagementService;
-
-
+    @Inject protected FixtureScripts fixtureScripts;
+    @Inject protected FactoryService factoryService;
+    @Inject protected ServiceRegistry serviceRegistry;
+    @Inject protected RepositoryService repositoryService;
+    @Inject protected UserService userService;
+    @Inject protected WrapperFactory wrapperFactory;
+    @Inject protected TransactionService transactionService;
+    @Inject protected SessionManagementService sessionManagementService;
 
 }

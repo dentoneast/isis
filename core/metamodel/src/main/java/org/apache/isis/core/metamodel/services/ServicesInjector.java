@@ -44,7 +44,6 @@ import org.apache.isis.commons.internal.collections._Multimaps;
 import org.apache.isis.commons.internal.collections._Multimaps.ListMultimap;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
-import org.apache.isis.core.commons.components.ApplicationScopedComponent;
 import org.apache.isis.core.commons.util.ToString;
 import org.apache.isis.core.metamodel.exceptions.MetaModelException;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
@@ -66,7 +65,7 @@ import static org.apache.isis.commons.internal.base._NullSafe.stream;
  * </p>
  *
  */
-public class ServicesInjector implements ApplicationScopedComponent, ServiceRegistry {
+public class ServicesInjector implements ServiceRegistry {
 
 
     private static final Logger LOG = LoggerFactory.getLogger(ServicesInjector.class);

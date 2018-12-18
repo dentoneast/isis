@@ -18,15 +18,14 @@
  */
 package org.apache.isis.core.runtime.services.userprof;
 
+import javax.ejb.Singleton;
 import javax.inject.Inject;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.userprof.UserProfileService;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 
-@DomainService(nature = NatureOfService.DOMAIN)
+@Singleton
 public class UserProfileServiceDefault implements UserProfileService {
 
     @Programmatic
@@ -35,6 +34,5 @@ public class UserProfileServiceDefault implements UserProfileService {
         return authenticationSessionProvider.getAuthenticationSession().getUserName();
     }
 
-    @Inject
-    AuthenticationSessionProvider authenticationSessionProvider;
+    @Inject AuthenticationSessionProvider authenticationSessionProvider;
 }

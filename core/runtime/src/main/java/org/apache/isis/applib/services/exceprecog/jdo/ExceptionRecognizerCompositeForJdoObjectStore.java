@@ -18,16 +18,12 @@
  */
 package org.apache.isis.applib.services.exceprecog.jdo;
 
-import java.util.Map;
-
 import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizerComposite;
-import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.config.internal._Config;
 
 /**
@@ -41,10 +37,7 @@ import org.apache.isis.config.internal._Config;
  *     the first one found).
  * </p>
  */
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Singleton
 public class ExceptionRecognizerCompositeForJdoObjectStore extends ExceptionRecognizerComposite {
 
     public static final String KEY_DISABLE = 

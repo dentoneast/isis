@@ -19,8 +19,9 @@
 
 package org.apache.isis.core.metamodel.services.title;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
+import javax.ejb.Singleton;
+import javax.inject.Inject;
+
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.applib.services.wrapper.WrapperFactory;
@@ -28,10 +29,7 @@ import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Singleton
 public class TitleServiceDefault implements TitleService {
 
     @Programmatic
@@ -65,10 +63,7 @@ public class TitleServiceDefault implements TitleService {
         return sessionServiceInternal;
     }
     
-    @javax.inject.Inject
-    PersistenceSessionServiceInternal sessionServiceInternal;
-
-    @javax.inject.Inject
-    WrapperFactory wrapperFactory;
+    @Inject PersistenceSessionServiceInternal sessionServiceInternal;
+    @Inject WrapperFactory wrapperFactory;
 
 }

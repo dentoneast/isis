@@ -28,6 +28,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.isis.applib.AbstractService;
@@ -466,31 +467,14 @@ public abstract class FixtureScripts extends AbstractService {
 
     // -- injected services
 
-    @javax.inject.Inject
-    FactoryService factoryService;
-
-    @javax.inject.Inject
-    TitleService titleService;
-
-    @javax.inject.Inject
-    JaxbService jaxbService;
-
-    @javax.inject.Inject
-    BookmarkService bookmarkService;
-
-    @javax.inject.Inject
-    ServiceRegistry serviceRegistry;
-
-    @javax.inject.Inject
-    RepositoryService repositoryService;
-
-    @javax.inject.Inject
-    TransactionService transactionService;
-
-    @javax.inject.Inject
-    ClassDiscoveryService classDiscoveryService;
-
-    @javax.inject.Inject
-    ExecutionParametersService executionParametersService;
+    @Inject FactoryService factoryService;
+    @Inject TitleService titleService;
+    @Inject JaxbService jaxbService;
+    @Inject BookmarkService bookmarkService;
+    @Inject ServiceRegistry serviceRegistry;
+    @Inject RepositoryService repositoryService;
+    @Inject TransactionService transactionService;
+    @Inject ClassDiscoveryService classDiscoveryService;
+    @Inject ExecutionParametersService executionParametersService;
 
 }

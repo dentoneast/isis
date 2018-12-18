@@ -21,15 +21,15 @@ package org.apache.isis.core.runtime.services.publish;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Predicate;
 
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.annotation.PublishingChangeKind;
 import org.apache.isis.applib.services.clock.ClockService;
@@ -50,10 +50,6 @@ import org.apache.isis.core.runtime.services.changes.ChangedObjectsServiceIntern
 /**
  * Wrapper around {@link PublisherService}.  Is a no-op if there is no injected service.
  */
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
 @RequestScoped
 public class PublishingServiceInternalDefault implements PublishingServiceInternal {
 
@@ -137,7 +133,7 @@ public class PublishingServiceInternalDefault implements PublishingServiceIntern
 
     private void publishToPublisherServices(final Interaction.Execution<?,?> execution) {
 
-        if(publisherServices == null || publisherServices.isEmpty()) {
+        if(publisherServices == null || publisherServices.isUnsatisfied()) {
             return;
         }
 
@@ -170,27 +166,13 @@ public class PublishingServiceInternalDefault implements PublishingServiceIntern
     }
 
     // -- injected services
-    @javax.inject.Inject
-    List<PublisherService> publisherServices;
-
-    @javax.inject.Inject
-    ChangedObjectsServiceInternal changedObjectsServiceInternal;
-
-    @javax.inject.Inject
-    CommandContext commandContext;
-
-    @javax.inject.Inject
-    InteractionContext interactionContext;
-
-    @javax.inject.Inject
-    ClockService clockService;
-
-    @javax.inject.Inject
-    UserService userService;
-
-    @javax.inject.Inject
-    MetricsService metricsService;
-
+    @Inject @Any Instance<PublisherService> publisherServices;
+    @Inject ChangedObjectsServiceInternal changedObjectsServiceInternal;
+    @Inject CommandContext commandContext;
+    @Inject InteractionContext interactionContext;
+    @Inject ClockService clockService;
+    @Inject UserService userService;
+    @Inject MetricsService metricsService;
 
 
 }

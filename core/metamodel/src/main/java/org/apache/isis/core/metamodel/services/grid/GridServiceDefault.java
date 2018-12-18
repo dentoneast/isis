@@ -19,8 +19,11 @@ package org.apache.isis.core.metamodel.services.grid;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
+import javax.ejb.Singleton;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.layout.grid.Grid;
 import org.apache.isis.applib.services.grid.GridLoaderService;
@@ -30,10 +33,7 @@ import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.commons.internal.collections._Lists;
 
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Singleton
 public class GridServiceDefault implements GridService {
 
     //private static final Logger LOG = LoggerFactory.getLogger(GridServiceDefault.class);
@@ -142,7 +142,7 @@ public class GridServiceDefault implements GridService {
         parts.add(LINKS_TNS);
         parts.add(LINKS_SCHEMA_LOCATION);
 
-        for (GridSystemService<?> gridSystemService : gridSystemServices) {
+        for (GridSystemService<?> gridSystemService : getGridSystemServices()) {
             final Class<? extends Grid> gridImpl = gridSystemService.gridImplementation();
             if(gridImpl.isAssignableFrom(grid.getClass())) {
                 parts.add(gridSystemService.tns());
@@ -172,7 +172,7 @@ public class GridServiceDefault implements GridService {
         if (filteredGridSystemServices == null) {
             List<GridSystemService<?>> services = _Lists.newArrayList();
 
-            for (GridSystemService<?> gridSystemService : this.gridSystemServices) {
+            for (GridSystemService<?> gridSystemService : getGridSystemServices()) {
                 final Class<?> gridImplementation = gridSystemService.gridImplementation();
                 final boolean seenBefore = _NullSafe.stream(services)
                         .anyMatch((GridSystemService<?> systemService) -> 
@@ -188,14 +188,20 @@ public class GridServiceDefault implements GridService {
         return filteredGridSystemServices;
     }
 
+    // -- poor man's testing support
+    
+    List<GridSystemService<?>> gridSystemServicesForTest;
+    Iterable<GridSystemService<?>> getGridSystemServices() {
+        return gridSystemServices!=null 
+                ? gridSystemServices
+                        : gridSystemServicesForTest;
+    }
+    
     ////////////////////////////////////////////////////////
 
-
-
-    @javax.inject.Inject
-    GridLoaderService gridLoaderService;
-
-    @javax.inject.Inject
-    List<GridSystemService<?>> gridSystemServices;
+    @Inject GridLoaderService gridLoaderService;
+    @Inject @Any private Instance<GridSystemService<?>> gridSystemServices;
+    
+    
 
 }

@@ -27,13 +27,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.stream.Stream;
+
+import javax.enterprise.inject.Vetoed;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.isis.applib.AppManifest;
-import org.apache.isis.applib.annotation.DomainObject;
-import org.apache.isis.applib.annotation.Nature;
 import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.collections._Lists;
@@ -57,8 +58,7 @@ import static org.apache.isis.commons.internal.base._With.requires;
  *     will be used instead.
  * </p>
  */
-//[2039] @DomainObject(objectType=...) fixes meta-data validation complaining, otherwise not required ...
-@DomainObject(nature=Nature.INMEMORY_ENTITY, objectType="internal.IsisConfiguration") 
+@Vetoed
 class IsisConfigurationDefault implements IsisConfiguration {
 
     private static final Logger LOG = LoggerFactory.getLogger(IsisConfigurationDefault.class);
@@ -110,6 +110,13 @@ class IsisConfigurationDefault implements IsisConfiguration {
     public void triggerTypeDiscovery() {
         typeDiscovery.get();
     }
+    
+    @Override
+    public Stream<Class<?>> streamClassesToDiscover() {
+        triggerTypeDiscovery();
+        return AppManifest.Registry.instance().streamAllTypes();
+    }
+    
     
     // ////////////////////////////////////////////////
     // ResourceStreamSource
@@ -512,6 +519,8 @@ class IsisConfigurationDefault implements IsisConfiguration {
         }
         return list;
     }
+
+
 
 
 }

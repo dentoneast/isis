@@ -25,11 +25,11 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.ejb.Singleton;
+import javax.inject.Inject;
 import javax.xml.bind.Marshaller;
 
 import org.apache.isis.applib.FatalException;
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.layout.grid.Grid;
 import org.apache.isis.applib.layout.menubars.MenuBars;
@@ -45,10 +45,7 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.objectstore.jdo.metamodel.facets.object.persistencecapable.JdoPersistenceCapableFacet;
 
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Singleton
 public class LayoutServiceDefault implements LayoutService2 {
 
     //private static final Logger LOG = LoggerFactory.getLogger(LayoutServiceDefault.class);
@@ -145,17 +142,9 @@ public class LayoutServiceDefault implements LayoutService2 {
                         ));
     }
 
-
-    @javax.inject.Inject
-    SpecificationLoader specificationLoader;
-
-    @javax.inject.Inject
-    JaxbService jaxbService;
-
-    @javax.inject.Inject
-    GridService gridService;
-
-    @javax.inject.Inject
-    MenuBarsService menuBarsService;
+    @Inject SpecificationLoader specificationLoader;
+    @Inject JaxbService jaxbService;
+    @Inject GridService gridService;
+    @Inject MenuBarsService menuBarsService;
 
 }

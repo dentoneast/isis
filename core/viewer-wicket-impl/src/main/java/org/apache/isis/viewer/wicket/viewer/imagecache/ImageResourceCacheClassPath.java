@@ -24,8 +24,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.Singleton;
+
 import com.google.common.collect.Maps;
-import com.google.inject.Singleton;
 
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;

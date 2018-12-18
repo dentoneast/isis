@@ -19,6 +19,8 @@
 
 package org.apache.isis.viewer.wicket.ui.panels;
 
+import javax.inject.Inject;
+
 import org.apache.wicket.model.IModel;
 
 import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
@@ -30,15 +32,14 @@ import org.apache.isis.viewer.wicket.model.models.FormExecutorContext;
  */
 public abstract class PromptFormPanelAbstract<T extends IModel<?> & FormExecutorContext> extends PanelAbstract<T> {
 
-
-
+    private static final long serialVersionUID = 1L;
+    
     public PromptFormPanelAbstract(final String id, final T model) {
         super(id, model);
     }
 
     // -- dependencies
-    @com.google.inject.Inject
-    WicketViewerSettings settings;
+    @Inject WicketViewerSettings settings;
     @Override
     protected WicketViewerSettings getSettings() {
         return settings;

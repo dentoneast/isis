@@ -18,16 +18,10 @@
  */
 package org.apache.isis.core.metamodel.services.message;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.services.i18n.TranslatableString;
 import org.apache.isis.applib.services.message.MessageService;
 
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
-public class MessageServiceNoop implements MessageService {
+public abstract class MessageServiceNoop implements MessageService {
 
     @Override
     public void informUser(final String message) {

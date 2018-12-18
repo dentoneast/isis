@@ -24,18 +24,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.inject.Inject;
+import javax.ejb.Singleton;
 
 import com.google.common.base.Supplier;
-import org.apache.isis.commons.internal.collections._Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import com.google.inject.Singleton;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.model.IModel;
 
+import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.viewer.wicket.ui.ComponentFactory;
 import org.apache.isis.viewer.wicket.ui.ComponentFactory.ApplicationAdvice;
 import org.apache.isis.viewer.wicket.ui.ComponentType;

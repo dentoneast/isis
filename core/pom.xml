@@ -171,11 +171,10 @@
         <select2.version>4.0.5</select2.version>
 
         <jquery-ui.version>1.12.1</jquery-ui.version>
-
         
         <picocontainer.version>2.15</picocontainer.version>
         
-        <javaee.version>7.0</javaee.version>
+        <javaee.version>8.0</javaee.version>
 
         <htmlparser.version>2.1</htmlparser.version>
 
@@ -1367,6 +1366,12 @@ ${license.additional-notes}
             
             <dependency>
                 <groupId>org.apache.isis.core</groupId>
+                <artifactId>isis-core-plugins-ioc-weld</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.isis.core</groupId>
                 <artifactId>isis-core-plugins-security-pac4j</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1732,29 +1737,18 @@ ${license.additional-notes}
 
             <dependency>
                 <groupId>org.apache.wicket</groupId>
+                <artifactId>wicket-cdi</artifactId>
+                <version>${wicket.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.wicket</groupId>
                 <artifactId>wicket-auth-roles</artifactId>
                 <version>${wicket.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.wicket</groupId>
-                <artifactId>wicket-guice</artifactId>
-                <version>${wicket.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <!-- for Java7 compatibility (we don't use the proxying capability of this component) -->
-                        <groupId>cglib</groupId>
-                        <artifactId>cglib</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -2487,6 +2481,7 @@ ${license.additional-notes}
         <module>plugins/discovery-reflections</module>
         <module>plugins/eventbus-axon</module>
         <module>plugins/eventbus-guava</module>
+        <module>plugins/ioc-weld</module>
         <module>plugins/jaxrs-resteasy-3</module>
         <module>plugins/jaxrs-resteasy-4</module>
         <module>plugins/jdo-datanucleus-4</module>

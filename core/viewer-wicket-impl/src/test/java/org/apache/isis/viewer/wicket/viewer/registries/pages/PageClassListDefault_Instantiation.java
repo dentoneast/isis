@@ -17,7 +17,7 @@
  *  under the License.
  */
 
-package org.apache.isis.viewer.wicket.viewer.pages;
+package org.apache.isis.viewer.wicket.viewer.registries.pages;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -30,8 +30,6 @@ import org.junit.runner.RunWith;
 
 import org.apache.isis.viewer.wicket.ui.pages.PageClassList;
 import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistrySpi;
-import org.apache.isis.viewer.wicket.viewer.registries.pages.PageClassListDefault;
-import org.apache.isis.viewer.wicket.viewer.registries.pages.PageClassRegistryDefault;
 
 @RunWith(JMock.class)
 public class PageClassListDefault_Instantiation {
@@ -51,7 +49,7 @@ public class PageClassListDefault_Instantiation {
         // necessary to provide an implementation that will register
         // all pages with the registry.
         final PageClassListDefault pageClassList = new PageClassListDefault();
-        new PageClassRegistryDefault(pageClassList);
+        newPageClassRegistryDefault(pageClassList);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -63,7 +61,16 @@ public class PageClassListDefault_Instantiation {
                 mockPageClassList.registerPages(with(any(PageClassRegistrySpi.class)));
             }
         });
-        new PageClassRegistryDefault(mockPageClassList);
+        newPageClassRegistryDefault(mockPageClassList);
     }
+    
+    // -- HELPER
 
+    public static PageClassRegistryDefault newPageClassRegistryDefault(PageClassList pageClassList) {
+        PageClassRegistryDefault pageClassRegistry = new PageClassRegistryDefault();
+        pageClassRegistry.pageClassList = pageClassList;
+        pageClassRegistry.init();
+        return pageClassRegistry;
+    }
+    
 }

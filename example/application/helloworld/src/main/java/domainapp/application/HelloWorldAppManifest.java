@@ -18,6 +18,10 @@
  */
 package domainapp.application;
 
+import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+
 import org.apache.isis.applib.AppManifestAbstract2;
 import org.apache.isis.config.AppConfig;
 import org.apache.isis.config.IsisConfiguration;
@@ -27,7 +31,7 @@ import domainapp.dom.HelloWorldModule;
 /**
  * Bootstrap the application.
  */
-@javax.ejb.Singleton // only if you want AppConfig to be managed by CDI (if available), otherwise not required
+@Singleton // only if you want AppConfig to be managed by CDI (if available), otherwise not required
 public class HelloWorldAppManifest extends AppManifestAbstract2 implements AppConfig {
 
     public static final Builder BUILDER = Builder
@@ -40,7 +44,7 @@ public class HelloWorldAppManifest extends AppManifestAbstract2 implements AppCo
     }
 
     // Implementing AppConfig, to tell the framework how to bootstrap the configuration.
-    @Override
+    @Override @Produces @ApplicationScoped
     public IsisConfiguration isisConfiguration () {
         return IsisConfiguration.buildFromAppManifest(this);
     }

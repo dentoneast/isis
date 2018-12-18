@@ -22,9 +22,10 @@ package org.apache.isis.core.metamodel.services.factory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import javax.ejb.Singleton;
+import javax.inject.Inject;
+
 import org.apache.isis.applib.NonRecoverableException;
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.factory.FactoryService;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
@@ -35,10 +36,7 @@ import org.apache.isis.core.metamodel.services.persistsession.PersistenceSession
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Singleton
 public class FactoryServiceInternalDefault implements FactoryService {
 
 
@@ -95,13 +93,8 @@ public class FactoryServiceInternalDefault implements FactoryService {
                 "Failed to locate constructor in %s to instantiate using %s", mixinClass.getName(), mixedIn));
     }
 
-    @javax.inject.Inject
-    SpecificationLoader specificationLoader;
-
-    @javax.inject.Inject
-    ServiceRegistry serviceRegistry;
-
-    @javax.inject.Inject
-    PersistenceSessionServiceInternal persistenceSessionServiceInternal;
+    @Inject SpecificationLoader specificationLoader;
+    @Inject ServiceRegistry serviceRegistry;
+    @Inject PersistenceSessionServiceInternal persistenceSessionServiceInternal;
 
 }

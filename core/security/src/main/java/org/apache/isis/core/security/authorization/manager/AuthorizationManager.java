@@ -21,7 +21,6 @@ package org.apache.isis.core.security.authorization.manager;
 
 import org.apache.isis.applib.Identifier;
 import org.apache.isis.applib.annotation.Programmatic;
-import org.apache.isis.core.commons.components.ApplicationScopedComponent;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 
 /**
@@ -30,7 +29,7 @@ import org.apache.isis.core.security.authentication.AuthenticationSession;
  * Implementing class is added to {@link ServicesInjector} as an (internal) domain service; all public methods
  * must be annotated using {@link Programmatic}.
  */
-public interface AuthorizationManager extends ApplicationScopedComponent {
+public interface AuthorizationManager {
 
     @Programmatic
     void init();

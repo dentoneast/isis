@@ -22,6 +22,7 @@ import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.core.security.authentication.AuthenticationRequest;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.standard.Authenticator;
+import org.apache.isis.core.security.authentication.standard.SimpleSession;
 
 public class Pac4jAuthenticator implements Authenticator {
 
@@ -46,10 +47,9 @@ public class Pac4jAuthenticator implements Authenticator {
         
         System.out.println("!!! Pac4jAuthenticator.canAuthenticate authenticationRequestClass="+authenticationRequestClass);
         
-        
         _Exceptions.dumpStackTrace(System.out, 0, 1000);
         
-        return true;
+        return false;
     }
 
     @Override
@@ -57,8 +57,8 @@ public class Pac4jAuthenticator implements Authenticator {
         
         System.out.println("!!! Pac4jAuthenticator.authenticate request=" + request + ", code="+code);
         
-        // TODO Auto-generated method stub
-        return null;
+        String[] roles = {};
+        return new SimpleSession(request.getName(), roles, code);
     }
 
     @Override
@@ -68,5 +68,9 @@ public class Pac4jAuthenticator implements Authenticator {
         System.out.println("!!! Pac4jAuthenticator.logout session="+session);
 
     }
+    
+    // -- HELPER
+    
+
 
 }

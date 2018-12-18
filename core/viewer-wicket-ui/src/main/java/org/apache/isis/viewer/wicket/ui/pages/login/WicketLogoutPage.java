@@ -19,6 +19,8 @@
 
 package org.apache.isis.viewer.wicket.ui.pages.login;
 
+import javax.inject.Inject;
+
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.WebPage;
 
@@ -39,10 +41,6 @@ public class WicketLogoutPage extends WebPage {
         return pageClassRegistry.getPageClass(PageType.SIGN_IN);
     }
 
-    /**
-     * {@link com.google.inject.Inject}ed when {@link #init() initialized}.
-     */
-    @com.google.inject.Inject
-    PageClassRegistry pageClassRegistry;
+    @Inject PageClassRegistry pageClassRegistry;
 
 }

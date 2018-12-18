@@ -18,14 +18,11 @@
  */
 package org.apache.isis.core.metamodel.services.appfeat;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
+import javax.ejb.Singleton;
+
 import org.apache.isis.applib.services.factory.FactoryService;
 
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Singleton
 public class ApplicationFeatureFactory {
 
     public ApplicationFeature newApplicationFeature() {

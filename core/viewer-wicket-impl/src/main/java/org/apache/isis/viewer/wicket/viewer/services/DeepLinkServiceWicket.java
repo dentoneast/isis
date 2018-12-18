@@ -21,15 +21,15 @@ package org.apache.isis.viewer.wicket.viewer.services;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.ejb.Singleton;
+import javax.inject.Inject;
+
 import org.apache.wicket.Page;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
-import org.apache.isis.applib.services.guice.GuiceBeanProvider;
 import org.apache.isis.applib.services.linking.DeepLinkService;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
@@ -42,10 +42,7 @@ import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistry;
  * An implementation of {@link org.apache.isis.applib.services.linking.DeepLinkService}
  * for Wicket Viewer
  */
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Singleton
 public class DeepLinkServiceWicket implements DeepLinkService {
 
     @Programmatic
@@ -55,7 +52,7 @@ public class DeepLinkServiceWicket implements DeepLinkService {
         final ObjectAdapter objectAdapter = getPersistenceSession().adapterFor(domainObject);
         final PageParameters pageParameters = EntityModel.createPageParameters(objectAdapter);
 
-        PageClassRegistry pageClassRegistry = guiceBeanProvider.lookup(PageClassRegistry.class);
+        //PageClassRegistry pageClassRegistry = guiceBeanProvider.lookup(PageClassRegistry.class);
         final Class<? extends Page> pageClass = pageClassRegistry.getPageClass(PageType.ENTITY);
 
         final RequestCycle requestCycle = RequestCycle.get();
@@ -72,9 +69,8 @@ public class DeepLinkServiceWicket implements DeepLinkService {
         return isisSessionFactory.getCurrentSession().getPersistenceSession();
     }
 
-    @javax.inject.Inject
-    private IsisSessionFactory isisSessionFactory;
-
-    @javax.inject.Inject
-    private GuiceBeanProvider guiceBeanProvider;
+    @Inject private IsisSessionFactory isisSessionFactory;
+    @Inject private PageClassRegistry pageClassRegistry;
+    
+    
 }

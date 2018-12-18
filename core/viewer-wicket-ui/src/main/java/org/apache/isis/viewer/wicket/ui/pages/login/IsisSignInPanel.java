@@ -25,7 +25,6 @@ import org.apache.wicket.Page;
 import org.apache.wicket.authroles.authentication.panel.SignInPanel;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 
-import org.apache.isis.applib.services.email.EmailService;
 import org.apache.isis.applib.services.userreg.EmailNotificationService;
 import org.apache.isis.applib.services.userreg.UserRegistrationService;
 import org.apache.isis.core.metamodel.services.ServicesInjector;
@@ -76,6 +75,8 @@ public class IsisSignInPanel extends SignInPanel {
     protected void onInitialize() {
         super.onInitialize();
 
+        
+        
         addOrReplace(new NotificationPanel("feedback"));
 
         final Component passwordResetLink = addPasswordResetLink();
@@ -160,11 +161,12 @@ public class IsisSignInPanel extends SignInPanel {
 
     @javax.inject.Inject // strangely, this isn't a @com.google.inject.Inject
     private PageClassRegistry pageClassRegistry;
-
-    @javax.inject.Inject // strangely, this isn't a @com.google.inject.Inject
-    private EmailNotificationService emailNotificationService;
-
-    @javax.inject.Inject // strangely, this isn't a @com.google.inject.Inject
-    private EmailService emailService;
+    
+//not used
+//    @javax.inject.Inject // strangely, this isn't a @com.google.inject.Inject
+//    private EmailNotificationService emailNotificationService;
+//
+//    @javax.inject.Inject // strangely, this isn't a @com.google.inject.Inject
+//    private EmailService emailService;
 
 }

@@ -23,11 +23,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Qualifier;
 
-import org.apache.isis.commons.internal.base._NullSafe;
+import org.apache.isis.commons.internal.exceptions._Exceptions;
+import org.apache.isis.core.plugins.ioc.IocPlugin;
+
+import static org.apache.isis.commons.internal.base._NullSafe.isEmpty;
+import static org.apache.isis.commons.internal.base._NullSafe.stream;
 
 /**
  * <h1>- internal use only -</h1>
@@ -41,6 +46,22 @@ import org.apache.isis.commons.internal.base._NullSafe;
  */
 public final class _CDI {
     
+    public static void init(Supplier<Stream<Class<?>>> onDiscover) {
+        
+        if(cdi().isPresent()) {
+            return;
+        }
+        
+        CDI.setCDIProvider(IocPlugin.get().getCDIProvider(onDiscover.get()));
+
+        // verify
+        if(!cdi().isPresent()) {
+            throw _Exceptions.unexpectedCodeReach();
+        }
+        
+    }
+    
+    
     /**
      * Obtains a child Instance for the given required type and additional required qualifiers. 
      * @param subType
@@ -49,7 +70,7 @@ public final class _CDI {
      * instance of an annotation that is not a qualifier type
      */
     public static <T> Optional<T> getManagedBean(final Class<T> subType, List<Annotation> qualifiers) {
-        if(_NullSafe.isEmpty(qualifiers)) {
+        if(isEmpty(qualifiers)) {
             return getManagedBean(subType);
         }
         
@@ -93,7 +114,7 @@ public final class _CDI {
      * @return non-null
      */
     public static List<Annotation> filterQualifiers(final Annotation[] annotations) {
-        return _NullSafe.stream(annotations)
+        return stream(annotations)
         .filter(_CDI::isQualifier)
         .collect(Collectors.toList());
     }

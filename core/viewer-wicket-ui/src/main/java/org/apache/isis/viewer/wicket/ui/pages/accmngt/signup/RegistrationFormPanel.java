@@ -22,6 +22,8 @@ package org.apache.isis.viewer.wicket.ui.pages.accmngt.signup;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.StatelessForm;
@@ -34,6 +36,7 @@ import org.apache.wicket.validation.validator.EmailAddressValidator;
 import org.apache.isis.applib.services.email.EmailService;
 import org.apache.isis.applib.services.userreg.EmailNotificationService;
 import org.apache.isis.applib.services.userreg.events.EmailRegistrationEvent;
+import org.apache.isis.config.beans.WebAppConfigBean;
 import org.apache.isis.viewer.wicket.model.models.PageType;
 import org.apache.isis.viewer.wicket.ui.components.widgets.bootstrap.FormGroup;
 import org.apache.isis.viewer.wicket.ui.pages.EmailVerificationUrlService;
@@ -47,6 +50,8 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.common.NotificationPanel
  * A panel with a form for creation of new users
  */
 public class RegistrationFormPanel extends Panel {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructor
@@ -73,6 +78,8 @@ public class RegistrationFormPanel extends Panel {
         formGroup.add(emailField);
 
         Button signUpButton = new Button("signUp") {
+            private static final long serialVersionUID = 1L;
+
             @Override
             public void onSubmit() {
                 super.onSubmit();
@@ -89,7 +96,11 @@ public class RegistrationFormPanel extends Panel {
                 emailNotificationService.init();
                 emailService.init();
 
-                final EmailRegistrationEvent emailRegistrationEvent = new EmailRegistrationEvent(email, confirmationUrl, applicationName);
+                final EmailRegistrationEvent emailRegistrationEvent = new EmailRegistrationEvent(
+                        email, 
+                        confirmationUrl, 
+                        webAppConfigBean.getApplicationName());
+                
                 boolean emailSent = emailNotificationService.send(emailRegistrationEvent);
                 if (emailSent) {
                     Map<String, String> map = new HashMap<>();
@@ -106,19 +117,11 @@ public class RegistrationFormPanel extends Panel {
         form.add(signUpButton);
     }
 
-    @javax.inject.Inject // strangely, this isn't a @com.google.inject.Inject
-    private EmailNotificationService emailNotificationService;
-    @javax.inject.Inject // strangely, this isn't a @com.google.inject.Inject
-    private EmailService emailService;
+    @Inject private EmailNotificationService emailNotificationService;
+    @Inject private EmailService emailService;
+    @Inject private EmailVerificationUrlService emailVerificationUrlService;
+    @Inject private PageNavigationService pageNavigationService;
+    @Inject private WebAppConfigBean webAppConfigBean;
 
-    @javax.inject.Inject // strangely, this isn't a @com.google.inject.Inject
-    private EmailVerificationUrlService emailVerificationUrlService;
-
-    @javax.inject.Inject // strangely, this isn't a @com.google.inject.Inject
-    private PageNavigationService pageNavigationService;
-
-    @javax.inject.Inject // strangely, this isn't a @com.google.inject.Inject
-    @com.google.inject.name.Named("applicationName")
-    private String applicationName;
 
 }

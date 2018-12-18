@@ -21,8 +21,6 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.context.RequestScoped;
 import javax.jdo.listener.InstanceLifecycleEvent;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.mixins.timestamp.HoldsUpdatedAt;
 import org.apache.isis.applib.mixins.timestamp.HoldsUpdatedBy;
@@ -32,10 +30,6 @@ import org.apache.isis.applib.services.user.UserService;
 import org.apache.isis.core.metamodel.JdoMetamodelUtil;
 
 @RequestScoped
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
 public class TimestampService implements
 javax.jdo.listener.StoreLifecycleListener {
 

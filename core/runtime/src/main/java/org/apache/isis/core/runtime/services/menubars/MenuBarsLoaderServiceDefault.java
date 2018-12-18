@@ -20,12 +20,12 @@ package org.apache.isis.core.runtime.services.menubars;
 
 import java.nio.charset.StandardCharsets;
 
+import javax.ejb.Singleton;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.isis.applib.AppManifest;
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.layout.menubars.bootstrap3.BS3MenuBars;
 import org.apache.isis.applib.services.jaxb.JaxbService;
 import org.apache.isis.applib.services.menu.MenuBarsLoaderService;
@@ -35,7 +35,7 @@ import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 
 import static org.apache.isis.commons.internal.resources._Resources.loadAsString;
 
-@DomainService(nature = NatureOfService.DOMAIN)
+@Singleton
 public class MenuBarsLoaderServiceDefault implements MenuBarsLoaderService {
     
     private final static Logger log = LoggerFactory.getLogger(MenuBarsLoaderServiceDefault.class);

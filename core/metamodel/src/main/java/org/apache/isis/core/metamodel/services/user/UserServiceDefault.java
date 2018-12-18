@@ -19,66 +19,58 @@
 
 package org.apache.isis.core.metamodel.services.user;
 
-import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.ejb.Singleton;
 import javax.inject.Inject;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
-import org.apache.isis.applib.security.RoleMemento;
 import org.apache.isis.applib.security.UserMemento;
-import org.apache.isis.applib.services.sudo.SudoService;
 import org.apache.isis.applib.services.user.UserService;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 
 import static org.apache.isis.commons.internal.base._NullSafe.stream;
 
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Singleton
 public class UserServiceDefault implements UserService {
 
     @Programmatic
     @Override
     public UserMemento getUser() {
 
-        final UserAndRoleOverrides userAndRoleOverrides = currentOverridesIfAny();
-
-        if (userAndRoleOverrides != null) {
-
-            final String username = userAndRoleOverrides.user;
-
-            final Stream<String> roles;
-            if (userAndRoleOverrides.roles != null) {
-                roles = userAndRoleOverrides.streamRoles();
-            } else {
-                // preserve the roles if were not overridden
-                roles = streamPreviousRoles();
-            }
-
-            final List<RoleMemento> roleMementos = asRoleMementos(roles);
-            return new UserMemento(username, roleMementos);
-
-        } else {
+//        final UserAndRoleOverrides userAndRoleOverrides = currentOverridesIfAny();
+//
+//        if (userAndRoleOverrides != null) {
+//
+//            final String username = userAndRoleOverrides.user;
+//
+//            final Stream<String> roles;
+//            if (userAndRoleOverrides.roles != null) {
+//                roles = userAndRoleOverrides.streamRoles();
+//            } else {
+//                // preserve the roles if were not overridden
+//                roles = streamPreviousRoles();
+//            }
+//
+//            final List<RoleMemento> roleMementos = asRoleMementos(roles);
+//            return new UserMemento(username, roleMementos);
+//
+//        } else {
             final AuthenticationSession session =
                     authenticationSessionProvider.getAuthenticationSession();
             return session.createUserMemento();
-        }
+//        }
     }
-
-    private Stream<String> streamPreviousRoles() {
-        final AuthenticationSession session =
-                authenticationSessionProvider.getAuthenticationSession();
-        
-        return session.streamRoles();
-    }
+//
+//    private Stream<String> streamPreviousRoles() {
+//        final AuthenticationSession session =
+//                authenticationSessionProvider.getAuthenticationSession();
+//        
+//        return session.streamRoles();
+//    }
 
     public static class UserAndRoleOverrides {
         final String user;
@@ -102,76 +94,72 @@ public class UserServiceDefault implements UserService {
             return stream(roles);
         }
     }
+//
+//    private final ThreadLocal<Stack<UserAndRoleOverrides>> overrides =
+//            new ThreadLocal<Stack<UserAndRoleOverrides>>() {
+//        @Override protected Stack<UserAndRoleOverrides> initialValue() {
+//            return new Stack<>();
+//        }
+//    };
 
-    private final ThreadLocal<Stack<UserAndRoleOverrides>> overrides =
-            new ThreadLocal<Stack<UserAndRoleOverrides>>() {
-        @Override protected Stack<UserAndRoleOverrides> initialValue() {
-            return new Stack<>();
-        }
-    };
+//
+//    private void overrideUserAndRoles(final String user, final Iterable<String> rolesIfAny) {
+//        
+//        final Stream<String> roles = rolesIfAny != null 
+//                ? stream(rolesIfAny)
+//                        : inheritRoles();
+//        
+//        this.overrides.get().push(new UserAndRoleOverrides(user, roles));
+//    }
+//
+//    private void resetOverrides() {
+//        this.overrides.get().pop();
+//    }
+
+//    /**
+//     * Not API; for use by the implementation of sudo/runAs (see {@link SudoService} etc.
+//     */
+//    @Programmatic
+//    public UserAndRoleOverrides currentOverridesIfAny() {
+//        final Stack<UserAndRoleOverrides> userAndRoleOverrides = overrides.get();
+//        return !userAndRoleOverrides.empty()
+//                ? userAndRoleOverrides.peek()
+//                        : null;
+//    }
+
+//    private Stream<String> inheritRoles() {
+//        final UserAndRoleOverrides currentOverridesIfAny = currentOverridesIfAny();
+//        return currentOverridesIfAny != null
+//                ? currentOverridesIfAny.streamRoles()
+//                        : authenticationSessionProvider.getAuthenticationSession().streamRoles();
+//        return authenticationSessionProvider.getAuthenticationSession().streamRoles();
+//    }
+//
+//    private static List<RoleMemento> asRoleMementos(final Stream<String> roles) {
+//        final List<RoleMemento> mementos = stream(roles)
+//                .map(RoleMemento::new)
+//                .collect(Collectors.toList());
+//        
+//        return mementos;
+//    }
 
 
-    private void overrideUserAndRoles(final String user, final Iterable<String> rolesIfAny) {
-        
-        final Stream<String> roles = rolesIfAny != null 
-                ? stream(rolesIfAny)
-                        : inheritRoles();
-        
-        this.overrides.get().push(new UserAndRoleOverrides(user, roles));
-    }
+//    @Singleton
+//    public static class SudoServiceSpi implements SudoService.Spi {
+//
+//        @Override
+//        public void runAs(final String username, final Iterable<String> roles) {
+//            userServiceDefault.overrideUserAndRoles(username, roles);
+//        }
+//
+//        @Override
+//        public void releaseRunAs() {
+//            userServiceDefault.resetOverrides();
+//        }
+//
+//        @Inject UserServiceDefault userServiceDefault;
+//    }
 
-    private void resetOverrides() {
-        this.overrides.get().pop();
-    }
-
-    /**
-     * Not API; for use by the implementation of sudo/runAs (see {@link SudoService} etc.
-     */
-    @Programmatic
-    public UserAndRoleOverrides currentOverridesIfAny() {
-        final Stack<UserAndRoleOverrides> userAndRoleOverrides = overrides.get();
-        return !userAndRoleOverrides.empty()
-                ? userAndRoleOverrides.peek()
-                        : null;
-    }
-
-    private Stream<String> inheritRoles() {
-        final UserAndRoleOverrides currentOverridesIfAny = currentOverridesIfAny();
-        return currentOverridesIfAny != null
-                ? currentOverridesIfAny.streamRoles()
-                        : authenticationSessionProvider.getAuthenticationSession().streamRoles();
-    }
-
-    private static List<RoleMemento> asRoleMementos(final Stream<String> roles) {
-        final List<RoleMemento> mementos = stream(roles)
-                .map(RoleMemento::new)
-                .collect(Collectors.toList());
-        
-        return mementos;
-    }
-
-
-    @DomainService(
-            nature = NatureOfService.DOMAIN,
-            menuOrder = "" + Integer.MAX_VALUE
-            )
-    public static class SudoServiceSpi implements SudoService.Spi {
-
-        @Override
-        public void runAs(final String username, final Iterable<String> roles) {
-            userServiceDefault.overrideUserAndRoles(username, roles);
-        }
-
-        @Override
-        public void releaseRunAs() {
-            userServiceDefault.resetOverrides();
-        }
-
-        @Inject
-        UserServiceDefault userServiceDefault;
-    }
-
-    @javax.inject.Inject
-    AuthenticationSessionProvider authenticationSessionProvider;
+    @Inject AuthenticationSessionProvider authenticationSessionProvider;
 
 }

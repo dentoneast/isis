@@ -16,6 +16,8 @@
  */
 package org.apache.isis.applib.services.swagger;
 
+import javax.inject.Inject;
+
 import org.apache.isis.applib.IsisApplibModule;
 import org.apache.isis.applib.annotation.Action;
 import org.apache.isis.applib.annotation.ActionLayout;
@@ -104,6 +106,5 @@ public class SwaggerServiceMenu {
         return SwaggerService.Format.YAML;
     }
 
-    @javax.inject.Inject
-    SwaggerService swaggerService;
+    @Inject SwaggerService swaggerService;
 }

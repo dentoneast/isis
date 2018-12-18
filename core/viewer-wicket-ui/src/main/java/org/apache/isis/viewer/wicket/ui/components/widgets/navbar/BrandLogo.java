@@ -18,24 +18,23 @@
  */
 package org.apache.isis.viewer.wicket.ui.components.widgets.navbar;
 
-import com.google.inject.name.Named;
+import javax.inject.Inject;
+
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebComponent;
+
+import org.apache.isis.config.beans.WebAppConfigBean;
 
 /**
  * A component used as a brand logo in the top-left corner of the navigation bar
  */
 public class BrandLogo extends WebComponent {
 
+    private static final long serialVersionUID = 1L;
+
     private final Placement placement;
 
-    @com.google.inject.Inject(optional = true)
-    @Named("brandLogoHeader")
-    private String logoHeaderUrl;
-
-    @com.google.inject.Inject(optional = true)
-    @Named("brandLogoSignin")
-    private String logoSigninUrl;
+    @Inject private WebAppConfigBean webAppConfigBean;
 
     /**
      * Constructor.
@@ -62,6 +61,9 @@ public class BrandLogo extends WebComponent {
     }
 
     private String url() {
+        String logoHeaderUrl = webAppConfigBean.getBrandLogoHeader();
+        String logoSigninUrl = webAppConfigBean.getBrandLogoSignin();
+        
         return placement.urlFor(logoHeaderUrl, logoSigninUrl);
     }
 

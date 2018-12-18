@@ -27,9 +27,8 @@ import java.util.SortedSet;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.annotation.SemanticsOf;
 import org.apache.isis.applib.annotation.Where;
@@ -58,11 +57,7 @@ import org.apache.isis.core.metamodel.specloader.specimpl.ContributeeMember;
 import static org.apache.isis.commons.internal.base._NullSafe.stream;
 import static org.apache.isis.config.internal._Config.getConfiguration;
 
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        repositoryFor = ApplicationFeature.class,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Singleton
 public class ApplicationFeatureRepositoryDefault implements ApplicationFeatureRepository {
 
     // -- caches
@@ -72,8 +67,6 @@ public class ApplicationFeatureRepositoryDefault implements ApplicationFeatureRe
     private final SortedMap<ApplicationFeatureId, ApplicationFeature> propertyFeatures = _Maps.newTreeMap();
     private final SortedMap<ApplicationFeatureId, ApplicationFeature> collectionFeatures = _Maps.newTreeMap();
     private final SortedMap<ApplicationFeatureId, ApplicationFeature> actionFeatures = _Maps.newTreeMap();
-
-
 
     // -- init
 

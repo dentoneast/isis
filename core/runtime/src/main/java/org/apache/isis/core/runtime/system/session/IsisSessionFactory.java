@@ -32,7 +32,6 @@ import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.commons.internal.base._Blackhole;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
-import org.apache.isis.core.commons.components.ApplicationScopedComponent;
 import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.services.appmanifest.AppManifestProvider;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
@@ -64,8 +63,7 @@ import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
  *     it can be {@link Inject}'d into other domain services.
  * </p>
  */
-public class IsisSessionFactory
-implements ApplicationScopedComponent, AppManifestProvider {
+public class IsisSessionFactory implements AppManifestProvider {
 
     //private final static Logger LOG = LoggerFactory.getLogger(IsisSessionFactory.class);
 
@@ -79,7 +77,7 @@ implements ApplicationScopedComponent, AppManifestProvider {
     private final PersistenceSessionFactory persistenceSessionFactory;
     private final AppManifest appManifest;
 
-    public IsisSessionFactory(
+    IsisSessionFactory(
             final ServicesInjector servicesInjector,
             final AppManifest appManifest) {
 
@@ -98,8 +96,6 @@ implements ApplicationScopedComponent, AppManifestProvider {
     public AppManifest getAppManifest() {
         return appManifest;
     }
-
-
 
     // -- constructServices, destroyServicesAndShutdown
 

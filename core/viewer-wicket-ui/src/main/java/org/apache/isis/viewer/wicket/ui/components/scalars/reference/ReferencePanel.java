@@ -21,6 +21,8 @@ package org.apache.isis.viewer.wicket.ui.components.scalars.reference;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -450,7 +452,7 @@ public class ReferencePanel extends ScalarPanelSelect2Abstract implements PanelW
 
     // //////////////////////////////////////
 
-    @com.google.inject.Inject
+    @Inject
     WicketViewerSettings wicketViewerSettings;
 
 }

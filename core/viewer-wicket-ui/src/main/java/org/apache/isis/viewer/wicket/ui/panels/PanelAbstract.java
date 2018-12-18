@@ -19,6 +19,8 @@
 
 package org.apache.isis.viewer.wicket.ui.panels;
 
+import javax.inject.Inject;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -181,9 +183,7 @@ public abstract class PanelAbstract<T extends IModel<?>> extends Panel {
         return IsisContext.getSessionFactory();
     }
 
-
-    @com.google.inject.Inject
-    WicketViewerSettings settings;
+    @Inject WicketViewerSettings settings;
     protected WicketViewerSettings getSettings() {
         return settings;
     }

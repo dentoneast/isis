@@ -33,7 +33,7 @@ public class BS3MenuBars_roundtrip_Test {
 
     @Before
     public void setUp() throws Exception {
-        jaxbService = new JaxbService.Simple();
+        jaxbService = new JaxbService.Simple() {};
     }
 
     @After

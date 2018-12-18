@@ -21,6 +21,9 @@ package org.apache.isis.applib.services.fixturespec;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 import org.apache.isis.applib.annotation.Action;
 import org.apache.isis.applib.annotation.ActionLayout;
@@ -88,10 +91,10 @@ public class FixtureScriptsDefault extends FixtureScripts {
     @Override
     @PostConstruct
     public void init() {
-        if(fixtureScriptsSpecificationProvider == null) {
+        if(fixtureScriptsSpecificationProviders.isUnsatisfied()) {
             return;
         }
-        setSpecification(fixtureScriptsSpecificationProvider.getSpecification());
+        setSpecification(fixtureScriptsSpecificationProviders.get().getSpecification());
     }
 
 
@@ -229,15 +232,14 @@ public class FixtureScriptsDefault extends FixtureScripts {
 
     // -- helpers
     private boolean hideIfPolicyNot(final FixtureScriptsSpecification.DropDownPolicy requiredPolicy) {
-        return fixtureScriptsSpecificationProvider == null || getSpecification().getRunScriptDropDownPolicy() != requiredPolicy;
+        return fixtureScriptsSpecificationProviders.isUnsatisfied() || 
+                getSpecification().getRunScriptDropDownPolicy() != requiredPolicy;
     }
 
-
     // -- injected services
-    @javax.inject.Inject
-    FixtureScriptsSpecificationProvider fixtureScriptsSpecificationProvider;
-    @javax.inject.Inject
-    EventBusService eventBusService;
+    
+    @Inject @Any Instance<FixtureScriptsSpecificationProvider> fixtureScriptsSpecificationProviders;
+    @Inject EventBusService eventBusService;
 
 
 }

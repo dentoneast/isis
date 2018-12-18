@@ -82,10 +82,6 @@ public class IsisSessionFactoryBuilder {
         this.timeZoneInitializer = new IsisTimeZoneInitializer();
     }
 
-    public AppManifest getAppManifest() {
-        return appManifest;
-    }
-
     // -- buildSessionFactory
 
     public IsisSessionFactory buildSessionFactory() {

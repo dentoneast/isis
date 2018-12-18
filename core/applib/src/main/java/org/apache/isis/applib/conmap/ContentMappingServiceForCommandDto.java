@@ -21,6 +21,8 @@ package org.apache.isis.applib.conmap;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 
@@ -145,10 +147,7 @@ public class ContentMappingServiceForCommandDto implements ContentMappingService
     }
 
 
-    @Inject
-    MetaModelService metaModelService;
-
-    @Inject
-    List<CommandDtoProcessorService> commandDtoProcessorServices;
+    @Inject MetaModelService metaModelService;
+    @Inject @Any Instance<CommandDtoProcessorService> commandDtoProcessorServices;
 
 }

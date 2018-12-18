@@ -16,24 +16,22 @@
  */
 package org.apache.isis.viewer.wicket.ui.components.widgets.favicon;
 
-import com.google.inject.name.Named;
+import javax.inject.Inject;
 
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.util.string.Strings;
+
+import org.apache.isis.config.beans.WebAppConfigBean;
 
 /**
  * A component for application favorite icon
  */
 public class Favicon extends WebComponent {
 
-    @com.google.inject.Inject(optional = true)
-    @Named("faviconUrl")
-    private String url;
-
-    @com.google.inject.Inject(optional = true)
-    @Named("faviconContentType")
-    private String contentType;
+    private static final long serialVersionUID = 1L;
+    
+    @Inject private WebAppConfigBean webAppConfigBean;
 
     public Favicon(String id) {
         super(id);
@@ -42,7 +40,8 @@ public class Favicon extends WebComponent {
     @Override
     protected void onConfigure() {
         super.onConfigure();
-
+        
+        String url = webAppConfigBean.getFaviconUrl();
         setVisible(!Strings.isEmpty(url));
     }
 
@@ -50,8 +49,11 @@ public class Favicon extends WebComponent {
     protected void onComponentTag(ComponentTag tag) {
         super.onComponentTag(tag);
 
+        String url = webAppConfigBean.getFaviconUrl();
+        String contentType = webAppConfigBean.getFaviconContentType();
+        
         tag.put("href", url);
-
+        
         if (!Strings.isEmpty(contentType)) {
             tag.put("type", contentType);
         }

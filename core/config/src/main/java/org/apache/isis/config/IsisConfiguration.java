@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.Module;
@@ -115,6 +116,11 @@ public interface IsisConfiguration {
      * @since 2.0.0-M2
      */
     public AppManifest getAppManifest();
+    
+    /**
+     * @since 2.0.0-M2
+     */
+    public Stream<Class<?>> streamClassesToDiscover();
 
     /**
      * Creates a new IsisConfiguration containing the properties starting with

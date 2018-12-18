@@ -22,10 +22,7 @@ package org.apache.isis.viewer.wicket.ui.pages.mmverror;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.isis.commons.internal.collections._Lists;
-import org.apache.isis.config.IsisConfiguration;
-
-import com.google.inject.name.Named;
+import javax.inject.Inject;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.MarkupContainer;
@@ -41,6 +38,9 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
+import org.apache.isis.commons.internal.collections._Lists;
+import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.config.beans.WebAppConfigBean;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 
@@ -55,28 +55,6 @@ public class MmvErrorPage extends WebPage {
 
     private static final String ID_PAGE_TITLE = "pageTitle";
     private static final String ID_APPLICATION_NAME = "applicationName";
-
-    /**
-     * {@link com.google.inject.Inject Inject}ed when {@link #init() initialized}.
-     */
-    @com.google.inject.Inject
-    @Named("applicationName")
-    private String applicationName;
-
-    /**
-     * {@link com.google.inject.Inject Inject}ed when {@link #init() initialized}.
-     */
-    @com.google.inject.Inject
-    @Named("applicationCss")
-    private String applicationCss;
-
-    /**
-     * {@link com.google.inject.Inject Inject}ed when {@link #init() initialized}.
-     */
-    @com.google.inject.Inject
-    @Named("applicationJs")
-    private String applicationJs;
-
     private static final String ID_ERROR = "error";
     private static final String ID_ERROR_MESSAGE = "errorMessage";
 
@@ -97,15 +75,17 @@ public class MmvErrorPage extends WebPage {
     }
 
     private MarkupContainer addPageTitle() {
-        return add(new Label(ID_PAGE_TITLE, applicationName));
+        return add(new Label(ID_PAGE_TITLE, webAppConfigBean.getApplicationName()));
     }
 
     private void addApplicationName() {
-        add(new Label(ID_APPLICATION_NAME, applicationName));
+        add(new Label(ID_APPLICATION_NAME, webAppConfigBean.getApplicationName()));
     }
 
     private void addValidationErrors() {
         ListView<String> validationErrorsView = new ListView<String>(ID_ERROR, getModel()) {
+            private static final long serialVersionUID = 1L;
+
             @Override
             protected void populateItem(ListItem<String> item) {
                 final String validationError = item.getModelObject();
@@ -121,9 +101,11 @@ public class MmvErrorPage extends WebPage {
         response.render(new PriorityHeaderItem(JavaScriptHeaderItem.forReference(Application.get().getJavaScriptLibrarySettings().getJQueryReference())));
         response.render(new PriorityHeaderItem(JavaScriptHeaderItem.forReference(BootstrapJavaScriptReference.instance())));
 
+        String applicationCss = webAppConfigBean.getApplicationCss();
         if(applicationCss != null) {
             response.render(CssReferenceHeaderItem.forUrl(applicationCss));
         }
+        String applicationJs = webAppConfigBean.getApplicationJs();
         if(applicationJs != null) {
             response.render(JavaScriptReferenceHeaderItem.forUrl(applicationJs));
         }
@@ -146,4 +128,6 @@ public class MmvErrorPage extends WebPage {
         return IsisContext.getSessionFactory();
     }
 
+    @Inject private WebAppConfigBean webAppConfigBean;
+    
 }

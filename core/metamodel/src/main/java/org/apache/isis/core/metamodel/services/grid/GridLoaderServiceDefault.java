@@ -19,19 +19,20 @@ package org.apache.isis.core.metamodel.services.grid;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.layout.grid.Grid;
 import org.apache.isis.applib.services.grid.GridLoaderService;
@@ -44,10 +45,7 @@ import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.resources._Resources;
 
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Singleton
 public class GridLoaderServiceDefault implements GridLoaderService {
 
     private static final Logger LOG = LoggerFactory.getLogger(GridLoaderServiceDefault.class);
@@ -222,13 +220,8 @@ public class GridLoaderServiceDefault implements GridLoaderService {
 
     // -- injected dependencies
 
-    @javax.inject.Inject
-    MessageService messageService;
-
-    @javax.inject.Inject
-    JaxbService jaxbService;
-
-    @javax.inject.Inject
-    List<GridSystemService<?>> gridSystemServices;
+    @Inject MessageService messageService;
+    @Inject JaxbService jaxbService;
+    @Inject @Any Instance<GridSystemService<?>> gridSystemServices;
 
 }

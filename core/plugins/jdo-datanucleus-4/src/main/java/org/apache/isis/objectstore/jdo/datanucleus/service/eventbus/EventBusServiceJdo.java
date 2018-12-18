@@ -16,8 +16,8 @@
  */
 package org.apache.isis.objectstore.jdo.datanucleus.service.eventbus;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
+import javax.ejb.Singleton;
+
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.core.runtime.services.eventbus.EventBusServiceDefault;
 import org.apache.isis.objectstore.jdo.datanucleus.JDOStateManagerForIsis;
@@ -39,10 +39,7 @@ import org.apache.isis.objectstore.jdo.datanucleus.JDOStateManagerForIsis.Hint;
  * with {@link org.apache.isis.applib.annotation.DomainService}.  Because it is implemented in the core, this means
  * that it is automatically registered and available for use; no further configuration is required.
  */
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "0" // initialize first, so available for any services that persist objects in their @PostConstruct
-        )
+@Singleton
 public class EventBusServiceJdo extends EventBusServiceDefault {
 
     /**

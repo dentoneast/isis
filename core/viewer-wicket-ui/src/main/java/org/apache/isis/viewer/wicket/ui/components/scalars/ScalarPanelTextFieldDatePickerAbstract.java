@@ -21,6 +21,8 @@ package org.apache.isis.viewer.wicket.ui.components.scalars;
 
 import java.io.Serializable;
 
+import javax.inject.Inject;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
@@ -124,7 +126,7 @@ public abstract class ScalarPanelTextFieldDatePickerAbstract<T extends Serializa
 
 
 
-    @com.google.inject.Inject
+    @Inject
     WicketViewerSettings settings;
     @Override
     protected WicketViewerSettings getSettings() {

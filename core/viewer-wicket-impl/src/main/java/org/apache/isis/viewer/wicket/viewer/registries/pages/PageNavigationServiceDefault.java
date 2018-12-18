@@ -19,7 +19,8 @@
 
 package org.apache.isis.viewer.wicket.viewer.registries.pages;
 
-import com.google.inject.Singleton;
+import javax.ejb.Singleton;
+import javax.inject.Inject;
 
 import org.apache.wicket.Page;
 import org.apache.wicket.RestartResponseAtInterceptPageException;
@@ -39,12 +40,8 @@ public class PageNavigationServiceDefault implements PageNavigationService {
 
     private static final long serialVersionUID = 1L;
 
-    private final PageClassRegistry pageClassRegistry;
-
-    @com.google.inject.Inject
-    public PageNavigationServiceDefault(final PageClassRegistry pageClassRegistry) {
-        this.pageClassRegistry = pageClassRegistry;
-    }
+    @Inject
+    private PageClassRegistry pageClassRegistry;
 
     @Override
     public void navigateTo(PageType pageType) {

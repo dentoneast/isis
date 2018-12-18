@@ -19,6 +19,8 @@
 
 package org.apache.isis.viewer.wicket.ui.components.entity.icontitle;
 
+import javax.inject.Inject;
+
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -229,16 +231,16 @@ public class EntityIconAndTitlePanel extends PanelAbstract<ObjectAdapterModel> {
     // Dependency Injection
     // ///////////////////////////////////////////////
 
-    @com.google.inject.Inject
+    @Inject
     private transient IsisSessionFactory isisSessionFactory;
 
-    @com.google.inject.Inject
+    @Inject
     private ImageResourceCache imageCache;
     protected ImageResourceCache getImageCache() {
         return imageCache;
     }
 
-    @com.google.inject.Inject
+    @Inject
     private WicketViewerSettings settings;
     @Override
     protected WicketViewerSettings getSettings() {

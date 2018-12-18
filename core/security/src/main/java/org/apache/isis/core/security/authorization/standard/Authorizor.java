@@ -20,9 +20,8 @@
 package org.apache.isis.core.security.authorization.standard;
 
 import org.apache.isis.applib.Identifier;
-import org.apache.isis.core.commons.components.ApplicationScopedComponent;
 
-public interface Authorizor extends ApplicationScopedComponent {
+public interface Authorizor {
 
     void init();
     void shutdown();

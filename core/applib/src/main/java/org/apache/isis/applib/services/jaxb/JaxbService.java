@@ -97,8 +97,7 @@ public interface JaxbService {
     @Programmatic
     Map<String, String> toXsd(final Object domainObject, final IsisSchemas isisSchemas);
 
-
-    public static class Simple implements JaxbService {
+    public static abstract class Simple implements JaxbService {
 
         @Override
         public Object fromXml(final JAXBContext jaxbContext, final String xml) {

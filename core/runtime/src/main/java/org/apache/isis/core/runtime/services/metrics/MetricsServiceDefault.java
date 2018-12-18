@@ -25,18 +25,12 @@ import javax.jdo.listener.InstanceLifecycleEvent;
 import javax.jdo.listener.InstanceLifecycleListener;
 import javax.jdo.listener.LoadLifecycleListener;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.WithTransactionScope;
 import org.apache.isis.applib.services.metrics.MetricsService;
 import org.apache.isis.core.runtime.services.changes.ChangedObjectsServiceInternal;
 
 @RequestScoped
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
 public class MetricsServiceDefault implements MetricsService, InstanceLifecycleListener, LoadLifecycleListener, WithTransactionScope {
 
     private AtomicInteger numberLoaded = new AtomicInteger(0);

@@ -19,11 +19,10 @@
 
 package org.apache.isis.core.security.authentication.standard;
 
-import org.apache.isis.core.commons.components.ApplicationScopedComponent;
 import org.apache.isis.core.security.authentication.AuthenticationRequest;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 
-public interface Authenticator extends ApplicationScopedComponent {
+public interface Authenticator {
 
     void init();
     void shutdown();

@@ -18,6 +18,8 @@ package org.apache.isis.viewer.wicket.ui.components.scalars.valuechoices;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -150,7 +152,7 @@ public class ValueChoicesSelect2Panel extends ScalarPanelSelect2Abstract impleme
         return scalarModel;
     }
 
-    @com.google.inject.Inject
+    @Inject
     WicketViewerSettings wicketViewerSettings;
 
     @Override

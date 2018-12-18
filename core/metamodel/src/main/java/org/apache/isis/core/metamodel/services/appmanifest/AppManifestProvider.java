@@ -24,6 +24,7 @@ import org.apache.isis.applib.annotation.Programmatic;
 
 /**
  * Implemented by an internal domain service.
+ * @deprecated we have CDI FIXME
  */
 public interface AppManifestProvider {
 

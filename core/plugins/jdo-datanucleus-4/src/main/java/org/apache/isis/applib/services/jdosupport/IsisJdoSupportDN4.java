@@ -19,8 +19,6 @@
 
 package org.apache.isis.applib.services.jdosupport;
 
-import static org.apache.isis.commons.internal.base._NullSafe.stream;
-
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -31,6 +29,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
+import javax.ejb.Singleton;
 import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.datastore.JDOConnection;
@@ -40,8 +39,6 @@ import org.datanucleus.query.typesafe.BooleanExpression;
 import org.datanucleus.query.typesafe.TypesafeQuery;
 
 import org.apache.isis.applib.FatalException;
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
@@ -52,6 +49,8 @@ import org.apache.isis.core.runtime.persistence.ObjectPersistenceException;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 
+import static org.apache.isis.commons.internal.base._NullSafe.stream;
+
 
 /**
  * This service provdes a number of utility methods to supplement/support the capabilities of the JDO Objectstore.
@@ -61,10 +60,7 @@ import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
  * with {@link org.apache.isis.applib.annotation.DomainService}.  Because it is implemented in the core, this means
  * that it is automatically registered and available for use; no further configuration is required.
  */
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Singleton
 public class IsisJdoSupportDN4 implements IsisJdoSupport_v3_1 {
 
     @Programmatic

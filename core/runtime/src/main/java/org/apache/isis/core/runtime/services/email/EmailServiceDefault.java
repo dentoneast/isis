@@ -24,6 +24,8 @@ import java.util.Properties;
 
 import javax.activation.DataSource;
 import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
+import javax.inject.Inject;
 
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.EmailException;
@@ -32,8 +34,6 @@ import org.apache.commons.mail.resolver.DataSourceClassPathResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.email.EmailService;
 import org.apache.isis.commons.internal.base._Strings;
@@ -42,10 +42,7 @@ import org.apache.isis.config.IsisConfiguration;
 /**
  * A service that sends email notifications when specific events occur
  */
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Singleton
 public class EmailServiceDefault implements EmailService {
 
     private static final long serialVersionUID = 1L;
@@ -273,7 +270,6 @@ public class EmailServiceDefault implements EmailService {
     }
     // endregion
 
-    @javax.inject.Inject
-    IsisConfiguration configuration;
+    @Inject IsisConfiguration configuration;
 
 }

@@ -21,20 +21,14 @@ package org.apache.isis.core.metamodel.services.metamodel;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.ejb.Singleton;
+import javax.inject.Inject;
 
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.AppManifest2;
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.bookmark.Bookmark;
 import org.apache.isis.applib.services.command.CommandDtoProcessor;
@@ -42,6 +36,8 @@ import org.apache.isis.applib.services.grid.GridService;
 import org.apache.isis.applib.services.metamodel.DomainMember;
 import org.apache.isis.applib.services.metamodel.DomainModel;
 import org.apache.isis.applib.services.metamodel.MetaModelService;
+import org.apache.isis.commons.internal.base._Blackhole;
+import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.JdoMetamodelUtil;
 import org.apache.isis.core.metamodel.facets.actions.command.CommandFacet;
@@ -60,14 +56,10 @@ import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.schema.metamodel.v1.MetamodelDto;
 
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-    )
+@Singleton
 public class MetaModelServiceDefault implements MetaModelService {
 
-    @SuppressWarnings("unused")
-    private final static Logger LOG = LoggerFactory.getLogger(MetaModelServiceDefault.class);
+    // private final static Logger LOG = LoggerFactory.getLogger(MetaModelServiceDefault.class);
 
     private MetaModelExporter metaModelExporter;
 
@@ -102,15 +94,19 @@ public class MetaModelServiceDefault implements MetaModelService {
     @Override
     public void rebuild(final Class<?> domainType) {
         specificationLookup.invalidateCache(domainType);
+        
+        GridService gridService = _CDI.getManagedBean(GridService.class).get();
         gridService.remove(domainType);
+        
         final ObjectSpecification objectSpecification = specificationLookup.loadSpecification(domainType);
-        //FIXME[ISIS-1976] the following might be optimized away by the JVM, since the results are not used
         
         // ensure the spec is fully rebuilt
         objectSpecification.streamObjectActions(Contributed.INCLUDED)
-            .collect(Collectors.toList());
+        .forEach(_Blackhole::consume);
+        
         objectSpecification.streamAssociations(Contributed.INCLUDED)
-            .collect(Collectors.toList());
+        .forEach(_Blackhole::consume);
+        
         specificationLookup.postProcess(objectSpecification);
     }
 
@@ -289,19 +285,15 @@ public class MetaModelServiceDefault implements MetaModelService {
         return appManifestProvider.getAppManifest();
     }
 
-    @javax.inject.Inject
-    SpecificationLoader specificationLookup;
-
-    @javax.inject.Inject
-    GridService gridService;
-
-    @javax.inject.Inject
-    AppManifestProvider appManifestProvider;
-
     @Override
     public MetamodelDto exportMetaModel(final Config config) {
         return metaModelExporter.exportMetaModel(config);
     }
+    
+    @Inject SpecificationLoader specificationLookup;
+    //@Inject GridService gridService; // to break circular dependency
+    @Inject AppManifestProvider appManifestProvider;
+
 
 
 }

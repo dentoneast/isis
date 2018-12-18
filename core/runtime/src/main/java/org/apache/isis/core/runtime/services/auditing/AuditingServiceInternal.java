@@ -18,13 +18,15 @@
  */
 package org.apache.isis.core.runtime.services.auditing;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
+import javax.ejb.Singleton;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.audit.AuditerService;
 import org.apache.isis.applib.services.bookmark.Bookmark;
@@ -43,10 +45,7 @@ import org.apache.isis.core.runtime.services.changes.PreAndPostValues;
 /**
  * Wrapper around {@link org.apache.isis.applib.services.audit.AuditerService}.
  */
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Singleton
 public class AuditingServiceInternal {
 
     Boolean whetherCanAudit;
@@ -118,22 +117,11 @@ public class AuditingServiceInternal {
         }
     }
 
-    @javax.inject.Inject
-    List<AuditerService> auditerServices;
-
-    @javax.inject.Inject
-    ChangedObjectsServiceInternal changedObjectsServiceInternal;
-
-    @javax.inject.Inject
-    UserService userService;
-
-    @javax.inject.Inject
-    ClockService clockService;
-
-    @javax.inject.Inject
-    InteractionContext interactionContext;
-
-    @javax.inject.Inject
-    TransactionService transactionService;
+    @Inject @Any Instance<AuditerService> auditerServices;
+    @Inject ChangedObjectsServiceInternal changedObjectsServiceInternal;
+    @Inject UserService userService;
+    @Inject ClockService clockService;
+    @Inject InteractionContext interactionContext;
+    @Inject TransactionService transactionService;
 
 }

@@ -82,6 +82,10 @@ public final class _Exceptions {
         return new IllegalStateException("internal error: code was reached, that is not implemented yet");
     }
     
+    public static RuntimeException unrecoverable(Exception cause) {
+        return new RuntimeException("internal error: unrecoverable error with cause ...", cause);
+    }
+    
     /**
     * Used to hide from the compiler the fact, that this call always throws.
     *
@@ -312,6 +316,8 @@ public final class _Exceptions {
             uncheckedConsumer(checkedConsumer).accept(obj);
         }
     }
+
+    
 
 
 }

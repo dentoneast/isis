@@ -16,10 +16,9 @@
  */
 package org.apache.isis.core.runtime.services.authsess;
 
-import java.util.stream.Stream;
+import javax.ejb.Singleton;
+import javax.inject.Inject;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.core.metamodel.services.user.UserServiceDefault;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
@@ -27,10 +26,7 @@ import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 import org.apache.isis.core.security.authentication.standard.SimpleSession;
 
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Singleton
 public class AuthenticationSessionProviderDefault implements AuthenticationSessionProvider {
 
     /**
@@ -44,24 +40,23 @@ public class AuthenticationSessionProviderDefault implements AuthenticationSessi
     @Override
     public AuthenticationSession getAuthenticationSession() {
 
-        // if user/role has been overridden by SudoService, then honour that value.
-        final UserServiceDefault.UserAndRoleOverrides userAndRoleOverrides =
-                userServiceDefault.currentOverridesIfAny();
-
-        if(userAndRoleOverrides != null) {
-            final String user = userAndRoleOverrides.getUser();
-            final Stream<String> roles = userAndRoleOverrides.streamRoles();
-            return new SimpleSession(user, roles);
-        }
+//        // if user/role has been overridden by SudoService, then honour that value.
+//        final UserServiceDefault.UserAndRoleOverrides userAndRoleOverrides =
+//                userServiceDefault.currentOverridesIfAny();
+//
+//        if(userAndRoleOverrides != null) {
+//            final String user = userAndRoleOverrides.getUser();
+//            final Stream<String> roles = userAndRoleOverrides.streamRoles();
+//            return new SimpleSession(user, roles);
+//        }
 
         // otherwise...
         return isisSessionFactory.getCurrentSession().getAuthenticationSession();
     }
 
-    @javax.inject.Inject
-    UserServiceDefault  userServiceDefault;
+//    @javax.inject.Inject
+//    UserServiceDefault userServiceDefault;
 
-    @javax.inject.Inject
-    IsisSessionFactory isisSessionFactory;
+    @Inject IsisSessionFactory isisSessionFactory;
 
 }

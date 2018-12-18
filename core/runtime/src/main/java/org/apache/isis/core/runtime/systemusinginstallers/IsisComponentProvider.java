@@ -20,7 +20,6 @@
 package org.apache.isis.core.runtime.systemusinginstallers;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.config.IsisConfiguration;
@@ -32,7 +31,6 @@ import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.specloader.ReflectorConstants;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidator;
-import org.apache.isis.core.runtime.services.ServicesInstallerFromConfigurationAndAnnotation;
 import org.apache.isis.core.runtime.system.IsisSystemException;
 import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
 import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
@@ -53,24 +51,10 @@ public final class IsisComponentProvider {
         return new IsisComponentProviderBuilder()
                 .appManifest(appManifest);
     }
-    
-    // -- BUILDER - USING INSTALLERS
-    
-    public static IsisComponentProviderBuilder builderUsingInstallers(AppManifest appManifest) {
-        
-        final IsisComponentProviderHelper_UsingInstallers helper = 
-                new IsisComponentProviderHelper_UsingInstallers(appManifest);
-        
-        return builder(appManifest)
-                .authenticationManager(helper.authenticationManager)
-                .authorizationManager(helper.authorizationManager);
-    }
-    
 
     // -- CONSTRUCTOR
 
     private final AppManifest appManifest;
-    protected final List<Object> services;
     protected final AuthenticationManager authenticationManager;
     protected final AuthorizationManager authorizationManager;
 
@@ -80,9 +64,6 @@ public final class IsisComponentProvider {
             final AuthorizationManager authorizationManager) {
 
         this.appManifest = requires(appManifest, "appManifest");
-
-        this.services = new ServicesInstallerFromConfigurationAndAnnotation().getServices();
-
         this.authenticationManager = authenticationManager;
         this.authorizationManager = authorizationManager;
     }
@@ -107,7 +88,6 @@ public final class IsisComponentProvider {
 
     public ServicesInjector provideServiceInjector() {
         return ServicesInjector.builder()
-                .addServices(services)
                 .build();
     }
 

@@ -16,27 +16,27 @@
  */
 package org.apache.isis.core.runtime.services.background;
 
-import static org.apache.isis.commons.internal.base._Casts.uncheckedCast;
-
 import java.lang.reflect.InvocationHandler;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.ejb.Singleton;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.background.BackgroundCommandService;
 import org.apache.isis.applib.services.background.BackgroundService;
 import org.apache.isis.applib.services.command.CommandContext;
 import org.apache.isis.applib.services.factory.FactoryService;
 import org.apache.isis.commons.internal._Constants;
+import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.core.commons.lang.ArrayExtensions;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.services.command.CommandDtoServiceInternal;
@@ -46,15 +46,14 @@ import org.apache.isis.core.metamodel.specloader.classsubstitutor.ProxyEnhanced;
 import org.apache.isis.core.plugins.codegen.ProxyFactory;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 
+import static org.apache.isis.commons.internal.base._Casts.uncheckedCast;
+
 /**
  * For command-reification depends on an implementation of
  * {@link org.apache.isis.applib.services.background.BackgroundCommandService} to
  * be configured.
  */
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Singleton
 public class BackgroundServiceDefault implements BackgroundService {
 
     static final Logger LOG = LoggerFactory.getLogger(BackgroundServiceDefault.class);
@@ -88,7 +87,7 @@ public class BackgroundServiceDefault implements BackgroundService {
     private BuiltinExecutor builtinExecutor; // only used if there is no BackgroundCommandService
 
     private boolean usesBuiltinExecutor() {
-        return backgroundCommandService==null;
+        return backgroundCommandServices.isUnsatisfied();
     }
 
     @Programmatic
@@ -166,7 +165,7 @@ public class BackgroundServiceDefault implements BackgroundService {
         }
 
         return new CommandInvocationHandler<T>(
-                backgroundCommandService,
+                backgroundCommandServices.get(),
                 target,
                 mixedInIfAny,
                 specificationLoader,
@@ -179,23 +178,12 @@ public class BackgroundServiceDefault implements BackgroundService {
 
     // //////////////////////////////////////
 
-    @javax.inject.Inject
-    private BackgroundCommandService backgroundCommandService;
-
-    @javax.inject.Inject
-    private CommandDtoServiceInternal commandDtoServiceInternal;
-
-    @javax.inject.Inject
-    private CommandContext commandContext;
-
-    @javax.inject.Inject
-    private FactoryService factoryService;
-
-    @javax.inject.Inject
-    private SpecificationLoader specificationLoader;
-
-    @javax.inject.Inject
-    private IsisSessionFactory isisSessionFactory;
+    @Inject @Any private Instance<BackgroundCommandService> backgroundCommandServices;
+    @Inject private CommandDtoServiceInternal commandDtoServiceInternal;
+    @Inject private CommandContext commandContext;
+    @Inject private FactoryService factoryService;
+    @Inject private SpecificationLoader specificationLoader;
+    @Inject private IsisSessionFactory isisSessionFactory;
 
     protected ObjectAdapterProvider getObjectAdapterProvider() {
         return isisSessionFactory.getCurrentSession().getPersistenceSession();

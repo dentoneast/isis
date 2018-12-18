@@ -16,10 +16,11 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-
 package org.apache.isis.viewer.wicket.viewer.registries.components;
 
 import java.util.ServiceLoader;
+
+import javax.ejb.Singleton;
 
 import org.apache.isis.commons.internal.context._Plugin;
 import org.apache.isis.viewer.wicket.ui.ComponentFactory;
@@ -86,8 +87,6 @@ import org.apache.isis.viewer.wicket.ui.components.voidreturn.VoidReturnPanelFac
 import org.apache.isis.viewer.wicket.ui.components.welcome.WelcomePanelFactory;
 import org.apache.isis.viewer.wicket.ui.components.widgets.entitysimplelink.EntityLinkSimplePanelFactory;
 
-import com.google.inject.Singleton;
-
 /**
  * Default implementation of {@link ComponentFactoryRegistrar} that registers a
  * hardcoded set of built-in {@link ComponentFactory}s, along with any
@@ -101,9 +100,7 @@ public class ComponentFactoryRegistrarDefault implements ComponentFactoryRegistr
     public void addComponentFactories(final ComponentFactoryList componentFactories) {
 
         addComponentFactoriesActingAsSelectors(componentFactories);
-
         addComponentFactoriesUsingServiceLoader(componentFactories);
-
         addBuiltInComponentFactories(componentFactories);
     }
 

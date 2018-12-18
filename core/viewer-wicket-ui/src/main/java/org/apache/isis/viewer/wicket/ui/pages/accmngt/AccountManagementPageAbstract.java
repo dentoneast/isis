@@ -19,7 +19,7 @@
 
 package org.apache.isis.viewer.wicket.ui.pages.accmngt;
 
-import com.google.inject.name.Named;
+import javax.inject.Inject;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.MarkupContainer;
@@ -37,6 +37,7 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.config.beans.WebAppConfigBean;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.viewer.wicket.model.models.PageType;
@@ -69,26 +70,7 @@ public class AccountManagementPageAbstract extends WebPage {
      */
     public static final String FEEDBACK_COOKIE_NAME = "isis.feedback.success";
 
-    /**
-     * {@link com.google.inject.Inject}ed when {@link #init() initialized}.
-     */
-    @com.google.inject.Inject
-    @Named("applicationName")
-    private String applicationName;
-
-    /**
-     * {@link com.google.inject.Inject}ed when {@link #init() initialized}.
-     */
-    @com.google.inject.Inject
-    @Named("applicationCss")
-    private String applicationCss;
-
-    /**
-     * {@link com.google.inject.Inject}ed when {@link #init() initialized}.
-     */
-    @com.google.inject.Inject
-    @Named("applicationJs")
-    private String applicationJs;
+    @Inject private WebAppConfigBean webAppConfigBean;
 
     /**
      * If set by {@link org.apache.isis.viewer.wicket.ui.pages.PageAbstract}.
@@ -122,6 +104,7 @@ public class AccountManagementPageAbstract extends WebPage {
 
 
     private MarkupContainer addPageTitle() {
+        String applicationName = webAppConfigBean.getApplicationName();
         return add(new Label(ID_PAGE_TITLE, applicationName));
     }
 
@@ -139,9 +122,11 @@ public class AccountManagementPageAbstract extends WebPage {
         response.render(new PriorityHeaderItem(JavaScriptHeaderItem.forReference(
                 BootstrapJavaScriptReference.instance())));
 
+        String applicationCss = webAppConfigBean.getApplicationCss();
         if(applicationCss != null) {
             response.render(CssReferenceHeaderItem.forUrl(applicationCss));
         }
+        String applicationJs = webAppConfigBean.getApplicationJs();
         if(applicationJs != null) {
             response.render(JavaScriptReferenceHeaderItem.forUrl(applicationJs));
         }

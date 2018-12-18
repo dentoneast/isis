@@ -23,6 +23,8 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.ejb.Singleton;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +35,6 @@ import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
-import org.apache.isis.core.commons.components.ApplicationScopedComponent;
 import org.apache.isis.core.commons.ensure.Assert;
 import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.commons.lang.ClassUtil;
@@ -82,7 +83,8 @@ import org.apache.isis.schema.utils.CommonDtoUtils;
  * </p>
  *
  */
-public class SpecificationLoader implements ApplicationScopedComponent {
+@Singleton
+public class SpecificationLoader {
 
     private final static Logger LOG = LoggerFactory.getLogger(SpecificationLoader.class);
 

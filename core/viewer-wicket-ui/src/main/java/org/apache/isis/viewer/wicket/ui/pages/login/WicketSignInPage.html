@@ -22,14 +22,29 @@
       xmlns:wicket="http://wicket.apache.org"
       xml:lang="en"  
       lang="en">
-    <body>
+
+<wicket:head>
+  <wicket:link>
+    
+<!--     <link href="https://lipis.github.io/bootstrap-social/assets/css/bootstrap.css" rel="stylesheet" type="text/css" /> -->
+    <link href="https://lipis.github.io/bootstrap-social/assets/css/font-awesome.css" rel="stylesheet" type="text/css" />
+    <link href="https://lipis.github.io/bootstrap-social/bootstrap-social.css" rel="stylesheet" type="text/css" />	
+    
+  </wicket:link>
+  
+</wicket:head>
+
+
+	<body>
         <wicket:extend>
+      
             <div class="row">
                 <div class="loginPanel col-sm-offset-4 col-sm-4">
                     <h2><wicket:message key="loginHeader">Login</wicket:message></h2>
                     <div wicket:id="signInPanel"></div>
                 </div>
             </div>
+            
         </wicket:extend>
     </body>
 </html>

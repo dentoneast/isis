@@ -21,20 +21,17 @@ package org.apache.isis.core.metamodel.services.registry;
 
 import java.util.stream.Stream;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
+import javax.enterprise.inject.Vetoed;
+import javax.inject.Inject;
+
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.wrapper.WrapperFactory;
 import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.services.ServicesInjectorAware;
 
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Vetoed
 public class ServiceRegistryDefault implements ServiceRegistry, ServicesInjectorAware {
-
 
     @Programmatic
     @Override
@@ -59,17 +56,12 @@ public class ServiceRegistryDefault implements ServiceRegistry, ServicesInjector
         return wrapperFactory != null ? wrapperFactory.unwrap(domainObject) : domainObject;
     }
 
-
-
-    @javax.inject.Inject
-    WrapperFactory wrapperFactory;
-
     private ServicesInjector servicesInjector;
     @Override
     public void setServicesInjector(final ServicesInjector servicesInjector) {
         this.servicesInjector = servicesInjector;
     }
 
-    
+    @Inject WrapperFactory wrapperFactory;    
 
 }

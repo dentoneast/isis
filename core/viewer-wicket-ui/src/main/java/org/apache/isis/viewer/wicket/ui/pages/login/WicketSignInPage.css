@@ -39,6 +39,10 @@
 	margin-top:-100px;
  }
  
+ .loginPanel .socialButtons {
+ 	line-height:2.5;
+ }
+ 
  .loginPanel h2 {
  	color:#423D37;
  	font-size:1.6em;

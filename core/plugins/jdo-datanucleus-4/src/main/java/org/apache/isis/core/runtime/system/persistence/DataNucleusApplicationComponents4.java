@@ -18,8 +18,6 @@
  */
 package org.apache.isis.core.runtime.system.persistence;
 
-import static org.apache.isis.commons.internal.base._NullSafe.stream;
-
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -38,7 +36,6 @@ import org.datanucleus.store.schema.SchemaAwareStoreManager;
 
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.config.IsisConfiguration;
-import org.apache.isis.core.commons.components.ApplicationScopedComponent;
 import org.apache.isis.core.commons.factory.InstanceUtil;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
@@ -49,7 +46,9 @@ import org.apache.isis.objectstore.jdo.datanucleus.DataNucleusPropertiesAware;
 import org.apache.isis.objectstore.jdo.metamodel.facets.object.query.JdoNamedQuery;
 import org.apache.isis.objectstore.jdo.metamodel.facets.object.query.JdoQueryFacet;
 
-public class DataNucleusApplicationComponents4 implements ApplicationScopedComponent {
+import static org.apache.isis.commons.internal.base._NullSafe.stream;
+
+public class DataNucleusApplicationComponents4 {
 
     public static final String CLASS_METADATA_LOADED_LISTENER_KEY = "classMetadataLoadedListener";
     static final String CLASS_METADATA_LOADED_LISTENER_DEFAULT = CreateSchemaObjectFromClassMetadata4.class.getName();

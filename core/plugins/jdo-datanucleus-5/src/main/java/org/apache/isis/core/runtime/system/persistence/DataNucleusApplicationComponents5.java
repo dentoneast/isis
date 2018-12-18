@@ -35,7 +35,6 @@ import org.datanucleus.store.schema.SchemaAwareStoreManager;
 
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.config.IsisConfiguration;
-import org.apache.isis.core.commons.components.ApplicationScopedComponent;
 import org.apache.isis.core.commons.factory.InstanceUtil;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
@@ -48,7 +47,7 @@ import org.apache.isis.objectstore.jdo.metamodel.facets.object.query.JdoQueryFac
 
 import static org.apache.isis.commons.internal.base._NullSafe.stream;
 
-public class DataNucleusApplicationComponents5 implements ApplicationScopedComponent {
+public class DataNucleusApplicationComponents5 {
 
     public static final String CLASS_METADATA_LOADED_LISTENER_KEY = "classMetadataLoadedListener";
     static final String CLASS_METADATA_LOADED_LISTENER_DEFAULT = CreateSchemaObjectFromClassMetadata.class.getName();

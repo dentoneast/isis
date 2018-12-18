@@ -19,18 +19,17 @@
 
 package org.apache.isis.core.runtime.services.sudo;
 
-import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
+import javax.ejb.Singleton;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.sudo.SudoService;
 
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Singleton
 public class SudoServiceDefault implements SudoService {
 
     @Programmatic
@@ -97,7 +96,6 @@ public class SudoServiceDefault implements SudoService {
         }
     }
 
-    @javax.inject.Inject
-    private List<Spi> spiServices;
+    @Inject @Any Instance<Spi> spiServices;
 
 }

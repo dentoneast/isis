@@ -209,7 +209,6 @@ public class MetaModelServicesMenu {
     }
 
 
-    @javax.inject.Inject
-    MetaModelService metaModelService;
+    @Inject MetaModelService metaModelService;
 
 }

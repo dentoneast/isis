@@ -20,6 +20,7 @@
 package org.apache.isis.viewer.wicket.viewer;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -29,10 +30,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.function.Function;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.ConverterLocator;
@@ -45,6 +44,7 @@ import org.apache.wicket.authentication.IAuthenticationStrategy;
 import org.apache.wicket.authentication.strategy.DefaultAuthenticationStrategy;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
+import org.apache.wicket.cdi.CdiConfiguration;
 import org.apache.wicket.core.request.mapper.MountedMapper;
 import org.apache.wicket.devutils.debugbar.DebugBar;
 import org.apache.wicket.devutils.debugbar.InspectorDebugPanel;
@@ -52,7 +52,6 @@ import org.apache.wicket.devutils.debugbar.PageSizeDebugPanel;
 import org.apache.wicket.devutils.debugbar.SessionSizeDebugPanel;
 import org.apache.wicket.devutils.debugbar.VersionDebugContributor;
 import org.apache.wicket.devutils.diskstore.DebugDiskDataStore;
-import org.apache.wicket.guice.GuiceComponentInjector;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.ResourceAggregator;
 import org.apache.wicket.markup.head.filter.JavaScriptFilteredIntoFooterHeaderResponse;
@@ -69,13 +68,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.select2.ApplicationSettings;
 
+import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.context._Context;
+import org.apache.isis.commons.internal.resources._Resources;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.commons.ensure.Ensure;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidException;
 import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.session.IsisInjectModule;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.runtime.threadpool.ThreadPoolSupport;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -97,7 +99,6 @@ import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistryAccessor;
 import org.apache.isis.viewer.wicket.ui.pages.accmngt.AccountConfirmationMap;
 import org.apache.isis.viewer.wicket.ui.pages.login.WicketLogoutPage;
 import org.apache.isis.viewer.wicket.ui.panels.PanelUtil;
-import org.apache.isis.viewer.wicket.viewer.integration.isis.IsisInjectModule;
 import org.apache.isis.viewer.wicket.viewer.integration.wicket.AuthenticatedWebSessionForIsis;
 import org.apache.isis.viewer.wicket.viewer.integration.wicket.ConverterForObjectAdapter;
 import org.apache.isis.viewer.wicket.viewer.integration.wicket.ConverterForObjectAdapterMemento;
@@ -175,41 +176,13 @@ implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor, WicketVi
         return (IsisWicketApplication) AuthenticatedWebApplication.get();
     }
 
-    /**
-     * {@link com.google.inject.Inject Inject}ed when {@link #init() initialized}.
-     */
-    @com.google.inject.Inject
-    private ComponentFactoryRegistry componentFactoryRegistry;
-
-    /**
-     * {@link com.google.inject.Inject Inject}ed when {@link #init() initialized}.
-     */
-    @SuppressWarnings("unused")
-    @com.google.inject.Inject
-    private ImageResourceCache imageCache;
-
-    /**
-     * {@link com.google.inject.Inject Inject}ed when {@link #init() initialized}.
-     */
-    @SuppressWarnings("unused")
-    @com.google.inject.Inject
-    private WicketViewerSettings wicketViewerSettings;
-
-    /**
-     * {@link com.google.inject.Inject Inject}ed when {@link #init() initialized}.
-     */
-    @com.google.inject.Inject
-    private PageClassRegistry pageClassRegistry;
-
-    /**
-     * {@link com.google.inject.Inject Inject}ed when {@link #init() initialized}.
-     */
-    @com.google.inject.Inject
-    private IsisSessionFactory isisSessionFactory;
-
-    @com.google.inject.Inject
-    private WicketViewerSettings settings;
-
+    @Inject private ComponentFactoryRegistry componentFactoryRegistry;
+    @Inject private ImageResourceCache imageCache;
+    @Inject private WicketViewerSettings wicketViewerSettings;
+    @Inject private PageClassRegistry pageClassRegistry;
+    @Inject private IsisSessionFactory isisSessionFactory;
+    @Inject private WicketViewerSettings settings;
+    
     private final IsisWicketApplication_Experimental experimental;
 
 
@@ -266,7 +239,7 @@ implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor, WicketVi
         List<Future<Object>> futures = null;
         try {
             super.init();
-
+            
             futures = startBackgroundInitializationThreads();
 
             getRequestCycleSettings().setRenderStrategy(RequestCycleSettings.RenderStrategy.REDIRECT_TO_RENDER);
@@ -276,17 +249,22 @@ implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor, WicketVi
             IRequestCycleListener requestCycleListenerForIsis = newWebRequestCycleForIsis();
             requestCycleListeners.add(requestCycleListenerForIsis);
             requestCycleListeners.add(new PageRequestHandlerTracker());
+            
+            // configure wicket/cdi
+            BeanManager beanManager = _CDI.cdi().get().getBeanManager();
+            new CdiConfiguration(beanManager).configure(this);
 
-            //
-            // create IsisSessionFactory
-            //
-            final Injector injector = Guice.createInjector(
-                    newIsisModule(), 
-                    newIsisWicketModule());
-            
-            initWicketComponentInjection(injector);
-            
-            injector.injectMembers(this); // populates this.isisSessionFactory
+
+//            // FIXME
+//            // create IsisSessionFactory
+//            //
+//            final Injector injector = Guice.createInjector(
+//                    newIsisModule(), 
+//                    newIsisWicketModule());
+//            
+//            initWicketComponentInjection(injector);
+//            
+//            injector.injectMembers(this); // populates this.isisSessionFactory
             Ensure.ensure("IsisSessionFactory should have been injected.", this.isisSessionFactory != null);
             
             if (requestCycleListenerForIsis instanceof WebRequestCycleForIsis) {
@@ -444,8 +422,10 @@ implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor, WicketVi
             return fallback;
         }
         try {
-            List<String> readLines = Resources.readLines(Resources.getResource(contextClass, resourceName), Charsets.UTF_8);
-            return String.join("\n", readLines);
+            
+            return _Resources.loadAsString(contextClass, resourceName, StandardCharsets.UTF_8)
+                    .replace("\r", "");
+            
         } catch (IOException | IllegalArgumentException e) {
             return fallback;
         }
@@ -682,8 +662,8 @@ implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor, WicketVi
     // //////////////////////////////////////
 
 
-    protected void initWicketComponentInjection(final Injector injector) {
-        getComponentInstantiationListeners().add(new GuiceComponentInjector(this, injector, false));
+    protected void initWicketComponentInjection(/*final Injector injector*/) {
+        //FIXME getComponentInstantiationListeners().add(new GuiceComponentInjector(this, injector, false));
     }
 
     // /////////////////////////////////////////////////

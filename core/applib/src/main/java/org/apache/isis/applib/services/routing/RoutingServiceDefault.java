@@ -18,22 +18,16 @@
  */
 package org.apache.isis.applib.services.routing;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.ejb.Singleton;
+import javax.inject.Inject;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.homepage.HomePageProviderService;
 
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Singleton
 public class RoutingServiceDefault implements RoutingService {
 
-    @SuppressWarnings("unused")
-    private final static Logger LOG = LoggerFactory.getLogger(RoutingServiceDefault.class);
+    // private final static Logger LOG = LoggerFactory.getLogger(RoutingServiceDefault.class);
 
     @Programmatic
     @Override
@@ -47,7 +41,6 @@ public class RoutingServiceDefault implements RoutingService {
         return original != null? original: homePageProviderService.homePage();
     }
 
-    @javax.inject.Inject
-    HomePageProviderService homePageProviderService;
+    @Inject HomePageProviderService homePageProviderService;
 
 }

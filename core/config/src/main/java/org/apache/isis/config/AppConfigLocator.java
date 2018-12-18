@@ -18,10 +18,16 @@ public final class AppConfigLocator {
     private AppConfigLocator() { }
     
     public static AppConfig getAppConfig() {
-        return _Context.computeIfAbsent(AppConfig.class, __->lookupAppConfig());
+        return _Context.computeIfAbsent(AppConfig.class, __->lookupAppConfigAndInitCDI());
     }
     
     // -- HELPER
+    
+    private static AppConfig lookupAppConfigAndInitCDI() {
+        final AppConfig appConfig = lookupAppConfig();
+        _CDI.init(appConfig.isisConfiguration()::streamClassesToDiscover);
+        return appConfig;
+    }
     
     private static AppConfig lookupAppConfig() {
         
