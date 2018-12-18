@@ -84,8 +84,8 @@ public abstract class ResourceContext_ensureCompatibleAcceptHeader_ContractTest 
 //              will(returnValue(mockIsisSessionFactory));
                 allowing(mockIsisSessionFactory).getServicesInjector();
                 will(returnValue(mockServicesInjector));
-                allowing(mockIsisSessionFactory).getConfiguration();
-                will(returnValue(mockConfiguration));
+//                allowing(mockIsisSessionFactory).getConfiguration();
+//                will(returnValue(mockConfiguration));
                 allowing(mockIsisSessionFactory).getCurrentSession();
                 will(returnValue(mockIsisSession));
                 allowing(mockIsisSession).getAuthenticationSession();

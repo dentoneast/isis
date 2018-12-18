@@ -163,7 +163,7 @@ public abstract class ResourceAbstract {
     // //////////////////////////////////////////////////////////////
 
     protected IsisConfiguration getConfiguration () {
-        return getIsisSessionFactory().getConfiguration();
+        return IsisContext.getConfiguration();
     }
 
     protected ServicesInjector getServicesInjector () {

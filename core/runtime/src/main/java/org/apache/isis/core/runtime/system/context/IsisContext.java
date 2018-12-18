@@ -20,15 +20,20 @@
 package org.apache.isis.core.runtime.system.context;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
+import org.apache.isis.applib.AppManifest;
 import org.apache.isis.commons.internal.base._Strings;
+import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.ConfigurationConstants;
 import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidException;
@@ -94,59 +99,6 @@ public interface IsisContext {
     public static IsisSystemEnvironment getEnvironment() {
         return _Context.getEnvironment();
     }
-
-//[2039]    
-//    /**
-//     * @deprecated use the {@link IsisSystemEnvironmentPlugin} SPI instead
-//     */
-//    @Deprecated
-//    public static class EnvironmentPrimer {
-//
-//        /**
-//         * For integration testing allows to prime the environment via provided parameters. Will not override
-//         * any IsisSystemEnvironment instance, that is already registered with the current context, because the 
-//         * IsisSystemEnvironment is expected to be an immutable singleton within an application's life-cycle.
-//         * @deprecated use the {@link IsisSystemEnvironmentPlugin} SPI instead
-//         */
-//        @Deprecated
-//        public static void primeEnvironment(DeploymentType deploymentType) {
-//            _Context.computeIfAbsent(IsisSystemEnvironment.class, __->IsisSystemEnvironment.of(deploymentType));
-//        }
-//        
-//        @Deprecated
-//        public static void primeEnvironment(IsisConfigurationBuilder configurationBuilder) {
-//            
-//            final String deploymentTypeLiteral = configurationBuilder.peekAtString("isis.deploymentType");
-//            if(_Strings.isNullOrEmpty(deploymentTypeLiteral)) {
-//                return; // do nothing
-//            }
-//            
-//            // at this point, the deploymentType seems explicitly set via config
-//            
-//            // throws if type can not be parsed
-//            final DeploymentType deploymentType = 
-//                    parseDeploymentType(deploymentTypeLiteral.toLowerCase());
-//            primeEnvironment(deploymentType);
-//        }
-//
-//        private static DeploymentType parseDeploymentType(String deploymentTypeLiteral) {
-//            
-//            switch(deploymentTypeLiteral) {
-//            case "server_prototype":
-//            case "prototyping":
-//                return DeploymentType.PROTOTYPING;
-//            case "server":
-//            case "production":
-//                return DeploymentType.PROTOTYPING;
-//            default:
-//                throw new IllegalArgumentException(
-//                        String.format("unknown deployment type '%s' in config property '%s'", 
-//                                deploymentTypeLiteral, "isis.deploymentType"));
-//            }
-//
-//        }
-//    }
-
     
     // -- LIFE-CYCLING
 
@@ -162,7 +114,7 @@ public interface IsisContext {
 
     /**
      * @return framework's current PersistenceSession (if any)
-     * @throws IllegalStateException if IsisSessionFactory not initialized
+     * @throws IllegalStateException - if IsisSessionFactory not initialized
      */
     public static Optional<PersistenceSession> getPersistenceSession() {
         return Optional.ofNullable(getSessionFactory().getCurrentSession())
@@ -171,7 +123,7 @@ public interface IsisContext {
     
     /**
      * @return framework's current AuthenticationSession (if any)
-     * @throws IllegalStateException if IsisSessionFactory not initialized
+     * @throws IllegalStateException - if IsisSessionFactory not initialized
      */
     public static Optional<AuthenticationSession> getAuthenticationSession() {
         return Optional.ofNullable(getSessionFactory().getCurrentSession())
@@ -180,27 +132,37 @@ public interface IsisContext {
 
     /**
      * @return framework's IsisConfiguration
-     * @throws IllegalStateException if IsisSessionFactory not initialized
+     * @throws NoSuchElementException - if IsisConfiguration not managed
      */
     public static IsisConfiguration getConfiguration() {
-        return getSessionFactory().getConfiguration();
+        return _Config.getConfiguration(); // currently not utilizing CDI, to support unit testing
     }
 
     /**
      * @return framework's SpecificationLoader
-     * @throws IllegalStateException if IsisSessionFactory not initialized
+     * @throws NoSuchElementException - if SpecificationLoader not managed
      */
     public static SpecificationLoader getSpecificationLoader() {
-        return getSessionFactory().getSpecificationLoader();
+        return _CDI.getManagedBean(SpecificationLoader.class).get();
     }
 
     /**
      * @return framework's ServicesInjector
-     * @throws IllegalStateException if IsisSessionFactory not initialized
+     * @throws NoSuchElementException - if ServicesInjector not managed
      */
     public static ServicesInjector getServicesInjector() {
-        return getSessionFactory().getServicesInjector();
+        return _CDI.getManagedBean(ServicesInjector.class).get();
     }
+    
+    /**
+     * @return framework's ServicesInjector
+     * @throws NullPointerException - if AppManifest is null
+     */
+    public static AppManifest getAppManifest() {
+        return Objects.requireNonNull(getConfiguration().getAppManifest()); 
+    }
+    
+    // -- 
 
     public static StringBuilder dumpConfig() {
         

@@ -25,15 +25,12 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.commons.internal.base._Blackhole;
 import org.apache.isis.config.IsisConfiguration;
-import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.metamodel.services.ServicesInjector;
-import org.apache.isis.core.metamodel.services.appmanifest.AppManifestProvider;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.ServiceInitializer;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
@@ -63,7 +60,7 @@ import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
  *     it can be {@link Inject}'d into other domain services.
  * </p>
  */
-public class IsisSessionFactory implements AppManifestProvider {
+public class IsisSessionFactory {
 
     //private final static Logger LOG = LoggerFactory.getLogger(IsisSessionFactory.class);
 
@@ -75,26 +72,16 @@ public class IsisSessionFactory implements AppManifestProvider {
     private final AuthenticationManager authenticationManager;
     private final AuthorizationManager authorizationManager;
     private final PersistenceSessionFactory persistenceSessionFactory;
-    private final AppManifest appManifest;
 
-    IsisSessionFactory(
-            final ServicesInjector servicesInjector,
-            final AppManifest appManifest) {
+    IsisSessionFactory(final ServicesInjector servicesInjector) {
 
         this.servicesInjector = servicesInjector;
 
-        this.configuration = _Config.getConfiguration();
+        this.configuration = IsisContext.getConfiguration();
         this.specificationLoader = servicesInjector.getSpecificationLoader();
         this.authenticationManager = servicesInjector.getAuthenticationManager();
         this.authorizationManager = servicesInjector.getAuthorizationManager();
         this.persistenceSessionFactory = servicesInjector.lookupServiceElseFail(PersistenceSessionFactory.class);
-        this.appManifest = appManifest;
-    }
-
-    @Override
-    @Programmatic
-    public AppManifest getAppManifest() {
-        return appManifest;
     }
 
     // -- constructServices, destroyServicesAndShutdown
@@ -333,15 +320,6 @@ public class IsisSessionFactory implements AppManifestProvider {
 
 
     // -- component accessors
-
-    /**
-     * The {@link ApplicationScopedComponent application-scoped}
-     * {@link IsisConfiguration}.
-     */
-    @Programmatic
-    public IsisConfiguration getConfiguration() {
-        return configuration;
-    }
 
     /**
      * The {@link ApplicationScopedComponent application-scoped} {@link ServicesInjector}.

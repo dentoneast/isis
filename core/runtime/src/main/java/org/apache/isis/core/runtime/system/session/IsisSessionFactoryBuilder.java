@@ -29,7 +29,6 @@ import java.util.concurrent.Future;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.clock.Clock;
 import org.apache.isis.applib.fixtures.FixtureClock;
 import org.apache.isis.applib.fixturescripts.FixtureScripts;
@@ -68,16 +67,11 @@ public class IsisSessionFactoryBuilder {
     // -- constructors, accessors
 
     private final IsisComponentProvider componentProvider;
-    private final AppManifest appManifest;
-
     private final IsisLocaleInitializer localeInitializer;
     private final IsisTimeZoneInitializer timeZoneInitializer;
 
     public IsisSessionFactoryBuilder(final IsisComponentProvider componentProvider) {
-
         this.componentProvider = componentProvider;
-        this.appManifest = componentProvider.getAppManifest();
-
         this.localeInitializer = new IsisLocaleInitializer();
         this.timeZoneInitializer = new IsisTimeZoneInitializer();
     }
@@ -146,7 +140,7 @@ public class IsisSessionFactoryBuilder {
             servicesInjector.validateServices();
 
             // instantiate the IsisSessionFactory
-            isisSessionFactory = new IsisSessionFactory(servicesInjector, appManifest);
+            isisSessionFactory = new IsisSessionFactory(servicesInjector);
 
             // now, add the IsisSessionFactory itself into ServicesInjector, so it can be @javax.inject.Inject'd
             // into any internal domain services

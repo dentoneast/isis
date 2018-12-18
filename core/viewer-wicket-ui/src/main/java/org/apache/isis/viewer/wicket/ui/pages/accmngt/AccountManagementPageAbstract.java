@@ -132,20 +132,17 @@ public class AccountManagementPageAbstract extends WebPage {
         }
     }
 
-
-
     // ///////////////////////////////////////////////////
     // System components
     // ///////////////////////////////////////////////////
 
     protected IsisConfiguration getConfiguration() {
-        return getIsisSessionFactory().getConfiguration();
+        return IsisContext.getConfiguration();
     }
 
     protected IsisSessionFactory getIsisSessionFactory() {
         return IsisContext.getSessionFactory();
     }
 
-    @javax.inject.Inject
-    private PageClassRegistry pageClassRegistry;
+    @Inject private PageClassRegistry pageClassRegistry;
 }

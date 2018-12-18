@@ -495,14 +495,12 @@ public abstract class PageAbstract extends WebPage implements ActionPromptProvid
     }
 
     protected IsisConfiguration getConfiguration() {
-        return getIsisSessionFactory().getConfiguration();
+        return IsisContext.getConfiguration();
     }
 
     protected ServicesInjector getServicesInjector() {
         return getIsisSessionFactory().getServicesInjector();
     }
-
-
 
     // -- derived from injected components (session-scope)
 

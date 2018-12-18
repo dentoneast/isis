@@ -21,7 +21,6 @@ package org.apache.isis.core.runtime.systemusinginstallers;
 
 import java.util.Collection;
 
-import org.apache.isis.applib.AppManifest;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.commons.factory.InstanceUtil;
 import org.apache.isis.core.metamodel.facetapi.MetaModelRefiner;
@@ -37,7 +36,6 @@ import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
 import org.apache.isis.progmodels.dflt.JavaReflectorHelper;
 import org.apache.isis.progmodels.dflt.ProgrammingModelFacetsJava5;
 
-import static org.apache.isis.commons.internal.base._With.requires;
 import static org.apache.isis.config.internal._Config.getConfiguration;
 
 /**
@@ -47,31 +45,21 @@ public final class IsisComponentProvider {
     
     // -- BUILDER - DEFAULT
     
-    public static IsisComponentProviderBuilder builder(AppManifest appManifest) {
-        return new IsisComponentProviderBuilder()
-                .appManifest(appManifest);
+    public static IsisComponentProviderBuilder builder() {
+        return new IsisComponentProviderBuilder();
     }
 
     // -- CONSTRUCTOR
 
-    private final AppManifest appManifest;
     protected final AuthenticationManager authenticationManager;
     protected final AuthorizationManager authorizationManager;
 
     IsisComponentProvider(
-            final AppManifest appManifest,
             final AuthenticationManager authenticationManager,
             final AuthorizationManager authorizationManager) {
 
-        this.appManifest = requires(appManifest, "appManifest");
         this.authenticationManager = authenticationManager;
         this.authorizationManager = authorizationManager;
-    }
-
-    // --
-    
-    public AppManifest getAppManifest() {
-        return appManifest;
     }
 
     // -- provideAuth*

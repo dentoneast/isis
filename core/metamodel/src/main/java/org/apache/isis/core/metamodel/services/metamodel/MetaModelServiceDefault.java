@@ -39,12 +39,12 @@ import org.apache.isis.applib.services.metamodel.MetaModelService;
 import org.apache.isis.commons.internal.base._Blackhole;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.collections._Lists;
+import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.metamodel.JdoMetamodelUtil;
 import org.apache.isis.core.metamodel.facets.actions.command.CommandFacet;
 import org.apache.isis.core.metamodel.facets.object.objectspecid.ObjectSpecIdFacet;
 import org.apache.isis.core.metamodel.services.appfeat.ApplicationFeatureId;
 import org.apache.isis.core.metamodel.services.appfeat.ApplicationFeatureType;
-import org.apache.isis.core.metamodel.services.appmanifest.AppManifestProvider;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.Contributed;
@@ -282,7 +282,7 @@ public class MetaModelServiceDefault implements MetaModelService {
 
     @Override
     public AppManifest getAppManifest() {
-        return appManifestProvider.getAppManifest();
+        return _Config.getConfiguration().getAppManifest();
     }
 
     @Override
@@ -292,8 +292,6 @@ public class MetaModelServiceDefault implements MetaModelService {
     
     @Inject SpecificationLoader specificationLookup;
     //@Inject GridService gridService; // to break circular dependency
-    @Inject AppManifestProvider appManifestProvider;
-
 
 
 }

@@ -168,7 +168,7 @@ public abstract class PanelAbstract<T extends IModel<?>> extends Panel {
         return getIsisSessionFactory().getCurrentSession().getPersistenceSession();
     }
     protected IsisConfiguration getConfiguration() {
-        return getIsisSessionFactory().getConfiguration();
+        return IsisContext.getConfiguration();
     }
 
     public SpecificationLoader getSpecificationLoader() {

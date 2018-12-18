@@ -1,6 +1,5 @@
 package org.apache.isis.core.runtime.systemusinginstallers;
 
-import org.apache.isis.applib.AppManifest;
 import org.apache.isis.core.runtime.authorization.standard.AuthorizationManagerStandard;
 import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
 import org.apache.isis.core.security.authentication.standard.AuthenticationManagerStandard;
@@ -10,14 +9,8 @@ import static org.apache.isis.commons.internal.base._With.computeIfAbsent;
 
 public class IsisComponentProviderBuilder {
     
-    private AppManifest appManifest;
     private AuthenticationManager authenticationManager;
     private AuthorizationManager authorizationManager;
-    
-    public IsisComponentProviderBuilder appManifest(AppManifest appManifest) {
-        this.appManifest = appManifest;
-        return this;
-    }
     
     public IsisComponentProviderBuilder authenticationManager(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
@@ -39,7 +32,7 @@ public class IsisComponentProviderBuilder {
         authorizationManager = computeIfAbsent(authorizationManager, 
                 AuthorizationManagerStandard::new);
         
-        return new IsisComponentProvider(appManifest, authenticationManager, authorizationManager);
+        return new IsisComponentProvider(authenticationManager, authorizationManager);
     }
     
     // -- HELPER

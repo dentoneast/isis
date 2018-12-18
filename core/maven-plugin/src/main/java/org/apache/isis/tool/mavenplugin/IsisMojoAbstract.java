@@ -69,7 +69,7 @@ public abstract class IsisMojoAbstract extends AbstractMojo {
         final AppManifest appManifest = InstanceUtil.createInstance(this.appManifest, AppManifest.class);
         IsisConfiguration.buildFromAppManifest(appManifest); // build and finalize config
         
-        final IsisComponentProvider isisComponentProvider = IsisComponentProvider.builder(appManifest)
+        final IsisComponentProvider isisComponentProvider = IsisComponentProvider.builder()
                 .build();
         final IsisSessionFactoryBuilder isisSessionFactoryBuilder = 
                 new IsisSessionFactoryBuilder(isisComponentProvider);

@@ -23,7 +23,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
-import org.apache.isis.applib.AppManifest;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
@@ -31,15 +30,14 @@ import org.apache.isis.core.runtime.systemusinginstallers.IsisComponentProvider;
 
 public class IsisInjectModule {
 
-    @Inject private IsisConfiguration isisConfiguration;
+    @SuppressWarnings("unused") // dependency graph constraint
+    @Inject private IsisConfiguration isisConfiguration; 
     
     @Produces @ApplicationScoped
     protected IsisSessionFactory provideIsisSessionFactory() {
         
-        final AppManifest appManifest = isisConfiguration.getAppManifest();
-        
         final IsisComponentProvider componentProvider = IsisComponentProvider
-                .builder(appManifest)
+                .builder()
                 .build();
         
         final IsisSessionFactoryBuilder builder =

@@ -21,6 +21,7 @@ package org.apache.isis.core.runtime.services.menubars;
 import java.nio.charset.StandardCharsets;
 
 import javax.ejb.Singleton;
+import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,7 @@ import org.apache.isis.applib.services.jaxb.JaxbService;
 import org.apache.isis.applib.services.menu.MenuBarsLoaderService;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.context._Context;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 
 import static org.apache.isis.commons.internal.resources._Resources.loadAsString;
@@ -48,7 +50,7 @@ public class MenuBarsLoaderServiceDefault implements MenuBarsLoaderService {
 
     @Override
     public BS3MenuBars menuBars() {
-        final AppManifest appManifest = isisSessionFactory.getAppManifest();
+        final AppManifest appManifest = IsisContext.getAppManifest();
         try {
             
             final String xml = 
@@ -77,7 +79,7 @@ public class MenuBarsLoaderServiceDefault implements MenuBarsLoaderService {
         if(warnedOnce) {
             return;
         }
-        final AppManifest appManifest = isisSessionFactory.getAppManifest();
+        final AppManifest appManifest = IsisContext.getAppManifest();
         log.warn( 
                 String.format("Failed to locate resource '%s' at class-path relative to '%s'", 
                 menubarsLayoutResourceName, appManifest.getClass().getName()));
@@ -86,18 +88,15 @@ public class MenuBarsLoaderServiceDefault implements MenuBarsLoaderService {
     }
     
     private void severeCannotLoad(Exception cause) {
-        final AppManifest appManifest = isisSessionFactory.getAppManifest();
+        final AppManifest appManifest = IsisContext.getAppManifest();
         log.error(
                 String.format("Failed to load resource '%s' from class-path relative to '%s'", 
                 menubarsLayoutResourceName, appManifest.getClass().getName()), 
                 cause);
     }
 
-    @javax.inject.Inject
-    JaxbService jaxbService;
-
-    @javax.inject.Inject
-    IsisSessionFactory isisSessionFactory;
+    @Inject JaxbService jaxbService;
+    @Inject IsisSessionFactory isisSessionFactory;
 
 }
 
