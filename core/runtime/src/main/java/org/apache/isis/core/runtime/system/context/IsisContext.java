@@ -156,15 +156,17 @@ public interface IsisContext {
     
     /**
      * @return framework's IsisSessionFactory
-     * @throws NoSuchElementException - if IsisSessionFactory not managed
+     * @throws NoSuchElementException - if IsisSessionFactory not resolvable
      */
     public static IsisSessionFactory getSessionFactory() {
-        return _CDI.getManagedBean(IsisSessionFactory.class).get();
+        // first lookup CDI, then lookup _Context; the later to support unit testing 
+        return _CDI.getManagedBean(IsisSessionFactory.class)
+                .orElseGet(()->_Context.getOrThrow(IsisSessionFactory.class, NoSuchElementException::new));
     }
     
     /**
      * @return framework's ServicesInjector
-     * @throws NullPointerException - if AppManifest is null
+     * @throws NullPointerException - if AppManifest not resolvable
      */
     public static AppManifest getAppManifest() {
         return Objects.requireNonNull(getConfiguration().getAppManifest()); 
