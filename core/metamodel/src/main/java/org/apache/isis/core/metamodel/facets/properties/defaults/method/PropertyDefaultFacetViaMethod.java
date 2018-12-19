@@ -26,28 +26,20 @@ import java.util.Map;
 
 import org.apache.isis.core.commons.exceptions.UnknownTypeException;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.ImperativeFacet;
 import org.apache.isis.core.metamodel.facets.properties.defaults.PropertyDefaultFacetAbstract;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
-import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 
 public class PropertyDefaultFacetViaMethod extends PropertyDefaultFacetAbstract implements ImperativeFacet {
 
     private final Method method;
-    private final SpecificationLoader specificationLoader;
-    private final ObjectAdapterProvider adapterProvider;
 
     public PropertyDefaultFacetViaMethod(
             final Method method,
-            final FacetHolder holder,
-            final SpecificationLoader specificationLoader,
-            final ObjectAdapterProvider adapterProvider) {
+            final FacetHolder holder) {
         super(holder);
         this.method = method;
-        this.specificationLoader = specificationLoader;
-        this.adapterProvider = adapterProvider;
     }
 
     /**
@@ -76,7 +68,7 @@ public class PropertyDefaultFacetViaMethod extends PropertyDefaultFacetAbstract 
     private ObjectAdapter createAdapter(final Class<?> type, final Object object) {
         final ObjectSpecification specification = getSpecificationLoader().loadSpecification(type);
         if (specification.isNotCollection()) {
-            return getObjectAdapterProvider().adapterFor(object);
+            return adapterProvider().adapterFor(object);
         } else {
             throw new UnknownTypeException("not an object, is this a collection?");
         }
@@ -85,18 +77,6 @@ public class PropertyDefaultFacetViaMethod extends PropertyDefaultFacetAbstract 
     @Override
     protected String toStringValues() {
         return "method=" + method;
-    }
-
-    // //////////////////////////////////////////////////////////////////
-    // Dependencies (from constructor)
-    // //////////////////////////////////////////////////////////////////
-
-    private SpecificationLoader getSpecificationLoader() {
-        return specificationLoader;
-    }
-
-    protected ObjectAdapterProvider getObjectAdapterProvider() {
-        return adapterProvider;
     }
 
     @Override public void appendAttributesTo(final Map<String, Object> attributeMap) {

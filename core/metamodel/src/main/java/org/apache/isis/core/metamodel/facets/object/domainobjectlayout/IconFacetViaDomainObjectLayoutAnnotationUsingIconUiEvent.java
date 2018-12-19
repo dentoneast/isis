@@ -27,13 +27,13 @@ import org.apache.isis.applib.NonRecoverableException;
 import org.apache.isis.applib.annotation.DomainObjectLayout;
 import org.apache.isis.applib.events.ui.IconUiEvent;
 import org.apache.isis.applib.services.eventbus.EventBusService;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.facetapi.Facet;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.object.icon.IconFacet;
 import org.apache.isis.core.metamodel.facets.object.icon.IconFacetAbstract;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.util.EventUtil;
 
@@ -43,7 +43,7 @@ public class IconFacetViaDomainObjectLayoutAnnotationUsingIconUiEvent extends Ic
 
     public static Facet create(
             final List<DomainObjectLayout> domainObjectLayouts,
-            final ServicesInjector servicesInjector,
+            final ServiceInjector servicesInjector,
             final IsisConfiguration configuration,
             final FacetHolder facetHolder) {
 

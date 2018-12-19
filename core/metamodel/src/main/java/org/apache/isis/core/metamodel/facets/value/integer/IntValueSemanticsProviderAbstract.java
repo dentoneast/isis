@@ -24,12 +24,12 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Map;
 
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.facetapi.Facet;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.object.parseable.TextEntryParseException;
 import org.apache.isis.core.metamodel.facets.object.value.vsp.ValueSemanticsProviderAndFacetAbstract;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 
 
 public abstract class IntValueSemanticsProviderAbstract extends ValueSemanticsProviderAndFacetAbstract<Integer> implements IntegerValueFacet {
@@ -44,8 +44,8 @@ public abstract class IntValueSemanticsProviderAbstract extends ValueSemanticsPr
 
     private final NumberFormat format;
 
-    public IntValueSemanticsProviderAbstract(final FacetHolder holder, final Class<Integer> adaptedClass, final ServicesInjector context) {
-        super(type(), holder, adaptedClass, TYPICAL_LENGTH, MAX_LENGTH, Immutability.IMMUTABLE, EqualByContent.HONOURED, DEFAULT_VALUE, context);
+    public IntValueSemanticsProviderAbstract(final FacetHolder holder, final Class<Integer> adaptedClass) {
+        super(type(), holder, adaptedClass, TYPICAL_LENGTH, MAX_LENGTH, Immutability.IMMUTABLE, EqualByContent.HONOURED, DEFAULT_VALUE);
         format = determineNumberFormat("value.format.int");
     }
 
@@ -97,7 +97,7 @@ public abstract class IntValueSemanticsProviderAbstract extends ValueSemanticsPr
 
     @Override
     public ObjectAdapter createValue(final Integer value) {
-        return value == null ? null : getObjectAdapterProvider().adapterFor(value);
+        return value == null ? null : adapterProvider().adapterFor(value);
     }
 
     // /////// toString ///////

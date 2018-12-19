@@ -58,6 +58,7 @@ public class WeldFactory {
 	                    "org.apache.isis.core.wrapper.WrapperFactoryDefault",
 	                    "org.apache.isis.viewer.wicket.viewer.IsisWicketModule",
 	                    "org.apache.isis.applib.services.jdosupport.IsisJdoSupportDN5",
+	                    "org.apache.isis.core.runtime.services.persistsession.PersistenceSessionServiceInternalDefault",
 	                    
 	                    "org.apache.wicket.cdi.AutoConversation"
 	                    

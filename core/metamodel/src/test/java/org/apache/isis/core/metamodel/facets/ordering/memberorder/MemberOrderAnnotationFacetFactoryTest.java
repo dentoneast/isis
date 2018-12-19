@@ -28,15 +28,16 @@ import org.jmock.Expectations;
 import org.jmock.api.Action;
 import org.jmock.api.Invocation;
 import org.junit.Rule;
+
 import org.apache.isis.applib.annotation.MemberOrder;
 import org.apache.isis.applib.services.i18n.TranslationService;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.facetapi.Facet;
+import org.apache.isis.core.metamodel.facets.AbstractFacetFactoryTest;
 import org.apache.isis.core.metamodel.facets.FacetFactory.ProcessMethodContext;
 import org.apache.isis.core.metamodel.facets.members.order.MemberOrderFacet;
-import org.apache.isis.core.metamodel.facets.AbstractFacetFactoryTest;
 import org.apache.isis.core.metamodel.facets.members.order.annotprop.MemberOrderFacetAnnotation;
 import org.apache.isis.core.metamodel.facets.members.order.annotprop.MemberOrderFacetFactory;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
 
 public class MemberOrderAnnotationFacetFactoryTest extends AbstractFacetFactoryTest {
@@ -48,13 +49,13 @@ public class MemberOrderAnnotationFacetFactoryTest extends AbstractFacetFactoryT
 
     TranslationService mockTranslationService;
 
-    ServicesInjector mockServicesInjector;
+    ServiceInjector mockServicesInjector;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
 
-        mockServicesInjector = context.mock(ServicesInjector.class);
+        mockServicesInjector = context.mock(ServiceInjector.class);
         mockTranslationService = context.mock(TranslationService.class);
 
 
@@ -80,7 +81,6 @@ public class MemberOrderAnnotationFacetFactoryTest extends AbstractFacetFactoryT
 
 
         facetFactory = new MemberOrderFacetFactory();
-        facetFactory.setServicesInjector(mockServicesInjector);
 
     }
 

@@ -29,7 +29,7 @@ import javax.xml.bind.Marshaller;
 import org.jboss.resteasy.plugins.providers.jaxb.JAXBXmlRootElementProvider;
 
 import org.apache.isis.applib.services.bookmark.BookmarkService;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.schema.utils.jaxbadapters.PersistentEntityAdapter;
@@ -64,7 +64,7 @@ public class RestfulObjectsJaxbWriterForXml extends JAXBXmlRootElementProvider {
         return marshaller;
     }
 
-    ServicesInjector getServicesInjector() {
+    ServiceInjector getServicesInjector() {
         return getIsisSessionFactory().getServicesInjector();
     }
 

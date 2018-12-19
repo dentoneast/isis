@@ -24,9 +24,9 @@ import java.util.stream.Collectors;
 
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.fixtures.FixtureClock;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.config.IsisConfiguration;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidException;
 import org.apache.isis.core.runtime.headless.auth.AuthenticationRequestNameOnly;
 import org.apache.isis.core.runtime.system.context.IsisContext;
@@ -198,7 +198,7 @@ public final class IsisSystem {
     // -- getService
 
     public <C> C getService(Class<C> serviceClass) {
-        final ServicesInjector servicesInjector = isisSessionFactory.getServicesInjector();
+        final ServiceInjector servicesInjector = isisSessionFactory.getServicesInjector();
         return servicesInjector.lookupServiceElseFail(serviceClass);
     }
 

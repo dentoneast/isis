@@ -34,9 +34,6 @@ import org.apache.isis.commons.internal.base._Blackhole;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.AppConfigLocator;
 import org.apache.isis.config.IsisConfiguration;
-import org.apache.isis.config.IsisConfiguration.ContainsPolicy;
-import org.apache.isis.config.NotFoundPolicy;
-import org.apache.isis.config.builder.IsisConfigurationBuilder;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.webapp.modules.WebModule;
 import org.apache.isis.core.webapp.modules.WebModuleContext;
@@ -81,11 +78,11 @@ public class IsisWebAppContextListener implements ServletContextListener {
         LOG.info("=== PHASE 1 === Setting up IoC from AppManifest");
         
         // finalize the config (build and regard immutable)
-        // as a side-effect bootstrap CDI, if the environment we are running on does not have its own 
+        // as a side-effect bootstrap CDI, if the environment we are running on does not already have its own 
         IsisConfiguration isisConfiguration = AppConfigLocator.getAppConfig().isisConfiguration();
         _Blackhole.consume(isisConfiguration);
         
-        LOG.info("=== PHASE 2 === Setting up ServletContext");
+        LOG.info("=== PHASE 2 === Preparing the ServletContext");
         
         //[2039] environment priming no longer supported
         //_Config.acceptBuilder(IsisContext.EnvironmentPrimer::primeEnvironment);
@@ -108,19 +105,13 @@ public class IsisWebAppContextListener implements ServletContextListener {
         LOG.info("=== DONE === ServletContext initialized.");
     }
 
-    void addConfigurationResourcesForDeploymentType(
-            final IsisConfigurationBuilder isisConfigurationBuilder) {
-        final String resourceName = 
-                IsisContext.getEnvironment().getDeploymentType().name().toLowerCase() + ".properties";
-        isisConfigurationBuilder.addConfigurationResource(resourceName, NotFoundPolicy.CONTINUE, ContainsPolicy.IGNORE);
-    }
-
     @Override
     public void contextDestroyed(ServletContextEvent event) {
+        LOG.info("=== SHUTDOWN === Shutting down ServletContext");
         activeListeners.forEach(listener->shutdownListener(event, listener));
         activeListeners.clear();
-        
-        _Context.clear();
+        IsisContext.clear();
+        LOG.info("=== DESTROYED === ServletContext destroyed");
     }
     
     // -- HELPER

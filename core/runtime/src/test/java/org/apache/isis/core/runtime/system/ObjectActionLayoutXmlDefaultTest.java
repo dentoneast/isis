@@ -26,12 +26,11 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import org.apache.isis.applib.Identifier;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.message.MessageService;
-import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.facets.FacetedMethod;
 import org.apache.isis.core.metamodel.facets.all.named.NamedFacet;
 import org.apache.isis.core.metamodel.facets.all.named.NamedFacetAbstract;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.specimpl.ObjectActionDefault;
@@ -64,18 +63,10 @@ public class ObjectActionLayoutXmlDefaultTest {
     @Mock
     private PersistenceSessionServiceInternal mockPersistenceSessionServiceInternal;
 
-    private ServicesInjector stubServicesInjector;
+    private ServiceInjector stubServicesInjector;
 
     @Before
     public void setUp() throws Exception {
-
-        stubServicesInjector = ServicesInjector.builderForTesting()
-                .addServices(_Lists.of(
-                        mockAuthenticationSessionProvider,
-                        mockSpecificationLoader,
-                        mockPersistenceSessionServiceInternal,
-                        mockMessageService))
-                .build();
 
         context.checking(new Expectations() {
             {
@@ -84,7 +75,7 @@ public class ObjectActionLayoutXmlDefaultTest {
             }
         });
 
-        action = new ObjectActionDefault(mockFacetedMethod, stubServicesInjector);
+        action = new ObjectActionDefault(mockFacetedMethod);
     }
 
 

@@ -24,8 +24,9 @@ import java.lang.reflect.Modifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.core.commons.exceptions.IsisException;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
@@ -44,7 +45,7 @@ class ObjectAdapterContext_DependencyInjection {
     private static final Logger LOG = LoggerFactory.getLogger(ObjectAdapterContext_DependencyInjection.class);
     private final ObjectAdapterContext objectAdapterContext;
     private final PersistenceSession persistenceSession;
-    private final ServicesInjector servicesInjector;
+    private final ServiceInjector servicesInjector;
     private final SpecificationLoader specificationLoader;
     
     
@@ -53,7 +54,7 @@ class ObjectAdapterContext_DependencyInjection {
         this.objectAdapterContext = objectAdapterContext;
         this.persistenceSession = persistenceSession;
         this.servicesInjector = persistenceSession.getServicesInjector();
-        this.specificationLoader = servicesInjector.getSpecificationLoader();
+        this.specificationLoader = _CDI.getSingleton(SpecificationLoader.class);
     }
     
     Object instantiateAndInjectServices(final ObjectSpecification objectSpec) {

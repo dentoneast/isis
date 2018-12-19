@@ -31,10 +31,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.isis.applib.annotation.Programmatic;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledFlag;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -46,7 +46,7 @@ import org.apache.isis.objectstore.jdo.service.RegisterEntities;
  * Factory for {@link PersistenceSession}.
  *
  * <p>
- * Implementing class is added to {@link ServicesInjector} as an (internal) domain service; all public methods
+ * Implementing class is added to {@link ServiceInjector} as an (internal) domain service; all public methods
  * must be annotated using {@link Programmatic}.
  * </p>
  */
@@ -184,7 +184,7 @@ implements PersistenceSessionFactory, FixturesInstalledFlag {
     @Programmatic
     @Override
     public PersistenceSession5 createPersistenceSession(
-            final ServicesInjector servicesInjector,
+            final ServiceInjector servicesInjector,
             final AuthenticationSession authenticationSession) {
 
         Objects.requireNonNull(applicationComponents.get(),

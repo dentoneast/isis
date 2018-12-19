@@ -29,10 +29,10 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.RepeatingView;
 
 import org.apache.isis.applib.annotation.SemanticsOf;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.message.MessageService;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.version.ConcurrencyException;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.spec.feature.ObjectActionParameter;
 import org.apache.isis.viewer.wicket.model.hints.IsisActionCompletedEvent;
@@ -138,7 +138,7 @@ class ActionParametersForm extends PromptFormAbstract<ActionModel> {
         final ObjectAction action = actionModel.getActionMemento().getAction(getSpecificationLoader());
         SemanticsOf semanticsOf = action.getSemantics();
 
-        final ServicesInjector servicesInjector = getPersistenceSession().getServicesInjector();
+        final ServiceInjector servicesInjector = getPersistenceSession().getServicesInjector();
 
         PanelUtil.addConfirmationDialogIfAreYouSureSemantics(button, semanticsOf, servicesInjector);
     }

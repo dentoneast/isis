@@ -32,8 +32,11 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.collections._Lists;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
+import org.apache.isis.core.metamodel.services.ServiceInjectorBuilder_forTesting;
+import org.apache.isis.core.metamodel.services.registry.ServiceRegistryBuilder_forTesting;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -45,7 +48,8 @@ public class ServiceInjectorTestUsingCodegenPlugin {
     public JUnitRuleMockery2 context = JUnitRuleMockery2.createFor(JUnitRuleMockery2.Mode.INTERFACES_AND_CLASSES);
 
     private ServiceInstantiator serviceInstantiator;
-    private ServicesInjector serviceInjector;
+    private ServiceInjector serviceInjector;
+    private ServiceRegistry serviceRegistry;
 
     @Before
     public void setUp() throws Exception {
@@ -57,28 +61,33 @@ public class ServiceInjectorTestUsingCodegenPlugin {
                 serviceInstantiator.createInstance(AccumulatingCalculator.class)
                 );
         
-        serviceInjector = ServicesInjector.builderForTesting()
+        serviceRegistry = ServiceRegistryBuilder_forTesting.of(context)
                 .addServices(services)
                 .build();
+        
+        serviceInjector = ServiceInjectorBuilder_forTesting.of(context)
+                .serviceRegistry(serviceRegistry)
+                .build();
+        
     }
 
     @Test
     public void singleton() {
-        SingletonCalculator calculator = serviceInjector.lookupService(SingletonCalculator.class).get();
+        SingletonCalculator calculator = serviceRegistry.lookupService(SingletonCalculator.class).get();
         assertThat(calculator.add(3), is(3));
-        calculator = serviceInjector.lookupService(SingletonCalculator.class).get();
+        calculator = serviceRegistry.lookupService(SingletonCalculator.class).get();
         assertThat(calculator.add(4), is(7));
     }
 
     @Test
     public void requestScoped_instantiate() {
-        final AccumulatingCalculator calculator = serviceInjector.lookupService(AccumulatingCalculator.class).get();
+        final AccumulatingCalculator calculator = serviceRegistry.lookupService(AccumulatingCalculator.class).get();
         assertThat(calculator instanceof RequestScopedService, is(true));
     }
 
     @Test
     public void requestScoped_justOneThread() {
-        final AccumulatingCalculator calculator = serviceInjector.lookupService(AccumulatingCalculator.class).get();
+        final AccumulatingCalculator calculator = serviceRegistry.lookupService(AccumulatingCalculator.class).get();
         
         try {
             ((RequestScopedService)calculator).__isis_startRequest(serviceInjector);
@@ -93,7 +102,7 @@ public class ServiceInjectorTestUsingCodegenPlugin {
     @Test
     public void requestScoped_multipleThreads() throws InterruptedException, ExecutionException {
         
-        final AccumulatingCalculator calculator = serviceInjector.lookupService(AccumulatingCalculator.class).get();
+        final AccumulatingCalculator calculator = serviceRegistry.lookupService(AccumulatingCalculator.class).get();
         final ExecutorService executor = Executors.newFixedThreadPool(10);
         
         // setup 32 tasks

@@ -30,11 +30,11 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.commons.url.UrlDecoderUtil;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSession;
@@ -59,7 +59,7 @@ public class ResourceContextTest_getArg {
     @Mock HttpServletRequest mockHttpServletRequest;
     @Mock ServletContext mockServletContext;
     @Mock IsisSessionFactory mockIsisSessionFactory;
-    @Mock ServicesInjector mockServicesInjector;
+    @Mock ServiceInjector mockServicesInjector;
     @Mock IsisConfiguration mockConfiguration;
     @Mock IsisSession mockIsisSession;
     @Mock AuthenticationSession mockAuthenticationSession;

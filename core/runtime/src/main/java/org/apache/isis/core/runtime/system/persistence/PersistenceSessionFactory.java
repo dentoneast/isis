@@ -16,8 +16,8 @@
  */
 package org.apache.isis.core.runtime.system.persistence;
 
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.IsisJdoRuntimePlugin;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 
@@ -25,7 +25,7 @@ public interface PersistenceSessionFactory {
 
     // -- INTERFACE
 
-    PersistenceSession createPersistenceSession(ServicesInjector servicesInjector,
+    PersistenceSession createPersistenceSession(ServiceInjector servicesInjector,
             AuthenticationSession authenticationSession);
 
     void init();

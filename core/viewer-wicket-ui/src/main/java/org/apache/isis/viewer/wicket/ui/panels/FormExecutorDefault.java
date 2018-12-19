@@ -42,13 +42,13 @@ import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizerComposite;
 import org.apache.isis.applib.services.guice.GuiceBeanProvider;
 import org.apache.isis.applib.services.hint.HintStore;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.message.MessageService;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.version.ConcurrencyException;
 import org.apache.isis.core.metamodel.facets.properties.renderunchanged.UnchangingFacet;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
@@ -478,7 +478,7 @@ implements FormExecutor {
         return getCurrentSession().getPersistenceSession();
     }
 
-    protected ServicesInjector getServicesInjector() {
+    protected ServiceInjector getServicesInjector() {
         return getIsisSessionFactory().getServicesInjector();
     }
 

@@ -67,7 +67,6 @@ public class DomainObjectAnnotationFacetFactoryTest extends AbstractFacetFactory
     public void setUp() throws Exception {
         _Config.clear();
         facetFactory = new DomainObjectAnnotationFacetFactory();
-        facetFactory.setServicesInjector(mockServicesInjector);
     }
 
     @After
@@ -424,11 +423,11 @@ public class DomainObjectAnnotationFacetFactoryTest extends AbstractFacetFactory
             
             context.checking(new Expectations() {
                 {
-                    allowing(mockServicesInjector).isRegisteredService(CustomerRepository.class);
-                    will(returnValue(true));
-
-                    allowing(mockServicesInjector).isRegisteredService(CustomerRepositoryWithDefaultMethodName.class);
-                    will(returnValue(true));
+//                    allowing(mockServicesInjector).isRegisteredService(CustomerRepository.class);
+//                    will(returnValue(true));
+//
+//                    allowing(mockServicesInjector).isRegisteredService(CustomerRepositoryWithDefaultMethodName.class);
+//                    will(returnValue(true));
                     
                     // anything else
                     

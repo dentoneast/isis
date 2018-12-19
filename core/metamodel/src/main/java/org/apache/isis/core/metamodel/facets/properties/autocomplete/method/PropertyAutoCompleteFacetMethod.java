@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.CollectionUtils;
@@ -35,9 +34,6 @@ import org.apache.isis.core.metamodel.facets.ImperativeFacet;
 import org.apache.isis.core.metamodel.facets.param.autocomplete.MinLengthUtil;
 import org.apache.isis.core.metamodel.facets.properties.autocomplete.PropertyAutoCompleteFacetAbstract;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
-import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-import org.apache.isis.core.security.authentication.AuthenticationSession;
-import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 
 public class PropertyAutoCompleteFacetMethod extends PropertyAutoCompleteFacetAbstract implements ImperativeFacet {
 
@@ -45,23 +41,13 @@ public class PropertyAutoCompleteFacetMethod extends PropertyAutoCompleteFacetAb
     private final Class<?> choicesClass;
     private final int minLength;
 
-    private final AuthenticationSessionProvider authenticationSessionProvider;
-    private final ObjectAdapterProvider adapterProvider;
-    private SpecificationLoader specificationLoader;
-
     public PropertyAutoCompleteFacetMethod(
             final Method method,
             final Class<?> choicesClass,
-            final FacetHolder holder,
-            final SpecificationLoader specificationLoader,
-            final AuthenticationSessionProvider authenticationSessionProvider,
-            final ObjectAdapterProvider adapterProvider) {
+            final FacetHolder holder) {
         super(holder);
         this.method = method;
         this.choicesClass = choicesClass;
-        this.specificationLoader = specificationLoader;
-        this.authenticationSessionProvider = authenticationSessionProvider;
-        this.adapterProvider = adapterProvider;
         this.minLength = MinLengthUtil.determineMinLength(method);
     }
 
@@ -95,7 +81,7 @@ public class PropertyAutoCompleteFacetMethod extends PropertyAutoCompleteFacetAb
             return null;
         }
 
-        final ObjectAdapter collectionAdapter = getObjectAdapterProvider().adapterFor(collectionOrArray);
+        final ObjectAdapter collectionAdapter = adapterProvider().adapterFor(collectionOrArray);
 
         final FacetedMethod facetedMethod = (FacetedMethod) getFacetHolder();
         final Class<?> propertyType = facetedMethod.getType();
@@ -108,35 +94,12 @@ public class PropertyAutoCompleteFacetMethod extends PropertyAutoCompleteFacetAb
                 _Lists.map(visibleAdapters, ObjectAdapter.Util::unwrapPojo);
 
         final ObjectSpecification propertySpec = getSpecification(propertyType);
-        return CollectionUtils.getCollectionAsObjectArray(filteredObjects, propertySpec, getObjectAdapterProvider());
+        return CollectionUtils.getCollectionAsObjectArray(filteredObjects, propertySpec, adapterProvider());
     }
 
     @Override
     protected String toStringValues() {
         return "method=" + method + ",class=" + choicesClass;
-    }
-
-
-
-
-    protected ObjectSpecification getSpecification(final Class<?> type) {
-        return type != null ? getSpecificationLoader().loadSpecification(type) : null;
-    }
-
-    // ////////////////////////////////////////////
-    // Dependencies
-    // ////////////////////////////////////////////
-
-    protected ObjectAdapterProvider getObjectAdapterProvider() {
-        return adapterProvider;
-    }
-
-    protected SpecificationLoader getSpecificationLoader() {
-        return specificationLoader;
-    }
-
-    protected AuthenticationSession getAuthenticationSession() {
-        return authenticationSessionProvider.getAuthenticationSession();
     }
 
     @Override public void appendAttributesTo(final Map<String, Object> attributeMap) {

@@ -33,7 +33,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 import org.apache.isis.applib.services.i18n.TranslationService;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.viewer.wicket.viewer.IsisWicketApplication;
@@ -150,7 +150,7 @@ public class LocalizerForIsis extends Localizer {
         return getServicesInjector().lookupService(TranslationService.class).orElse(null);
     }
 
-    protected ServicesInjector getServicesInjector() {
+    protected ServiceInjector getServicesInjector() {
         return getIsisSessionFactory().getServicesInjector();
     }
 

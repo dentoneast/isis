@@ -232,7 +232,7 @@ implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor, WicketVi
     @Override
     protected void init() {
         
-        final IsisConfiguration configuration = _Config.getConfiguration();
+        final IsisConfiguration configuration = IsisContext.getConfiguration();
         
         List<Future<Object>> futures = null;
         try {

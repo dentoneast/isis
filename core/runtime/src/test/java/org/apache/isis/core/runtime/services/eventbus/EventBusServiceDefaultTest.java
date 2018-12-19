@@ -16,15 +16,12 @@
  */
 package org.apache.isis.core.runtime.services.eventbus;
 
-import java.util.Optional;
-import java.util.stream.Stream;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.config.internal._Config;
+import org.apache.isis.core.metamodel.services.ServiceInjectorDefault;
 import org.apache.isis.core.plugins.environment.IsisSystemEnvironment;
 
 import static org.hamcrest.Matchers.is;
@@ -43,12 +40,7 @@ public class EventBusServiceDefaultTest {
         
         eventBusService = new EventBusServiceDefault() {
         	{
-        		serviceRegistry = new ServiceRegistry() {
-					@Override public <T> Optional<T> lookupService(Class<T> service) { return null; }
-					@Override public <T> T injectServicesInto(T domainObject) {	return null; }
-                    @Override public Stream<Object> streamServices() {return null;}
-                    @Override public <T> Stream<T> streamServices(Class<T> serviceClass) {return null;}
-				}; 
+        		servicesInjector = new ServiceInjectorDefault();
         	}
         };
     }

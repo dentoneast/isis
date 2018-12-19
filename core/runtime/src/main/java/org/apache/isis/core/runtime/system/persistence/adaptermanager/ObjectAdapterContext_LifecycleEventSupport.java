@@ -23,9 +23,10 @@ import org.slf4j.LoggerFactory;
 
 import org.apache.isis.applib.events.lifecycle.AbstractLifecycleEvent;
 import org.apache.isis.applib.services.eventbus.EventBusService;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.commons.factory.InstanceUtil;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.facets.object.callbacks.LifecycleEventFacet;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
@@ -44,18 +45,20 @@ class ObjectAdapterContext_LifecycleEventSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ObjectAdapterContext_LifecycleEventSupport.class);
     private final ObjectAdapterContext objectAdapterContext;
     private final PersistenceSession persistenceSession;
-    private final ServicesInjector servicesInjector;
+    private final ServiceInjector servicesInjector;
     private final SpecificationLoader specificationLoader;
     private final EventBusService eventBusService; 
     
-    
-    ObjectAdapterContext_LifecycleEventSupport(ObjectAdapterContext objectAdapterContext,
+    ObjectAdapterContext_LifecycleEventSupport(
+            ObjectAdapterContext objectAdapterContext,
+            MetaModelContext metaModelContext,
             PersistenceSession persistenceSession) {
+        
         this.objectAdapterContext = objectAdapterContext;
         this.persistenceSession = persistenceSession;
         this.servicesInjector = persistenceSession.getServicesInjector();
-        this.specificationLoader = servicesInjector.getSpecificationLoader();
-        this.eventBusService = servicesInjector.lookupServiceElseFail(EventBusService.class);
+        this.specificationLoader = metaModelContext.getSpecificationLoader();
+        this.eventBusService = metaModelContext.getServiceRegistry().lookupServiceElseFail(EventBusService.class);
     }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })

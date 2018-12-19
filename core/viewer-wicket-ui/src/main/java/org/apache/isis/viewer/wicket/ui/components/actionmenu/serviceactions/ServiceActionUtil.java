@@ -41,10 +41,10 @@ import org.apache.isis.applib.layout.menubars.MenuSection;
 import org.apache.isis.applib.layout.menubars.bootstrap3.BS3Menu;
 import org.apache.isis.applib.layout.menubars.bootstrap3.BS3MenuBar;
 import org.apache.isis.applib.services.i18n.TranslationService;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.runtime.system.SystemConstants;
 import org.apache.isis.core.runtime.system.context.IsisContext;
@@ -267,7 +267,7 @@ public final class ServiceActionUtil {
 
     private static void addConfirmationDialog(
             final Component component,
-            final ServicesInjector servicesInjector) {
+            final ServiceInjector servicesInjector) {
 
         final TranslationService translationService =
                 servicesInjector.lookupService(TranslationService.class).orElse(null);;

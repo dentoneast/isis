@@ -37,8 +37,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.core.plugins.codegen.ProxyFactoryPlugin;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -69,7 +69,7 @@ public class ImposteriserTestUsingCodegenPlugin {
     public void tearDown() throws Exception {
         invokable = null;
         invocation = null;
-        _Context.clear(); // removes plugins from context
+        IsisContext.clear(); // removes plugins from context
     }
 
     // //////////////////////////////////////

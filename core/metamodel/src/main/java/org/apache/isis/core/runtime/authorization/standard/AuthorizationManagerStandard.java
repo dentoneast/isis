@@ -19,37 +19,34 @@
 
 package org.apache.isis.core.runtime.authorization.standard;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ejb.Singleton;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+
 import org.apache.isis.applib.Identifier;
 import org.apache.isis.applib.services.sudo.SudoService;
 import org.apache.isis.core.metamodel.progmodel.ProgrammingModel;
-import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidatorComposite;
-import org.apache.isis.core.runtime.authorization.AuthorizationManagerAbstract;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
+import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
 import org.apache.isis.core.security.authorization.standard.Authorizor;
 
-public class AuthorizationManagerStandard extends AuthorizationManagerAbstract {
+@Singleton
+public class AuthorizationManagerStandard implements AuthorizationManager {
 
-    private Authorizor authorizor;
-
-    // /////////////////////////////////////////////////////////
-    // Constructor
-    // /////////////////////////////////////////////////////////
-
-    public AuthorizationManagerStandard() {
-        super();
-        // avoid null pointers
-        authorizor = Authorizor.nop();
-    }
 
     // /////////////////////////////////////////////////////////
     // init, shutddown
     // /////////////////////////////////////////////////////////
 
+    @PostConstruct
     @Override
     public void init() {
         authorizor.init();
     }
 
+    @PreDestroy
     @Override
     public void shutdown() {
         authorizor.shutdown();
@@ -112,28 +109,11 @@ public class AuthorizationManagerStandard extends AuthorizationManagerAbstract {
     }
 
 
-    // //////////////////////////////////////////////////
-    // MetaModelRefiner impl
-    // //////////////////////////////////////////////////
-
-    @Override
-    public void refineMetaModelValidator(MetaModelValidatorComposite baseMetaModelValidator) {
-        // no-op
-    }
-
-    @Override
-    public void refineProgrammingModel(ProgrammingModel baseProgrammingModel) {
-        final AuthorizationFacetFactory facetFactory = new AuthorizationFacetFactory(this);
+    public void refineProgrammingModel(@Observes ProgrammingModel baseProgrammingModel) {
+        final AuthorizationFacetFactory facetFactory = new AuthorizationFacetFactory();
         baseProgrammingModel.addFactory(facetFactory);
     }
 
-
-    // //////////////////////////////////////////////////
-    // Dependencies (injected)
-    // //////////////////////////////////////////////////
-
-    protected void setAuthorizor(final Authorizor authorisor) {
-        this.authorizor = authorisor;
-    }
+    @Inject Authorizor authorizor;
 
 }

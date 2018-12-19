@@ -20,10 +20,10 @@
 package org.apache.isis.core.metamodel.facets.collections.collection.modify;
 
 import org.apache.isis.applib.events.domain.CollectionDomainEvent;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.collections.modify.CollectionAddToFacet;
 import org.apache.isis.core.metamodel.facets.propcoll.accessor.PropertyOrCollectionAccessorFacet;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 
 public class CollectionAddToFacetForDomainEventFromCollectionAnnotation
 extends CollectionAddToFacetForDomainEventFromAbstract {
@@ -33,7 +33,7 @@ extends CollectionAddToFacetForDomainEventFromAbstract {
                     final PropertyOrCollectionAccessorFacet getterFacet,
                     final CollectionAddToFacet collectionAddToFacet,
                     final CollectionDomainEventFacetAbstract collectionInteractionFacet,
-                    final FacetHolder holder, final ServicesInjector servicesInjector) {
+                    final FacetHolder holder, final ServiceInjector servicesInjector) {
         super(eventType, getterFacet, collectionAddToFacet, collectionInteractionFacet, servicesInjector, holder);
     }
 

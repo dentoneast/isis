@@ -25,7 +25,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.repository.RepositoryService;
+import org.apache.isis.core.metamodel.services.registry.ServiceRegistryBuilder_forTesting;
 import org.apache.isis.core.metamodel.services.repository.RepositoryServiceInternalDefault;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2.Mode;
@@ -44,7 +47,8 @@ public class ServicesInjectorDefaultTest_usingFields {
     private SomeDomainService2 service2;
     private SomeDomainService3 service3;
     
-    private ServicesInjector injector;
+    private ServiceRegistry registry;
+    private ServiceInjector injector;
 
 
     static class SomeDomainService3 { }
@@ -82,9 +86,16 @@ public class ServicesInjectorDefaultTest_usingFields {
         service1 = new SomeDomainService1();
         service3 = new SomeDomainService3();
         service2 = new SomeDomainService2();
-        injector = ServicesInjector.builderForTesting()
+        
+        
+        registry = ServiceRegistryBuilder_forTesting.of(context)
                 .addServices(Arrays.asList(container, service1, service3, service2))
                 .build();
+        
+        injector = ServiceInjectorBuilder_forTesting.of(context)
+                
+                .build();
+
     }
 
     @Test

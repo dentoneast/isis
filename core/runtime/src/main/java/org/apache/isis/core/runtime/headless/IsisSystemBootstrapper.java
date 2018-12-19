@@ -32,10 +32,9 @@ import org.apache.isis.applib.fixturescripts.FixtureScript;
 import org.apache.isis.applib.fixturescripts.FixtureScripts;
 import org.apache.isis.applib.services.jdosupport.IsisJdoSupport;
 import org.apache.isis.applib.services.metamodel.MetaModelService;
-import org.apache.isis.applib.services.registry.ServiceRegistry;
-import org.apache.isis.commons.internal.collections._Sets;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.commons.ensure.Ensure;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.runtime.headless.logging.LeveledLogger;
 import org.apache.isis.core.runtime.headless.logging.LogConfig;
 import org.apache.isis.core.runtime.system.context.IsisContext;
@@ -151,7 +150,7 @@ public class IsisSystemBootstrapper {
     }
 
     public void injectServicesInto(final Object object) {
-        lookupService(ServiceRegistry.class).injectServicesInto(object);
+        MetaModelContext.current().getServiceInjector().injectServicesInto(object);
     }
 
     enum SystemState {

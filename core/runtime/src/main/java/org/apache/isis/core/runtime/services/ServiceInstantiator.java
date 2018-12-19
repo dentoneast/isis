@@ -31,6 +31,7 @@ import javax.enterprise.context.RequestScoped;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.collections._Sets;
 import org.apache.isis.commons.internal.context._Context;
@@ -38,7 +39,6 @@ import org.apache.isis.core.commons.factory.InstanceCreationClassException;
 import org.apache.isis.core.commons.factory.InstanceCreationException;
 import org.apache.isis.core.commons.lang.ArrayExtensions;
 import org.apache.isis.core.commons.lang.MethodExtensions;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.specloader.classsubstitutor.ProxyEnhanced;
 import org.apache.isis.core.plugins.codegen.ProxyFactory;
 
@@ -144,7 +144,7 @@ public final class ServiceInstantiator {
                     T service = instantiate(cls);
                     serviceByThread.set(service);
 
-                    ServicesInjector servicesInjector = (ServicesInjector) args[0];
+                    ServiceInjector servicesInjector = (ServiceInjector) args[0];
                     servicesInjector.injectServicesInto(service);
 
                     return null;

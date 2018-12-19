@@ -24,12 +24,12 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Map;
 
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.facetapi.Facet;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.object.parseable.TextEntryParseException;
 import org.apache.isis.core.metamodel.facets.object.value.vsp.ValueSemanticsProviderAndFacetAbstract;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 
 
 public class FloatValueSemanticsProviderAbstract extends ValueSemanticsProviderAndFacetAbstract<Float> implements FloatingPointValueFacet {
@@ -44,8 +44,8 @@ public class FloatValueSemanticsProviderAbstract extends ValueSemanticsProviderA
 
     private final NumberFormat format;
 
-    public FloatValueSemanticsProviderAbstract(final FacetHolder holder, final Class<Float> adaptedClass, final ServicesInjector context) {
-        super(type(), holder, adaptedClass, TYPICAL_LENGTH, MAX_LENGTH, Immutability.IMMUTABLE, EqualByContent.HONOURED, DEFAULT_VALUE, context);
+    public FloatValueSemanticsProviderAbstract(final FacetHolder holder, final Class<Float> adaptedClass) {
+        super(type(), holder, adaptedClass, TYPICAL_LENGTH, MAX_LENGTH, Immutability.IMMUTABLE, EqualByContent.HONOURED, DEFAULT_VALUE);
         format = determineNumberFormat("value.format.float");
     }
 
@@ -97,7 +97,7 @@ public class FloatValueSemanticsProviderAbstract extends ValueSemanticsProviderA
 
     @Override
     public ObjectAdapter createValue(final Float value) {
-        return getObjectAdapterProvider().adapterFor(value);
+        return adapterProvider().adapterFor(value);
     }
 
     // /////// toString ///////

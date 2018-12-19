@@ -51,7 +51,6 @@ import org.apache.isis.core.metamodel.facets.object.plural.inferred.PluralFacetI
 import org.apache.isis.core.metamodel.facets.object.value.ValueFacet;
 import org.apache.isis.core.metamodel.facets.object.viewmodel.ViewModelFacet;
 import org.apache.isis.core.metamodel.facets.object.wizard.WizardFacet;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.ActionType;
 import org.apache.isis.core.metamodel.spec.ElementSpecificationProvider;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
@@ -96,11 +95,9 @@ public class ObjectSpecificationDefault extends ObjectSpecificationAbstract impl
     public ObjectSpecificationDefault(
             final Class<?> correspondingClass,
             final FacetedMethodsBuilderContext facetedMethodsBuilderContext,
-            final ServicesInjector servicesInjector,
             final FacetProcessor facetProcessor,
             final NatureOfService natureOfServiceIfAny) {
-        super(correspondingClass, determineShortName(correspondingClass),
-                servicesInjector, facetProcessor);
+        super(correspondingClass, determineShortName(correspondingClass), facetProcessor);
 
         this.isService = natureOfServiceIfAny != null;
         this.facetedMethodsBuilder = new FacetedMethodsBuilder(this, facetedMethodsBuilderContext);
@@ -222,9 +219,9 @@ public class ObjectSpecificationDefault extends ObjectSpecificationAbstract impl
 
     private ObjectAssociation createAssociation(final FacetedMethod facetMethod) {
         if (facetMethod.getFeatureType().isCollection()) {
-            return new OneToManyAssociationDefault(facetMethod, servicesInjector);
+            return new OneToManyAssociationDefault(facetMethod);
         } else if (facetMethod.getFeatureType().isProperty()) {
-            return new OneToOneAssociationDefault(facetMethod, servicesInjector);
+            return new OneToOneAssociationDefault(facetMethod);
         } else {
             return null;
         }
@@ -249,7 +246,7 @@ public class ObjectSpecificationDefault extends ObjectSpecificationAbstract impl
 
     private ObjectAction createAction(final FacetedMethod facetedMethod) {
         if (facetedMethod.getFeatureType().isAction()) {
-            return new ObjectActionDefault(facetedMethod, servicesInjector);
+            return new ObjectActionDefault(facetedMethod);
         } else {
             return null;
         }

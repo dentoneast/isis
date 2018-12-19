@@ -28,6 +28,7 @@ import java.util.Set;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.core.commons.lang.ListExtensions;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facetapi.FeatureType;
 import org.apache.isis.core.metamodel.facetapi.MethodRemover;
@@ -43,11 +44,9 @@ import org.apache.isis.core.metamodel.facets.MethodPrefixBasedFacetFactory;
 import org.apache.isis.core.metamodel.facets.MethodRemoverConstants;
 import org.apache.isis.core.metamodel.facets.PropertyOrCollectionIdentifyingFacetFactory;
 import org.apache.isis.core.metamodel.progmodel.ProgrammingModel;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
-import org.apache.isis.core.metamodel.services.ServicesInjectorAware;
 import org.apache.isis.core.metamodel.spec.feature.ObjectMember;
 
-public class FacetProcessor implements ServicesInjectorAware {
+public class FacetProcessor {
 
     private final ProgrammingModel programmingModel;
 
@@ -147,7 +146,7 @@ public class FacetProcessor implements ServicesInjectorAware {
      * processing.
      */
     public void injectDependenciesInto(final FacetFactory factory) {
-        servicesInjector.injectInto(factory);
+        MetaModelContext.current().getServiceInjector().injectServicesInto(factory);
     }
 
     /**
@@ -446,17 +445,5 @@ public class FacetProcessor implements ServicesInjectorAware {
     private MethodRemover removerElseNullRemover(final MethodRemover methodRemover) {
         return methodRemover != null ? methodRemover : MethodRemoverConstants.NULL;
     }
-
-
-    // -- dependencies
-
-    private ServicesInjector servicesInjector;
-
-    @Override
-    public void setServicesInjector(final ServicesInjector servicesInjector) {
-        this.servicesInjector = servicesInjector;
-    }
-
-
 
 }

@@ -32,12 +32,12 @@ import org.junit.Rule;
 import org.apache.isis.applib.Identifier;
 import org.apache.isis.applib.services.eventbus.EventBusService;
 import org.apache.isis.applib.services.i18n.TranslationService;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facetapi.FeatureType;
 import org.apache.isis.core.metamodel.facetapi.IdentifiedHolder;
 import org.apache.isis.core.metamodel.facetapi.MethodRemover;
 import org.apache.isis.core.metamodel.facets.object.domainobject.autocomplete.AutoCompleteFacetForDomainObjectAnnotation;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
@@ -62,7 +62,7 @@ public abstract class AbstractFacetFactoryJUnit4TestCase {
     @Mock
     protected FacetHolder mockFacetHolder;
     @Mock
-    protected ServicesInjector mockServicesInjector;
+    protected ServiceInjector mockServicesInjector;
     @Mock
     protected TranslationService mockTranslationService;
 
@@ -108,14 +108,14 @@ public abstract class AbstractFacetFactoryJUnit4TestCase {
         
         context.checking(new Expectations() {{
 
-            allowing(mockServicesInjector).getPersistenceSessionServiceInternal();
-            will(returnValue(mockPersistenceSessionServiceInternal));
+//            allowing(mockServicesInjector).getPersistenceSessionServiceInternal();
+//            will(returnValue(mockPersistenceSessionServiceInternal));
 
             allowing(mockServicesInjector).lookupService(TranslationService.class);
             will(returnValue(Optional.of(mockTranslationService)));
 
-            allowing(mockServicesInjector).getAuthenticationSessionProvider();
-            will(returnValue(mockAuthenticationSessionProvider));
+//            allowing(mockServicesInjector).getAuthenticationSessionProvider();
+//            will(returnValue(mockAuthenticationSessionProvider));
 
             allowing(mockServicesInjector).lookupService(AuthenticationSessionProvider.class);
             will(returnValue(mockAuthenticationSessionProvider));
@@ -123,8 +123,8 @@ public abstract class AbstractFacetFactoryJUnit4TestCase {
             allowing(mockServicesInjector).lookupServiceElseFail(EventBusService.class);
             will(returnValue(mockEventBusService));
             
-            allowing(mockServicesInjector).getSpecificationLoader();
-            will(returnValue(mockSpecificationLoader));
+//            allowing(mockServicesInjector).getSpecificationLoader();
+//            will(returnValue(mockSpecificationLoader));
 
         }});
 

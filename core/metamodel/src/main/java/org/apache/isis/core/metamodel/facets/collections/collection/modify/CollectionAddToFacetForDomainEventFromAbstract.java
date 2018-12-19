@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.apache.isis.applib.events.domain.AbstractDomainEvent;
 import org.apache.isis.applib.events.domain.CollectionDomainEvent;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.facetapi.Facet;
@@ -34,7 +35,6 @@ import org.apache.isis.core.metamodel.facets.DomainEventHelper;
 import org.apache.isis.core.metamodel.facets.SingleValueFacetAbstract;
 import org.apache.isis.core.metamodel.facets.collections.modify.CollectionAddToFacet;
 import org.apache.isis.core.metamodel.facets.propcoll.accessor.PropertyOrCollectionAccessorFacet;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 
 public abstract class CollectionAddToFacetForDomainEventFromAbstract
 extends SingleValueFacetAbstract<Class<? extends CollectionDomainEvent<?,?>>>
@@ -56,7 +56,7 @@ implements CollectionAddToFacet {
                     final PropertyOrCollectionAccessorFacet getterFacet,
                     final CollectionAddToFacet collectionAddToFacet,
                     final CollectionDomainEventFacetAbstract collectionDomainEventFacet,
-                    final ServicesInjector servicesInjector,
+                    final ServiceInjector servicesInjector,
                     final FacetHolder holder) {
         super(type(), eventType, holder);
         this.getterFacet = getterFacet;

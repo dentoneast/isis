@@ -20,8 +20,8 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.queryresultscache.QueryResultsCache;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 
@@ -44,7 +44,7 @@ class TargetRespondListenerToResetQueryResultCache implements AjaxRequestTarget.
         return getServicesInjector().lookupService(QueryResultsCache.class).orElse(null);
     }
 
-    private ServicesInjector getServicesInjector() {
+    private ServiceInjector getServicesInjector() {
         return getSessionFactory().getServicesInjector();
     }
 

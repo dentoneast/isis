@@ -32,11 +32,11 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
 import org.apache.isis.applib.services.i18n.TranslationService;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.commons.internal.base._Blackhole;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.IsisConfiguration;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.ServiceInitializer;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
@@ -63,7 +63,7 @@ import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
  * </p>
  *
  * <p>
- *     The class is only instantiated once; it is also registered with {@link ServicesInjector}, meaning that
+ *     The class is only instantiated once; it is also registered with {@link ServiceInjector}, meaning that
  *     it can be {@link Inject}'d into other domain services.
  * </p>
  */
@@ -74,7 +74,7 @@ public class IsisSessionFactory {
 
     @Inject private IsisConfiguration configuration;
     
-    private ServicesInjector servicesInjector;
+    private ServiceInjector servicesInjector;
     private SpecificationLoader specificationLoader;
     private AuthenticationManager authenticationManager;
     private AuthorizationManager authorizationManager;
@@ -102,11 +102,11 @@ public class IsisSessionFactory {
         IsisSessionFactory sessionFactory = builder.buildSessionFactory(()->this);
     }
     
-    void setServicesInjector(ServicesInjector servicesInjector) {
+    void setServicesInjector(ServiceInjector servicesInjector) {
         this.servicesInjector = servicesInjector;
-        this.specificationLoader = servicesInjector.getSpecificationLoader();
-        this.authenticationManager = servicesInjector.getAuthenticationManager();
-        this.authorizationManager = servicesInjector.getAuthorizationManager();
+        this.specificationLoader = IsisContext.getSpecificationLoader();
+        this.authenticationManager = IsisContext.getAuthenticationManager();
+        this.authorizationManager = IsisContext.getAuthorizationManager();
         this.persistenceSessionFactory = servicesInjector.lookupServiceElseFail(PersistenceSessionFactory.class);
     }
 
@@ -146,7 +146,7 @@ public class IsisSessionFactory {
 
             // (previously we took a protective copy to avoid a concurrent modification exception,
             // but this is now done by SpecificationLoader itself)
-            for (final ObjectSpecification objSpec : servicesInjector.getSpecificationLoader().allSpecifications()) {
+            for (final ObjectSpecification objSpec : IsisContext.getSpecificationLoader().allSpecifications()) {
                 final Class<?> correspondingClass = objSpec.getCorrespondingClass();
                 if(correspondingClass.isEnum()) {
                     final Object[] enumConstants = correspondingClass.getEnumConstants();
@@ -331,10 +331,10 @@ public class IsisSessionFactory {
     // -- component accessors
 
     /**
-     * The {@link ApplicationScopedComponent application-scoped} {@link ServicesInjector}.
+     * The {@link ApplicationScopedComponent application-scoped} {@link ServiceInjector}.
      */
     @Produces @ApplicationScoped
-    public ServicesInjector getServicesInjector() {
+    public ServiceInjector getServicesInjector() {
         return servicesInjector;
     }
 

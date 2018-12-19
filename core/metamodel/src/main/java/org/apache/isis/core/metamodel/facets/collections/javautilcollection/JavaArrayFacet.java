@@ -19,9 +19,6 @@
 
 package org.apache.isis.core.metamodel.facets.collections.javautilcollection;
 
-import static org.apache.isis.commons.internal.base._NullSafe.isEmpty;
-import static org.apache.isis.commons.internal.collections._Arrays.toArray;
-
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -32,13 +29,13 @@ import org.apache.isis.core.metamodel.facets.collections.CollectionFacetAbstract
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 
+import static org.apache.isis.commons.internal.base._NullSafe.isEmpty;
+import static org.apache.isis.commons.internal.collections._Arrays.toArray;
+
 public class JavaArrayFacet extends CollectionFacetAbstract {
 
-    private final ObjectAdapterProvider adapterProvider;
-
-    public JavaArrayFacet(final FacetHolder holder, final ObjectAdapterProvider adapterProvider) {
+    public JavaArrayFacet(final FacetHolder holder) {
         super(holder);
-        this.adapterProvider = adapterProvider;
     }
 
     @Override
@@ -60,8 +57,11 @@ public class JavaArrayFacet extends CollectionFacetAbstract {
         if(isEmpty(array)) {
             return Stream.of();
         }
+        
+        final ObjectAdapterProvider adapterProvider = adapterProvider();
+        
         return Stream.of(array)
-                .map(getObjectAdapterProvider()::adapterFor) //FIXME[ISIS-1976] we always generate an OA here
+                .map(adapterProvider::adapterFor) //FIXME[ISIS-1976] we always generate an OA here
                 .map(x->(T)x);
     }
     
@@ -78,19 +78,6 @@ public class JavaArrayFacet extends CollectionFacetAbstract {
     private Object[] pojoArray(final ManagedObject arrayAdapter) {
         return (Object[]) arrayAdapter.getPojo();
     }
-
-    // /////////////////////////////////////////////////////
-    // Dependencies (from constructor)
-    // /////////////////////////////////////////////////////
-
-    private ObjectAdapterProvider getObjectAdapterProvider() {
-        return adapterProvider;
-    }
-
-
-
-
-
 
 
 }

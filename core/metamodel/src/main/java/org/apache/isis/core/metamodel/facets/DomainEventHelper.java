@@ -34,9 +34,9 @@ import org.apache.isis.applib.events.domain.CollectionDomainEvent;
 import org.apache.isis.applib.events.domain.PropertyDomainEvent;
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.eventbus.EventBusService;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.facetapi.IdentifiedHolder;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.spec.feature.ObjectActionParameter;
@@ -45,10 +45,10 @@ import static org.apache.isis.commons.internal.base._Casts.uncheckedCast;
 
 public class DomainEventHelper {
 
-    private final ServicesInjector servicesInjector;
+    private final ServiceInjector servicesInjector;
 
 
-    public DomainEventHelper(final ServicesInjector servicesInjector) {
+    public DomainEventHelper(final ServiceInjector servicesInjector) {
         this.servicesInjector = servicesInjector;
     }
 

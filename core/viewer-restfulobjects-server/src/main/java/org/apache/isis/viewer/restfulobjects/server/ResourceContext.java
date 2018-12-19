@@ -34,13 +34,13 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Providers;
 
 import org.apache.isis.applib.annotation.Where;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.collections._Sets;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
@@ -67,7 +67,7 @@ public class ResourceContext implements RendererContext {
     private final SecurityContext securityContext;
 
     private final IsisConfiguration configuration;
-    private final ServicesInjector servicesInjector;
+    private final ServiceInjector servicesInjector;
     private final SpecificationLoader specificationLoader;
     private final AuthenticationSession authenticationSession;
     private final PersistenceSession persistenceSession;
@@ -266,7 +266,7 @@ public class ResourceContext implements RendererContext {
     }
 
     @Override
-    public ServicesInjector getServicesInjector() {
+    public ServiceInjector getServicesInjector() {
         return servicesInjector;
     }
 

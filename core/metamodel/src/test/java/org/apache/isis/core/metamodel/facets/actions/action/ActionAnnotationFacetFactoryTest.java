@@ -122,8 +122,6 @@ public class ActionAnnotationFacetFactoryTest extends AbstractFacetFactoryJUnit4
         }});
 
         actionMethod = findMethod(Customer.class, "someAction");
-
-        facetFactory.setServicesInjector(mockServicesInjector);
     }
 
     @After

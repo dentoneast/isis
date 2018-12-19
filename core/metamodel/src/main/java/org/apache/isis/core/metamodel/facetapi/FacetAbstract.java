@@ -24,11 +24,12 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.apache.isis.core.commons.ensure.Ensure;
+import org.apache.isis.core.metamodel.MetaModelContext;
 
 import static org.apache.isis.commons.internal.base._With.requires;
 
 
-public abstract class FacetAbstract implements Facet {
+public abstract class FacetAbstract implements Facet, MetaModelContext.Delegating {
 
     public enum Derivation {
         DERIVED,
@@ -230,5 +231,13 @@ public abstract class FacetAbstract implements Facet {
      */
     public static interface Validating {
     }
+    
+    // -- dependencies
+    
+    @Override
+    public MetaModelContext getMetaModelContext() {
+        return MetaModelContext.current();
+    }
+   
 
 }

@@ -41,7 +41,6 @@ import org.apache.isis.core.metamodel.interactions.ValidityContext;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
-import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 
 /**
@@ -68,12 +67,10 @@ implements ChoicesFacet, DisablingInteractionAdvisor, ValidatingInteractionAdvis
     private final PersistenceSessionServiceInternal persistenceSessionServiceInternal;
 
     public ChoicesFacetFromBoundedAbstract(
-            final FacetHolder holder,
-            final AuthenticationSessionProvider authenticationSessionProvider,
-            final PersistenceSessionServiceInternal persistenceSessionServiceInternal) {
+            final FacetHolder holder) {
         super(type(), holder, Derivation.NOT_DERIVED);
-        this.authenticationSessionProvider = authenticationSessionProvider;
-        this.persistenceSessionServiceInternal = persistenceSessionServiceInternal;
+        this.authenticationSessionProvider = getAuthenticationSessionProvider();
+        this.persistenceSessionServiceInternal = (PersistenceSessionServiceInternal) adapterProvider();
     }
 
     public PersistenceSessionServiceInternal getPersistenceSessionService() {
@@ -133,7 +130,4 @@ implements ChoicesFacet, DisablingInteractionAdvisor, ValidatingInteractionAdvis
                 .collect(_Arrays.toArray(Object.class, _NullSafe.size(adapters)));
     }
 
-    protected AuthenticationSession getAuthenticationSession() {
-        return authenticationSessionProvider.getAuthenticationSession();
-    }
 }

@@ -19,8 +19,6 @@
 
 package org.apache.isis.core.metamodel.specloader.specimpl.standalonelist;
 
-import static org.apache.isis.commons.internal.base._With.mapIfPresentElse;
-
 import java.util.List;
 
 import org.apache.isis.commons.internal.base._Lazy;
@@ -28,7 +26,6 @@ import org.apache.isis.core.metamodel.facetapi.FacetUtil;
 import org.apache.isis.core.metamodel.facets.actcoll.typeof.TypeOfFacet;
 import org.apache.isis.core.metamodel.facets.actcoll.typeof.TypeOfFacetDefaultToObject;
 import org.apache.isis.core.metamodel.facets.object.objectspecid.classname.ObjectSpecIdFacetOnStandaloneList;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.ActionType;
 import org.apache.isis.core.metamodel.spec.ElementSpecificationProvider;
 import org.apache.isis.core.metamodel.spec.FreeStandingList;
@@ -39,6 +36,8 @@ import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAssociation;
 import org.apache.isis.core.metamodel.specloader.facetprocessor.FacetProcessor;
 import org.apache.isis.core.metamodel.specloader.specimpl.ObjectSpecificationAbstract;
+
+import static org.apache.isis.commons.internal.base._With.mapIfPresentElse;
 
 /**
  * A custom {@link ObjectSpecification} that is designed to treat the
@@ -52,10 +51,8 @@ public class ObjectSpecificationOnStandaloneList extends ObjectSpecificationAbst
 
     // -- constructor
 
-    public ObjectSpecificationOnStandaloneList(
-            final ServicesInjector servicesInjector,
-            final FacetProcessor facetProcessor) {
-        super(FreeStandingList.class, NAME, servicesInjector, facetProcessor);
+    public ObjectSpecificationOnStandaloneList(final FacetProcessor facetProcessor) {
+        super(FreeStandingList.class, NAME, facetProcessor);
         this.specId = ObjectSpecId.of(getCorrespondingClass().getName());
     }
 
@@ -68,7 +65,7 @@ public class ObjectSpecificationOnStandaloneList extends ObjectSpecificationAbst
         updateSuperclass(Object.class);
 
         addFacet(new CollectionFacetOnStandaloneList(this));
-        addFacet(new TypeOfFacetDefaultToObject(this, getSpecificationLoader()) {
+        addFacet(new TypeOfFacetDefaultToObject(this) {
         });
 
         // ObjectList specific

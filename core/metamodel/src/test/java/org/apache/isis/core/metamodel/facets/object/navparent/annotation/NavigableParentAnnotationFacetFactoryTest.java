@@ -55,7 +55,6 @@ public class NavigableParentAnnotationFacetFactoryTest extends AbstractFacetFact
         context.allowing(mockSpecificationLoader);
 
         facetFactory = new NavigableParentAnnotationFacetFactory();
-        facetFactory.setServicesInjector(mockServicesInjector);
 
         context.checking(new Expectations() {
             {
@@ -65,15 +64,13 @@ public class NavigableParentAnnotationFacetFactoryTest extends AbstractFacetFact
                 allowing(mockAuthenticationSessionProvider).getAuthenticationSession();
                 will(returnValue(mockAuthenticationSession));
 
-                allowing(mockServicesInjector).getSpecificationLoader();
-                will(returnValue(mockSpecificationLoader));
-
-                allowing(mockServicesInjector).getPersistenceSessionServiceInternal();
-                will(returnValue(mockPersistenceSessionServiceInternal));
+//                allowing(mockServicesInjector).getSpecificationLoader();
+//                will(returnValue(mockSpecificationLoader));
+//
+//                allowing(mockServicesInjector).getPersistenceSessionServiceInternal();
+//                will(returnValue(mockPersistenceSessionServiceInternal));
             }
         });
-
-        facetFactory.setServicesInjector(mockServicesInjector);
 
     }
 

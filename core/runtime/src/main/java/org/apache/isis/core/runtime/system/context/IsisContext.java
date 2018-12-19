@@ -28,13 +28,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 import org.apache.isis.applib.AppManifest;
+import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.ConfigurationConstants;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidException;
 import org.apache.isis.core.plugins.environment.IsisSystemEnvironment;
@@ -42,6 +43,8 @@ import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
+import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
+import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
 
 /**
  * Provides static access to current context's singletons
@@ -111,57 +114,13 @@ public interface IsisContext {
     }
 
     // -- CONVENIENT SHORTCUTS
-
-    /**
-     * @return framework's current PersistenceSession (if any)
-     * @throws IllegalStateException - if IsisSessionFactory not initialized
-     */
-    public static Optional<PersistenceSession> getPersistenceSession() {
-        return Optional.ofNullable(getSessionFactory().getCurrentSession())
-                .map(IsisSession::getPersistenceSession);
-    }
     
-    /**
-     * @return framework's current AuthenticationSession (if any)
-     * @throws IllegalStateException - if IsisSessionFactory not initialized
-     */
-    public static Optional<AuthenticationSession> getAuthenticationSession() {
-        return Optional.ofNullable(getSessionFactory().getCurrentSession())
-                .map(IsisSession::getAuthenticationSession);
-    }
-
     /**
      * @return framework's IsisConfiguration
      * @throws NoSuchElementException - if IsisConfiguration not managed
      */
     public static IsisConfiguration getConfiguration() {
         return _Config.getConfiguration(); // currently not utilizing CDI, to support unit testing
-    }
-
-    /**
-     * @return framework's SpecificationLoader
-     * @throws NoSuchElementException - if SpecificationLoader not managed
-     */
-    public static SpecificationLoader getSpecificationLoader() {
-        return _CDI.getManagedBean(SpecificationLoader.class).get();
-    }
-
-    /**
-     * @return framework's ServicesInjector
-     * @throws NoSuchElementException - if ServicesInjector not managed
-     */
-    public static ServicesInjector getServicesInjector() {
-        return _CDI.getManagedBean(ServicesInjector.class).get();
-    }
-    
-    /**
-     * @return framework's IsisSessionFactory
-     * @throws NoSuchElementException - if IsisSessionFactory not resolvable
-     */
-    public static IsisSessionFactory getSessionFactory() {
-        // first lookup CDI, then lookup _Context; the later to support unit testing 
-        return _CDI.getManagedBean(IsisSessionFactory.class)
-                .orElseGet(()->_Context.getOrThrow(IsisSessionFactory.class, NoSuchElementException::new));
     }
     
     /**
@@ -170,6 +129,72 @@ public interface IsisContext {
      */
     public static AppManifest getAppManifest() {
         return Objects.requireNonNull(getConfiguration().getAppManifest()); 
+    }
+
+    /**
+     * @return framework's SpecificationLoader
+     * @throws NoSuchElementException - if SpecificationLoader not managed
+     */
+    public static SpecificationLoader getSpecificationLoader() {
+        return _CDI.getSingleton(SpecificationLoader.class);
+    }
+
+    /**
+     * @return framework's ServicesInjector
+     * @throws NoSuchElementException - if ServicesInjector not managed
+     */
+    public static ServiceInjector getServicesInjector() {
+        return _CDI.getSingleton(ServiceInjector.class);
+    }
+    
+    /**
+     * @return framework's ServiceRegistry
+     * @throws NoSuchElementException - if ServiceRegistry not managed
+     */
+    public static ServiceRegistry getServiceRegistry() {
+        return _CDI.getSingleton(ServiceRegistry.class);
+    }
+    
+    /**
+     * @return framework's IsisSessionFactory
+     * @throws NoSuchElementException - if IsisSessionFactory not resolvable
+     */
+    public static IsisSessionFactory getSessionFactory() {
+        return _CDI.getSingleton(IsisSessionFactory.class);
+    }
+    
+    /**
+     * @return framework's current IsisSession (if any)
+     * @throws IllegalStateException - if IsisSessionFactory not resolvable
+     */
+    public static Optional<IsisSession> getCurrentIsisSession() {
+        return Optional.ofNullable(getSessionFactory().getCurrentSession());
+    }
+
+    /**
+     * @return framework's current PersistenceSession (if any)
+     * @throws IllegalStateException - if IsisSessionFactory not resolvable
+     */
+    public static Optional<PersistenceSession> getPersistenceSession() {
+        return getCurrentIsisSession()
+                .map(IsisSession::getPersistenceSession);
+    }
+    
+    /**
+     * @return framework's current AuthenticationSession (if any)
+     * @throws IllegalStateException - if IsisSessionFactory not resolvable
+     */
+    public static Optional<AuthenticationSession> getAuthenticationSession() {
+        return getCurrentIsisSession()
+                .map(IsisSession::getAuthenticationSession);
+    }
+
+    public static AuthenticationManager getAuthenticationManager() {
+        return _CDI.getSingleton(AuthenticationManager.class);
+    }
+
+    public static AuthorizationManager getAuthorizationManager() {
+        return _CDI.getSingleton(AuthorizationManager.class);
     }
     
     // -- 
@@ -206,9 +231,6 @@ public interface IsisContext {
         
         return sb;
     }
-
-
-
 
 
 

@@ -22,6 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.List;
 
 import org.jmock.Expectations;
@@ -36,6 +37,8 @@ import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;
 
 import org.apache.isis.commons.internal.base._Casts;
+import org.apache.isis.commons.internal.base._NullSafe;
+import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.core.plugins.environment.IsisSystemEnvironment;
 
 import static java.lang.annotation.ElementType.FIELD;
@@ -215,6 +218,15 @@ public class JUnitRuleMockery2 extends JUnit4Mockery implements MethodRule {
         return _Casts.uncheckedCast( container.getComponent(cutType) );
     }
 
+    
+    @Override
+    public <T> T mock(Class<T> typeToMock, String name) {
+        final T mock = super.mock(typeToMock, name);
+        
+        _Context.putSingleton(typeToMock, mock);
+        
+        return mock;
+    }
 
     /**
      * Ignoring any interaction with the mock; an allowing/ignoring mock will be
@@ -306,6 +318,20 @@ public class JUnitRuleMockery2 extends JUnit4Mockery implements MethodRule {
         } catch (Exception e) {
             throw new AssertionFailedError("Unable to instantiate expectations class '" + expectationsClass.getName() + "'");
         }
+    }
+
+    public void putAll(Collection<?> mockedServices) {
+        _NullSafe.stream(mockedServices)
+        .forEach(this::put);
+    }
+
+    public <T> T put(T mockedService) {
+        return put(_Casts.uncheckedCast(mockedService.getClass()), mockedService);
+    }
+
+    public <T> T put(Class<T> type, T mockedService) {
+        _Context.putSingleton(type, mockedService);
+        return mockedService;
     }
 
 

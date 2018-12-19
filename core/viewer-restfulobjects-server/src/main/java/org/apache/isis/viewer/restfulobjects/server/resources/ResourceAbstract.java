@@ -32,11 +32,11 @@ import javax.ws.rs.ext.Providers;
 import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.command.CommandContext;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.commons.url.UrlDecoderUtil;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
@@ -166,7 +166,7 @@ public abstract class ResourceAbstract {
         return IsisContext.getConfiguration();
     }
 
-    protected ServicesInjector getServicesInjector () {
+    protected ServiceInjector getServicesInjector () {
         return getIsisSessionFactory().getServicesInjector();
     }
 

@@ -399,7 +399,7 @@ public class FacetedMethodsBuilder {
             return null;
         }
 
-        final FacetedMethod action = FacetedMethod.createForAction(introspectedClass, actionMethod, getSpecificationLoader());
+        final FacetedMethod action = FacetedMethod.createForAction(introspectedClass, actionMethod);
 
         // process facets on the action & parameters
         getFacetProcessor().process(introspectedClass, actionMethod, methodRemover, action, FeatureType.ACTION);

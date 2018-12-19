@@ -19,7 +19,9 @@
 package org.apache.isis.commons.internal.cdi;
 
 import java.lang.annotation.Annotation;
+import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -30,6 +32,7 @@ import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.inject.spi.CDIProvider;
 import javax.inject.Qualifier;
 
+import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.commons.internal.functions._Functions.CheckedRunnable;
@@ -145,6 +148,38 @@ public final class _CDI {
             return false;
         }
         return annotation.annotationType().getAnnotationsByType(Qualifier.class).length>0;
+    }
+    
+    // -- GENERIC SINGLETON RESOLVING
+    
+    /**
+     * @return framework's managed singleton
+     * @throws NoSuchElementException - if the singleton is not resolvable
+     */
+    public static <T> T getSingleton(Class<T> type) {
+        // first lookup CDI, then lookup _Context; the latter to support unit testing 
+        return _CDI.getManagedBean(type)
+                .orElseGet(()->getMockedSingleton(type));
+    }
+        
+    // -- UNIT TESTING SUPPORT
+    
+//    public static void putMockedSingletons(Collection<?> mockedServices) {
+//        stream(mockedServices)
+//        .forEach(_CDI::putMockedSingleton);
+//    }
+//    
+//    public static <T> T putMockedSingleton(T mockedService) {
+//        return putMockedSingleton(_Casts.uncheckedCast(mockedService.getClass()), mockedService);
+//    }
+//    
+//    public static <T> T putMockedSingleton(Class<T> type, T mockedService) {
+//        _Context.putSingleton(type, mockedService);
+//        return mockedService;
+//    }
+    
+    private static <T> T getMockedSingleton(Class<T> type) {
+        return _Context.getOrThrow(type, NoSuchElementException::new);
     }
     
     // -- HELPER

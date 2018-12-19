@@ -18,8 +18,6 @@
  */
 package org.apache.isis.core.runtime.system.persistence.adaptermanager;
 
-import static org.apache.isis.commons.internal.base._With.requires;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,19 +26,22 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.core.commons.ensure.Assert;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.services.ServiceUtil;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.persistence.adaptermanager.factories.OidFactory;
+
+import static org.apache.isis.commons.internal.base._With.requires;
 
 /**
  * package private mixin for ObjectAdapterContext
@@ -55,16 +56,19 @@ class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvide
     private static final Logger LOG = LoggerFactory.getLogger(ObjectAdapterContext_ObjectAdapterProvider.class);
     private final ObjectAdapterContext objectAdapterContext;
 //    private final PersistenceSession persistenceSession;
-    private final ServicesInjector servicesInjector;
+    private final ServiceInjector servicesInjector;
     private final SpecificationLoader specificationLoader; 
     private final OidFactory oidFactory; 
     
-    ObjectAdapterContext_ObjectAdapterProvider(ObjectAdapterContext objectAdapterContext,
+    ObjectAdapterContext_ObjectAdapterProvider(
+            ObjectAdapterContext objectAdapterContext,
+            MetaModelContext metaModelContext,
             PersistenceSession persistenceSession) {
+        
         this.objectAdapterContext = objectAdapterContext;
 //        this.persistenceSession = persistenceSession;
         this.servicesInjector = persistenceSession.getServicesInjector();
-        this.specificationLoader = servicesInjector.getSpecificationLoader();
+        this.specificationLoader = metaModelContext.getSpecificationLoader();
         
         this.oidFactory = OidFactory.builder(pojo->specificationLoader.loadSpecification(pojo.getClass()))
                 .add(new ObjectAdapterContext_OidProviders.GuardAgainstRootOid())

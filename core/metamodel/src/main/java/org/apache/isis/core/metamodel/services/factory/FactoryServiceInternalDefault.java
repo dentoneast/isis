@@ -28,7 +28,7 @@ import javax.inject.Inject;
 import org.apache.isis.applib.NonRecoverableException;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.factory.FactoryService;
-import org.apache.isis.applib.services.registry.ServiceRegistry;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.facets.object.mixin.MixinFacet;
@@ -82,7 +82,7 @@ public class FactoryServiceInternalDefault implements FactoryService {
                 final Object mixin;
                 try {
                     mixin = constructor.newInstance(mixedIn);
-                    return _Casts.uncheckedCast(serviceRegistry.injectServicesInto(mixin));
+                    return _Casts.uncheckedCast(serviceInjector.injectServicesInto(mixin));
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                     throw new NonRecoverableException(e);
                 }
@@ -94,7 +94,7 @@ public class FactoryServiceInternalDefault implements FactoryService {
     }
 
     @Inject SpecificationLoader specificationLoader;
-    @Inject ServiceRegistry serviceRegistry;
+    @Inject ServiceInjector serviceInjector;
     @Inject PersistenceSessionServiceInternal persistenceSessionServiceInternal;
 
 }

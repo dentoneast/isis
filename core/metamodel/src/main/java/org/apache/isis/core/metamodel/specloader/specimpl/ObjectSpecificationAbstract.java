@@ -42,6 +42,7 @@ import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.core.commons.exceptions.UnknownTypeException;
 import org.apache.isis.core.commons.lang.ClassExtensions;
 import org.apache.isis.core.commons.util.ToString;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.consent.Consent;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.consent.InteractionResult;
@@ -73,7 +74,6 @@ import org.apache.isis.core.metamodel.interactions.InteractionUtils;
 import org.apache.isis.core.metamodel.interactions.ObjectTitleContext;
 import org.apache.isis.core.metamodel.interactions.ObjectValidityContext;
 import org.apache.isis.core.metamodel.layout.DeweyOrderSet;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.ActionType;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
@@ -118,8 +118,9 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
 
     // -- fields
 
-    protected final ServicesInjector servicesInjector;
+    //protected final ServiceInjector servicesInjector;
 
+    private final MetaModelContext context;
     private final SpecificationLoader specificationLoader;
     private final FacetProcessor facetProcessor;
 
@@ -157,13 +158,11 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
     private CssClassFacet cssClassFacet;
 
     private IntrospectionState introspected = IntrospectionState.NOT_INTROSPECTED;
-
-
+    
     // -- Constructor
     public ObjectSpecificationAbstract(
             final Class<?> introspectedClass,
             final String shortName,
-            final ServicesInjector servicesInjector,
             final FacetProcessor facetProcessor) {
 
         this.correspondingClass = introspectedClass;
@@ -173,10 +172,9 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
         this.isAbstract = ClassExtensions.isAbstract(introspectedClass);
         this.identifier = Identifier.classIdentifier(introspectedClass);
 
-        this.servicesInjector = servicesInjector;
         this.facetProcessor = facetProcessor;
-
-        this.specificationLoader = servicesInjector.getSpecificationLoader();
+        this.context = MetaModelContext.current();
+        this.specificationLoader = context.getSpecificationLoader();
     }
 
     // -- Stuff immediately derivable from class
@@ -743,7 +741,7 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
     }
 
     private Stream<Object> streamServicePojos() {
-        return getServicesInjector().streamServices();
+        return context.getServiceRegistry().streamServices();
     }
 
     // -- contributee associations (properties and collections)
@@ -823,11 +821,9 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
                     final ObjectActionDefault input,
                     final ObjectSpecification returnType) {
                 if (returnType.isNotCollection()) {
-                    return new OneToOneAssociationContributee(servicePojo, input, contributeeType,
-                            servicesInjector);
+                    return new OneToOneAssociationContributee(servicePojo, input, contributeeType);
                 } else {
-                    return new OneToManyAssociationContributee(servicePojo, input, contributeeType,
-                            servicesInjector);
+                    return new OneToManyAssociationContributee(servicePojo, input, contributeeType);
                 }
             }
         };
@@ -914,10 +910,10 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
                 final ObjectSpecification returnType = mixinAction.getReturnType();
                 if (returnType.isNotCollection()) {
                     return new OneToOneAssociationMixedIn(
-                            mixinAction, mixedInType, mixinType, mixinMethodName, servicesInjector);
+                            mixinAction, mixedInType, mixinType, mixinMethodName);
                 } else {
                     return new OneToManyAssociationMixedIn(
-                            mixinAction, mixedInType, mixinType, mixinMethodName, servicesInjector);
+                            mixinAction, mixedInType, mixinType, mixinMethodName);
                 }
             }
         };
@@ -981,8 +977,7 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
             }
             
             ObjectActionContributee contributeeAction =
-                    new ObjectActionContributee(servicePojo, contributedAction, contributeeParam, this,
-                            servicesInjector);
+                    new ObjectActionContributee(servicePojo, contributedAction, contributeeParam, this);
             facetProcessor.processMemberOrder(contributeeAction);
             contributeeActionsToAppendTo.add(contributeeAction);
         });
@@ -1074,7 +1069,7 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
         .filter(this::canAddMixin)
         .forEach(mixinTypeAction->{
             ObjectActionMixedIn mixedInAction =
-                    new ObjectActionMixedIn(mixinType, mixinFacet.value(), (ObjectActionDefault)mixinTypeAction, this, servicesInjector);
+                    new ObjectActionMixedIn(mixinType, mixinFacet.value(), (ObjectActionDefault)mixinTypeAction, this);
             facetProcessor.processMemberOrder(mixedInAction);
             mixedInActionsToAppendTo.add(mixedInAction);
         });
@@ -1220,15 +1215,8 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
         }
     }
 
-    // -- Dependencies (injected in constructor)
-    private ServicesInjector getServicesInjector() {
-        return servicesInjector;
-    }
-
     protected SpecificationLoader getSpecificationLoader() {
         return specificationLoader;
     }
-
-
 
 }

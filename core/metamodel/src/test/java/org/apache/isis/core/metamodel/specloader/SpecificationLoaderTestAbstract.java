@@ -30,6 +30,7 @@ import org.junit.rules.ExpectedException;
 
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.services.grid.GridService;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.message.MessageService;
 import org.apache.isis.commons.internal.collections._Sets;
 import org.apache.isis.core.metamodel.facetapi.Facet;
@@ -40,7 +41,6 @@ import org.apache.isis.core.metamodel.facets.collections.modify.CollectionFacet;
 import org.apache.isis.core.metamodel.facets.object.plural.PluralFacet;
 import org.apache.isis.core.metamodel.metamodelvalidator.dflt.MetaModelValidatorDefault;
 import org.apache.isis.core.metamodel.progmodel.ProgrammingModelAbstract.DeprecatedPolicy;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
@@ -65,7 +65,7 @@ public abstract class SpecificationLoaderTestAbstract {
     @Mock
     private MessageService mockMessageService;
     
-    ServicesInjector stubServicesInjector;
+    ServiceInjector stubServicesInjector;
 
     // is loaded by subclasses
     protected ObjectSpecification specification;
@@ -87,18 +87,11 @@ public abstract class SpecificationLoaderTestAbstract {
 
         }});
 
-        stubServicesInjector = ServicesInjector.builderForTesting()
-                    .addService(mockAuthenticationSessionProvider)
-                    .addService(mockPersistenceSessionServiceInternal)
-                    .addService(mockMessageService)
-                    .addService(mockGridService)
-                    .build();
-
         specificationLoader = new SpecificationLoader(
                 new ProgrammingModelFacetsJava5(DeprecatedPolicy.HONOUR),
-                new MetaModelValidatorDefault(), stubServicesInjector);
+                new MetaModelValidatorDefault());
 
-        stubServicesInjector.addFallbackIfRequired(SpecificationLoader.class, specificationLoader);
+        context.put(specificationLoader);
 
         AppManifest.Registry.instance().setDomainServiceTypes(_Sets.newHashSet());
         AppManifest.Registry.instance().setFixtureScriptTypes(_Sets.newHashSet());

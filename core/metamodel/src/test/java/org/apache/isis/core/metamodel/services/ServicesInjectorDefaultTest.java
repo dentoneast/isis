@@ -30,8 +30,11 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.repository.RepositoryService;
 import org.apache.isis.config.builder.IsisConfigurationBuilder;
+import org.apache.isis.core.metamodel.services.registry.ServiceRegistryBuilder_forTesting;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2.Mode;
 
@@ -51,7 +54,8 @@ public class ServicesInjectorDefaultTest {
     
     protected IsisConfigurationBuilder configurationBuilderForTesting;
 
-    private ServicesInjector injector;
+    private ServiceInjector injector;
+    private ServiceRegistry registry;
 
     public static interface Service1 {
     }
@@ -75,11 +79,16 @@ public class ServicesInjectorDefaultTest {
     @Before
     public void setUp() throws Exception {
 
-        injector = ServicesInjector.builderForTesting()
+        registry = ServiceRegistryBuilder_forTesting.of(context)
                 .addService(mockRepository)
                 .addService(mockService1)
                 .addService(mockService2)
+                .build();
+        
+        injector = ServiceInjectorBuilder_forTesting.of(context)
+                .serviceRegistry(registry)
         		.build();
+        
     }
 
     @After
@@ -103,7 +112,7 @@ public class ServicesInjectorDefaultTest {
     
     @Test
     public void shouldStreamRegisteredServices() {
-        List<Class<?>> registeredServices = injector.streamServiceTypes().collect(Collectors.toList());
+        List<Class<?>> registeredServices = registry.streamServiceTypes().collect(Collectors.toList());
         Assert.assertTrue(registeredServices.size()>=3);
     }
 

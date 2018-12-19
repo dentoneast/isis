@@ -23,7 +23,7 @@ import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.command.CommandContext;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.runtime.headless.HeadlessTransactionSupport;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
@@ -156,7 +156,7 @@ public class HeadlessTransactionSupportDefault implements HeadlessTransactionSup
     // -- getService
 
     private <C> C getService(Class<C> serviceClass) {
-        final ServicesInjector servicesInjector = isisSessionFactory().getServicesInjector();
+        final ServiceInjector servicesInjector = isisSessionFactory().getServicesInjector();
         return servicesInjector.lookupServiceElseFail(serviceClass);
     }
 

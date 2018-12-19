@@ -32,16 +32,13 @@ import org.slf4j.LoggerFactory;
 
 import org.apache.isis.applib.clock.Clock;
 import org.apache.isis.applib.fixtures.FixtureClock;
-import org.apache.isis.applib.fixturescripts.FixtureScripts;
-import org.apache.isis.applib.services.confview.ConfigurationViewService;
-import org.apache.isis.applib.services.fixturespec.FixtureScriptsDefault;
+import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
-import org.apache.isis.config.services.view.ConfigurationViewServiceDefault;
 import org.apache.isis.core.commons.lang.ListExtensions;
 import org.apache.isis.core.metamodel.facetapi.MetaModelRefiner;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidException;
 import org.apache.isis.core.runtime.system.IsisSystemException;
@@ -99,38 +96,22 @@ public class IsisSessionFactoryBuilder {
         IsisSessionFactory isisSessionFactory;
         try {
 
-            // everything added to ServicesInjector will be able to @javax.inject.Inject'ed
-            // the IsisSessionFactory will look up each of these components from the ServicesInjector
-
-            final ServicesInjector servicesInjector = componentProvider.provideServiceInjector();
-
-            // ConfigurationService
-            servicesInjector.addFallbackIfRequired(ConfigurationViewService.class, new ConfigurationViewServiceDefault());
-            
-            // fixtureScripts
-            servicesInjector.addFallbackIfRequired(FixtureScripts.class, new FixtureScriptsDefault());
-
-            // authentication
+            final ServiceRegistry servicesRegistry = IsisContext.getServiceRegistry();
+            final ServiceInjector servicesInjector = IsisContext.getServicesInjector();
             final AuthenticationManager authenticationManager = componentProvider.provideAuthenticationManager();
-            servicesInjector.addFallbackIfRequired(AuthenticationManager.class, authenticationManager);
-
-            // authorization
             final AuthorizationManager authorizationManager = componentProvider.provideAuthorizationManager();
-            servicesInjector.addFallbackIfRequired(AuthorizationManager.class, authorizationManager);
 
             // specificationLoader
             final Collection<MetaModelRefiner> metaModelRefiners = refiners(
                     authenticationManager, authorizationManager, new PersistenceSessionFactoryMetamodelRefiner());
+            
             final SpecificationLoader specificationLoader =
-                    componentProvider.provideSpecificationLoader(servicesInjector, metaModelRefiners);
-            servicesInjector.addFallbackIfRequired(SpecificationLoader.class, specificationLoader);
+                    componentProvider.provideSpecificationLoader(metaModelRefiners);
 
             // persistenceSessionFactory
-            final PersistenceSessionFactory persistenceSessionFactory = PersistenceSessionFactory.get(/*configuration*/);
-            servicesInjector.addFallbackIfRequired(PersistenceSessionFactory.class, persistenceSessionFactory);
+            final PersistenceSessionFactory persistenceSessionFactory = PersistenceSessionFactory.get();
 
-
-            servicesInjector.validateServices();
+            servicesRegistry.validateServices();
 
             // instantiate or reuse the IsisSessionFactory
             isisSessionFactory = sfInstanceSupplier.get();

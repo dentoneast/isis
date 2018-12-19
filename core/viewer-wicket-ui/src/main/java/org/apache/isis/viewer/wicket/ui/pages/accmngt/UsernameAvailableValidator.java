@@ -21,8 +21,9 @@ package org.apache.isis.viewer.wicket.ui.pages.accmngt;
 import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.IValidator;
 import org.apache.wicket.validation.ValidationError;
+
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.userreg.UserRegistrationService;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 
@@ -53,7 +54,7 @@ public class UsernameAvailableValidator implements IValidator<String> {
 
     }
 
-    ServicesInjector getServicesInjector() {
+    ServiceInjector getServicesInjector() {
         return getIsisSessionFactory().getServicesInjector();
     }
 

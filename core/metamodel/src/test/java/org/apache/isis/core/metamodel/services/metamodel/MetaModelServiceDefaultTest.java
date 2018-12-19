@@ -39,13 +39,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import org.apache.isis.applib.Identifier;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.metamodel.DomainMember;
 import org.apache.isis.applib.services.metamodel.DomainModel;
 import org.apache.isis.commons.internal.base._Casts;
+import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.facetapi.Facet;
 import org.apache.isis.core.metamodel.facets.FacetedMethod;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.spec.Hierarchical.Depth;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
@@ -57,7 +58,7 @@ import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2.Mode;
 
 class MetaModelServiceDefaultTest {
 
-    ServicesInjector stubServicesInjector;
+    ServiceInjector stubServicesInjector;
     MetaModelServiceDefault mockMetaModelService;
     SpecificationLoader specificationLoader;
     ObjectAction action;
@@ -71,17 +72,12 @@ class MetaModelServiceDefaultTest {
         
         JUnitRuleMockery2 context = JUnitRuleMockery2.createFor(Mode.INTERFACES_AND_CLASSES);
         
-        stubServicesInjector =
-                ServicesInjector.builderForTesting()
-                .addServices(_Lists.of(context.mock(
-                        PersistenceSessionServiceInternal.class
-                        )))
-                .build();
-        
+        context.mock(PersistenceSessionServiceInternal.class);
+                
         specificationLoader = 
-                new SpecificationLoader(null, null, stubServicesInjector);
+                new SpecificationLoader(null, null);
         
-        stubServicesInjector.addFallbackIfRequired(SpecificationLoader.class, specificationLoader);
+        context.put(specificationLoader);
         
         mockFacetedMethod = context.mock(FacetedMethod.class);
         Matcher<Class<? extends Facet>> facetMatcher = _Casts.uncheckedCast(Matchers.any(Class.class));
@@ -112,7 +108,7 @@ class MetaModelServiceDefaultTest {
             }
         });
         
-        action = new ObjectActionDefault(mockFacetedMethod, stubServicesInjector);
+        action = new ObjectActionDefault(mockFacetedMethod);
         
         mockMetaModelService = context.mock(MetaModelServiceDefault.class);
         context.checking(new Expectations() {

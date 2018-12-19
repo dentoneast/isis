@@ -38,11 +38,11 @@ import javax.jdo.query.BooleanExpression;
 
 import org.apache.isis.applib.FatalException;
 import org.apache.isis.applib.annotation.Programmatic;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.runtime.persistence.ObjectPersistenceException;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
@@ -219,7 +219,7 @@ public class IsisJdoSupportDN5 implements IsisJdoSupport_v3_2 {
         return isisSessionFactory.getCurrentSession().getPersistenceSession();
     }
 
-    protected ServicesInjector getServicesInjector() {
+    protected ServiceInjector getServicesInjector() {
         return isisSessionFactory.getServicesInjector();
     }
 

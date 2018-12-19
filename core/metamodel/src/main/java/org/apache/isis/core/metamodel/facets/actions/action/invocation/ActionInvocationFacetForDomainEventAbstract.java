@@ -46,6 +46,7 @@ import org.apache.isis.applib.services.command.CommandContext;
 import org.apache.isis.applib.services.command.spi.CommandService;
 import org.apache.isis.applib.services.iactn.Interaction;
 import org.apache.isis.applib.services.iactn.InteractionContext;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.metamodel.MetaModelService;
 import org.apache.isis.applib.services.metamodel.MetaModelService.Mode;
 import org.apache.isis.applib.services.queryresultscache.QueryResultsCache;
@@ -54,8 +55,6 @@ import org.apache.isis.applib.services.xactn.TransactionService;
 import org.apache.isis.applib.services.xactn.TransactionState;
 import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.base._Strings;
-import org.apache.isis.config.IsisConfiguration;
-import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.commons.lang.ArrayExtensions;
 import org.apache.isis.core.commons.lang.MethodInvocationPreprocessor;
@@ -71,13 +70,11 @@ import org.apache.isis.core.metamodel.facets.actions.publish.PublishedActionFace
 import org.apache.isis.core.metamodel.facets.actions.semantics.ActionSemanticsFacet;
 import org.apache.isis.core.metamodel.facets.collections.modify.CollectionFacet;
 import org.apache.isis.core.metamodel.facets.object.viewmodel.ViewModelFacet;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.services.ixn.InteractionDtoServiceInternal;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.services.publishing.PublishingServiceInternal;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
-import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 import org.apache.isis.schema.ixn.v1.ActionInvocationDto;
 
@@ -95,11 +92,11 @@ implements ImperativeFacet {
     private final ObjectSpecification onType;
     private final ObjectSpecification returnType;
 
-    private final PersistenceSessionServiceInternal persistenceSessionServiceInternal;
+    private final ObjectAdapterProvider objectAdapterProvider;
     private final AuthenticationSessionProvider authenticationSessionProvider;
 
-    private final ServicesInjector servicesInjector;
-    private final IsisConfiguration configuration;
+    private final ServiceInjector servicesInjector;
+    
     private final Class<? extends ActionDomainEvent<?>> eventType;
     private final DomainEventHelper domainEventHelper;
 
@@ -108,17 +105,15 @@ implements ImperativeFacet {
                     final Method method,
                     final ObjectSpecification onType,
                     final ObjectSpecification returnType,
-                    final FacetHolder holder,
-                    final ServicesInjector servicesInjector) {
+                    final FacetHolder holder) {
         super(holder);
         this.eventType = eventType;
         this.method = method;
         this.onType = onType;
         this.returnType = returnType;
-        this.authenticationSessionProvider = servicesInjector.getAuthenticationSessionProvider();
-        this.persistenceSessionServiceInternal = servicesInjector.getPersistenceSessionServiceInternal();
-        this.servicesInjector = servicesInjector;
-        this.configuration = _Config.getConfiguration();
+        this.objectAdapterProvider = getObjectAdapterProvider();
+        this.authenticationSessionProvider = getAuthenticationSessionProvider();
+        this.servicesInjector = getServiceInjector();
         this.domainEventHelper = new DomainEventHelper(this.servicesInjector);
     }
 
@@ -544,25 +539,16 @@ implements ImperativeFacet {
     // /////////////////////////////////////////////////////////
 
     private ObjectAdapterProvider getObjectAdapterProvider() {
-        return persistenceSessionServiceInternal;
+        return objectAdapterProvider;
     }
     
     private PersistenceSessionServiceInternal getPersistenceSessionServiceInternal() {
-        return persistenceSessionServiceInternal;
-    }
-
-    public IsisConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    public AuthenticationSession getAuthenticationSession() {
-        return authenticationSessionProvider.getAuthenticationSession();
+        return (PersistenceSessionServiceInternal) objectAdapterProvider;
     }
 
     public TransactionState getTransactionState() {
-        return persistenceSessionServiceInternal.getTransactionState();
+        return getPersistenceSessionServiceInternal().getTransactionState();
     }
-
 
     @Override public void appendAttributesTo(final Map<String, Object> attributeMap) {
         super.appendAttributesTo(attributeMap);

@@ -18,11 +18,12 @@ package org.apache.isis.core.runtime.services.eventbus;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 
 import org.apache.isis.applib.NonRecoverableException;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.eventbus.EventBusService;
-import org.apache.isis.applib.services.registry.ServiceRegistry;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.commons.lang.ClassUtil;
@@ -120,7 +121,7 @@ public abstract class EventBusServiceDefault extends EventBusService {
     @Override
     protected org.apache.isis.core.plugins.eventbus.EventBusPlugin newEventBus() {
         final EventBusPlugin implementation = instantiateEventBus();
-        serviceRegistry.injectServicesInto(implementation);
+        servicesInjector.injectServicesInto(implementation);
         return implementation;
     }
 
@@ -153,7 +154,6 @@ public abstract class EventBusServiceDefault extends EventBusService {
     }
 
 
-    @javax.inject.Inject
-    ServiceRegistry serviceRegistry;
+    @Inject ServiceInjector servicesInjector;
 
 }

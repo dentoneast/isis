@@ -26,17 +26,14 @@ import java.util.Map;
 
 import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.facetapi.Facet;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.SingleValueFacetAbstract;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 
 public abstract class MixinFacetAbstract extends SingleValueFacetAbstract<String> implements MixinFacet {
 
     private final Class<?> mixinType;
     private final Class<?> constructorType;
-    private final ServicesInjector servicesInjector;
 
     public static Class<? extends Facet> type() {
         return MixinFacet.class;
@@ -44,13 +41,13 @@ public abstract class MixinFacetAbstract extends SingleValueFacetAbstract<String
 
     public MixinFacetAbstract(
             final Class<?> mixinType,
-            final String value, final Class<?> constructorType,
-            final FacetHolder holder,
-            final ServicesInjector servicesInjector) {
+            final String value, 
+            final Class<?> constructorType,
+            final FacetHolder holder) {
+        
         super(type(), value, holder);
         this.mixinType = mixinType;
         this.constructorType = constructorType;
-        this.servicesInjector = servicesInjector;
     }
 
     @Override
@@ -73,7 +70,7 @@ public abstract class MixinFacetAbstract extends SingleValueFacetAbstract<String
         try {
             final Constructor<?> constructor = mixinType.getConstructor(constructorType);
             final Object mixinPojo = constructor.newInstance(domainPojo);
-            servicesInjector.injectServicesInto(mixinPojo);
+            getServiceInjector().injectServicesInto(mixinPojo);
             return mixinPojo;
         } catch (NoSuchMethodException e) {
             // shouldn't happen; ought we to fail-fast instead?
@@ -101,7 +98,7 @@ public abstract class MixinFacetAbstract extends SingleValueFacetAbstract<String
                 declaredField.setAccessible(true);
                 try {
                     Object o = declaredField.get(mixin);
-                    return getObjectAdapterProvider().adapterFor(o);
+                    return adapterProvider().adapterFor(o);
                 } catch (IllegalAccessException e) {
                     if(policy == Policy.FAIL_FAST) {
                         throw new RuntimeException(
@@ -118,14 +115,6 @@ public abstract class MixinFacetAbstract extends SingleValueFacetAbstract<String
         }
         // else just...
         return null;
-    }
-
-    private ObjectAdapterProvider getObjectAdapterProvider() {
-        return servicesInjector.getPersistenceSessionServiceInternal();
-    }
-
-    private TitleService getTitleService() {
-        return servicesInjector.lookupServiceElseFail(TitleService.class);
     }
 
     @Override public void appendAttributesTo(final Map<String, Object> attributeMap) {

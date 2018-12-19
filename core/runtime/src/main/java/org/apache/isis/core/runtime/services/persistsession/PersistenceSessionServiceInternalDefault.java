@@ -23,6 +23,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.function.Supplier;
 
 import javax.ejb.Singleton;
+import javax.inject.Inject;
 
 import org.apache.isis.applib.NonRecoverableException;
 import org.apache.isis.applib.annotation.Programmatic;
@@ -224,10 +225,6 @@ public class PersistenceSessionServiceInternalDefault implements PersistenceSess
     }
 
 
-    @javax.inject.Inject
-    IsisSessionFactory isisSessionFactory;
-
-
-
+    @Inject IsisSessionFactory isisSessionFactory;
 
 }

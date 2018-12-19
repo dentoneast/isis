@@ -35,6 +35,7 @@ import org.apache.isis.applib.query.Query;
 import org.apache.isis.applib.security.UserMemento;
 import org.apache.isis.applib.services.factory.FactoryService;
 import org.apache.isis.applib.services.i18n.TranslatableString;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.jdosupport.IsisJdoSupport;
 import org.apache.isis.applib.services.message.MessageService;
 import org.apache.isis.applib.services.metamodel.MetaModelService;
@@ -59,6 +60,7 @@ public class DomainObjectContainer {
 	@Inject private TitleService titleService;
 	@Inject private TransactionService transactionService;
 	@Inject private ServiceRegistry serviceRegistry;
+	@Inject private ServiceInjector serviceInjector;
 	@Inject private MessageService messageService;
 	@Inject private UserService userService;
 	
@@ -195,7 +197,7 @@ public class DomainObjectContainer {
     		throw new IllegalArgumentException("parameter 'memento' is no longer supported");
     	}
     	T obj = factoryService.instantiate(ofType);
-    	serviceRegistry.injectServicesInto(obj);
+    	serviceInjector.injectServicesInto(obj);
     	return obj;
     }
 
@@ -257,7 +259,7 @@ public class DomainObjectContainer {
     @Deprecated
     @Programmatic
     public <T> T injectServicesInto(final T domainObject) {
-    	return serviceRegistry.injectServicesInto(domainObject);
+    	return serviceInjector.injectServicesInto(domainObject);
     }
 
     /**

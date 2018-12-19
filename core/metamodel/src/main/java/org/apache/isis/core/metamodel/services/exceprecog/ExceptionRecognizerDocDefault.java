@@ -22,19 +22,19 @@ package org.apache.isis.core.metamodel.services.exceprecog;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
+import javax.inject.Inject;
 
 import org.apache.isis.applib.RecoverableException;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizerComposite;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizerForType;
-import org.apache.isis.applib.services.registry.ServiceRegistry;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.adapter.version.ConcurrencyException;
 
 @Singleton
 public class ExceptionRecognizerDocDefault
 implements ExceptionRecognizer {
-
 
     // -- init, shutdown
 
@@ -42,7 +42,7 @@ implements ExceptionRecognizer {
     @PostConstruct
     @Override
     public void init() {
-        serviceRegistry.injectServicesInto(recognizer);
+        serviceInjector.injectServicesInto(recognizer);
         recognizer.init();
     }
 
@@ -52,8 +52,6 @@ implements ExceptionRecognizer {
     public void shutdown() {
         recognizer.shutdown();
     }
-
-
 
     static class ExceptionRecognizerForConcurrencyException
     extends ExceptionRecognizerForType {
@@ -92,9 +90,6 @@ implements ExceptionRecognizer {
         return recognizer.recognize2(ex);
     }
 
-
-
-    @javax.inject.Inject
-    ServiceRegistry serviceRegistry;
+    @Inject ServiceInjector serviceInjector;
 
 }

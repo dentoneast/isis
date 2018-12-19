@@ -23,7 +23,6 @@ import java.util.Collection;
 
 import org.apache.isis.core.metamodel.facetapi.MetaModelRefiner;
 import org.apache.isis.core.metamodel.progmodel.ProgrammingModel;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidator;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidatorComposite;
@@ -37,8 +36,7 @@ public final class JavaReflectorHelper  {
     public static SpecificationLoader createObjectReflector(
             final ProgrammingModel programmingModel,
             final Collection<MetaModelRefiner> metaModelRefiners,
-            final MetaModelValidator mmv,
-            final ServicesInjector servicesInjector) {
+            final MetaModelValidator mmv) {
 
         MetaModelValidatorComposite metaModelValidator = MetaModelValidatorComposite.asComposite(mmv);
         for (MetaModelRefiner metaModelRefiner : metaModelRefiners) {
@@ -48,7 +46,7 @@ public final class JavaReflectorHelper  {
 
         programmingModel.refineMetaModelValidator(metaModelValidator);
 
-        return new SpecificationLoader(programmingModel, metaModelValidator, servicesInjector);
+        return new SpecificationLoader(programmingModel, metaModelValidator);
     }
 
 }

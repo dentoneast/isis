@@ -21,12 +21,12 @@ package org.apache.isis.core.runtime.systemusinginstallers;
 
 import java.util.Collection;
 
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.commons.factory.InstanceUtil;
 import org.apache.isis.core.metamodel.facetapi.MetaModelRefiner;
 import org.apache.isis.core.metamodel.progmodel.ProgrammingModel;
 import org.apache.isis.core.metamodel.progmodel.ProgrammingModelAbstract.DeprecatedPolicy;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.specloader.ReflectorConstants;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidator;
@@ -72,17 +72,9 @@ public final class IsisComponentProvider {
         return authorizationManager;
     }
 
-    // -- provideServiceInjector
-
-    public ServicesInjector provideServiceInjector() {
-        return ServicesInjector.builder()
-                .build();
-    }
-
     // -- provideSpecificationLoader
 
     public SpecificationLoader provideSpecificationLoader(
-            final ServicesInjector servicesInjector,
             final Collection<MetaModelRefiner> metaModelRefiners)  throws IsisSystemException {
 
         final IsisConfiguration configuration = getConfiguration();
@@ -92,8 +84,7 @@ public final class IsisComponentProvider {
 
         return JavaReflectorHelper.createObjectReflector(
                 programmingModel, metaModelRefiners,
-                mmv,
-                servicesInjector);
+                mmv);
     }
 
     protected MetaModelValidator createMetaModelValidator(IsisConfiguration configuration) {
@@ -114,9 +105,6 @@ public final class IsisComponentProvider {
         ProgrammingModel.Util.excludeFacetFactories(configuration, programmingModel);
         return programmingModel;
     }
-
-
-
 
 
 }

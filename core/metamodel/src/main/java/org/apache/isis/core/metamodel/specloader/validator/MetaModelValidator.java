@@ -19,14 +19,11 @@
 
 package org.apache.isis.core.metamodel.specloader.validator;
 
-import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-
 public interface MetaModelValidator {
 
-    void init(final SpecificationLoader specificationLoader);
+    void init();
     void shutdown();
 
     void validate(ValidationFailures validationFailures);
-
 
 }

@@ -26,8 +26,8 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 
 import org.apache.isis.applib.annotation.SemanticsOf;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.config.IsisConfiguration;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
@@ -155,7 +155,7 @@ public abstract class PanelAbstract<T extends IModel<?>> extends Panel {
 
     protected void addConfirmationDialogIfAreYouSureSemantics(final Component component, final SemanticsOf semanticsOf) {
 
-        final ServicesInjector servicesInjector = getPersistenceSession().getServicesInjector();
+        final ServiceInjector servicesInjector = getPersistenceSession().getServicesInjector();
 
         PanelUtil.addConfirmationDialogIfAreYouSureSemantics(component, semanticsOf, servicesInjector);
     }
@@ -175,7 +175,7 @@ public abstract class PanelAbstract<T extends IModel<?>> extends Panel {
         return getIsisSessionFactory().getSpecificationLoader();
     }
 
-    protected ServicesInjector getServicesInjector() {
+    protected ServiceInjector getServicesInjector() {
         return getIsisSessionFactory().getServicesInjector();
     }
 

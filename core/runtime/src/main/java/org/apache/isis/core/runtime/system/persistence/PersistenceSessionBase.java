@@ -31,13 +31,14 @@ import org.apache.isis.applib.services.command.CommandContext;
 import org.apache.isis.applib.services.command.spi.CommandService;
 import org.apache.isis.applib.services.factory.FactoryService;
 import org.apache.isis.applib.services.iactn.InteractionContext;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.metrics.MetricsService;
 import org.apache.isis.applib.services.user.UserService;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.commons.util.ToString;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledFlag;
 import org.apache.isis.core.runtime.runner.opts.OptionHandlerFixtureAbstract;
@@ -62,7 +63,7 @@ abstract class PersistenceSessionBase implements PersistenceSession {
     protected final SpecificationLoader specificationLoader;
     protected final AuthenticationSession authenticationSession;
 
-    protected final ServicesInjector servicesInjector;
+    protected final ServiceInjector servicesInjector;
 
     protected final CommandContext commandContext;
     protected final CommandService commandService;
@@ -105,7 +106,7 @@ abstract class PersistenceSessionBase implements PersistenceSession {
      * persisted objects and persist changes to the object that are saved.
      */
     protected PersistenceSessionBase(
-            final ServicesInjector servicesInjector,
+            final ServiceInjector servicesInjector,
             final AuthenticationSession authenticationSession,
             final PersistenceManagerFactory jdoPersistenceManagerFactory,
             final FixturesInstalledFlag fixturesInstalledFlag) {
@@ -120,7 +121,7 @@ abstract class PersistenceSessionBase implements PersistenceSession {
 
         // injected
         this.configuration = _Config.getConfiguration();
-        this.specificationLoader = servicesInjector.getSpecificationLoader();
+        this.specificationLoader = MetaModelContext.current().getSpecificationLoader();
         this.authenticationSession = authenticationSession;
 
         this.commandContext = lookupService(CommandContext.class);
@@ -151,10 +152,10 @@ abstract class PersistenceSessionBase implements PersistenceSession {
     }
 
     /**
-     * The configured {@link ServicesInjector}.
+     * The configured {@link ServiceInjector}.
      */
     @Override
-    public ServicesInjector getServicesInjector() {
+    public ServiceInjector getServicesInjector() {
         return servicesInjector;
     }
 

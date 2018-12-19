@@ -18,8 +18,6 @@
  */
 package org.apache.isis.core.metamodel.specloader.validator;
 
-import static org.apache.isis.commons.internal.base._NullSafe.stream;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,6 +26,8 @@ import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
+
+import static org.apache.isis.commons.internal.base._NullSafe.stream;
 
 public class MetaModelValidatorToCheckObjectSpecIdsUnique extends MetaModelValidatorComposite {
 
@@ -40,7 +40,7 @@ public class MetaModelValidatorToCheckObjectSpecIdsUnique extends MetaModelValid
 
     @Override
     public void validate(final ValidationFailures validationFailures) {
-        boolean check = specificationLoader.getConfiguration()
+        boolean check = getConfiguration()
                 .getBoolean(ISIS_REFLECTOR_ENSURE_UNIQUE_OBJECT_IDS_KEY,
                         ISIS_REFLECTOR_ENSURE_UNIQUE_OBJECT_IDS_DEFAULT);
         if(!check) {

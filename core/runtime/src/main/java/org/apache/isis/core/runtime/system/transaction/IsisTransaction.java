@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.WithTransactionScope;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.xactn.Transaction;
 import org.apache.isis.applib.services.xactn.TransactionState;
 import org.apache.isis.commons.internal.collections._Lists;
@@ -36,7 +37,6 @@ import org.apache.isis.core.commons.components.TransactionScopedComponent;
 import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.commons.util.ToString;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.services.publishing.PublishingServiceInternal;
 import org.apache.isis.core.runtime.persistence.objectstore.transaction.CreateObjectCommand;
 import org.apache.isis.core.runtime.persistence.objectstore.transaction.DestroyObjectCommand;
@@ -177,7 +177,7 @@ public class IsisTransaction implements TransactionScopedComponent, Transaction 
             final UUID interactionId,
             final int sequence,
             /*final AuthenticationSession authenticationSession,*/
-            final ServicesInjector servicesInjector) {
+            final ServiceInjector servicesInjector) {
 
         this.interactionId = interactionId;
         this.sequence = sequence;

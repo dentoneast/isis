@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.isis.applib.adapters.EncoderDecoder;
 import org.apache.isis.applib.adapters.Parser;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.value.Money;
 import org.apache.isis.config.ConfigurationConstants;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
@@ -35,7 +36,6 @@ import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.object.parseable.TextEntryParseException;
 import org.apache.isis.core.metamodel.facets.object.value.vsp.ValueSemanticsProviderAndFacetAbstract;
 import org.apache.isis.core.metamodel.facets.properties.defaults.PropertyDefaultFacet;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 
 public class MoneyValueSemanticsProvider extends ValueSemanticsProviderAndFacetAbstract<Money> implements MoneyValueFacet {
 
@@ -76,11 +76,11 @@ public class MoneyValueSemanticsProvider extends ValueSemanticsProviderAndFacetA
      * {@link EncoderDecoder}.
      */
     public MoneyValueSemanticsProvider() {
-        this(null, null);
+        this(null);
     }
 
-    public MoneyValueSemanticsProvider(final FacetHolder holder, final ServicesInjector context) {
-        super(type(), holder, Money.class, TYPICAL_LENGTH, -1, Immutability.IMMUTABLE, EqualByContent.HONOURED, DEFAULT_VALUE, context);
+    public MoneyValueSemanticsProvider(final FacetHolder holder) {
+        super(type(), holder, Money.class, TYPICAL_LENGTH, -1, Immutability.IMMUTABLE, EqualByContent.HONOURED, DEFAULT_VALUE);
 
         final String property = ConfigurationConstants.ROOT + "value.money.currency";
         defaultCurrencyCode = getConfiguration().getString(property, LOCAL_CURRENCY_CODE);
@@ -214,7 +214,7 @@ public class MoneyValueSemanticsProvider extends ValueSemanticsProviderAndFacetA
 
     @Override
     public ObjectAdapter createValue(final float amount, final String currencyCode) {
-        return getObjectAdapterProvider().adapterFor(new Money(amount, currencyCode));
+        return adapterProvider().adapterFor(new Money(amount, currencyCode));
     }
 
     // /////// toString ///////

@@ -31,7 +31,6 @@ import org.apache.isis.applib.events.domain.CollectionDomainEvent;
 import org.apache.isis.applib.events.domain.PropertyDomainEvent;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.context._Context;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.facetapi.Facet;
 import org.apache.isis.core.metamodel.facetapi.FacetUtil;
 import org.apache.isis.core.metamodel.facets.Annotations;
@@ -89,8 +88,6 @@ import org.apache.isis.core.metamodel.facets.properties.property.modify.Property
 import org.apache.isis.core.metamodel.facets.properties.typicallen.fromtype.TypicalLengthFacetOnPropertyDerivedFromType;
 import org.apache.isis.core.metamodel.facets.properties.typicallen.fromtype.TypicalLengthFacetOnPropertyDerivedFromTypeFacetFactory;
 import org.apache.isis.core.metamodel.progmodel.ObjectSpecificationPostProcessor;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
-import org.apache.isis.core.metamodel.services.ServicesInjectorAware;
 import org.apache.isis.core.metamodel.spec.ActionType;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.Contributed;
@@ -100,24 +97,16 @@ import org.apache.isis.core.metamodel.spec.feature.ObjectAssociation;
 import org.apache.isis.core.metamodel.spec.feature.ObjectMember;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
-import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.specimpl.ObjectActionMixedIn;
 import org.apache.isis.core.metamodel.specloader.specimpl.ObjectActionParameterAbstract;
 import org.apache.isis.core.metamodel.specloader.specimpl.ObjectMemberAbstract;
 import org.apache.isis.core.metamodel.specloader.specimpl.OneToManyAssociationMixedIn;
 import org.apache.isis.core.metamodel.specloader.specimpl.OneToOneAssociationMixedIn;
-import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 
 /**
  * Sets up all the {@link Facet}s for an action in a single shot.
  */
-public class DeriveFacetsPostProcessor implements ObjectSpecificationPostProcessor,
-        ServicesInjectorAware {
-
-    private SpecificationLoader specificationLoader;
-    private AuthenticationSessionProvider authenticationSessionProvider;
-    private ObjectAdapterProvider adapterProvider;
-    private ServicesInjector servicesInjector;
+public class DeriveFacetsPostProcessor implements ObjectSpecificationPostProcessor {
 
     @Override
     public void postProcess(final ObjectSpecification objectSpecification) {
@@ -267,8 +256,9 @@ public class DeriveFacetsPostProcessor implements ObjectSpecificationPostProcess
                     final Class<? extends CollectionDomainEvent<?, ?>> collectionDomainEventType =
                             CollectionAnnotationFacetFactory.defaultFromDomainObjectIfRequired(
                                     objectSpecification, collectionAnnot.domainEvent());
-                    final CollectionDomainEventFacetForCollectionAnnotation collectionDomainEventFacet = new CollectionDomainEventFacetForCollectionAnnotation(
-                            collectionDomainEventType, servicesInjector, specificationLoader, collection);
+                    final CollectionDomainEventFacetForCollectionAnnotation collectionDomainEventFacet = 
+                            new CollectionDomainEventFacetForCollectionAnnotation(
+                                    collectionDomainEventType, collection);
                     FacetUtil.addFacet(collectionDomainEventFacet);
                 }
 
@@ -308,8 +298,7 @@ public class DeriveFacetsPostProcessor implements ObjectSpecificationPostProcess
                     final PropertyOrCollectionAccessorFacet getterFacetIfAny = null;
                     final PropertyDomainEventFacetForPropertyAnnotation propertyDomainEventFacet =
                             new PropertyDomainEventFacetForPropertyAnnotation(
-                                propertyDomainEventType, getterFacetIfAny,
-                                servicesInjector, specificationLoader, property);
+                                propertyDomainEventType, getterFacetIfAny, property);
                     FacetUtil.addFacet(propertyDomainEventFacet);
                 }
             }
@@ -399,8 +388,7 @@ public class DeriveFacetsPostProcessor implements ObjectSpecificationPostProcess
         if(existsAndIsDoOp(specFacet)) {
             FacetUtil.addFacet(
                 new ActionParameterChoicesFacetDerivedFromChoicesFacet(
-                    peerFor(parameter),
-                    specificationLoader, authenticationSessionProvider, adapterProvider));
+                    peerFor(parameter)));
         }
     }
 
@@ -446,7 +434,7 @@ public class DeriveFacetsPostProcessor implements ObjectSpecificationPostProcess
         final ChoicesFacet specFacet = propertySpec.getFacet(ChoicesFacet.class);
         if(existsAndIsDoOp(specFacet)) {
             FacetUtil.addFacet(
-                    new PropertyChoicesFacetDerivedFromChoicesFacet(facetedMethodFor(property), specificationLoader));
+                    new PropertyChoicesFacetDerivedFromChoicesFacet(facetedMethodFor(property)));
         }
     }
 
@@ -462,7 +450,7 @@ public class DeriveFacetsPostProcessor implements ObjectSpecificationPostProcess
         if(existsAndIsDoOp(specFacet)) {
             FacetUtil.addFacet(
                 new PropertyDefaultFacetDerivedFromDefaultedFacet(
-                        specFacet, facetedMethodFor(property), adapterProvider));
+                        specFacet, facetedMethodFor(property)));
         }
     }
 
@@ -600,9 +588,7 @@ public class DeriveFacetsPostProcessor implements ObjectSpecificationPostProcess
 
         FacetUtil.addFacet(
                 new ActionParameterChoicesFacetFromParentedCollection(
-                        scalarOrCollectionParam, otma,
-                        specificationLoader,
-                        authenticationSessionProvider, adapterProvider));
+                        scalarOrCollectionParam, otma));
     }
 
     private static boolean existsAndIsDoOp(final Facet facet) {
@@ -617,15 +603,5 @@ public class DeriveFacetsPostProcessor implements ObjectSpecificationPostProcess
         }
         return actionTypes;
     }
-
-
-    @Override
-    public void setServicesInjector(final ServicesInjector servicesInjector) {
-        this.servicesInjector = servicesInjector;
-        specificationLoader = servicesInjector.getSpecificationLoader();
-        authenticationSessionProvider = servicesInjector.getAuthenticationSessionProvider();
-        adapterProvider = servicesInjector.getPersistenceSessionServiceInternal();
-    }
-
 
 }

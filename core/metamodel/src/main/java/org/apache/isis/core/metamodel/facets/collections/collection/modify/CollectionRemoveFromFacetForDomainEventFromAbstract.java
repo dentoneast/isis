@@ -25,6 +25,7 @@ import java.util.Collection;
 
 import org.apache.isis.applib.events.domain.AbstractDomainEvent;
 import org.apache.isis.applib.events.domain.CollectionDomainEvent;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.base._Casts;
 import java.util.Map;
 
@@ -36,7 +37,6 @@ import org.apache.isis.core.metamodel.facets.DomainEventHelper;
 import org.apache.isis.core.metamodel.facets.SingleValueFacetAbstract;
 import org.apache.isis.core.metamodel.facets.collections.modify.CollectionRemoveFromFacet;
 import org.apache.isis.core.metamodel.facets.propcoll.accessor.PropertyOrCollectionAccessorFacet;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 
 
 public abstract class CollectionRemoveFromFacetForDomainEventFromAbstract
@@ -59,7 +59,7 @@ implements CollectionRemoveFromFacet {
                     final PropertyOrCollectionAccessorFacet getterFacet,
                     final CollectionRemoveFromFacet collectionRemoveFromFacet,
                     final CollectionDomainEventFacetAbstract collectionDomainEventFacet,
-                    final ServicesInjector servicesInjector,
+                    final ServiceInjector servicesInjector,
                     final FacetHolder holder) {
         super(type(), eventType, holder);
         this.getterFacet = getterFacet;

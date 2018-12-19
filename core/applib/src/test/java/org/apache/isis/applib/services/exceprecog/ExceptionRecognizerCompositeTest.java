@@ -24,7 +24,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import org.apache.isis.applib.services.i18n.TranslationService;
-import org.apache.isis.applib.services.registry.ServiceRegistry;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -62,7 +62,7 @@ public class ExceptionRecognizerCompositeTest {
     public JUnitRuleMockery2 context = JUnitRuleMockery2.createFor(JUnitRuleMockery2.Mode.INTERFACES_AND_CLASSES);
 
     @Mock
-    private ServiceRegistry mockServiceRegistry;
+    private ServiceInjector mockServiceInjector;
 
     @Mock
     private TranslationService mockTranslationService;
@@ -70,10 +70,10 @@ public class ExceptionRecognizerCompositeTest {
     @Before
     public void setUp() throws Exception {
         composite = new ExceptionRecognizerComposite();
-        composite.serviceRegistry = mockServiceRegistry;
+        composite.serviceInjector = mockServiceInjector;
         composite.translationService = mockTranslationService;
 
-        context.ignoring(mockServiceRegistry);
+        context.ignoring(mockServiceInjector);
         context.ignoring(mockTranslationService);
     }
     

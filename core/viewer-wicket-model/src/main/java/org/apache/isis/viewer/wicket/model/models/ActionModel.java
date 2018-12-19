@@ -43,6 +43,7 @@ import org.apache.isis.applib.Identifier;
 import org.apache.isis.applib.annotation.BookmarkPolicy;
 import org.apache.isis.applib.annotation.PromptStyle;
 import org.apache.isis.applib.annotation.Where;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.routing.RoutingService;
 import org.apache.isis.applib.value.Blob;
 import org.apache.isis.applib.value.Clob;
@@ -61,7 +62,6 @@ import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.object.bookmarkpolicy.BookmarkPolicyFacet;
 import org.apache.isis.core.metamodel.facets.object.encodeable.EncodableFacet;
 import org.apache.isis.core.metamodel.facets.object.promptStyle.PromptStyleFacet;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.ActionType;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
@@ -715,7 +715,7 @@ public class ActionModel extends BookmarkableModel<ObjectAdapter> implements For
     //////////////////////////////////////////////////
 
 
-    ServicesInjector getServicesInjector() {
+    ServiceInjector getServicesInjector() {
         return getIsisSessionFactory().getServicesInjector();
     }
 

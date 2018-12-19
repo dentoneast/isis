@@ -27,6 +27,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import org.apache.isis.applib.annotation.Where;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.Oid.Factory;
@@ -46,8 +47,9 @@ import org.apache.isis.core.metamodel.interactions.PropertyUsabilityContext;
 import org.apache.isis.core.metamodel.interactions.PropertyVisibilityContext;
 import org.apache.isis.core.metamodel.interactions.UsabilityContext;
 import org.apache.isis.core.metamodel.interactions.VisibilityContext;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
+import org.apache.isis.core.metamodel.services.ServiceInjectorBuilder_forTesting;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
+import org.apache.isis.core.metamodel.services.registry.ServiceRegistryBuilder_forTesting;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
@@ -89,7 +91,7 @@ public class ObjectMemberAbstractTest {
     @Mock
     private SpecificationLoader mockSpecificationLoader;
 
-    ServicesInjector stubServicesInjector;
+    ServiceInjector stubServicesInjector;
     
 
     @Mock
@@ -102,10 +104,13 @@ public class ObjectMemberAbstractTest {
     public void setUp() throws Exception {
         org.apache.log4j.Logger.getRootLogger().setLevel(org.apache.log4j.Level.OFF);
 
-        stubServicesInjector = ServicesInjector.builderForTesting()
-                .addServices(_Lists.<Object>of(
-                        mockSpecificationLoader, 
-                        mockPersistenceSessionServiceInternal))
+        stubServicesInjector = ServiceInjectorBuilder_forTesting.of(context)
+                .serviceRegistry(ServiceRegistryBuilder_forTesting.of(context)
+                        .addServices(_Lists.<Object>of(
+                                mockSpecificationLoader, 
+                                mockPersistenceSessionServiceInternal))
+                        .build()
+                        )
                 .build();
 
         context.checking(new Expectations() {{
@@ -132,7 +137,7 @@ public class ObjectMemberAbstractTest {
                 .withPojo(mockPersistable)
                 .build();
 
-        testMember = new ObjectMemberAbstractImpl("id", stubServicesInjector);
+        testMember = new ObjectMemberAbstractImpl("id");
 
         context.checking(new Expectations() {{
             allowing(mockSpecificationLoader).lookupBySpecId(ObjectSpecId.of("CUS"));
@@ -160,7 +165,7 @@ public class ObjectMemberAbstractTest {
 
     @Test
     public void testAvailableForUser() throws Exception {
-        testMember.addFacet(new DisableForSessionFacetAbstract(testMember, mockAuthenticationSessionProvider) {
+        testMember.addFacet(new DisableForSessionFacetAbstract(testMember) {
             @Override
             public String disabledReason(final AuthenticationSession session) {
                 return null;
@@ -207,7 +212,7 @@ public class ObjectMemberAbstractTest {
 
     @Test
     public void testVisibleForSession() {
-        testMember.addFacet(new HideForSessionFacetAbstract(testMember, mockAuthenticationSessionProvider) {
+        testMember.addFacet(new HideForSessionFacetAbstract(testMember) {
             @Override
             public String hiddenReason(final AuthenticationSession session) {
                 return "Hidden";
@@ -218,7 +223,7 @@ public class ObjectMemberAbstractTest {
 
     @Test
     public void testVisibleForSessionFails() {
-        testMember.addFacet(new HideForSessionFacetAbstract(testMember, mockAuthenticationSessionProvider) {
+        testMember.addFacet(new HideForSessionFacetAbstract(testMember) {
             @Override
             public String hiddenReason(final AuthenticationSession session) {
                 return "hidden";
@@ -254,8 +259,8 @@ class ObjectMemberAbstractImpl extends ObjectMemberAbstract {
         }
     }
 
-    protected ObjectMemberAbstractImpl(final String id, final ServicesInjector servicesInjector) {
-        super(FacetedMethod.createForProperty(Customer.class, "firstName"), FeatureType.PROPERTY, servicesInjector);
+    protected ObjectMemberAbstractImpl(final String id) {
+        super(FacetedMethod.createForProperty(Customer.class, "firstName"), FeatureType.PROPERTY);
     }
 
     /**

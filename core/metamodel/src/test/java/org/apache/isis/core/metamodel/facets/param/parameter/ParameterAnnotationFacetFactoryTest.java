@@ -77,7 +77,6 @@ public class ParameterAnnotationFacetFactoryTest extends AbstractFacetFactoryJUn
     @Before
     public void setUp() throws Exception {
         facetFactory = new ParameterAnnotationFacetFactory();
-        facetFactory.setServicesInjector(mockServicesInjector);
     }
 
     @After

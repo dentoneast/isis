@@ -21,9 +21,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.ejb.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +29,8 @@ import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.collections._Lists;
-import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.commons.ensure.Assert;
 import org.apache.isis.core.commons.exceptions.IsisException;
@@ -43,7 +40,6 @@ import org.apache.isis.core.metamodel.facets.FacetFactory;
 import org.apache.isis.core.metamodel.facets.object.autocomplete.AutoCompleteFacet;
 import org.apache.isis.core.metamodel.facets.object.objectspecid.ObjectSpecIdFacet;
 import org.apache.isis.core.metamodel.progmodel.ProgrammingModel;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.FreeStandingList;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
@@ -78,12 +74,11 @@ import org.apache.isis.schema.utils.CommonDtoUtils;
  * </p>
  *
  * <p>
- * Implementing class is added to {@link ServicesInjector} as an (internal) domain service; all public methods
+ * Implementing class is added to {@link ServiceInjector} as an (internal) domain service; all public methods
  * must be annotated using {@link Programmatic}.
  * </p>
  *
  */
-@Singleton
 public class SpecificationLoader {
 
     private final static Logger LOG = LoggerFactory.getLogger(SpecificationLoader.class);
@@ -97,7 +92,7 @@ public class SpecificationLoader {
     private final ProgrammingModel programmingModel;
     private final FacetProcessor facetProcessor;
 
-    private final ServicesInjector servicesInjector;
+    //private final ServiceInjector servicesInjector;
 
     private final MetaModelValidator metaModelValidator;
     private final SpecificationCacheDefault cache = new SpecificationCacheDefault();
@@ -109,18 +104,15 @@ public class SpecificationLoader {
         INTROSPECTING
     }
 
-
     public SpecificationLoader(
             final ProgrammingModel programmingModel,
-            final MetaModelValidator metaModelValidator,
-            final ServicesInjector servicesInjector) {
+            final MetaModelValidator metaModelValidator) {
 
-        this.servicesInjector = servicesInjector;
         this.programmingModel = programmingModel;
         this.metaModelValidator = metaModelValidator;
 
         this.facetProcessor = new FacetProcessor(programmingModel);
-        this.postProcessor = new PostProcessor(programmingModel, servicesInjector);
+        this.postProcessor = new PostProcessor(programmingModel);
 
         this.state = State.NOT_INITIALIZED;
     }
@@ -131,9 +123,8 @@ public class SpecificationLoader {
 
     /**
      * Initializes and wires up, and primes the cache based on any service
-     * classes (provided by the {@link ServicesInjector}).
+     * classes (provided by the {@link ServiceInjector}).
      */
-    @Programmatic
     public void init() {
 
         if (LOG.isDebugEnabled()) {
@@ -141,14 +132,14 @@ public class SpecificationLoader {
         }
 
         // wire subcomponents into each other
-        facetProcessor.setServicesInjector(servicesInjector);
+        //facetProcessor.setServicesInjector(servicesInjector);
 
         // initialize subcomponents
         this.programmingModel.init();
         facetProcessor.init();
 
         postProcessor.init();
-        metaModelValidator.init(this);
+        metaModelValidator.init();
 
 
         state = State.CACHING;
@@ -160,7 +151,7 @@ public class SpecificationLoader {
                 CommonDtoUtils.VALUE_TYPES, null,
                 IntrospectionStrategy.STUB, specificationsFromRegistry);
         loadSpecificationsFor(
-                streamServiceClasses().collect(Collectors.toList()), NatureOfService.DOMAIN,
+                AppManifest.Registry.instance().getDomainServiceTypes(), NatureOfService.DOMAIN,
                 IntrospectionStrategy.STUB, specificationsFromRegistry);
         loadSpecificationsFor(
                 AppManifest.Registry.instance().getMixinTypes(), null,
@@ -264,7 +255,6 @@ public class SpecificationLoader {
 
     // -- shutdown
 
-    @Programmatic
     public void shutdown() {
         LOG.info("shutting down {}", this);
 
@@ -275,7 +265,6 @@ public class SpecificationLoader {
 
     // -- invalidateCache
 
-    @Programmatic
     public void invalidateCache(final Class<?> cls) {
 
         if(!cache.isInitialized()) {
@@ -311,7 +300,6 @@ public class SpecificationLoader {
 
     private ValidationFailures validationFailures;
 
-    @Programmatic
     public void validateAndAssert() {
         ValidationFailures validationFailures = validate();
         validationFailures.assertNone();
@@ -319,7 +307,6 @@ public class SpecificationLoader {
         cache.init();
     }
 
-    @Programmatic
     public ValidationFailures validate() {
         if(validationFailures == null) {
             validationFailures = new ValidationFailures();
@@ -338,7 +325,6 @@ public class SpecificationLoader {
      * the configured {@link org.apache.isis.core.metamodel.specloader.classsubstitutor.ClassSubstitutor}
      * has filtered out the class.
      */
-    @Programmatic
     public ObjectSpecification loadSpecification(final String className) {
         assert className != null;
 
@@ -357,7 +343,6 @@ public class SpecificationLoader {
     /**
      * @see #loadSpecification(String)
      */
-    @Programmatic
     public ObjectSpecification loadSpecification(final Class<?> type) {
         final ObjectSpecification spec = internalLoadSpecification(type);
         if(spec == null) {
@@ -447,7 +432,6 @@ public class SpecificationLoader {
      * Loads the specifications of the specified types except the one specified
      * (to prevent an infinite loop).
      */
-    @Programmatic
     public boolean loadSpecifications(final List<Class<?>> typesToLoad, final Class<?> typeToIgnore) {
         boolean anyLoadedAsNull = false;
         for (final Class<?> typeToLoad : typesToLoad) {
@@ -463,7 +447,6 @@ public class SpecificationLoader {
     /**
      * Loads the specifications of the specified types.
      */
-    @Programmatic
     public boolean loadSpecifications(final List<Class<?>> typesToLoad) {
         return loadSpecifications(typesToLoad, null);
     }
@@ -477,7 +460,7 @@ public class SpecificationLoader {
 
         // ... and create the specs
         if (FreeStandingList.class.isAssignableFrom(cls)) {
-            return new ObjectSpecificationOnStandaloneList(servicesInjector, facetProcessor);
+            return new ObjectSpecificationOnStandaloneList(facetProcessor);
         } else {
 
             final FacetedMethodsBuilderContext facetedMethodsBuilderContext =
@@ -487,7 +470,7 @@ public class SpecificationLoader {
             final NatureOfService natureOfServiceIfAny = natureOfServiceFrom(cls, fallback);
 
             return new ObjectSpecificationDefault(cls, facetedMethodsBuilderContext,
-                    servicesInjector, facetProcessor, natureOfServiceIfAny);
+                    facetProcessor, natureOfServiceIfAny);
         }
     }
 
@@ -545,9 +528,7 @@ public class SpecificationLoader {
         specSpi.setIntrospectionState(ObjectSpecificationAbstract.IntrospectionState.INTROSPECTED);
     }
 
-    @Programmatic
     public void postProcess() {
-
         final Collection<ObjectSpecification> specs = allSpecifications();
         for (final ObjectSpecification spec : specs) {
             postProcess(spec);
@@ -555,12 +536,9 @@ public class SpecificationLoader {
 
     }
 
-    @Programmatic
     public void postProcess(final ObjectSpecification spec) {
         postProcessor.postProcess(spec);
     }
-
-
 
     // -- allSpecifications
     /**
@@ -572,7 +550,6 @@ public class SpecificationLoader {
      *     ObjectSpec's being discovered, eg performing metamodel validation.
      * </p>
      */
-    @Programmatic
     public List<ObjectSpecification> allSpecifications() {
         return _Lists.newArrayList(allCachedSpecifications());
     }
@@ -581,23 +558,10 @@ public class SpecificationLoader {
         return cache.allSpecifications();
     }
 
-    // -- getServiceClasses, isServiceClass
-
-    @Programmatic
-    public Stream<Class<?>> streamServiceClasses() {
-        return servicesInjector.streamServiceTypes();
-    }
-
-    @Programmatic
-    public boolean isServiceClass(Class<?> cls) {
-        return this.servicesInjector.isRegisteredService(cls);
-    }
-
     // -- loaded
     /**
      * Whether this class has been loaded.
      */
-    @Programmatic
     public boolean loaded(final Class<?> cls) {
         return loaded(cls.getName());
     }
@@ -605,13 +569,11 @@ public class SpecificationLoader {
     /**
      * @see #loaded(Class).
      */
-    @Programmatic
     public boolean loaded(final String fullyQualifiedClassName) {
         return cache.get(fullyQualifiedClassName) != null;
     }
 
     // -- lookupBySpecId
-    @Programmatic
     public ObjectSpecification lookupBySpecId(ObjectSpecId objectSpecId) {
         if(!cache.isInitialized()) {
             throw new IllegalStateException("Internal cache not yet initialized");
@@ -624,13 +586,4 @@ public class SpecificationLoader {
         return objectSpecification;
     }
 
-    @Programmatic
-    public IsisConfiguration getConfiguration() {
-        return _Config.getConfiguration();
-    }
-
-    @Programmatic
-    public ServicesInjector getServicesInjector() {
-        return servicesInjector;
-    }
 }

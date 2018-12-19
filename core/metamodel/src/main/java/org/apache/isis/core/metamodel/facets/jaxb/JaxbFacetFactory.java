@@ -100,7 +100,7 @@ implements MetaModelValidatorRefiner {
 
         final FacetHolder holder = processClassContext.getFacetHolder();
         final XmlJavaTypeAdapterFacetDefault facet = new XmlJavaTypeAdapterFacetDefault(holder,
-                annotation.value(), getSpecificationLoader());
+                annotation.value());
 
         FacetUtil.addFacet(facet);
     }
@@ -148,7 +148,7 @@ implements MetaModelValidatorRefiner {
 
         final FacetHolder holder = processMethodContext.getFacetHolder();
         final XmlJavaTypeAdapterFacetDefault facet = new XmlJavaTypeAdapterFacetDefault(holder,
-                annotation.value(), getSpecificationLoader());
+                annotation.value());
 
         FacetUtil.addFacet(facet);
     }

@@ -24,11 +24,11 @@ import java.util.Optional;
 
 import org.jmock.Expectations;
 import org.apache.isis.applib.services.i18n.TranslationService;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.facetapi.Facet;
 import org.apache.isis.core.metamodel.facets.FacetFactory.ProcessClassContext;
 import org.apache.isis.core.metamodel.facets.object.title.TitleFacet;
 import org.apache.isis.core.metamodel.facets.object.title.methods.TitleFacetViaMethodsFactory;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.specloader.specimpl.ObjectSpecificationAbstract;
 import org.apache.isis.core.metamodel.facets.AbstractFacetFactoryTest;
 import org.apache.isis.core.metamodel.facets.object.title.methods.TitleFacetViaTitleMethod;
@@ -39,14 +39,14 @@ public class TitleFacetViaMethodsFactoryTest extends AbstractFacetFactoryTest {
 
     private JUnitRuleMockery2 context = JUnitRuleMockery2.createFor(JUnitRuleMockery2.Mode.INTERFACES_AND_CLASSES);
 
-    private ServicesInjector mockServicesInjector;
+    private ServiceInjector mockServicesInjector;
     private TranslationService mockTranslationService;
 
     private TitleFacetViaMethodsFactory facetFactory;
 
     public void setUp() throws Exception {
         super.setUp();
-        mockServicesInjector = context.mock(ServicesInjector.class);
+        mockServicesInjector = context.mock(ServiceInjector.class);
         mockTranslationService = context.mock(TranslationService.class);
 
         context.checking(new Expectations() {{
@@ -56,7 +56,6 @@ public class TitleFacetViaMethodsFactoryTest extends AbstractFacetFactoryTest {
 
         facetFactory = new TitleFacetViaMethodsFactory();
 
-        facetFactory.setServicesInjector(mockServicesInjector);
     }
 
 

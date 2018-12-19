@@ -26,15 +26,14 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import org.apache.isis.applib.Identifier;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.message.MessageService;
-import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.facets.FacetedMethod;
 import org.apache.isis.core.metamodel.facets.all.named.NamedFacet;
 import org.apache.isis.core.metamodel.facets.collections.modify.CollectionAddToFacet;
 import org.apache.isis.core.metamodel.facets.propcoll.notpersisted.NotPersistedFacet;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
@@ -83,24 +82,17 @@ public class OneToManyAssociationDefaultTest {
     @Mock
     private CollectionAddToFacet mockCollectionAddToFacet;
 
-    private ServicesInjector stubServicesInjector;
+    private ServiceInjector stubServicesInjector;
 
     private OneToManyAssociation association;
 
     @Before
     public void setUp() {
-        stubServicesInjector = ServicesInjector.builderForTesting()
-                .addServices(_Lists.of(
-                mockAuthenticationSessionProvider,
-                mockSpecificationLoader,
-                mockMessageService,
-                mockPersistenceSessionServiceInternal))
-                .build();
-
+        
         allowingPeerToReturnCollectionType();
         allowingPeerToReturnIdentifier();
         allowingSpecLoaderToReturnSpecs();
-        association = new OneToManyAssociationDefault(mockPeer, stubServicesInjector);
+        association = new OneToManyAssociationDefault(mockPeer);
     }
 
     private void allowingSpecLoaderToReturnSpecs() {

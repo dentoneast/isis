@@ -24,11 +24,13 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.collections._Lists;
+import org.apache.isis.core.metamodel.services.registry.ServiceRegistryDefault;
 
 public class ServicesInjectorDefaultTest_validateServices {
 
-    ServicesInjector servicesInjector;
+    ServiceRegistry serviceRegistry;
 
     public static class DomainServiceWithSomeId {
         public String getId() { return "someId"; }
@@ -57,13 +59,17 @@ public class ServicesInjectorDefaultTest_validateServices {
             // given
             serviceList.add(new DomainServiceWithSomeId());
             serviceList.add(new DomainServiceWithDuplicateId());
-
-            servicesInjector = ServicesInjector.builderForTesting()
-                    .addServices(serviceList)
-                    .build();
+            
+            serviceRegistry = new ServiceRegistryDefault();
+            serviceList.forEach(serviceRegistry::registerServiceInstance);
+            
+//            serviceRegistry.registerServiceInstance(serviceInstance);
+//                    ServiceRegistryBuilder_forTesting.get()
+//                    .addServices(serviceList)
+//                    .build();
 
             // when
-            servicesInjector.validateServices();
+            serviceRegistry.validateServices();
         }
 
         public void validate_DomainServicesWithDifferentIds() {
@@ -71,13 +77,16 @@ public class ServicesInjectorDefaultTest_validateServices {
             // given
             serviceList.add(new DomainServiceWithSomeId());
             serviceList.add(new DomainServiceWithDifferentId());
+            
+            serviceRegistry = new ServiceRegistryDefault();
+            serviceList.forEach(serviceRegistry::registerServiceInstance);
 
-            servicesInjector = ServicesInjector.builderForTesting()
-                    .addServices(serviceList)
-                    .build();
+//            serviceRegistry = ServiceRegistryBuilder_forTesting.get()
+//                    .addServices(serviceList)
+//                    .build();
 
             // when
-            servicesInjector.validateServices();
+            serviceRegistry.validateServices();
         }
 
     }

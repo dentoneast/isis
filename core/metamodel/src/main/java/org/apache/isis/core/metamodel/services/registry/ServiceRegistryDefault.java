@@ -19,49 +19,111 @@
 
 package org.apache.isis.core.metamodel.services.registry;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.enterprise.inject.Vetoed;
-import javax.inject.Inject;
+import javax.ejb.Singleton;
 
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
-import org.apache.isis.applib.services.wrapper.WrapperFactory;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
-import org.apache.isis.core.metamodel.services.ServicesInjectorAware;
+import org.apache.isis.commons.internal.base._Casts;
+import org.apache.isis.commons.internal.base._Lazy;
+import org.apache.isis.commons.internal.collections._Maps;
+import org.apache.isis.commons.internal.collections._Multimaps;
+import org.apache.isis.commons.internal.collections._Multimaps.ListMultimap;
+import org.apache.isis.commons.internal.collections._Sets;
 
-@Vetoed
-public class ServiceRegistryDefault implements ServiceRegistry, ServicesInjectorAware {
+/**
+ * @since 2.0.0-M2
+ */
+@Singleton
+public final class ServiceRegistryDefault implements ServiceRegistry {
+    
+    /**
+     * This is mutable internally, but only ever exposed (in {@link #streamRegisteredServices()}).
+     */
+    private final Set<Object> registeredServiceInstances = _Sets.newHashSet();
 
-    @Programmatic
+    /**
+     * If no key, not yet searched for type; otherwise the corresponding value is a {@link List} of all
+     * services that are assignable to the type.  It's possible that this is an empty list.
+     */
+    private final ListMultimap<Class<?>, Object> servicesAssignableToType = _Multimaps.newListMultimap();
+    private final _Lazy<Map<Class<?>, Object>> serviceByConcreteType = _Lazy.of(this::initServiceByConcreteType);
+
+
     @Override
-    public <T> T injectServicesInto(T domainObject) {
-        servicesInjector.injectServicesInto(unwrapped(domainObject));
-        return domainObject;
+    public void registerServiceInstance(Object serviceInstance) {
+        registeredServiceInstances.add(serviceInstance);
+        serviceByConcreteType.clear(); // invalidate
     }
-
-    @Programmatic
-    @Override
-    public <T> Stream<T> streamServices(Class<T> serviceType) {
-        return servicesInjector.streamServices(serviceType);
-    }
-
-    @Programmatic
+    
     @Override
     public Stream<Object> streamServices() {
-        return servicesInjector.streamServices();
+        return registeredServiceInstances.stream();
     }
 
-    private Object unwrapped(Object domainObject) {
-        return wrapperFactory != null ? wrapperFactory.unwrap(domainObject) : domainObject;
-    }
-
-    private ServicesInjector servicesInjector;
     @Override
-    public void setServicesInjector(final ServicesInjector servicesInjector) {
-        this.servicesInjector = servicesInjector;
+    public <T> Stream<T> streamServices(final Class<T> serviceClass) {
+        return servicesAssignableToType
+                .computeIfAbsent(serviceClass, this::locateMatchingServices)
+                .stream()
+                .map(x->_Casts.uncheckedCast(x));
     }
 
-    @Inject WrapperFactory wrapperFactory;    
+    @Override
+    public boolean isRegisteredService(final Class<?> cls) {
+        return serviceByConcreteType.get().containsKey(cls);
+    }
 
+    @Override
+    public boolean isRegisteredServiceInstance(final Object pojo) {
+        if(pojo==null) {
+            return false;
+        }
+        final Class<?> key = pojo.getClass();
+        final Object serviceInstance = serviceByConcreteType.get().get(key);
+        return Objects.equals(pojo, serviceInstance);
+    }
+    
+    
+    @Override
+    public void validateServices() {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    // -- HELPER ...
+    
+    // -- LOOKUP SERVICE(S)
+
+    private <T> List<Object> locateMatchingServices(final Class<T> serviceClass) {
+        final List<Object> matchingServices = streamServices()
+                .filter(isOfType(serviceClass))
+                .collect(Collectors.toList());
+        return matchingServices;
+    }
+    
+    // -- LAZY INIT
+
+    private Map<Class<?>, Object> initServiceByConcreteType(){
+        final Map<Class<?>, Object> map = _Maps.newHashMap();
+        for (Object service : registeredServiceInstances) {
+            final Class<?> concreteType = service.getClass();
+            map.put(concreteType, service);
+        }
+        return map;
+    }
+    
+    // -- REFLECTIVE PREDICATES
+
+    private static final Predicate<Object> isOfType(final Class<?> cls) {
+        return obj->cls.isAssignableFrom(obj.getClass());
+    }
+
+    
 }

@@ -27,8 +27,8 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.isis.applib.NonRecoverableException;
 import org.apache.isis.applib.domain.DomainObjectList;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.metamodel.MetaModelService;
-import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.schema.utils.jaxbadapters.PersistentEntitiesAdapter;
 import org.apache.isis.schema.utils.jaxbadapters.PersistentEntityAdapter;
 
@@ -76,21 +76,21 @@ public class JaxbServiceDefault extends JaxbService.Simple {
     @Override
     protected void configure(final Unmarshaller unmarshaller) {
         unmarshaller.setAdapter(PersistentEntityAdapter.class,
-                serviceRegistry.injectServicesInto(new PersistentEntityAdapter()));
+                serviceInjector.injectServicesInto(new PersistentEntityAdapter()));
         unmarshaller.setAdapter(PersistentEntitiesAdapter.class,
-                serviceRegistry.injectServicesInto(new PersistentEntitiesAdapter()));
+                serviceInjector.injectServicesInto(new PersistentEntitiesAdapter()));
     }
 
     @Override
     protected void configure(final Marshaller marshaller) {
         marshaller.setAdapter(PersistentEntityAdapter.class,
-                serviceRegistry.injectServicesInto(new PersistentEntityAdapter()));
+                serviceInjector.injectServicesInto(new PersistentEntityAdapter()));
         marshaller.setAdapter(PersistentEntitiesAdapter.class,
-                serviceRegistry.injectServicesInto(new PersistentEntitiesAdapter()));
+                serviceInjector.injectServicesInto(new PersistentEntitiesAdapter()));
     }
 
 
-    @Inject ServiceRegistry serviceRegistry;
+    @Inject ServiceInjector serviceInjector;
     @Inject MetaModelService metaModelService5;
 }
 

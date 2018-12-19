@@ -33,6 +33,7 @@ import org.junit.Test;
 
 import org.apache.isis.applib.Identifier;
 import org.apache.isis.applib.annotation.Where;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.wrapper.DisabledException;
 import org.apache.isis.applib.services.wrapper.WrapperFactory;
 import org.apache.isis.applib.services.wrapper.events.PropertyModifyEvent;
@@ -51,7 +52,6 @@ import org.apache.isis.core.metamodel.facets.members.disabled.DisabledFacet;
 import org.apache.isis.core.metamodel.facets.members.disabled.DisabledFacetAbstractAlwaysEverywhere;
 import org.apache.isis.core.metamodel.facets.properties.accessor.PropertyAccessorFacetViaAccessor;
 import org.apache.isis.core.metamodel.facets.properties.update.modify.PropertySetterFacetViaSetterMethod;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
@@ -98,7 +98,7 @@ public class WrapperFactoryDefaultTest_wrappedObject_transient {
     private Identifier mockPasswordIdentifier;
 
     @Mock
-    private ServicesInjector mockServicesInjector;
+    private ServiceInjector mockServicesInjector;
 
     @Mock
     protected ObjectAdapter mockPasswordAdapter;
@@ -138,17 +138,17 @@ public class WrapperFactoryDefaultTest_wrappedObject_transient {
                 allowing(mockIsisSessionFactory).getSpecificationLoader();
                 will(returnValue(mockSpecificationLoader));
 
-                allowing(mockServicesInjector).getPersistenceSessionServiceInternal();
-                will(returnValue(mockPersistenceSessionServiceInternal));
+//                allowing(mockServicesInjector).getPersistenceSessionServiceInternal();
+//                will(returnValue(mockPersistenceSessionServiceInternal));
 
                 allowing(mockPersistenceSessionServiceInternal).adapterFor(employeeDO);
                 will(returnValue(mockEmployeeAdapter));
 
-                allowing(mockServicesInjector).getAuthenticationSessionProvider();
-                will(returnValue(mockAuthenticationSessionProvider));
-
-                allowing(mockServicesInjector).getSpecificationLoader();
-                will(returnValue(mockSpecificationLoader));
+//                allowing(mockServicesInjector).getAuthenticationSessionProvider();
+//                will(returnValue(mockAuthenticationSessionProvider));
+//
+//                allowing(mockServicesInjector).getSpecificationLoader();
+//                will(returnValue(mockSpecificationLoader));
 
 //                allowing(mockAdapterManager).lookupAdapterFor(employeeDO);
 //                will(returnValue(mockEmployeeAdapter));
@@ -279,9 +279,8 @@ public class WrapperFactoryDefaultTest_wrappedObject_transient {
 
 
         // and given
-        facets = Arrays.asList((Facet)new PropertyAccessorFacetViaAccessor(mockOnType, getPasswordMethod, mockPasswordMember,
-                mockSpecificationLoader,
-                mockAuthenticationSessionProvider, mockAdapterManager
+        facets = Arrays.asList((Facet)new PropertyAccessorFacetViaAccessor(mockOnType, getPasswordMethod, mockPasswordMember
+               
         ));
         context.checking(new Expectations() {
             {

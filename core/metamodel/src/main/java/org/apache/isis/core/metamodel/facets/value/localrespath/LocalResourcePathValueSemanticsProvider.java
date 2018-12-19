@@ -23,12 +23,12 @@ import java.nio.file.InvalidPathException;
 
 import org.apache.isis.applib.adapters.EncoderDecoder;
 import org.apache.isis.applib.adapters.Parser;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.value.LocalResourcePath;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.facetapi.Facet;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.object.value.vsp.ValueSemanticsProviderAndFacetAbstract;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 
 public class LocalResourcePathValueSemanticsProvider
 extends ValueSemanticsProviderAndFacetAbstract<LocalResourcePath> implements LocalResourcePathValueFacet {
@@ -47,13 +47,13 @@ extends ValueSemanticsProviderAndFacetAbstract<LocalResourcePath> implements Loc
      * {@link EncoderDecoder}.
      */
     public LocalResourcePathValueSemanticsProvider() {
-        this(null, null);
+        this(null);
     }
 
-    public LocalResourcePathValueSemanticsProvider(final FacetHolder holder, final ServicesInjector context) {
+    public LocalResourcePathValueSemanticsProvider(final FacetHolder holder) {
         super(type(), holder, LocalResourcePath.class,
-                TYPICAL_LENGTH, MAX_LENGTH, Immutability.IMMUTABLE, EqualByContent.HONOURED, DEFAULT_VALUE,
-                context);
+                TYPICAL_LENGTH, MAX_LENGTH, Immutability.IMMUTABLE, EqualByContent.HONOURED, DEFAULT_VALUE
+                );
     }
 
     // //////////////////////////////////////////////////////////////////
@@ -118,7 +118,7 @@ extends ValueSemanticsProviderAndFacetAbstract<LocalResourcePath> implements Loc
 
     @Override
     public ObjectAdapter createValue(final LocalResourcePath value) {
-        return getObjectAdapterProvider().adapterFor(value);
+        return adapterProvider().adapterFor(value);
     }
 
     // /////// toString ///////

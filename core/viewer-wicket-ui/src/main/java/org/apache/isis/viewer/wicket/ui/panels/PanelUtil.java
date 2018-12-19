@@ -28,8 +28,8 @@ import org.apache.wicket.request.resource.CssResourceReference;
 
 import org.apache.isis.applib.annotation.SemanticsOf;
 import org.apache.isis.applib.services.i18n.TranslationService;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.base._Strings;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.runtime.system.SystemConstants;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactoryBuilder;
 
@@ -92,7 +92,7 @@ public final class PanelUtil {
     public static void addConfirmationDialogIfAreYouSureSemantics(
             final Component component,
             final SemanticsOf semanticsOf,
-            final ServicesInjector servicesInjector) {
+            final ServiceInjector servicesInjector) {
 
         if (!semanticsOf.isAreYouSure()) {
             return;

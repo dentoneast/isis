@@ -21,17 +21,17 @@ package org.apache.isis.core.runtime.system.persistence;
 
 import java.lang.reflect.Modifier;
 
-import org.apache.isis.core.metamodel.services.ServicesInjector;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.spec.ObjectInstantiationException;
 
 public class ObjectFactory {
 
     private final PersistenceSession persistenceSession;
-    private final ServicesInjector servicesInjector;
+    private final ServiceInjector servicesInjector;
 
     public ObjectFactory(
             final PersistenceSession persistenceSession,
-            final ServicesInjector servicesInjector) {
+            final ServiceInjector servicesInjector) {
         this.persistenceSession = persistenceSession;
         this.servicesInjector = servicesInjector;
     }

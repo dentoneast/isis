@@ -63,7 +63,6 @@ public class TitleAnnotationFacetFactoryTest extends AbstractFacetFactoryJUnit4T
         context.allowing(mockSpecificationLoader);
 
         facetFactory = new TitleAnnotationFacetFactory();
-        facetFactory.setServicesInjector(mockServicesInjector);
 
         context.checking(new Expectations() {
             {
@@ -73,15 +72,13 @@ public class TitleAnnotationFacetFactoryTest extends AbstractFacetFactoryJUnit4T
                 allowing(mockAuthenticationSessionProvider).getAuthenticationSession();
                 will(returnValue(mockAuthenticationSession));
 
-                allowing(mockServicesInjector).getSpecificationLoader();
-                will(returnValue(mockSpecificationLoader));
-
-                allowing(mockServicesInjector).getPersistenceSessionServiceInternal();
-                will(returnValue(mockPersistenceSessionServiceInternal));
+//                allowing(mockServicesInjector).getSpecificationLoader();
+//                will(returnValue(mockSpecificationLoader));
+//
+//                allowing(mockServicesInjector).getPersistenceSessionServiceInternal();
+//                will(returnValue(mockPersistenceSessionServiceInternal));
             }
         });
-
-        facetFactory.setServicesInjector(mockServicesInjector);
 
     }
 

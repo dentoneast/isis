@@ -46,8 +46,8 @@ import org.apache.isis.applib.services.classdiscovery.ClassDiscoveryService;
 import org.apache.isis.applib.services.factory.FactoryService;
 import org.apache.isis.applib.services.fixturespec.FixtureScriptsDefault;
 import org.apache.isis.applib.services.fixturespec.FixtureScriptsSpecification;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.jaxb.JaxbService;
-import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.repository.RepositoryService;
 import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.applib.services.xactn.TransactionService;
@@ -305,7 +305,7 @@ public abstract class FixtureScripts extends AbstractService {
         // if this method is called programmatically, the caller may have simply new'd up the fixture script
         // (rather than use container.newTransientInstance(...).  To allow this use case, we need to ensure that
         // domain services are injected into the fixture script.
-        serviceRegistry.injectServicesInto(fixtureScript);
+        serviceInjector.injectServicesInto(fixtureScript);
 
         return fixtureScript.withTracing(fixtureTracing.get()).run(parameters);
     }
@@ -365,7 +365,7 @@ public abstract class FixtureScripts extends AbstractService {
     @Programmatic
     public <T,F extends BuilderScriptAbstract<T,F>> T runBuilderScript(final F fixtureScript) {
 
-        serviceRegistry.injectServicesInto(fixtureScript);
+        serviceInjector.injectServicesInto(fixtureScript);
 
         fixtureScript.run(null);
 
@@ -471,7 +471,7 @@ public abstract class FixtureScripts extends AbstractService {
     @Inject TitleService titleService;
     @Inject JaxbService jaxbService;
     @Inject BookmarkService bookmarkService;
-    @Inject ServiceRegistry serviceRegistry;
+    @Inject ServiceInjector serviceInjector;
     @Inject RepositoryService repositoryService;
     @Inject TransactionService transactionService;
     @Inject ClassDiscoveryService classDiscoveryService;

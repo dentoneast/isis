@@ -22,13 +22,13 @@ import java.util.Map;
 import javax.jdo.PersistenceManager;
 
 import org.apache.isis.applib.query.Query;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.commons.components.SessionScopedComponent;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterByIdProvider;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.runtime.persistence.objectstore.transaction.PersistenceCommand;
 import org.apache.isis.core.runtime.persistence.objectstore.transaction.TransactionalResource;
 import org.apache.isis.core.runtime.runner.opts.OptionHandlerFixtureAbstract;
@@ -48,7 +48,7 @@ extends
     
     IsisConfiguration getConfiguration();
     IsisTransactionManager getTransactionManager();
-    ServicesInjector getServicesInjector();
+    ServiceInjector getServicesInjector();
     
     void open();
     void close();

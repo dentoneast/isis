@@ -23,11 +23,11 @@ import javax.ws.rs.core.Response;
 
 import org.apache.isis.applib.annotation.SemanticsOf;
 import org.apache.isis.applib.annotation.Where;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.xactn.TransactionService;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
@@ -166,7 +166,7 @@ public class DomainResourceHelper {
         }
 
         @Override
-        public ServicesInjector getServicesInjector() {
+        public ServiceInjector getServicesInjector() {
             return rendererContext.getServicesInjector();
         }
 
@@ -383,7 +383,7 @@ public class DomainResourceHelper {
     // dependencies (from context)
     // //////////////////////////////////////
 
-    private ServicesInjector getServicesInjector() {
+    private ServiceInjector getServicesInjector() {
         return resourceContext.getServicesInjector();
     }
 

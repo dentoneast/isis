@@ -18,8 +18,7 @@
  */
 package org.apache.isis.viewer.restfulobjects.server.util;
 
-import static org.apache.isis.commons.internal.base._With.mapIfPresentElse;
-
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
@@ -31,6 +30,8 @@ import org.apache.isis.core.runtime.persistence.ObjectNotFoundException;
 import org.apache.isis.core.runtime.persistence.PojoRecreationException;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.viewer.restfulobjects.rendering.RendererContext;
+
+import static org.apache.isis.commons.internal.base._With.mapIfPresentElse;
 
 public final class OidUtils {
 
@@ -70,11 +71,12 @@ public final class OidUtils {
         return ps.adapterFor(domainObject);
     }
     
-    private static Object domainObjectForAny(final PersistenceSession persistenceSession, final RootOid rootOid) {
+    private static Object domainObjectForAny(PersistenceSession persistenceSession, final RootOid rootOid) {
+        
+        final MetaModelContext context = MetaModelContext.current();
         
         final ObjectSpecId specId = rootOid.getObjectSpecId();
-        final ObjectSpecification spec = persistenceSession.getServicesInjector()
-                .getSpecificationLoader()
+        final ObjectSpecification spec = context.getSpecificationLoader()
                 .lookupBySpecId(specId);
         if(spec == null) {
             // eg "NONEXISTENT:123"

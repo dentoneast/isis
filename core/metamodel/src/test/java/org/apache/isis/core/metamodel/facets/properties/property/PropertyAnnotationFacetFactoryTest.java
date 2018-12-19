@@ -113,7 +113,6 @@ public class PropertyAnnotationFacetFactoryTest extends AbstractFacetFactoryJUni
     public void setUp() throws Exception {
         _Config.clear();
         facetFactory = new PropertyAnnotationFacetFactory();
-        facetFactory.setServicesInjector(mockServicesInjector);
     }
 
     @After
@@ -124,11 +123,7 @@ public class PropertyAnnotationFacetFactoryTest extends AbstractFacetFactoryJUni
     public static class Modify extends PropertyAnnotationFacetFactoryTest {
 
         private void addGetterFacet(final FacetHolder holder) {
-            FacetUtil.addFacet(new PropertyOrCollectionAccessorFacetAbstract(mockOnType, holder,
-                    mockSpecificationLoader, 
-                    mockAuthenticationSessionProvider,
-                    mockPersistenceSessionServiceInternal
-            ) {
+            FacetUtil.addFacet(new PropertyOrCollectionAccessorFacetAbstract(mockOnType, holder ) {
                 @Override
                 public Object getProperty(
                         final ManagedObject inObject,

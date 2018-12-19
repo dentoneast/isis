@@ -44,26 +44,21 @@ import org.apache.isis.core.metamodel.interactions.InteractionUtils;
 import org.apache.isis.core.metamodel.interactions.UsabilityContext;
 import org.apache.isis.core.metamodel.interactions.ValidityContext;
 import org.apache.isis.core.metamodel.interactions.VisibilityContext;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 
 public class OneToManyAssociationDefault extends ObjectAssociationAbstract implements OneToManyAssociation {
 
-    public OneToManyAssociationDefault(
-            final FacetedMethod facetedMethod,
-            final ServicesInjector servicesInjector) {
-        this(facetedMethod,
-                getSpecification(servicesInjector.getSpecificationLoader(), facetedMethod.getType()),
-                servicesInjector);
+    public OneToManyAssociationDefault(final FacetedMethod facetedMethod) {
+        this(facetedMethod, specificationOf(facetedMethod.getType()));
     }
 
     protected OneToManyAssociationDefault(
             final FacetedMethod facetedMethod,
-            final ObjectSpecification objectSpec,
-            final ServicesInjector servicesInjector) {
-        super(facetedMethod, FeatureType.COLLECTION, objectSpec, servicesInjector);
+            final ObjectSpecification objectSpec) {
+        
+        super(facetedMethod, FeatureType.COLLECTION, objectSpec);
     }
 
     @Override
@@ -167,7 +162,7 @@ public class OneToManyAssociationDefault extends ObjectAssociationAbstract imple
         if (collection == null) {
             return null;
         }
-        return getObjectAdapterProvider().adapterFor(collection, (RootOid)ownerAdapter.getOid(), this);
+        return adapterProvider().adapterFor(collection, (RootOid)ownerAdapter.getOid(), this);
     }
     
     @Override

@@ -26,12 +26,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.isis.applib.services.command.Command;
+import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.facets.object.callbacks.CallbackFacet;
 import org.apache.isis.core.metamodel.facets.object.callbacks.CreatedCallbackFacet;
 import org.apache.isis.core.metamodel.facets.object.callbacks.CreatedLifecycleEventFacet;
 import org.apache.isis.core.metamodel.facets.object.viewmodel.ViewModelFacet;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.Contributed;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAssociation;
@@ -52,15 +53,18 @@ class ObjectAdapterContext_ObjectCreation {
     private static final Logger LOG = LoggerFactory.getLogger(ObjectAdapterContext_ObjectCreation.class);
     private final ObjectAdapterContext objectAdapterContext;
     private final PersistenceSession persistenceSession;
-    private final ServicesInjector servicesInjector;
+    private final ServiceInjector servicesInjector;
     private final SpecificationLoader specificationLoader;
     
-    ObjectAdapterContext_ObjectCreation(ObjectAdapterContext objectAdapterContext,
+    ObjectAdapterContext_ObjectCreation(
+            ObjectAdapterContext objectAdapterContext,
+            MetaModelContext metaModelContext,
             PersistenceSession persistenceSession) {
+        
         this.objectAdapterContext = objectAdapterContext;
         this.persistenceSession = persistenceSession;
         this.servicesInjector = persistenceSession.getServicesInjector();
-        this.specificationLoader = servicesInjector.getSpecificationLoader();
+        this.specificationLoader = metaModelContext.getSpecificationLoader();
     }
     
     public ObjectAdapter newInstance(ObjectSpecification objectSpec) {

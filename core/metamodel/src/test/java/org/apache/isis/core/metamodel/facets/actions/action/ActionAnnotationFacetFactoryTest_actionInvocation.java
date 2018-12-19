@@ -46,9 +46,6 @@ public class ActionAnnotationFacetFactoryTest_actionInvocation extends AbstractF
     public void setUp() throws Exception {
         super.setUp();
         this.facetFactory =  new ActionAnnotationFacetFactory();
-
-        facetFactory.setServicesInjector(stubServicesInjector);
-
     }
 
     public void testActionInvocationFacetIsInstalledAndMethodRemoved() {
@@ -144,8 +141,7 @@ public class ActionAnnotationFacetFactoryTest_actionInvocation extends AbstractF
 
         final Method actionMethod = findMethod(CustomerEx.class, "someAction", new Class[] { int.class, long.class });
 
-        final FacetedMethod facetHolderWithParms = FacetedMethod.createForAction(CustomerEx.class, actionMethod,
-                mockSpecificationLoader);
+        final FacetedMethod facetHolderWithParms = FacetedMethod.createForAction(CustomerEx.class, actionMethod);
 
         facetFactory.processInvocation(new ProcessMethodContext(CustomerEx.class, null, actionMethod, methodRemover, facetHolderWithParms));
 
@@ -157,16 +153,8 @@ public class ActionAnnotationFacetFactoryTest_actionInvocation extends AbstractF
 
         allowing_specificationLoader_loadSpecification_any_willReturn(voidSpec);
 
-
         final ActionParameterChoicesFacetViaMethodFactory facetFactoryForChoices = new ActionParameterChoicesFacetViaMethodFactory();
-        facetFactoryForChoices.setServicesInjector(stubServicesInjector);
-
-        facetFactoryForChoices.setServicesInjector(stubServicesInjector);
-
-
         final DisableForContextFacetViaMethodFactory facetFactoryForDisable = new DisableForContextFacetViaMethodFactory();
-        facetFactoryForDisable.setServicesInjector(stubServicesInjector);
-
 
         class Customer {
             @SuppressWarnings("unused")
@@ -201,8 +189,7 @@ public class ActionAnnotationFacetFactoryTest_actionInvocation extends AbstractF
         final Method choices1Method = findMethod(CustomerEx.class, "choices1SomeAction", new Class[] {});
         final Method disableMethod = findMethod(CustomerEx.class, "disableSomeAction", new Class[] { int.class, long.class });
 
-        final FacetedMethod facetHolderWithParms = FacetedMethod.createForAction(CustomerEx.class, actionMethod,
-                mockSpecificationLoader);
+        final FacetedMethod facetHolderWithParms = FacetedMethod.createForAction(CustomerEx.class, actionMethod);
 
         final ProcessMethodContext processMethodContext = new ProcessMethodContext(CustomerEx.class, null, actionMethod, methodRemover, facetHolderWithParms);
         facetFactory.processInvocation(processMethodContext);

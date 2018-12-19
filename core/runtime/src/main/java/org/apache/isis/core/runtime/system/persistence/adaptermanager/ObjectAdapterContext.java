@@ -23,8 +23,10 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.commons.ensure.Assert;
 import org.apache.isis.core.commons.ensure.IsisAssertException;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterByIdProvider;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
@@ -33,7 +35,6 @@ import org.apache.isis.core.metamodel.adapter.oid.ParentedOid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.adapter.version.Version;
 import org.apache.isis.core.metamodel.facets.object.callbacks.LifecycleEventFacet;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
@@ -53,7 +54,7 @@ final public class ObjectAdapterContext {
     private static final Logger LOG = LoggerFactory.getLogger(ObjectAdapterContext.class);
 
     public static ObjectAdapterContext openContext(
-            ServicesInjector servicesInjector, 
+            ServiceInjector servicesInjector, 
             AuthenticationSession authenticationSession, 
             SpecificationLoader specificationLoader, 
             PersistenceSession persistenceSession) {
@@ -74,22 +75,24 @@ final public class ObjectAdapterContext {
     private final ObjectAdapterContext_DependencyInjection dependencyInjectionMixin;
     final ObjectAdapterContext_ObjectCreation objectCreationMixin;
     private final ObjectAdapterContext_LifecycleEventSupport lifecycleEventMixin;
-    private final ServicesInjector servicesInjector;
+    private final ServiceInjector servicesInjector;
 
     private ObjectAdapterContext(
-            ServicesInjector servicesInjector, 
+            ServiceInjector servicesInjector, 
             AuthenticationSession authenticationSession, 
             SpecificationLoader specificationLoader, 
             PersistenceSession persistenceSession) {
+        
+        final MetaModelContext metaModelContext = MetaModelContext.current();
 
-        this.objectAdapterProviderMixin = new ObjectAdapterContext_ObjectAdapterProvider(this, persistenceSession);
+        this.objectAdapterProviderMixin = new ObjectAdapterContext_ObjectAdapterProvider(this, metaModelContext, persistenceSession);
         this.mementoSupportMixin = new ObjectAdapterContext_MementoSupport(this, persistenceSession);
         this.serviceLookupMixin = new ObjectAdapterContext_ServiceLookup(this, servicesInjector);
-        this.newIdentifierMixin = new ObjectAdapterContext_NewIdentifier(this, persistenceSession);
-        this.objectAdapterByIdProviderMixin = new ObjectAdapterContext_ObjectAdapterByIdProvider(this, persistenceSession, authenticationSession);
+        this.newIdentifierMixin = new ObjectAdapterContext_NewIdentifier(this, metaModelContext, persistenceSession);
+        this.objectAdapterByIdProviderMixin = new ObjectAdapterContext_ObjectAdapterByIdProvider(this, metaModelContext, persistenceSession, authenticationSession);
         this.dependencyInjectionMixin = new ObjectAdapterContext_DependencyInjection(this, persistenceSession);
-        this.objectCreationMixin = new ObjectAdapterContext_ObjectCreation(this, persistenceSession);
-        this.lifecycleEventMixin = new ObjectAdapterContext_LifecycleEventSupport(this, persistenceSession);
+        this.objectCreationMixin = new ObjectAdapterContext_ObjectCreation(this, metaModelContext, persistenceSession);
+        this.lifecycleEventMixin = new ObjectAdapterContext_LifecycleEventSupport(this, metaModelContext, persistenceSession);
 
         this.persistenceSession = persistenceSession;
         this.specificationLoader = specificationLoader;

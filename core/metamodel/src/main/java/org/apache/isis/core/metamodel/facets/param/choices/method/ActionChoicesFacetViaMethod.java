@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.CollectionUtils;
@@ -34,31 +33,20 @@ import org.apache.isis.core.metamodel.facets.ImperativeFacet;
 import org.apache.isis.core.metamodel.facets.param.choices.ActionChoicesFacetAbstract;
 import org.apache.isis.core.metamodel.spec.DomainModelException;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
-import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-import org.apache.isis.core.security.authentication.AuthenticationSession;
-import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 
 public class ActionChoicesFacetViaMethod extends ActionChoicesFacetAbstract implements ImperativeFacet {
 
     private final Method method;
     private final Class<?> choicesType;
-    private final SpecificationLoader specificationLoader;
-    private final AuthenticationSessionProvider authenticationSessionProvider;
-    private final ObjectAdapterProvider adapterProvider;
 
     public ActionChoicesFacetViaMethod(
             final Method method,
             final Class<?> choicesType,
-            final FacetHolder holder,
-            final SpecificationLoader specificationLoader,
-            final AuthenticationSessionProvider authenticationSessionProvider,
-            final ObjectAdapterProvider adapterProvider) {
+            final FacetHolder holder) {
+        
         super(holder);
         this.method = method;
         this.choicesType = choicesType;
-        this.specificationLoader = specificationLoader;
-        this.authenticationSessionProvider = authenticationSessionProvider;
-        this.adapterProvider = adapterProvider;
     }
 
     /**
@@ -105,10 +93,8 @@ public class ActionChoicesFacetViaMethod extends ActionChoicesFacetAbstract impl
             return null;
         }
 
-        final ObjectAdapter collectionAdapter = getObjectAdapterProvider().adapterFor(collectionOrArray);
+        final ObjectAdapter collectionAdapter = adapterProvider().adapterFor(collectionOrArray);
 
-//        final AuthenticationSession authenticationSession = getAuthenticationSession();
-//        final DeploymentCategory deploymentCategory = getDeploymentCategory();
         final List<ObjectAdapter> visibleAdapters =
                 ObjectAdapter.Util.visibleAdapters(
                         collectionAdapter,
@@ -117,32 +103,12 @@ public class ActionChoicesFacetViaMethod extends ActionChoicesFacetAbstract impl
                 _Lists.map(visibleAdapters, ObjectAdapter.Util::unwrapPojo);
 
         final ObjectSpecification parameterSpec = getSpecification(parameterType);
-        return CollectionUtils.getCollectionAsObjectArray(filteredObjects, parameterSpec, getObjectAdapterProvider());
+        return CollectionUtils.getCollectionAsObjectArray(filteredObjects, parameterSpec, adapterProvider());
     }
 
     @Override
     protected String toStringValues() {
         return "method=" + method + ",type=" + choicesType;
-    }
-
-    protected ObjectSpecification getSpecification(final Class<?> type) {
-        return type != null ? getSpecificationLoader().loadSpecification(type) : null;
-    }
-
-    // ///////////////////////////////////////////////////////
-    // Dependencies
-    // ///////////////////////////////////////////////////////
-
-    protected SpecificationLoader getSpecificationLoader() {
-        return specificationLoader;
-    }
-
-    protected ObjectAdapterProvider getObjectAdapterProvider() {
-        return adapterProvider;
-    }
-
-    protected AuthenticationSession getAuthenticationSession() {
-        return authenticationSessionProvider.getAuthenticationSession();
     }
 
     @Override public void appendAttributesTo(final Map<String, Object> attributeMap) {

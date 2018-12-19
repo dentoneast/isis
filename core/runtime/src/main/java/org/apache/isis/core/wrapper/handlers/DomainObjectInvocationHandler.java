@@ -28,9 +28,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.apache.isis.commons.internal.collections._Lists;
-import org.apache.isis.commons.internal.collections._Sets;
-
 import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.services.wrapper.DisabledException;
 import org.apache.isis.applib.services.wrapper.HiddenException;
@@ -46,7 +43,10 @@ import org.apache.isis.applib.services.wrapper.events.UsabilityEvent;
 import org.apache.isis.applib.services.wrapper.events.ValidityEvent;
 import org.apache.isis.applib.services.wrapper.events.VisibilityEvent;
 import org.apache.isis.commons.internal.base._NullSafe;
+import org.apache.isis.commons.internal.collections._Lists;
+import org.apache.isis.commons.internal.collections._Sets;
 import org.apache.isis.core.metamodel.IsisJdoMetamodelPlugin;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.consent.Consent;
@@ -56,7 +56,6 @@ import org.apache.isis.core.metamodel.facets.ImperativeFacet;
 import org.apache.isis.core.metamodel.facets.ImperativeFacet.Intent;
 import org.apache.isis.core.metamodel.facets.object.mixin.MixinFacet;
 import org.apache.isis.core.metamodel.interactions.ObjectTitleContext;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.Contributed;
@@ -77,7 +76,7 @@ import org.apache.isis.core.security.authentication.AuthenticationSessionProvide
 public class DomainObjectInvocationHandler<T> extends DelegatingInvocationHandlerDefault<T> {
 
     private final AuthenticationSessionProvider authenticationSessionProvider;
-    private final PersistenceSessionServiceInternal persistenceSessionServiceInternal;
+    private final ObjectAdapterProvider objectAdapterProvider;
 
     private final ProxyContextHandler proxy;
     private final ExecutionMode executionMode;
@@ -116,12 +115,10 @@ public class DomainObjectInvocationHandler<T> extends DelegatingInvocationHandle
         this.executionMode = mode;
         this.isisSessionFactory = isisSessionFactory;
 
-        final ServicesInjector servicesInjector = isisSessionFactory.getServicesInjector();
-
-        this.authenticationSessionProvider = servicesInjector.getAuthenticationSessionProvider();
-        //this.specificationLoader = servicesInjector.getSpecificationLoader();
-        this.persistenceSessionServiceInternal = servicesInjector.getPersistenceSessionServiceInternal();
-
+        final MetaModelContext context = MetaModelContext.current();
+        
+        this.authenticationSessionProvider = context.getAuthenticationSessionProvider(); 
+        this.objectAdapterProvider = context.adapterProvider();
 
         try {
             titleMethod = delegate.getClass().getMethod("title", new Class[]{});
@@ -836,6 +833,7 @@ public class DomainObjectInvocationHandler<T> extends DelegatingInvocationHandle
      * a hard-coded value like this is an approximation.
      */
     private final Where where = Where.ANYWHERE;
+    
 
     private void checkVisibility(
             final ObjectAdapter targetObjectAdapter,
@@ -958,11 +956,11 @@ public class DomainObjectInvocationHandler<T> extends DelegatingInvocationHandle
     }
 
     protected ObjectAdapterProvider getObjectAdapterProvider() {
-        return persistenceSessionServiceInternal;
+        return objectAdapterProvider;
     }
     
     protected PersistenceSessionServiceInternal getPersistenceSessionService() {
-        return persistenceSessionServiceInternal;
+        return (PersistenceSessionServiceInternal) objectAdapterProvider;
     }
 
     public IsisSessionFactory getIsisSessionFactory() {

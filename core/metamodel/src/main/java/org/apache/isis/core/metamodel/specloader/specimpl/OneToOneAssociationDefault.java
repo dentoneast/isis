@@ -51,7 +51,6 @@ import org.apache.isis.core.metamodel.interactions.PropertyVisibilityContext;
 import org.apache.isis.core.metamodel.interactions.UsabilityContext;
 import org.apache.isis.core.metamodel.interactions.ValidityContext;
 import org.apache.isis.core.metamodel.interactions.VisibilityContext;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.services.command.CommandDtoServiceInternal;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
@@ -60,19 +59,15 @@ import org.apache.isis.schema.cmd.v1.CommandDto;
 
 public class OneToOneAssociationDefault extends ObjectAssociationAbstract implements OneToOneAssociation {
 
-    public OneToOneAssociationDefault(
-            final FacetedMethod facetedMethod,
-            final ServicesInjector servicesInjector) {
-        this(facetedMethod,
-                getSpecification(servicesInjector.getSpecificationLoader(), facetedMethod.getType()),
-                servicesInjector);
+    public OneToOneAssociationDefault(final FacetedMethod facetedMethod) {
+        this(facetedMethod, specificationOf(facetedMethod.getType()));
     }
 
     protected OneToOneAssociationDefault(
             final FacetedMethod facetedMethod,
-            final ObjectSpecification objectSpec,
-            final ServicesInjector servicesInjector) {
-        super(facetedMethod, FeatureType.PROPERTY, objectSpec, servicesInjector);
+            final ObjectSpecification objectSpec) {
+        
+        super(facetedMethod, FeatureType.PROPERTY, objectSpec);
     }
 
     // -- visible, usable
@@ -149,7 +144,7 @@ public class OneToOneAssociationDefault extends ObjectAssociationAbstract implem
             return null;
         }
 
-        return getObjectAdapterProvider().adapterFor(referencedPojo);
+        return adapterProvider().adapterFor(referencedPojo);
     }
     
 
@@ -164,7 +159,7 @@ public class OneToOneAssociationDefault extends ObjectAssociationAbstract implem
             return null;
         }
         
-        return getObjectAdapterProvider().adapterFor(referencedPojo);
+        return adapterProvider().adapterFor(referencedPojo);
     }
     
     @Override
@@ -279,16 +274,18 @@ public class OneToOneAssociationDefault extends ObjectAssociationAbstract implem
     public ObjectAdapter[] getChoices(
             final ObjectAdapter ownerAdapter,
             final InteractionInitiatedBy interactionInitiatedBy) {
+        
         final PropertyChoicesFacet propertyChoicesFacet = getFacet(PropertyChoicesFacet.class);
         if (propertyChoicesFacet == null) {
             return null;
         }
+        
         final Object[] pojoOptions = propertyChoicesFacet.getChoices(
                 ownerAdapter,
-                getSpecificationLoader(),
                 interactionInitiatedBy);
+        
         List<ObjectAdapter> adapters = _NullSafe.stream(pojoOptions)
-                .map(  getObjectAdapterProvider()::adapterFor )
+                .map(  adapterProvider()::adapterFor )
                 .collect(Collectors.toList());
         return adapters.toArray(new ObjectAdapter[]{});
     }
@@ -311,7 +308,7 @@ public class OneToOneAssociationDefault extends ObjectAssociationAbstract implem
         if (pojoOptions != null) {
             final ObjectAdapter[] options = new ObjectAdapter[pojoOptions.length];
             for (int i = 0; i < options.length; i++) {
-                options[i] = getObjectAdapterProvider().adapterFor(pojoOptions[i]);
+                options[i] = adapterProvider().adapterFor(pojoOptions[i]);
             }
             return options;
         }

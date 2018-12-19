@@ -26,12 +26,10 @@ import org.apache.isis.applib.services.urlencoding.UrlEncodingService;
 import org.apache.isis.commons.internal.memento._Mementos;
 import org.apache.isis.commons.internal.memento._Mementos.SerializingAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.PostConstructMethodCache;
 import org.apache.isis.core.metamodel.facets.properties.update.modify.PropertySetterFacet;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.Contributed;
@@ -40,16 +38,11 @@ import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
 public abstract class RecreatableObjectFacetDeclarativeInitializingAbstract 
 extends RecreatableObjectFacetAbstract {
 
-    private final ObjectAdapterProvider adapterProvider;
-
     public RecreatableObjectFacetDeclarativeInitializingAbstract(
             final FacetHolder holder,
             final RecreationMechanism recreationMechanism,
-            final ObjectAdapterProvider adapterProvider,
-            final ServicesInjector servicesInjector,
             final PostConstructMethodCache postConstructMethodCache) {
-        super(holder, recreationMechanism, postConstructMethodCache, servicesInjector);
-        this.adapterProvider = adapterProvider;
+        super(holder, recreationMechanism, postConstructMethodCache);
     }
 
     @Override
@@ -57,14 +50,14 @@ extends RecreatableObjectFacetAbstract {
             final Object viewModelPojo,
             final String mementoStr) {
 
-        final UrlEncodingService codec = servicesInjector.lookupServiceElseFail(UrlEncodingService.class);
-        final SerializingAdapter serializer = servicesInjector.lookupServiceElseFail(SerializingAdapter.class);
+        final UrlEncodingService codec = getServiceRegistry().lookupServiceElseFail(UrlEncodingService.class);
+        final SerializingAdapter serializer = getServiceRegistry().lookupServiceElseFail(SerializingAdapter.class);
 
         final _Mementos.Memento memento = _Mementos.parse(codec, serializer, mementoStr);
 
         final Set<String> mementoKeys = memento.keySet();
 
-        final ObjectAdapter viewModelAdapter = adapterProvider.adapterForViewModel(viewModelPojo, mementoStr);
+        final ObjectAdapter viewModelAdapter = adapterProvider().adapterForViewModel(viewModelPojo, mementoStr);
                     
 
         final ObjectSpecification spec = viewModelAdapter.getSpecification();
@@ -81,7 +74,7 @@ extends RecreatableObjectFacetAbstract {
             }
 
             if(propertyValue != null) {
-                property.set(viewModelAdapter, adapterProvider.adapterFor(propertyValue), InteractionInitiatedBy.FRAMEWORK);
+                property.set(viewModelAdapter, adapterProvider().adapterFor(propertyValue), InteractionInitiatedBy.FRAMEWORK);
             }
         });
         
@@ -90,12 +83,12 @@ extends RecreatableObjectFacetAbstract {
     @Override
     public String memento(Object viewModelPojo) {
 
-        final UrlEncodingService codec = servicesInjector.lookupServiceElseFail(UrlEncodingService.class);
-        final SerializingAdapter serializer = servicesInjector.lookupServiceElseFail(SerializingAdapter.class);
+        final UrlEncodingService codec = getServiceRegistry().lookupServiceElseFail(UrlEncodingService.class);
+        final SerializingAdapter serializer = getServiceRegistry().lookupServiceElseFail(SerializingAdapter.class);
 
         final _Mementos.Memento memento = _Mementos.create(codec, serializer);
 
-        final ManagedObject ownerAdapter = adapterProvider.disposableAdapterForViewModel(viewModelPojo);
+        final ManagedObject ownerAdapter = adapterProvider().disposableAdapterForViewModel(viewModelPojo);
         final ObjectSpecification spec = ownerAdapter.getSpecification();
         
         final Stream<OneToOneAssociation> properties = spec.streamProperties(Contributed.EXCLUDED);

@@ -44,13 +44,13 @@ public class DomainObjectLayoutFacetFactory extends FacetFactoryAbstract {
 
         FacetUtil.addFacet(
                 TitleFacetViaDomainObjectLayoutAnnotationUsingTitleUiEvent.create(
-                        domainObjectLayouts, servicesInjector, getConfiguration(), facetHolder));
+                        domainObjectLayouts, getServiceInjector(), getConfiguration(), facetHolder));
         FacetUtil.addFacet(
                 IconFacetViaDomainObjectLayoutAnnotationUsingIconUiEvent.create(
-                        domainObjectLayouts, servicesInjector, getConfiguration(), facetHolder));
+                        domainObjectLayouts, getServiceInjector(), getConfiguration(), facetHolder));
         FacetUtil.addFacet(
                 CssClassFacetViaDomainObjectLayoutAnnotationUsingCssClassUiEvent.create(
-                        domainObjectLayouts, servicesInjector, getConfiguration(), facetHolder));
+                        domainObjectLayouts, getServiceInjector(), getConfiguration(), facetHolder));
 
         FacetUtil.addFacet(
                 CssClassFacetForDomainObjectLayoutAnnotation.create(domainObjectLayouts, facetHolder));

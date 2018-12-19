@@ -22,9 +22,12 @@ package org.apache.isis.core.metamodel.specloader;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import javax.ejb.Singleton;
+
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.core.metamodel.spec.InjectorMethodEvaluator;
 
+@Singleton
 public final class InjectorMethodEvaluatorDefault implements InjectorMethodEvaluator {
 
     //private final static Logger LOG = LoggerFactory.getLogger(InjectorMethodEvaluatorDefault.class);

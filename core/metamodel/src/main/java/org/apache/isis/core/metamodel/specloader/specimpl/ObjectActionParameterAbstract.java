@@ -129,7 +129,7 @@ public abstract class ObjectActionParameterAbstract implements ObjectActionParam
 
     @Override
     public ObjectSpecification getSpecification() {
-        return ObjectMemberAbstract.getSpecification(getSpecificationLoader(), peer.getType());
+        return ObjectMemberAbstract.specificationOf(peer.getType());
     }
 
     @Override
@@ -528,11 +528,11 @@ public abstract class ObjectActionParameterAbstract implements ObjectActionParam
     }
 
     protected ObjectAdapterProvider getObjectAdapterProvider() {
-        return parentAction.getPersistenceSessionService();
+        return parentAction.adapterProvider();
     }
 
     protected PersistenceSessionServiceInternal getObjectPersistor() {
-        return parentAction.getPersistenceSessionService();
+        return (PersistenceSessionServiceInternal) parentAction.adapterProvider();
     }
 
 

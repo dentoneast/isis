@@ -60,7 +60,7 @@ public class JavaCollectionFacetTest {
     public void setUp() throws Exception {
         mockOAProvider = context.mock(ObjectAdapterProvider.class);
 
-        facet = new JavaCollectionFacet(mockFacetHolder, mockOAProvider);
+        facet = new JavaCollectionFacet(mockFacetHolder);
     }
 
     @After

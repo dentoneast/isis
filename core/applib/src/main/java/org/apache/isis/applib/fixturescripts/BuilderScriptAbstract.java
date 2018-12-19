@@ -21,6 +21,7 @@ package org.apache.isis.applib.fixturescripts;
 import java.util.List;
 
 import org.apache.isis.applib.annotation.Programmatic;
+import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.collections._Lists;
 
 @Programmatic
@@ -51,7 +52,7 @@ extends FixtureScript implements WithPrereqs<T,F>, FixtureScriptWithExecutionStr
             ExecutionContext executionContext) {
 
         final F onFixture = self();
-        parentFixtureScript.serviceRegistry.injectServicesInto(onFixture);
+        parentFixtureScript.serviceInjector.injectServicesInto(onFixture);
 
         execPrereqs(executionContext);
 
@@ -98,9 +99,8 @@ extends FixtureScript implements WithPrereqs<T,F>, FixtureScriptWithExecutionStr
         return self();
     }
 
-    @SuppressWarnings("unchecked") //[ahuber] it's safe to assume that this object is of type F
     protected F self() {
-        return (F)this;
+        return _Casts.uncheckedCast(this);
     }
 
 }

@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.isis.applib.Identifier;
 import org.apache.isis.applib.annotation.Where;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.consent.Consent;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
@@ -34,7 +35,6 @@ import org.apache.isis.core.metamodel.facets.propcoll.notpersisted.NotPersistedF
 import org.apache.isis.core.metamodel.interactions.InteractionUtils;
 import org.apache.isis.core.metamodel.interactions.UsabilityContext;
 import org.apache.isis.core.metamodel.interactions.VisibilityContext;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
@@ -55,9 +55,9 @@ public class OneToOneAssociationContributee extends OneToOneAssociationDefault i
     public OneToOneAssociationContributee(
             final Object servicePojo,
             final ObjectActionDefault serviceAction,
-            final ObjectSpecification contributeeType,
-            final ServicesInjector servicesInjector) {
-        super(serviceAction.getFacetedMethod(), serviceAction.getReturnType(), servicesInjector);
+            final ObjectSpecification contributeeType) {
+        
+        super(serviceAction.getFacetedMethod(), serviceAction.getReturnType());
 
         this.servicePojo = servicePojo;
 
@@ -152,7 +152,7 @@ public class OneToOneAssociationContributee extends OneToOneAssociationDefault i
     }
 
     private ObjectAdapter getServiceAdapter() {
-        return getPersistenceSessionService().adapterFor(servicePojo);
+        return adapterProvider().adapterFor(servicePojo);
     }
 
     // -- Contributee impl - getServiceContributedBy()

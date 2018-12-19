@@ -16,17 +16,13 @@
  */
 package org.apache.isis.core.runtime.services.eventbus;
 
-import java.util.Optional;
-import java.util.stream.Stream;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import org.apache.isis.applib.services.registry.ServiceRegistry;
-import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.config.internal._Config;
+import org.apache.isis.core.metamodel.services.ServiceInjectorDefault;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -40,12 +36,7 @@ public class EventBusServiceDefaultUsingAxonSimpleTest {
     public void setUp() throws Exception {
         eventBusService = new EventBusServiceDefault() {
         	{
-        		serviceRegistry = new ServiceRegistry() {
-					@Override public <T> Optional<T> lookupService(Class<T> service) { return null; }
-					@Override public <T> T injectServicesInto(T domainObject) {	return null; }
-                    @Override public Stream<Object> streamServices() { return null; }
-                    @Override public <T> Stream<T> streamServices(Class<T> serviceClass) {return null;}
-				}; 
+        		servicesInjector = new ServiceInjectorDefault();
         	}
         };
     }

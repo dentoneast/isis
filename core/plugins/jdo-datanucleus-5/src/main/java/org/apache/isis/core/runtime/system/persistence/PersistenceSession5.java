@@ -45,6 +45,7 @@ import org.apache.isis.applib.query.Query;
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
 import org.apache.isis.applib.services.iactn.Interaction;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
@@ -65,7 +66,6 @@ import org.apache.isis.core.metamodel.facets.object.callbacks.RemovingCallbackFa
 import org.apache.isis.core.metamodel.facets.object.callbacks.RemovingLifecycleEventFacet;
 import org.apache.isis.core.metamodel.facets.object.callbacks.UpdatedCallbackFacet;
 import org.apache.isis.core.metamodel.facets.object.callbacks.UpdatedLifecycleEventFacet;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.services.container.query.QueryCardinality;
 import org.apache.isis.core.metamodel.spec.FreeStandingList;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
@@ -112,7 +112,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
      * persisted objects and persist changes to the object that are saved.
      */
     public PersistenceSession5(
-            final ServicesInjector servicesInjector,
+            final ServiceInjector servicesInjector,
             final AuthenticationSession authenticationSession,
             final PersistenceManagerFactory jdoPersistenceManagerFactory,
             final FixturesInstalledFlag fixturesInstalledFlag) {
@@ -748,7 +748,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
 
         // need to do eagerly, because (if a viewModel then) a
         // viewModel's #viewModelMemento might need to use services
-        servicesInjector.injectInto(pojo);
+        servicesInjector.injectServicesInto(pojo);
 
         final Version datastoreVersion = getVersionIfAny(pc);
         final RootOid originalOid = objectAdapterContext.createPersistentOrViewModelOid(pojo);

@@ -27,7 +27,7 @@ import org.datanucleus.state.ReferentialStateManagerImpl;
 import org.datanucleus.store.FieldValues;
 import org.datanucleus.store.fieldmanager.FieldManager;
 
-import org.apache.isis.core.metamodel.services.ServicesInjector;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 
@@ -217,7 +217,7 @@ public class JDOStateManagerForIsis extends ReferentialStateManagerImpl {
         getServicesInjector().injectServicesInto(pc);
     }
 
-    protected ServicesInjector getServicesInjector() {
+    protected ServiceInjector getServicesInjector() {
         return getSessionFactory().getServicesInjector();
     }
 

@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.core.commons.ensure.Ensure;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterByIdProvider;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
@@ -36,7 +37,6 @@ import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.adapter.version.ConcurrencyException;
 import org.apache.isis.core.metamodel.adapter.version.Version;
 import org.apache.isis.core.metamodel.facets.object.viewmodel.ViewModelFacet;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.persistence.ObjectNotFoundException;
@@ -57,18 +57,19 @@ class ObjectAdapterContext_ObjectAdapterByIdProvider implements ObjectAdapterByI
     private static final Logger LOG = LoggerFactory.getLogger(ObjectAdapterContext_ObjectAdapterByIdProvider.class);
     private final ObjectAdapterContext objectAdapterContext;
     private final PersistenceSession persistenceSession;
-    private final ServicesInjector servicesInjector;
     private final SpecificationLoader specificationLoader;
     private final AuthenticationSession authenticationSession;
     private final boolean concurrencyCheckingGloballyEnabled;
     
-    
-    ObjectAdapterContext_ObjectAdapterByIdProvider(ObjectAdapterContext objectAdapterContext,
-            PersistenceSession persistenceSession, AuthenticationSession authenticationSession) {
+    ObjectAdapterContext_ObjectAdapterByIdProvider(
+            ObjectAdapterContext objectAdapterContext,
+            MetaModelContext metaModelContext,
+            PersistenceSession persistenceSession,
+            AuthenticationSession authenticationSession) {
+        
         this.objectAdapterContext = objectAdapterContext;
         this.persistenceSession = persistenceSession;
-        this.servicesInjector = persistenceSession.getServicesInjector();
-        this.specificationLoader = servicesInjector.getSpecificationLoader();
+        this.specificationLoader = metaModelContext.getSpecificationLoader();
         this.authenticationSession = authenticationSession;
         
         this.concurrencyCheckingGloballyEnabled = 

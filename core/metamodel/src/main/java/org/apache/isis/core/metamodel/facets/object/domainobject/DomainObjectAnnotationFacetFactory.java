@@ -76,8 +76,6 @@ import org.apache.isis.core.metamodel.facets.object.mixin.MixinFacet;
 import org.apache.isis.core.metamodel.facets.object.mixin.MixinFacetForDomainObjectAnnotation;
 import org.apache.isis.core.metamodel.facets.object.publishedobject.PublishedObjectFacet;
 import org.apache.isis.core.metamodel.facets.object.viewmodel.ViewModelFacet;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidatorComposite;
@@ -200,7 +198,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache {
                 .filter(a -> a.repositoryMethod != null)
                 .findFirst()
                 .map(a -> new AutoCompleteFacetForDomainObjectAnnotation(
-                        facetHolder, a.autoCompleteRepository, a.repositoryMethod, servicesInjector))
+                        facetHolder, a.autoCompleteRepository, a.repositoryMethod))
                 .orElse(null);
     }
 
@@ -230,7 +228,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache {
         final FacetHolder facetHolder = processClassContext.getFacetHolder();
 
         // check from @DomainObject(bounded=...)
-        Facet facet = ChoicesFacetForDomainObjectAnnotation.create(domainObjects, facetHolder, getAuthenticationSessionProvider(), persistenceSessionServiceInternal);
+        Facet facet = ChoicesFacetForDomainObjectAnnotation.create(domainObjects, facetHolder);
 
         // then add
         FacetUtil.addFacet(facet);
@@ -283,8 +281,6 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache {
         final PostConstructMethodCache postConstructMethodCache = this;
         final ViewModelFacet recreatableObjectFacet = RecreatableObjectFacetForDomainObjectAnnotation.create(
                 domainObjects, 
-                persistenceSessionServiceInternal, 
-                servicesInjector,
                 facetHolder, 
                 postConstructMethodCache);
 
@@ -298,7 +294,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache {
                     .filter(domainObject -> mixinTypeValidator.ensureMixinType(cls))
                     .collect(Collectors.toList());
 
-            final MixinFacet mixinFacet = MixinFacetForDomainObjectAnnotation.create(mixinDomainObjects, cls, facetHolder, servicesInjector);
+            final MixinFacet mixinFacet = MixinFacetForDomainObjectAnnotation.create(mixinDomainObjects, cls, facetHolder, getServiceInjector());
             FacetUtil.addFacet(mixinFacet);
         }
 
@@ -352,7 +348,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache {
                 )
         .findFirst()
         .map(lifecycleEvent -> new CreatedLifecycleEventFacetForDomainObjectAnnotation(
-                holder, lifecycleEvent, getSpecificationLoader()))
+                holder, lifecycleEvent))
         .ifPresent(FacetUtil::addFacet);
     }
 
@@ -370,7 +366,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache {
                 )
         .findFirst()
         .map(lifecycleEvent -> new LoadedLifecycleEventFacetForDomainObjectAnnotation(
-                holder, lifecycleEvent, getSpecificationLoader()))
+                holder, lifecycleEvent))
         .ifPresent(FacetUtil::addFacet);
     }
 
@@ -388,7 +384,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache {
                 )
         .findFirst()
         .map(lifecycleEvent -> new PersistingLifecycleEventFacetForDomainObjectAnnotation(
-                holder, lifecycleEvent, getSpecificationLoader()))
+                holder, lifecycleEvent))
         .ifPresent(FacetUtil::addFacet);
     }
 
@@ -406,7 +402,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache {
                 )
         .findFirst()
         .map(lifecycleEvent -> new PersistedLifecycleEventFacetForDomainObjectAnnotation(
-                holder, lifecycleEvent, getSpecificationLoader()))
+                holder, lifecycleEvent))
         .ifPresent(FacetUtil::addFacet);
     }
 
@@ -424,7 +420,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache {
                 )
         .findFirst()
         .map(lifecycleEvent -> new RemovingLifecycleEventFacetForDomainObjectAnnotation(
-                holder, lifecycleEvent, getSpecificationLoader()))
+                holder, lifecycleEvent))
         .ifPresent(FacetUtil::addFacet);
     }
 
@@ -442,7 +438,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache {
                 )
         .findFirst()
         .map(lifecycleEvent -> new UpdatedLifecycleEventFacetForDomainObjectAnnotation(
-                holder, lifecycleEvent, getSpecificationLoader()))
+                holder, lifecycleEvent))
         .ifPresent(FacetUtil::addFacet);
     }
 
@@ -460,7 +456,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache {
                 )
         .findFirst()
         .map(lifecycleEvent -> new UpdatingLifecycleEventFacetForDomainObjectAnnotation(
-                holder, lifecycleEvent, getSpecificationLoader()))
+                holder, lifecycleEvent))
         .ifPresent(FacetUtil::addFacet);
     }
 
@@ -470,7 +466,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache {
         .filter(domainEvent -> domainEvent != ActionDomainEvent.Default.class)
         .findFirst()
         .map(domainEvent -> new ActionDomainEventDefaultFacetForDomainObjectAnnotation(
-                        holder, domainEvent, getSpecificationLoader()))
+                        holder, domainEvent))
         .ifPresent(FacetUtil::addFacet);
 
     }
@@ -481,7 +477,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache {
         .filter(domainEvent -> domainEvent != PropertyDomainEvent.Default.class)
         .findFirst()
         .map(domainEvent -> new PropertyDomainEventDefaultFacetForDomainObjectAnnotation(
-                        holder, domainEvent, getSpecificationLoader()))
+                        holder, domainEvent))
         .ifPresent(FacetUtil::addFacet);
     }
 
@@ -491,7 +487,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache {
         .filter(domainEvent -> domainEvent != CollectionDomainEvent.Default.class)
         .findFirst()
         .map(domainEvent -> new CollectionDomainEventDefaultFacetForDomainObjectAnnotation(
-                        holder, domainEvent, getSpecificationLoader()))
+                        holder, domainEvent))
         .ifPresent(FacetUtil::addFacet);
     }
 
@@ -544,7 +540,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache {
                 if(autoCompleteFacet != null && !autoCompleteFacet.isNoop() && autoCompleteFacet instanceof AutoCompleteFacetAbstract) {
                     final AutoCompleteFacetAbstract facet = (AutoCompleteFacetForDomainObjectAnnotation) autoCompleteFacet;
                     final Class<?> repositoryClass = facet.getRepositoryClass();
-                    final boolean isRegistered = servicesInjector.isRegisteredService(repositoryClass);
+                    final boolean isRegistered = getServiceRegistry().isRegisteredService(repositoryClass);
                     if(!isRegistered) {
                         validationFailures.add(
                                 "@DomainObject annotation on %s specifies unknown repository '%s'",
@@ -562,22 +558,11 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache {
 
     // //////////////////////////////////////
 
-    @Override
-    public void setServicesInjector(final ServicesInjector servicesInjector) {
-        super.setServicesInjector(servicesInjector);
-        this.persistenceSessionServiceInternal = servicesInjector.getPersistenceSessionServiceInternal();
-    }
-
-    // //////////////////////////////////////
-
     private final Map<Class<?>, Optional<Method>> postConstructMethods = _Maps.newHashMap();
 
     @Override
     public Method postConstructMethodFor(final Object pojo) {
         return MethodFinderUtils.findAnnotatedMethod(pojo, PostConstruct.class, postConstructMethods);
     }
-
-
-    PersistenceSessionServiceInternal persistenceSessionServiceInternal;
 
 }

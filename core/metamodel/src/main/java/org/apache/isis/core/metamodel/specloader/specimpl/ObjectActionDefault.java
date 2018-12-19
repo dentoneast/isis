@@ -30,6 +30,7 @@ import org.apache.isis.applib.RecoverableException;
 import org.apache.isis.applib.annotation.SemanticsOf;
 import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.services.command.Command;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal._Constants;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.commons.exceptions.UnknownTypeException;
@@ -57,7 +58,6 @@ import org.apache.isis.core.metamodel.interactions.InteractionUtils;
 import org.apache.isis.core.metamodel.interactions.UsabilityContext;
 import org.apache.isis.core.metamodel.interactions.ValidityContext;
 import org.apache.isis.core.metamodel.interactions.VisibilityContext;
-import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.services.command.CommandDtoServiceInternal;
 import org.apache.isis.core.metamodel.spec.ActionType;
 import org.apache.isis.core.metamodel.spec.DomainModelException;
@@ -91,9 +91,8 @@ public class ObjectActionDefault extends ObjectMemberAbstract implements ObjectA
     // -- constructors
 
     public ObjectActionDefault(
-            final FacetedMethod facetedMethod,
-            final ServicesInjector servicesInjector) {
-        super(facetedMethod, FeatureType.ACTION, servicesInjector);
+            final FacetedMethod facetedMethod) {
+        super(facetedMethod, FeatureType.ACTION);
     }
 
 
@@ -192,7 +191,7 @@ public class ObjectActionDefault extends ObjectMemberAbstract implements ObjectA
             final FacetedMethodParameter paramPeer = paramPeers.get(paramNum);
 
             final ObjectSpecification specification = ObjectMemberAbstract
-                    .getSpecification(getSpecificationLoader(), paramPeer.getType());
+                    .specificationOf(paramPeer.getType());
 
             // previously we threw an exception here if the specification represented a collection.  No longer!
             final ObjectActionParameter parameter =
@@ -514,7 +513,7 @@ public class ObjectActionDefault extends ObjectMemberAbstract implements ObjectA
     }
 
     private ObjectAdapter adapterFor(final Object pojo) {
-        return pojo == null ? null : getPersistenceSessionService().adapterFor(pojo);
+        return pojo == null ? null : adapterProvider().adapterFor(pojo);
     }
 
     private static ThreadLocal<List<ObjectAdapter>> commandTargetAdaptersHolder = new ThreadLocal<>();
