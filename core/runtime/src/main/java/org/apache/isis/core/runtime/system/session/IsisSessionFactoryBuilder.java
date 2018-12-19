@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,8 +63,6 @@ public class IsisSessionFactoryBuilder {
 
     public static final Logger LOG = LoggerFactory.getLogger(IsisSessionFactoryBuilder.class);
 
-    private boolean initialized = false;
-
     // -- constructors, accessors
 
     private final IsisComponentProvider componentProvider;
@@ -78,13 +77,7 @@ public class IsisSessionFactoryBuilder {
 
     // -- buildSessionFactory
 
-    public IsisSessionFactory buildSessionFactory() {
-
-        if (initialized) {
-            throw new IllegalStateException("Already initialized");
-        }
-        initialized = true;
-
+    public IsisSessionFactory buildSessionFactory(Supplier<IsisSessionFactory> sfInstanceSupplier) {
 
         LOG.info("initialising Isis System");
         LOG.info("working directory: {}", new File(".").getAbsolutePath());
@@ -139,17 +132,16 @@ public class IsisSessionFactoryBuilder {
 
             servicesInjector.validateServices();
 
-            // instantiate the IsisSessionFactory
-            isisSessionFactory = new IsisSessionFactory(servicesInjector);
+            // instantiate or reuse the IsisSessionFactory
+            isisSessionFactory = sfInstanceSupplier.get();
+            isisSessionFactory.setServicesInjector(servicesInjector);
 
             // now, add the IsisSessionFactory itself into ServicesInjector, so it can be @javax.inject.Inject'd
             // into any internal domain services
-            servicesInjector.addFallbackIfRequired(IsisSessionFactory.class, isisSessionFactory);
-
-
+//            servicesInjector.addFallbackIfRequired(IsisSessionFactory.class, isisSessionFactory);
 
             // finally, wire up components and components into services...
-            servicesInjector.autowire();
+//            servicesInjector.autowire();
 
             // ... and make IsisSessionFactory available via the IsisContext static for those places where we cannot
             // yet inject.

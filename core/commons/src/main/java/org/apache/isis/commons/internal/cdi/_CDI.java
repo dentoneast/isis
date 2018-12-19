@@ -25,14 +25,19 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
+import javax.enterprise.inject.spi.CDIProvider;
 import javax.inject.Qualifier;
 
+import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
+import org.apache.isis.commons.internal.functions._Functions.CheckedRunnable;
 import org.apache.isis.core.plugins.ioc.IocPlugin;
 
 import static org.apache.isis.commons.internal.base._NullSafe.isEmpty;
 import static org.apache.isis.commons.internal.base._NullSafe.stream;
+import static org.apache.isis.commons.internal.base._With.requires;
 
 /**
  * <h1>- internal use only -</h1>
@@ -45,20 +50,45 @@ import static org.apache.isis.commons.internal.base._NullSafe.stream;
  * @since 2.0.0-M2
  */
 public final class _CDI {
-    
+
+    /**
+     * Bootstrap CDI if not already present.
+     * @param onDiscover - Packages of the specified (stream of) classes will be scanned and found classes 
+     * will be added to the set of bean classes for the synthetic bean archive. 
+     */
     public static void init(Supplier<Stream<Class<?>>> onDiscover) {
         
         if(cdi().isPresent()) {
             return;
         }
         
-        CDI.setCDIProvider(IocPlugin.get().getCDIProvider(onDiscover.get()));
+        requires(onDiscover, "onDiscover");
+        
+        // plug in the provider
+        final CDIProvider standaloneCDIProvider = IocPlugin.get().getCDIProvider(onDiscover.get());
+        CDI.setCDIProvider(standaloneCDIProvider);
 
         // verify
         if(!cdi().isPresent()) {
-            throw _Exceptions.unexpectedCodeReach();
+            throw _Exceptions.unrecoverable("Could not resolve an instance of CDI.");
         }
         
+        // proper CDI lifecycle support utilizing the fact that WELD provides a WeldContainer that 
+        // implements AutoCloseable, which we can put on the _Context, such that when _Context.clear()
+        // is called, gets properly closed
+        final CheckedRunnable onClose = () -> ((AutoCloseable)CDI.current()).close();
+        _Context.putSingleton(_CDI_Lifecycle.class, _CDI_Lifecycle.of(onClose));
+        
+    }
+    
+    /**
+     * Get the CDI BeanManager for the current context.
+     * @return non-null
+     * @throws RuntimeException - if no BeanManager could be resolved
+     */
+    public static BeanManager getBeanManager() {
+        return cdi().map(CDI::getBeanManager)
+                .orElseThrow(()->_Exceptions.unrecoverable("Could not resolve a BeanManager."));
     }
     
     
@@ -95,19 +125,6 @@ public final class _CDI {
     }
     
     /**
-     * Get the CDI instance that provides access to the current container. 
-     * @return an optional
-     */
-    public static Optional<CDI<Object>> cdi() {
-        try {
-            CDI<Object> cdi = CDI.current();
-            return Optional.ofNullable(cdi);
-        } catch (Exception e) {
-            return Optional.empty();
-        }
-    }
-
-    /**
      * Filters the input array into a collection, such that only annotations are retained, 
      * that are valid qualifiers for CDI.
      * @param annotations
@@ -134,6 +151,19 @@ public final class _CDI {
     
     private _CDI() {}
     
+    /**
+     * Get the CDI instance that provides access to the current container. 
+     * @return an optional
+     */
+    private static Optional<CDI<Object>> cdi() {
+        try {
+            CDI<Object> cdi = CDI.current();
+            return Optional.ofNullable(cdi);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+    
     private static <T> T tryGet(final Supplier<T> supplier) {
         try { 
             return supplier.get();  
@@ -141,5 +171,8 @@ public final class _CDI {
             return null;
         }
     }
+
+
+
 
 }

@@ -83,7 +83,15 @@ public final class _Exceptions {
     }
     
     public static RuntimeException unrecoverable(Exception cause) {
-        return new RuntimeException("internal error: unrecoverable error with cause ...", cause);
+        return new RuntimeException("unrecoverable error: with cause ...", cause);
+    }
+    
+    public static RuntimeException unrecoverable(String msg) {
+        return new RuntimeException(String.format("unrecoverable error: '%s'", msg));
+    }
+    
+    public static RuntimeException unrecoverable(String msg, Exception cause) {
+        return new RuntimeException(String.format("unrecoverable error: '%s' with cause ...", msg), cause);
     }
     
     /**
@@ -316,6 +324,7 @@ public final class _Exceptions {
             uncheckedConsumer(checkedConsumer).accept(obj);
         }
     }
+
 
     
 

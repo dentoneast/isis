@@ -23,12 +23,18 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.commons.internal.base._Blackhole;
+import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.services.ServicesInjector;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
@@ -42,6 +48,7 @@ import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManagerException;
+import org.apache.isis.core.runtime.systemusinginstallers.IsisComponentProvider;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
 import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
@@ -60,36 +67,50 @@ import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
  *     it can be {@link Inject}'d into other domain services.
  * </p>
  */
+@Singleton @ApplicationScoped @Startup
 public class IsisSessionFactory {
 
     //private final static Logger LOG = LoggerFactory.getLogger(IsisSessionFactory.class);
 
-    // -- constructor, fields, accessors
+    @Inject private IsisConfiguration configuration;
+    
+    private ServicesInjector servicesInjector;
+    private SpecificationLoader specificationLoader;
+    private AuthenticationManager authenticationManager;
+    private AuthorizationManager authorizationManager;
+    private PersistenceSessionFactory persistenceSessionFactory;
+    private ServiceInitializer serviceInitializer;
 
-    private final IsisConfiguration configuration;
-    private final SpecificationLoader specificationLoader;
-    private final ServicesInjector servicesInjector;
-    private final AuthenticationManager authenticationManager;
-    private final AuthorizationManager authorizationManager;
-    private final PersistenceSessionFactory persistenceSessionFactory;
+    @PostConstruct
+    public void init() {
 
-    IsisSessionFactory(final ServicesInjector servicesInjector) {
-
+        if(_Context.getIfAny(IsisSessionFactory.class)!=null) {
+            return;
+        }
+        
+        System.out.println("!!!!!!!!!!!!! IsisSessionFactory INIT " + hashCode());
+        
+        final IsisComponentProvider componentProvider = IsisComponentProvider
+                .builder()
+                .build();
+        
+        final IsisSessionFactoryBuilder builder =
+                new IsisSessionFactoryBuilder(componentProvider);
+        
+        // as a side-effect, if the metamodel turns out to be invalid, then
+        // this will push the MetaModelInvalidException into IsisContext.
+        IsisSessionFactory sessionFactory = builder.buildSessionFactory(()->this);
+    }
+    
+    void setServicesInjector(ServicesInjector servicesInjector) {
         this.servicesInjector = servicesInjector;
-
-        this.configuration = IsisContext.getConfiguration();
         this.specificationLoader = servicesInjector.getSpecificationLoader();
         this.authenticationManager = servicesInjector.getAuthenticationManager();
         this.authorizationManager = servicesInjector.getAuthorizationManager();
         this.persistenceSessionFactory = servicesInjector.lookupServiceElseFail(PersistenceSessionFactory.class);
     }
 
-    // -- constructServices, destroyServicesAndShutdown
-
-    private ServiceInitializer serviceInitializer;
-
-    @Programmatic
-    public void constructServices() {
+    void constructServices() {
 
         // do postConstruct.  We store the initializer to do preDestroy on shutdown
         serviceInitializer = new ServiceInitializer(configuration, servicesInjector.streamServices().collect(Collectors.toList()));
@@ -151,8 +172,7 @@ public class IsisSessionFactory {
         }
     }
 
-
-    @Programmatic
+    @PreDestroy
     public void destroyServicesAndShutdown() {
         destroyServices();
         shutdown();
@@ -202,7 +222,6 @@ public class IsisSessionFactory {
     /**
      * Creates and {@link IsisSession#open() open}s the {@link IsisSession}.
      */
-    @Programmatic
     public IsisSession openSession(final AuthenticationSession authenticationSession) {
 
         closeSession();
@@ -215,7 +234,6 @@ public class IsisSessionFactory {
         return session;
     }
 
-    @Programmatic
     public void closeSession() {
         final IsisSession existingSessionIfAny = getCurrentSession();
         if (existingSessionIfAny == null) {
@@ -225,7 +243,6 @@ public class IsisSessionFactory {
         currentSession.set(null);
     }
 
-    @Programmatic
     public IsisSession getCurrentSession() {
         return currentSession.get();
     }
@@ -235,12 +252,10 @@ public class IsisSessionFactory {
         return currentSession.getPersistenceSession().getTransactionManager();
     }
 
-    @Programmatic
     public boolean inSession() {
         return getCurrentSession() != null;
     }
 
-    @Programmatic
     public boolean inTransaction() {
         if (inSession()) {
             if (getCurrentSession().getCurrentTransaction() != null) {
@@ -256,7 +271,6 @@ public class IsisSessionFactory {
      * As per {@link #doInSession(Runnable, AuthenticationSession)}, using a default {@link InitialisationSession}.
      * @param runnable
      */
-    @Programmatic
     public void doInSession(final Runnable runnable) {
         doInSession(runnable, new InitialisationSession());
     }
@@ -269,7 +283,6 @@ public class IsisSessionFactory {
      * @param runnable The piece of code to run.
      * @param authenticationSession
      */
-    @Programmatic
     public void doInSession(final Runnable runnable, final AuthenticationSession authenticationSession) {
         doInSession(new Callable<Void>() {
             @Override
@@ -283,7 +296,6 @@ public class IsisSessionFactory {
     /**
      * As per {@link #doInSession(Callable), AuthenticationSession}, using a default {@link InitialisationSession}.
      */
-    @Programmatic
     public <R> R doInSession(final Callable<R> callable) {
         return doInSession(callable, new InitialisationSession());
     }
@@ -296,7 +308,6 @@ public class IsisSessionFactory {
      * @param callable The piece of code to run.
      * @param authenticationSession - the user to run under
      */
-    @Programmatic
     public <R> R doInSession(final Callable<R> callable, final AuthenticationSession authenticationSession) {
         final IsisSessionFactory sessionFactory = this;
         boolean noSession = !sessionFactory.inSession();
@@ -317,14 +328,12 @@ public class IsisSessionFactory {
         }
     }
 
-
-
     // -- component accessors
 
     /**
      * The {@link ApplicationScopedComponent application-scoped} {@link ServicesInjector}.
      */
-    @Programmatic
+    @Produces @ApplicationScoped
     public ServicesInjector getServicesInjector() {
         return servicesInjector;
     }
@@ -333,7 +342,7 @@ public class IsisSessionFactory {
      * The {@link ApplicationScopedComponent application-scoped}
      * {@link SpecificationLoader}.
      */
-    @Programmatic
+    @Produces @ApplicationScoped
     public SpecificationLoader getSpecificationLoader() {
         return specificationLoader;
     }
@@ -344,7 +353,6 @@ public class IsisSessionFactory {
      * {@link IsisSession#getAuthenticationSession() within} the
      * {@link IsisSession}.
      */
-    @Programmatic
     public AuthenticationManager getAuthenticationManager() {
         return authenticationManager;
     }
@@ -353,7 +361,6 @@ public class IsisSessionFactory {
      * The {@link AuthorizationManager} that will be used to authorize access to
      * domain objects.
      */
-    @Programmatic
     public AuthorizationManager getAuthorizationManager() {
         return authorizationManager;
     }
@@ -363,12 +370,9 @@ public class IsisSessionFactory {
      * {@link PersistenceSession} {@link IsisSession#getPersistenceSession()
      * within} the {@link IsisSession}.
      */
-    @Programmatic
     public PersistenceSessionFactory getPersistenceSessionFactory() {
         return persistenceSessionFactory;
     }
-
-
 
 
 }

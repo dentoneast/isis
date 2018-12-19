@@ -76,7 +76,7 @@ public abstract class IsisMojoAbstract extends AbstractMojo {
         
         IsisSessionFactory isisSessionFactory = null;
         try {
-            isisSessionFactory = isisSessionFactoryBuilder.buildSessionFactory();
+            isisSessionFactory = isisSessionFactoryBuilder.buildSessionFactory(IsisSessionFactory::new);
             if(!isisSessionFactoryBuilder.isMetaModelValid()) {
                 MetaModelInvalidException metaModelInvalidException = IsisContext
                         .getMetaModelInvalidExceptionIfAny();

@@ -128,7 +128,7 @@ public final class IsisSystem {
             // ensures that a FixtureClock is installed as the singleton underpinning the ClockService
             FixtureClock.initialize();
 
-            isisSessionFactory = isisSessionFactoryBuilder.buildSessionFactory();
+            isisSessionFactory = isisSessionFactoryBuilder.buildSessionFactory(IsisSessionFactory::new);
             // REVIEW: does no harm, but is this required?
             closeSession();
 

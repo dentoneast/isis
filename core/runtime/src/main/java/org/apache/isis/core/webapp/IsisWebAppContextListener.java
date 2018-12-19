@@ -30,11 +30,12 @@ import javax.servlet.ServletException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.isis.commons.internal.base._Blackhole;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.AppConfigLocator;
 import org.apache.isis.config.IsisConfiguration;
-import org.apache.isis.config.NotFoundPolicy;
 import org.apache.isis.config.IsisConfiguration.ContainsPolicy;
+import org.apache.isis.config.NotFoundPolicy;
 import org.apache.isis.config.builder.IsisConfigurationBuilder;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.webapp.modules.WebModule;
@@ -71,22 +72,24 @@ public class IsisWebAppContextListener implements ServletContextListener {
 
         final ServletContext servletContext = event.getServletContext();
         
-        LOG.info("=== PHASE 1 === Setting up ServletContext parameters");
-  
-        //[ahuber] set the ServletContext initializing thread as preliminary default until overridden by
+        // set the ServletContext initializing thread as preliminary default until overridden by
         // IsisWicketApplication#init() or others that better know what ClassLoader to use as application default.
         _Context.setDefaultClassLoader(Thread.currentThread().getContextClassLoader(), false);
-        
         _Context.putSingleton(ServletContext.class, servletContext);
-        
         putContextPathIfPresent(servletContext.getContextPath());
         
-        @SuppressWarnings("unused") // finalize the config (build and regard immutable)
-        IsisConfiguration isisConfiguration = AppConfigLocator.getAppConfig().isisConfiguration();
+        LOG.info("=== PHASE 1 === Setting up IoC from AppManifest");
         
-        //[2039] environment priming no longer suppoerted
+        // finalize the config (build and regard immutable)
+        // as a side-effect bootstrap CDI, if the environment we are running on does not have its own 
+        IsisConfiguration isisConfiguration = AppConfigLocator.getAppConfig().isisConfiguration();
+        _Blackhole.consume(isisConfiguration);
+        
+        LOG.info("=== PHASE 2 === Setting up ServletContext");
+        
+        //[2039] environment priming no longer supported
         //_Config.acceptBuilder(IsisContext.EnvironmentPrimer::primeEnvironment);
-
+        
         final WebModuleContext webModuleContext = new WebModuleContext(servletContext);
         
         final List<WebModule> webModules =
@@ -94,7 +97,7 @@ public class IsisWebAppContextListener implements ServletContextListener {
                  .peek(module->module.prepare(webModuleContext)) // prepare context
                  .collect(Collectors.toList());
 
-        LOG.info("=== PHASE 2 === Initializing the ServletContext");
+        LOG.info("=== PHASE 3 === Initializing the ServletContext");
         
         webModules.stream()
         .filter(module->module.isApplicable(webModuleContext)) // filter those WebModules that are applicable
@@ -116,6 +119,8 @@ public class IsisWebAppContextListener implements ServletContextListener {
     public void contextDestroyed(ServletContextEvent event) {
         activeListeners.forEach(listener->shutdownListener(event, listener));
         activeListeners.clear();
+        
+        _Context.clear();
     }
     
     // -- HELPER

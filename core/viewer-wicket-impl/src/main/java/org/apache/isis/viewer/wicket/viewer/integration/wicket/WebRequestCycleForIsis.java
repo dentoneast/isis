@@ -82,7 +82,7 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
     private static final Logger LOG = LoggerFactory.getLogger(WebRequestCycleForIsis.class);
 
     private PageClassRegistry pageClassRegistry;
-
+    
     @Override
     public synchronized void onBeginRequest(RequestCycle requestCycle) {
 
@@ -353,6 +353,9 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
     }
 
     // -- Dependencies (from isis' context)
+    
+    
+    
     protected ServicesInjector getServicesInjector() {
         return getIsisSessionFactory().getServicesInjector();
     }

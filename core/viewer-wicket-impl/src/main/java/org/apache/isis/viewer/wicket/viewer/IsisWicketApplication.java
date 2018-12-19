@@ -77,14 +77,12 @@ import org.apache.isis.core.commons.ensure.Ensure;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidException;
 import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.session.IsisInjectModule;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.runtime.threadpool.ThreadPoolSupport;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
 import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettingsAccessor;
 import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
-import org.apache.isis.viewer.wicket.model.models.ImageResourceCache;
 import org.apache.isis.viewer.wicket.model.models.PageType;
 import org.apache.isis.viewer.wicket.ui.ComponentFactory;
 import org.apache.isis.viewer.wicket.ui.app.registry.ComponentFactoryRegistry;
@@ -177,8 +175,8 @@ implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor, WicketVi
     }
 
     @Inject private ComponentFactoryRegistry componentFactoryRegistry;
-    @Inject private ImageResourceCache imageCache;
-    @Inject private WicketViewerSettings wicketViewerSettings;
+//    @Inject private ImageResourceCache imageCache;
+//    @Inject private WicketViewerSettings wicketViewerSettings;
     @Inject private PageClassRegistry pageClassRegistry;
     @Inject private IsisSessionFactory isisSessionFactory;
     @Inject private WicketViewerSettings settings;
@@ -251,7 +249,7 @@ implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor, WicketVi
             requestCycleListeners.add(new PageRequestHandlerTracker());
             
             // configure wicket/cdi
-            BeanManager beanManager = _CDI.cdi().get().getBeanManager();
+            BeanManager beanManager = _CDI.getBeanManager();
             new CdiConfiguration(beanManager).configure(this);
 
 
@@ -653,19 +651,6 @@ implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor, WicketVi
                         : RuntimeConfigurationType.DEPLOYMENT;
     }
     
-    // //////////////////////////////////////
-
-    protected IsisInjectModule newIsisModule() {
-        return new IsisInjectModule();
-    }
-
-    // //////////////////////////////////////
-
-
-    protected void initWicketComponentInjection(/*final Injector injector*/) {
-        //FIXME getComponentInstantiationListeners().add(new GuiceComponentInjector(this, injector, false));
-    }
-
     // /////////////////////////////////////////////////
     // Wicket Hooks
     // /////////////////////////////////////////////////

@@ -57,18 +57,18 @@ public interface IsisContext {
         return _Context.getIfAny(MetaModelInvalidException.class);
     }
 
-    /**
-     *
-     * @return Isis's session factory
-     * @throws IllegalStateException if IsisSessionFactory not initialized
-     */
-    // Implementation Note: Populated only by {@link IsisSessionFactoryBuilder}.
-    public static IsisSessionFactory getSessionFactory() {
-        return _Context.getOrThrow(
-                IsisSessionFactory.class,
-                ()->new IllegalStateException(
-                        "internal error: should have been populated by IsisSessionFactoryBuilder") );
-    }
+//    /**
+//     *
+//     * @return Isis's session factory
+//     * @throws IllegalStateException if IsisSessionFactory not initialized
+//     */
+//    // Implementation Note: Populated only by {@link IsisSessionFactoryBuilder}.
+//    public static IsisSessionFactory getSessionFactory() {
+//        return _Context.getOrThrow(
+//                IsisSessionFactory.class,
+//                ()->new IllegalStateException(
+//                        "internal error: should have been populated by IsisSessionFactoryBuilder") );
+//    }
 
     /**
      *
@@ -152,6 +152,14 @@ public interface IsisContext {
      */
     public static ServicesInjector getServicesInjector() {
         return _CDI.getManagedBean(ServicesInjector.class).get();
+    }
+    
+    /**
+     * @return framework's IsisSessionFactory
+     * @throws NoSuchElementException - if IsisSessionFactory not managed
+     */
+    public static IsisSessionFactory getSessionFactory() {
+        return _CDI.getManagedBean(IsisSessionFactory.class).get();
     }
     
     /**

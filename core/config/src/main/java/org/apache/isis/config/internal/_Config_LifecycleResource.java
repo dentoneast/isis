@@ -62,7 +62,7 @@ class _Config_LifecycleResource {
         }
         
         // Logging in the context of IsisConfiguration
-        LoggerFactory.getLogger(IsisConfiguration.class).info("=== BUILT/DONE ===");
+        LoggerFactory.getLogger(IsisConfiguration.class).info("Configuration is final.");
         
         return builder.build();
         
