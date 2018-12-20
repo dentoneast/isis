@@ -22,11 +22,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
@@ -39,7 +37,6 @@ import org.slf4j.LoggerFactory;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.base._NullSafe;
-import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.collections._Collections;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.config.IsisConfiguration;
@@ -64,8 +61,7 @@ public class ServiceInjectorDefault implements ServiceInjector {
 
     @Override
     public <T> T injectServicesInto(T domainObject) {
-        final List<Object> services = serviceRegistry.streamServices().collect(Collectors.toList()); 
-        injectServices(domainObject, services);
+        injectServices(domainObject);
         return domainObject;
     }
     
@@ -80,37 +76,34 @@ public class ServiceInjectorDefault implements ServiceInjector {
     boolean autowireSetters;
     boolean autowireInject;    
 
-    private void injectServices(final Object object, final List<Object> services) {
+    private void injectServices(final Object targetPojo) {
 
-        final Class<?> cls = object.getClass();
+        final Class<?> cls = targetPojo.getClass();
 
-        injectToFields(object, services, cls);
+        injectToFields(targetPojo, cls);
 
         if(autowireSetters) {
-            injectViaPrefixedMethods(object, services, cls, "set");
+            injectViaPrefixedMethods(targetPojo, cls, "set");
         }
         if(autowireInject) {
-            injectViaPrefixedMethods(object, services, cls, "inject");
+            injectViaPrefixedMethods(targetPojo, cls, "inject");
         }
     }
 
-    private void injectToFields(final Object object, final List<Object> services, final Class<?> cls) {
+    private void injectToFields(final Object targetPojo, final Class<?> cls) {
 
         _NullSafe.stream(fieldsByClassCache.computeIfAbsent(cls, __->cls.getDeclaredFields()))
         .filter(isAnnotatedForInjection())
-        .forEach(field->autowire(object, field, services));
+        .forEach(field->injectToField(targetPojo, field));
 
         // recurse up the object's class hierarchy
         final Class<?> superclass = cls.getSuperclass();
         if(superclass != null) {
-            injectToFields(object, services, superclass);
+            injectToFields(targetPojo, superclass);
         }
     }
 
-    private void autowire(
-            final Object object,
-            final Field field,
-            final List<Object> services) {
+    private void injectToField(final Object targetPojo, final Field field) {
 
         final Class<?> typeToBeInjected = field.getType();
         // don't think that type can ever be null,
@@ -122,57 +115,59 @@ public class ServiceInjectorDefault implements ServiceInjector {
         // inject matching services into a field of type Collection<T> if a generic type T is present
         final Class<?> elementType = _Collections.inferElementTypeIfAny(field);
         if(elementType!=null) {
-            @SuppressWarnings("unchecked")
-            final Class<? extends Collection<Object>> collectionTypeToBeInjected =
-            (Class<? extends Collection<Object>>) typeToBeInjected;
+            injectToField_nonScalar(targetPojo, field, elementType);
+            return;
+        }
+        
+        serviceRegistry.getManagedBean(typeToBeInjected, field.getAnnotations())
+        .ifPresent(bean->invokeInjectorField(field, targetPojo, bean));
 
-            final Collection<Object> collectionOfServices = _NullSafe.stream(services)
-                    .filter(_NullSafe::isPresent)
+    }
+    
+    private void injectToField_nonScalar(
+            final Object targetPojo, 
+            final Field field, 
+            final Class<?> elementType) {
+        
+        @SuppressWarnings("unchecked")
+        final Class<? extends Collection<Object>> collectionTypeToBeInjected =
+        (Class<? extends Collection<Object>>) field.getType();
+
+        
+        serviceRegistry.getInstance(elementType, field.getAnnotations())
+        .ifPresent(instance->{
+            
+            final Collection<Object> collectionOfServices = instance.stream()
                     .filter(isOfType(elementType))
                     .collect(_Collections.toUnmodifiableOfType(collectionTypeToBeInjected));
 
-            invokeInjectorField(field, object, collectionOfServices);
-        }
-
-        for (final Object service : services) {
-            final Class<?> serviceClass = service.getClass();
-            if(typeToBeInjected.isAssignableFrom(serviceClass)) {
-                invokeInjectorField(field, object, service);
-                return;
-            }
-        }
-
-        // fallback and try CDI
-        _CDI.getManagedBean(typeToBeInjected, _CDI.filterQualifiers(field.getAnnotations()))
-        .ifPresent(bean->invokeInjectorField(field, object, bean));
-
+            invokeInjectorField(field, targetPojo, collectionOfServices);
+            
+        });
+        
     }
 
     private void injectViaPrefixedMethods(
-            final Object object,
-            final List<Object> services,
+            final Object targetPojo,
             final Class<?> cls,
             final String prefix) {
 
         _NullSafe.stream(methodsByClassCache.computeIfAbsent(cls, __->cls.getMethods()))
         .filter(nameStartsWith(prefix))
-        .forEach(prefixedMethod->autowire(object, prefixedMethod, services));
+        .forEach(prefixedMethod->injectIntoSetter(targetPojo, prefixedMethod));
     }
 
-    private void autowire(
-            final Object object,
-            final Method prefixedMethod,
-            final List<Object> services) {
-
-        for (final Object service : services) {
-            final Class<?> serviceClass = service.getClass();
-            final boolean isInjectorMethod = injectorMethodEvaluator.isInjectorMethodFor(prefixedMethod, serviceClass);
-            if(isInjectorMethod) {
-                prefixedMethod.setAccessible(true);
-                invokeInjectorMethod(prefixedMethod, object, service);
-                return;
-            }
+    private void injectIntoSetter(
+            final Object targetPojo,
+            final Method setter) {
+        
+        final Class<?> typeToBeInjected = injectorMethodEvaluator.getTypeToBeInjected(setter);
+        if(typeToBeInjected == null) {
+            return;
         }
+        
+        serviceRegistry.getManagedBean(typeToBeInjected, setter.getAnnotations())
+        .ifPresent(bean->invokeInjectorMethod(setter, targetPojo, bean));
     }
 
     private static void invokeMethod(final Method method, final Object target, final Object[] parameters) {

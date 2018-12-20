@@ -22,6 +22,7 @@ package org.apache.isis.core.metamodel.services.registry;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -41,6 +42,8 @@ import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.collections._Multimaps;
 import org.apache.isis.commons.internal.collections._Multimaps.SetMultimap;
 import org.apache.isis.commons.internal.collections._Sets;
+
+import lombok.val;
 
 /**
  * @since 2.0.0-M2
@@ -63,18 +66,41 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
 
     @Override
     public void registerServiceInstance(Object serviceInstance) {
-        registeredServiceInstances.add(serviceInstance);
-        serviceByConcreteType.clear(); // invalidate
+        //registeredServiceInstances.add(serviceInstance);
+        //serviceByConcreteType.clear(); // invalidate
     }
     
     @Override
     public Stream<Object> streamServices() {
-        
-        BeanManager beanManager = _CDI.getBeanManager();
-        
-        Set<Bean<?>> beans = beanManager.getBeans(Object.class, new AnnotationLiteral<Any>() {});
-        for (Bean<?> bean : beans) {
-            System.out.println("!!! " + bean.getBeanClass().getName());
+        if(registeredServiceInstances.isEmpty()) {
+         
+            BeanManager beanManager = _CDI.getBeanManager();
+            
+            Set<Bean<?>> beans = beanManager.getBeans(Object.class, QUALIFIER_ANY);
+            for (Bean<?> bean : beans) {
+                
+                val type = bean.getBeanClass();
+                
+                if(bean.getBeanClass().getName().startsWith("org.apache.isis.")) {
+                    System.out.println("!!! " + bean);    
+                }
+                
+                Optional<?> managedObject = 
+                        _CDI.getManagedBean(type, bean.getQualifiers());
+                
+                if(managedObject.isPresent()) {
+                    registeredServiceInstances.add(managedObject.get());
+                    
+                    System.out.println("\t registering: " + managedObject.get());
+                    
+                } else {
+                    if(bean.getBeanClass().getName().startsWith("org.apache.isis.")) {
+                        System.out.println("\t !!! bean not present: " + type.getName());    
+                    }
+                }
+                
+            }
+            
         }
         
         return registeredServiceInstances.stream();
@@ -112,6 +138,19 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
     
     // -- HELPER ...
     
+    private final static AnnotationLiteral<Any> QUALIFIER_ANY = 
+            new AnnotationLiteral<Any>() {
+        private static final long serialVersionUID = 1L;};
+    
+    
+//    private final static AnnotationLiteral<Singleton> SINGLETON =
+//            new AnnotationLiteral<Singleton>() {
+//        private static final long serialVersionUID = 1L;};
+//    
+//    private final static AnnotationLiteral<ApplicationScoped> APPLICATIONSCOPED = 
+//            new AnnotationLiteral<ApplicationScoped>() {
+//        private static final long serialVersionUID = 1L;};
+        
     // -- LOOKUP SERVICE(S)
 
     private <T> Set<Object> locateMatchingServices(final Class<T> serviceClass) {

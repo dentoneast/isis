@@ -19,6 +19,7 @@
 package org.apache.isis.commons.internal.cdi;
 
 import java.lang.annotation.Annotation;
+import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -26,6 +27,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.inject.spi.CDIProvider;
@@ -92,7 +94,6 @@ public final class _CDI {
                 .orElseThrow(()->_Exceptions.unrecoverable("Could not resolve a BeanManager."));
     }
     
-    
     /**
      * Obtains a child Instance for the given required type and additional required qualifiers. 
      * @param subType
@@ -100,15 +101,8 @@ public final class _CDI {
      * @return an optional, empty if passed two instances of the same qualifier type, or an 
      * instance of an annotation that is not a qualifier type
      */
-    public static <T> Optional<T> getManagedBean(final Class<T> subType, List<Annotation> qualifiers) {
-        if(isEmpty(qualifiers)) {
-            return getManagedBean(subType);
-        }
-        
-        final Annotation[] _qualifiers = qualifiers.toArray(new Annotation[] {});
-        
-        return cdi()
-                .map(cdi->tryGet(()->cdi.select(subType, _qualifiers)))
+    public static <T> Optional<T> getManagedBean(final Class<T> subType, Collection<Annotation> qualifiers) {
+        return getInstance(subType, qualifiers)
                 .map(instance->tryGet(instance::get));
     }
 
@@ -120,10 +114,40 @@ public final class _CDI {
      * instance of an annotation that is not a qualifier type
      */
     public static <T> Optional<T> getManagedBean(final Class<T> subType) {
-        return cdi()
-                .map(cdi->tryGet(()->cdi.select(subType)))
+        return getInstance(subType)
                 .map(instance->tryGet(instance::get));
     }
+    
+    /**
+     * Obtains a child Instance for the given required type and additional required qualifiers. 
+     * @param subType
+     * @param qualifiers
+     * @return an optional, empty if passed two instances of the same qualifier type, or an 
+     * instance of an annotation that is not a qualifier type
+     */
+    public static <T> Optional<Instance<T>> getInstance(final Class<T> subType, Collection<Annotation> qualifiers) {
+        if(isEmpty(qualifiers)) {
+            return getInstance(subType);
+        }
+        
+        final Annotation[] _qualifiers = qualifiers.toArray(new Annotation[] {});
+        
+        return cdi()
+                .map(cdi->tryGet(()->cdi.select(subType, _qualifiers)));
+    }
+    
+    /**
+     * Obtains a child Instance for the given required type and additional required qualifiers. 
+     * @param subType
+     * @param qualifiers
+     * @return an optional, empty if passed two instances of the same qualifier type, or an 
+     * instance of an annotation that is not a qualifier type
+     */
+    public static <T> Optional<Instance<T>> getInstance(final Class<T> subType) {
+        return cdi()
+                .map(cdi->tryGet(()->cdi.select(subType)));
+    }
+    
     
     /**
      * Filters the input array into a collection, such that only annotations are retained, 

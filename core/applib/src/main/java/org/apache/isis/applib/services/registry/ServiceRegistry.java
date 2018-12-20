@@ -19,19 +19,51 @@
 
 package org.apache.isis.applib.services.registry;
 
+import java.lang.annotation.Annotation;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
 
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
+import org.apache.isis.commons.internal.cdi._CDI;
 
 @ApplicationScoped
 public interface ServiceRegistry {
 
     @Deprecated
     void registerServiceInstance(Object serviceInstance);
+    
+    /**
+     * Obtains a child Instance for the given required type and additional required qualifiers. 
+     * @param type
+     * @param annotations
+     * @return an optional, empty if passed two instances of the same qualifier type, or an 
+     * instance of an annotation that is not a qualifier type
+     */
+    default public <T> Optional<Instance<T>> getInstance(
+            final Class<T> type, Annotation[] annotations){
+        return annotations!=null
+                ? _CDI.getInstance(type, _CDI.filterQualifiers(annotations))
+                    : _CDI.getInstance(type);
+    }
+    
+    /**
+     * Obtains a child Instance for the given required type and additional required qualifiers. 
+     * @param type
+     * @param annotations
+     * @return an optional, empty if passed two instances of the same qualifier type, or an 
+     * instance of an annotation that is not a qualifier type
+     */
+    default public <T> Optional<T> getManagedBean(
+            final Class<T> type, Annotation[] annotations){
+        return annotations!=null
+                ? _CDI.getManagedBean(type, _CDI.filterQualifiers(annotations))
+                    : _CDI.getManagedBean(type);
+    }
+    
     
     /**
      * @return Stream of all currently registered service instances.
