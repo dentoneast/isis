@@ -24,6 +24,7 @@ import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
@@ -43,7 +44,7 @@ public final class MetaModelContexts {
         
         @Override
         public final IsisConfiguration getConfiguration() {
-            return _CDI.getSingleton(IsisConfiguration.class);
+            return _Config.getConfiguration();
         }
         
         @Override

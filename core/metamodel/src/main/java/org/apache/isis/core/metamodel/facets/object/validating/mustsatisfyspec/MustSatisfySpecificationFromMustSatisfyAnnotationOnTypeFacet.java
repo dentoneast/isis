@@ -57,7 +57,7 @@ public class MustSatisfySpecificationFromMustSatisfyAnnotationOnTypeFacet extend
         super(type(), holder, Derivation.NOT_DERIVED);
         this.specifications = specifications;
 
-        final TranslationService translationService = servicesInjector.lookupService(TranslationService.class).orElse(null);;
+        final TranslationService translationService = getTranslationService();
         // sadness: same as in TranslationFactory
         final String translationContext = ((IdentifiedHolder) holder).getIdentifier().toClassAndNameIdentityString();
 

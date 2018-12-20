@@ -61,7 +61,7 @@ public abstract class MustSatisfySpecificationFacetAbstract extends FacetAbstrac
         inject(specifications, servicesInjector);
         this.specifications = specifications;
 
-        final TranslationService translationService = servicesInjector.lookupService(TranslationService.class).orElse(null);;
+        final TranslationService translationService = getTranslationService();
         // sadness: same as in TranslationFactory
         final String translationContext = ((IdentifiedHolder) holder).getIdentifier().toClassAndNameIdentityString();
 

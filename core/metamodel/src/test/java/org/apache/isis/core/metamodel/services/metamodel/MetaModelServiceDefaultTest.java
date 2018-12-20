@@ -43,15 +43,13 @@ import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.metamodel.DomainMember;
 import org.apache.isis.applib.services.metamodel.DomainModel;
 import org.apache.isis.commons.internal.base._Casts;
-import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.collections._Lists;
+import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.core.metamodel.facetapi.Facet;
 import org.apache.isis.core.metamodel.facets.FacetedMethod;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.spec.Hierarchical.Depth;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
-import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.specimpl.ObjectActionDefault;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2.Mode;
@@ -60,7 +58,6 @@ class MetaModelServiceDefaultTest {
 
     ServiceInjector stubServicesInjector;
     MetaModelServiceDefault mockMetaModelService;
-    SpecificationLoader specificationLoader;
     ObjectAction action;
     ObjectSpecification mockSpec;
 
@@ -70,14 +67,9 @@ class MetaModelServiceDefaultTest {
     @BeforeEach
     void setUp() throws Exception {
         
+        _Context.clear();
         JUnitRuleMockery2 context = JUnitRuleMockery2.createFor(Mode.INTERFACES_AND_CLASSES);
         
-        context.mock(PersistenceSessionServiceInternal.class);
-                
-        specificationLoader = 
-                new SpecificationLoader(null, null);
-        
-        context.put(specificationLoader);
         
         mockFacetedMethod = context.mock(FacetedMethod.class);
         Matcher<Class<? extends Facet>> facetMatcher = _Casts.uncheckedCast(Matchers.any(Class.class));

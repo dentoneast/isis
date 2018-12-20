@@ -64,8 +64,8 @@ public abstract class SpecificationLoaderTestAbstract {
     private PersistenceSessionServiceInternal mockPersistenceSessionServiceInternal;
     @Mock
     private MessageService mockMessageService;
-    
-    ServiceInjector stubServicesInjector;
+    @Mock
+    private ServiceInjector mockServiceInjector;
 
     // is loaded by subclasses
     protected ObjectSpecification specification;

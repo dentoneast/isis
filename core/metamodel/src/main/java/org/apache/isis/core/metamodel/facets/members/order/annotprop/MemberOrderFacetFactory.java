@@ -54,7 +54,7 @@ public class MemberOrderFacetFactory extends FacetFactoryAbstract implements Con
             return new MemberOrderFacetAnnotation(
                     annotation.name(),
                     annotation.sequence(),
-                    getServiceInjector().lookupService(TranslationService.class).orElse(null),
+                    getTranslationService(),
                     processMethodContext.getFacetHolder());
         }
         else {

@@ -72,7 +72,7 @@ public class ServiceInjectorBuilder_forTesting {
         injector.autowireSetters = autowireSetters; 
         injector.autowireInject = autowireInject;
         
-        injector.init();
+        //injector.init(); 
         
         mockeryContext.put(injector);
         

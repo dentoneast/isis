@@ -19,6 +19,8 @@ package org.apache.isis.applib.services.inject;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import javax.enterprise.context.ApplicationScoped;
+
 /**
  * The repository of services, also able to inject into any object.
  *
@@ -27,6 +29,7 @@ import java.util.stream.Stream;
  * </p>
  *
  */
+@ApplicationScoped
 public interface ServiceInjector {
 
     <T> T injectServicesInto(final T domainObject);

@@ -21,7 +21,6 @@ package org.apache.isis.core.metamodel.facets.ordering.memberorder;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.Optional;
 
 import org.hamcrest.Description;
 import org.jmock.Expectations;
@@ -30,8 +29,6 @@ import org.jmock.api.Invocation;
 import org.junit.Rule;
 
 import org.apache.isis.applib.annotation.MemberOrder;
-import org.apache.isis.applib.services.i18n.TranslationService;
-import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.facetapi.Facet;
 import org.apache.isis.core.metamodel.facets.AbstractFacetFactoryTest;
 import org.apache.isis.core.metamodel.facets.FacetFactory.ProcessMethodContext;
@@ -47,23 +44,10 @@ public class MemberOrderAnnotationFacetFactoryTest extends AbstractFacetFactoryT
     @Rule
     public JUnitRuleMockery2 context = JUnitRuleMockery2.createFor(JUnitRuleMockery2.Mode.INTERFACES_AND_CLASSES);
 
-    TranslationService mockTranslationService;
-
-    ServiceInjector mockServicesInjector;
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
-        mockServicesInjector = context.mock(ServiceInjector.class);
-        mockTranslationService = context.mock(TranslationService.class);
-
-
-        context.checking(new Expectations() {{
-            allowing(mockServicesInjector).lookupService(TranslationService.class);
-            will(returnValue(Optional.of(mockTranslationService)));
-        }});
-
+        
         context.checking(new Expectations() {{
             allowing(mockTranslationService).translate(with(any(String.class)), with(any(String.class)));
             will(new Action() {

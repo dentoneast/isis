@@ -19,7 +19,6 @@
 package org.apache.isis.commons.internal.cdi;
 
 import java.lang.annotation.Annotation;
-import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -32,7 +31,6 @@ import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.inject.spi.CDIProvider;
 import javax.inject.Qualifier;
 
-import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.commons.internal.functions._Functions.CheckedRunnable;
@@ -179,7 +177,9 @@ public final class _CDI {
 //    }
     
     private static <T> T getMockedSingleton(Class<T> type) {
-        return _Context.getOrThrow(type, NoSuchElementException::new);
+        requires(type, "type");        
+        return _Context.getOrThrow(type, ()-> 
+            new NoSuchElementException(String.format("Could not resolve an instance of type '%s'", type.getName())));
     }
     
     // -- HELPER

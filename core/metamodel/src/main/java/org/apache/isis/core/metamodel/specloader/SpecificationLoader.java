@@ -22,6 +22,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +81,7 @@ import org.apache.isis.schema.utils.CommonDtoUtils;
  * </p>
  *
  */
+@ApplicationScoped
 public class SpecificationLoader {
 
     private final static Logger LOG = LoggerFactory.getLogger(SpecificationLoader.class);

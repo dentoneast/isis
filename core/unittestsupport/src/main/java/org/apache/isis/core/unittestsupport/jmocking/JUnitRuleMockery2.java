@@ -25,6 +25,9 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
 
+import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
+
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
 import org.jmock.integration.junit4.JUnit4Mockery;
@@ -39,6 +42,7 @@ import org.picocontainer.PicoBuilder;
 import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.commons.internal.context._Context;
+import org.apache.isis.commons.internal.reflection._Reflect;
 import org.apache.isis.core.plugins.environment.IsisSystemEnvironment;
 
 import static java.lang.annotation.ElementType.FIELD;
@@ -151,6 +155,7 @@ public class JUnitRuleMockery2 extends JUnit4Mockery implements MethodRule {
 
             @Override
             public void evaluate() throws Throwable {
+                _Context.clear(); 
                 prepare(target);
                 base.evaluate();
                 assertIsSatisfied();
@@ -223,7 +228,15 @@ public class JUnitRuleMockery2 extends JUnit4Mockery implements MethodRule {
     public <T> T mock(Class<T> typeToMock, String name) {
         final T mock = super.mock(typeToMock, name);
         
-        _Context.putSingleton(typeToMock, mock);
+        if(isSingleton(typeToMock)) {
+            _Context.putSingleton(typeToMock, mock);
+            
+            System.out.println("!!! + " + typeToMock.getSimpleName());
+            
+        } else {
+            
+            System.out.println("!!! - " + typeToMock.getSimpleName());
+        }
         
         return mock;
     }
@@ -318,6 +331,21 @@ public class JUnitRuleMockery2 extends JUnit4Mockery implements MethodRule {
         } catch (Exception e) {
             throw new AssertionFailedError("Unable to instantiate expectations class '" + expectationsClass.getName() + "'");
         }
+    }
+    
+    // -- since 2.0.0-M2 -- put mocked services on the _Context
+    
+    private boolean isSingleton(Class<?> cls) {
+        
+        if(cls.isAnnotationPresent(Singleton.class)) {
+            return true;
+        }
+        if(cls.getName().startsWith("org.apache.isis.") && 
+                cls.isAnnotationPresent(ApplicationScoped.class)) {
+            return true;
+        }
+        
+        return false;
     }
 
     public void putAll(Collection<?> mockedServices) {

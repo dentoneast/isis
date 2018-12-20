@@ -24,6 +24,7 @@ import java.util.function.Consumer;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.commons.internal.collections._Sets;
@@ -46,6 +47,7 @@ import org.apache.isis.core.plugins.eventbus.EventBusPlugin.EventListener;
  *     (keeps things nice and symmetrical).
  * </p>
  */
+@ApplicationScoped
 public abstract class EventBusService {
 
     /**

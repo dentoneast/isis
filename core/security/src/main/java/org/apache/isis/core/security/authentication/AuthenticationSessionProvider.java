@@ -16,9 +16,12 @@
  */
 package org.apache.isis.core.security.authentication;
 
+import javax.enterprise.context.ApplicationScoped;
+
 /**
  * This is implemented by an (internal) domain service
  */
+@ApplicationScoped
 public interface AuthenticationSessionProvider {
 
     AuthenticationSession getAuthenticationSession();

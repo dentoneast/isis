@@ -23,6 +23,7 @@ import static org.apache.isis.commons.internal.base._With.mapIfPresentElse;
 import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
@@ -36,6 +37,7 @@ import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
  * @since 2.0.0-M2
  *
  */
+@ApplicationScoped
 public interface ObjectAdapterProvider {
     
     // -- INTERFACE

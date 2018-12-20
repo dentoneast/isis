@@ -33,6 +33,7 @@ import org.apache.isis.applib.Identifier;
 import org.apache.isis.applib.services.eventbus.EventBusService;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facetapi.FeatureType;
 import org.apache.isis.core.metamodel.facetapi.IdentifiedHolder;
@@ -83,7 +84,8 @@ public abstract class AbstractFacetFactoryJUnit4TestCase {
     protected OneToOneActionParameter mockOneToOneActionParameter;
     @Mock
     protected EventBusService mockEventBusService;
-    
+    @Mock
+    protected ObjectAdapterProvider mockObjectAdapterProvider;
     
     protected FacetedMethod facetedMethod;
     protected FacetedMethodParameter facetedMethodParameter;

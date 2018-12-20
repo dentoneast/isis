@@ -77,6 +77,7 @@ public class PropertyMethodsFacetFactoryTest extends AbstractFacetFactoryTest {
 
     @Mock
     private ObjectSpecification mockSpecification;
+    
 
     public void setUp() throws Exception {
         super.setUp();
@@ -488,6 +489,7 @@ public class PropertyMethodsFacetFactoryTest extends AbstractFacetFactoryTest {
     }
 
     public void testDisableFacetNoArgsFoundAndMethodRemoved() {
+        
         final DisableForContextFacetViaMethodFactory facetFactory = new DisableForContextFacetViaMethodFactory();
 
         class Customer {

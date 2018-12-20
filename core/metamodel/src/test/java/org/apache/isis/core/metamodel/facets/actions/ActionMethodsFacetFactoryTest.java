@@ -23,14 +23,12 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.jmock.Expectations;
 
 import org.apache.isis.applib.security.UserMemento;
-import org.apache.isis.applib.services.i18n.TranslationService;
-import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.facetapi.Facet;
 import org.apache.isis.core.metamodel.facets.AbstractFacetFactoryTest;
 import org.apache.isis.core.metamodel.facets.FacetFactory.ProcessMethodContext;
@@ -59,11 +57,9 @@ import org.apache.isis.core.metamodel.facets.param.choices.methodnum.ActionParam
 import org.apache.isis.core.metamodel.facets.param.defaults.ActionParameterDefaultsFacet;
 import org.apache.isis.core.metamodel.facets.param.defaults.methodnum.ActionParameterDefaultsFacetViaMethod;
 import org.apache.isis.core.metamodel.facets.param.defaults.methodnum.ActionParameterDefaultsFacetViaMethodFactory;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.testspec.ObjectSpecificationStub;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
-import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
 
 public class ActionMethodsFacetFactoryTest extends AbstractFacetFactoryTest {
@@ -74,24 +70,12 @@ public class ActionMethodsFacetFactoryTest extends AbstractFacetFactoryTest {
     private final ObjectSpecification stringSpec = new ObjectSpecificationStub("java.lang.String");
     private final ObjectSpecification customerSpec = new ObjectSpecificationStub("Customer");
 
-    private ServiceInjector mockServicesInjector;
-    private AuthenticationSessionProvider mockAuthenticationSessionProvider;
-    private TranslationService mockTranslationService;
-    private PersistenceSessionServiceInternal mockPersistenceSessionServiceInternal;
-
-
     public void setUp() throws Exception {
         
         // PRODUCTION
         
         super.setUp();
         
-        mockServicesInjector = context.mock(ServiceInjector.class);
-        mockTranslationService = context.mock(TranslationService.class);
-        mockPersistenceSessionServiceInternal = context.mock(PersistenceSessionServiceInternal.class);
-
-        mockAuthenticationSessionProvider = context.mock(AuthenticationSessionProvider.class);
-
         final AuthenticationSession mockAuthenticationSession = context.mock(AuthenticationSession.class);
 
         context.checking(new Expectations() {{
@@ -99,11 +83,11 @@ public class ActionMethodsFacetFactoryTest extends AbstractFacetFactoryTest {
             allowing(mockAuthenticationSessionProvider).getAuthenticationSession();
             will(returnValue(mockAuthenticationSession));
 
-            allowing(mockServicesInjector).lookupService(TranslationService.class);
-            will(returnValue(Optional.of(mockTranslationService)));
-
-            allowing(mockServicesInjector).lookupServiceElseFail(AuthenticationSessionProvider.class);
-            will(returnValue(mockAuthenticationSessionProvider));
+//            allowing(mockServicesInjector).lookupService(TranslationService.class);
+//            will(returnValue(Optional.of(mockTranslationService)));
+//
+//            allowing(mockServicesInjector).lookupServiceElseFail(AuthenticationSessionProvider.class);
+//            will(returnValue(mockAuthenticationSessionProvider));
 
 //            allowing(mockServicesInjector).getAuthenticationSessionProvider();
 //            will(returnValue(mockAuthenticationSessionProvider));

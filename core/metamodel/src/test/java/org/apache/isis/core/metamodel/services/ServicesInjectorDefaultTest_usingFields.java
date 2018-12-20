@@ -93,7 +93,7 @@ public class ServicesInjectorDefaultTest_usingFields {
                 .build();
         
         injector = ServiceInjectorBuilder_forTesting.of(context)
-                
+                .serviceRegistry(registry)
                 .build();
 
     }

@@ -28,8 +28,8 @@ import org.junit.Rule;
 import org.apache.isis.applib.Identifier;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
-import org.apache.isis.commons.internal.cdi._CDI;
-import org.apache.isis.commons.internal.collections._Lists;
+import org.apache.isis.commons.internal.context._Context;
+import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facetapi.FacetHolderImpl;
 import org.apache.isis.core.metamodel.facetapi.FeatureType;
@@ -61,7 +61,8 @@ public abstract class AbstractFacetFactoryTest extends TestCase {
         }
     }
 
-    protected ServiceInjector stubServicesInjector;
+    protected ObjectAdapterProvider mockObjectAdapterProvider;
+    protected ServiceInjector mockServiceInjector;
     protected TranslationService mockTranslationService;
     protected AuthenticationSessionProvider mockAuthenticationSessionProvider;
     protected AuthenticationSession mockAuthenticationSession;
@@ -93,6 +94,8 @@ public abstract class AbstractFacetFactoryTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         
+        _Context.clear();
+        
         // PRODUCTION
         
         facetHolder = new IdentifiedHolderImpl(
@@ -112,6 +115,9 @@ public abstract class AbstractFacetFactoryTest extends TestCase {
         mockPersistenceSessionServiceInternal = context.mock(PersistenceSessionServiceInternal.class);
 
         mockSpecificationLoader = context.mock(SpecificationLoader.class);
+        
+        mockServiceInjector = context.mock(ServiceInjector.class);
+        mockObjectAdapterProvider = context.mock(ObjectAdapterProvider.class);
         
         context.checking(new Expectations() {{
 
