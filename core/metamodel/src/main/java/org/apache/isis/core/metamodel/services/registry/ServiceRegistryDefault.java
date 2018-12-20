@@ -19,6 +19,7 @@
 
 package org.apache.isis.core.metamodel.services.registry;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,14 +35,20 @@ import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
 
+import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.base._Lazy;
+import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.collections._Multimaps;
+import org.apache.isis.commons.internal.collections._Multimaps.ListMultimap;
 import org.apache.isis.commons.internal.collections._Multimaps.SetMultimap;
 import org.apache.isis.commons.internal.collections._Sets;
+import org.apache.isis.core.metamodel.services.ServiceUtil;
+
+import static org.apache.isis.commons.internal.base._NullSafe.stream;
 
 import lombok.val;
 
@@ -72,6 +79,7 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
     
     @Override
     public Stream<Object> streamServices() {
+        
         if(registeredServiceInstances.isEmpty()) {
          
             BeanManager beanManager = _CDI.getBeanManager();
@@ -80,9 +88,14 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
             for (Bean<?> bean : beans) {
                 
                 val type = bean.getBeanClass();
+                val debug = type.getName().startsWith("org.apache.isis.");
                 
-                if(bean.getBeanClass().getName().startsWith("org.apache.isis.")) {
+                if(debug) {
                     System.out.println("!!! " + bean);    
+                } 
+                
+                if(!isSingleton(type)) {
+                    continue;
                 }
                 
                 Optional<?> managedObject = 
@@ -91,11 +104,14 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
                 if(managedObject.isPresent()) {
                     registeredServiceInstances.add(managedObject.get());
                     
-                    System.out.println("\t registering: " + managedObject.get());
+                    if(debug) {
+                        System.out.println("!!!\t registering: " + managedObject.get());
+                    }
                     
                 } else {
-                    if(bean.getBeanClass().getName().startsWith("org.apache.isis.")) {
-                        System.out.println("\t !!! bean not present: " + type.getName());    
+                    
+                    if(debug) {
+                        System.out.println("!!!\t bean not present: " + type.getName());    
                     }
                 }
                 
@@ -132,24 +148,59 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
     
     @Override
     public void validateServices() {
-        // TODO Auto-generated method stub
-        
+        validate(streamServices());
     }
-    
+
     // -- HELPER ...
     
     private final static AnnotationLiteral<Any> QUALIFIER_ANY = 
             new AnnotationLiteral<Any>() {
         private static final long serialVersionUID = 1L;};
+
+    private boolean isSingleton(Class<?> cls) {
+        
+        if(cls.isAnnotationPresent(Singleton.class) ||
+                cls.isAnnotationPresent(DomainService.class)) {
+            return true;
+        }
+        
+        return false;
+    }
+        
+    // -- VALIDATE
+        
+    private static void validate(final Stream<Object> serviceInstances) {
+
+        final ListMultimap<String, Object> servicesById = _Multimaps.newListMultimap();
+        serviceInstances.forEach(serviceInstance->{
+            String id = ServiceUtil.idOfPojo(serviceInstance);
+            System.out.println("!!! id="+id);
+            
+            servicesById.putElement(id, serviceInstance);
+        });
+
+        final String errorMsg = servicesById.entrySet().stream()
+                .filter(entry->entry.getValue().size()>1) // filter for duplicates
+                .map(entry->{
+                    String serviceId = entry.getKey();
+                    List<Object> duplicateServiceEntries = entry.getValue();
+                    return String.format("serviceId '%s' is declared by domain services %s",
+                            serviceId, classNamesFor(duplicateServiceEntries));
+                })
+                .collect(Collectors.joining(", "));
+
+        if(_Strings.isNotEmpty(errorMsg)) {
+            throw new IllegalStateException("Service ids must be unique! "+errorMsg);
+        }
+    }
     
-    
-//    private final static AnnotationLiteral<Singleton> SINGLETON =
-//            new AnnotationLiteral<Singleton>() {
-//        private static final long serialVersionUID = 1L;};
-//    
-//    private final static AnnotationLiteral<ApplicationScoped> APPLICATIONSCOPED = 
-//            new AnnotationLiteral<ApplicationScoped>() {
-//        private static final long serialVersionUID = 1L;};
+    private static String classNamesFor(Collection<Object> services) {
+        return stream(services)
+                .map(Object::getClass)
+                .map(Class::getName)
+                .collect(Collectors.joining(", "));
+    }
+
         
     // -- LOOKUP SERVICE(S)
 

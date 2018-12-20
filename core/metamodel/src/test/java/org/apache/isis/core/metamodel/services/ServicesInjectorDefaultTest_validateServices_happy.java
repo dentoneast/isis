@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import org.jboss.weld.junit5.EnableWeld;
 import org.jboss.weld.junit5.WeldInitiator;
 import org.jboss.weld.junit5.WeldSetup;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import org.apache.isis.applib.annotation.DomainService;
@@ -32,8 +31,8 @@ import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.core.metamodel.BeansForTesting;
 
 @EnableWeld
-class ServicesInjectorDefaultTest_validateServices {
-
+class ServicesInjectorDefaultTest_validateServices_happy {
+    
     // -- SCENARIO
 
     @DomainService
@@ -42,11 +41,9 @@ class ServicesInjectorDefaultTest_validateServices {
     }
 
     @DomainService
-    public static class DomainServiceWithDuplicateId {
-        public String getId() { return "someId"; }
+    public static class DomainServiceWithDifferentId {
+        public String getId() { return "otherId"; }
     }
-
-    // --
 
     @WeldSetup
     public WeldInitiator weld = WeldInitiator.from(
@@ -54,7 +51,7 @@ class ServicesInjectorDefaultTest_validateServices {
             BeansForTesting.builder()
             .injector()
             .add(DomainServiceWithSomeId.class)
-            .add(DomainServiceWithDuplicateId.class)
+            .add(DomainServiceWithDifferentId.class)
             .build()
 
             )
@@ -63,8 +60,9 @@ class ServicesInjectorDefaultTest_validateServices {
     @Inject private ServiceRegistry serviceRegistry;
 
     @Test
-    public void validate_DomainServicesWithDuplicateIds() {
-        Assertions.assertThrows(IllegalStateException.class, serviceRegistry::validateServices);
+    public void validate_DomainServicesWithoutDuplicateIds() {
+        serviceRegistry.validateServices();
     }
-
+    
+    
 }

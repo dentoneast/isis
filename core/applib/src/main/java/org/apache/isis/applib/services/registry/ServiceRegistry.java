@@ -122,6 +122,10 @@ public interface ServiceRegistry {
      */
     boolean isRegisteredServiceInstance(Object pojo);
 
+    /**
+     * Verify domain service Ids are unique.
+     * @throws IllegalStateException - if validation fails
+     */
     void validateServices();
 
 

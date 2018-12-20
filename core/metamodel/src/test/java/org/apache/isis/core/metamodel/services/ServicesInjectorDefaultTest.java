@@ -43,10 +43,7 @@ import org.mockito.Mockito;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.repository.RepositoryService;
-import org.apache.isis.config.IsisConfiguration;
-import org.apache.isis.config.builder.IsisConfigurationBuilder;
-import org.apache.isis.core.metamodel.services.registry.ServiceRegistryDefault;
-import org.apache.isis.core.metamodel.specloader.InjectorMethodEvaluatorDefault;
+import org.apache.isis.core.metamodel.BeansForTesting;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -56,13 +53,7 @@ import static org.mockito.Mockito.verify;
 @EnableWeld
 class ServicesInjectorDefaultTest {
 
-    static class FactoriesForTesting {
-        
-        @Produces
-        IsisConfiguration getConfiguration() {
-            return IsisConfigurationBuilder.getDefaultForUnitTesting()
-            .build();
-        }
+    static class Mocks {
         
         @Produces
         SomeDomainObject mockDomainObject() {
@@ -93,16 +84,15 @@ class ServicesInjectorDefaultTest {
     
     @WeldSetup
     public WeldInitiator weld = WeldInitiator.from(
-            FactoriesForTesting.class,
-            IsisConfiguration.class,
-            InjectorMethodEvaluatorDefault.class,
-            ServiceRegistryDefault.class,
-            ServiceInjectorDefault.class,
             
-            RepositoryService.class,
-            
-            Service1.class,
-            Service2.class
+            BeansForTesting.builder()
+            .injector()
+            .addAll(
+                    Mocks.class,
+                    Service1.class,
+                    Service2.class
+                    )
+            .build()
             
             )
     .build();

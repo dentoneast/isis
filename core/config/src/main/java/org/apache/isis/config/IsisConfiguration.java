@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.Module;
 import org.apache.isis.applib.PropertyResource;
@@ -50,6 +52,7 @@ import static org.apache.isis.config.internal._Config.getConfiguration;
  * Thus the {@link IsisConfiguration} held by different components may vary, but
  * with each being a possible superset of the previous.
  */
+@ApplicationScoped
 public interface IsisConfiguration {
     
     /**

@@ -30,10 +30,7 @@ import org.mockito.Mockito;
 
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.repository.RepositoryService;
-import org.apache.isis.config.IsisConfiguration;
-import org.apache.isis.config.builder.IsisConfigurationBuilder;
-import org.apache.isis.core.metamodel.services.registry.ServiceRegistryDefault;
-import org.apache.isis.core.metamodel.specloader.InjectorMethodEvaluatorDefault;
+import org.apache.isis.core.metamodel.BeansForTesting;
 
 import static org.hamcrest.Matchers.any;
 import static org.junit.Assert.assertThat;
@@ -44,13 +41,7 @@ import lombok.Getter;
 class ServicesInjectorDefaultTest_usingFields {
 
 
-    static class FactoriesForTesting {
-        
-        @Produces
-        IsisConfiguration getConfiguration() {
-            return IsisConfigurationBuilder.getDefaultForUnitTesting()
-            .build();
-        }
+    static class Mocks {
         
         @Produces
         RepositoryService mockRepositoryService() {
@@ -61,14 +52,16 @@ class ServicesInjectorDefaultTest_usingFields {
     
     @WeldSetup
     public WeldInitiator weld = WeldInitiator.from(
-            FactoriesForTesting.class,
-            InjectorMethodEvaluatorDefault.class,
-            ServiceRegistryDefault.class,
-            ServiceInjectorDefault.class,
             
-            A.class,
-            B.class,
-            C.class
+            BeansForTesting.builder()
+            .injector()
+            .addAll(
+                    Mocks.class,
+                    A.class,
+                    B.class,
+                    C.class
+                    )
+            .build()
             
             )
     .build();
@@ -100,7 +93,7 @@ class ServicesInjectorDefaultTest_usingFields {
         @Inject @Getter private C someC;
     }
     
-    // not-managed managed
+    // not-managed
     static class D { 
         @Inject @Getter private A someA;    
         @Inject @Getter private B someB;
