@@ -28,13 +28,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.ejb.Singleton;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.util.AnnotationLiteral;
 
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.base._Lazy;
+import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.collections._Multimaps;
-import org.apache.isis.commons.internal.collections._Multimaps.ListMultimap;
+import org.apache.isis.commons.internal.collections._Multimaps.SetMultimap;
 import org.apache.isis.commons.internal.collections._Sets;
 
 /**
@@ -52,7 +57,7 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
      * If no key, not yet searched for type; otherwise the corresponding value is a {@link List} of all
      * services that are assignable to the type.  It's possible that this is an empty list.
      */
-    private final ListMultimap<Class<?>, Object> servicesAssignableToType = _Multimaps.newListMultimap();
+    private final SetMultimap<Class<?>, Object> servicesAssignableToType = _Multimaps.newSetMultimap();
     private final _Lazy<Map<Class<?>, Object>> serviceByConcreteType = _Lazy.of(this::initServiceByConcreteType);
 
 
@@ -64,6 +69,14 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
     
     @Override
     public Stream<Object> streamServices() {
+        
+        BeanManager beanManager = _CDI.getBeanManager();
+        
+        Set<Bean<?>> beans = beanManager.getBeans(Object.class, new AnnotationLiteral<Any>() {});
+        for (Bean<?> bean : beans) {
+            System.out.println("!!! " + bean.getBeanClass().getName());
+        }
+        
         return registeredServiceInstances.stream();
     }
 
@@ -101,10 +114,10 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
     
     // -- LOOKUP SERVICE(S)
 
-    private <T> List<Object> locateMatchingServices(final Class<T> serviceClass) {
-        final List<Object> matchingServices = streamServices()
+    private <T> Set<Object> locateMatchingServices(final Class<T> serviceClass) {
+        final Set<Object> matchingServices = streamServices()
                 .filter(isOfType(serviceClass))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
         return matchingServices;
     }
     
@@ -124,6 +137,7 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
     private static final Predicate<Object> isOfType(final Class<?> cls) {
         return obj->cls.isAssignableFrom(obj.getClass());
     }
+
 
     
 }

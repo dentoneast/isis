@@ -71,6 +71,12 @@
             <artifactId>junit-vintage-engine</artifactId>
         </dependency>
 
+		<!-- WELD -->
+		<dependency>
+			<groupId>org.jboss.weld</groupId>
+			<artifactId>weld-junit5</artifactId>
+		</dependency>        
+
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock</artifactId>

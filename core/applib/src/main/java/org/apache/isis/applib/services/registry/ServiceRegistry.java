@@ -23,10 +23,14 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
 
+@ApplicationScoped
 public interface ServiceRegistry {
 
+    @Deprecated
     void registerServiceInstance(Object serviceInstance);
     
     /**

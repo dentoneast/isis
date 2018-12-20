@@ -32,6 +32,7 @@ import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.services.grid.GridService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.message.MessageService;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.collections._Sets;
 import org.apache.isis.core.metamodel.facetapi.Facet;
 import org.apache.isis.core.metamodel.facets.actcoll.typeof.TypeOfFacet;
@@ -66,7 +67,9 @@ public abstract class SpecificationLoaderTestAbstract {
     private MessageService mockMessageService;
     @Mock
     private ServiceInjector mockServiceInjector;
-
+    @Mock
+    private ServiceRegistry mockServiceRegistry;
+    
     // is loaded by subclasses
     protected ObjectSpecification specification;
 
@@ -79,18 +82,20 @@ public abstract class SpecificationLoaderTestAbstract {
         // PRODUCTION
 
         context.checking(new Expectations() {{
+            
+            ignoring(mockServiceInjector);
+            ignoring(mockServiceRegistry);
 
-            ignoring(mockGridService).existsFor(with(any(Class.class)));
-
-            ignoring(mockPersistenceSessionServiceInternal);
-            ignoring(mockMessageService);
+//            ignoring(mockGridService).existsFor(with(any(Class.class)));
+//            ignoring(mockPersistenceSessionServiceInternal);
+//            ignoring(mockMessageService);
 
         }});
 
         specificationLoader = new SpecificationLoader(
                 new ProgrammingModelFacetsJava5(DeprecatedPolicy.HONOUR),
                 new MetaModelValidatorDefault());
-
+        
         context.put(specificationLoader);
 
         AppManifest.Registry.instance().setDomainServiceTypes(_Sets.newHashSet());
@@ -104,6 +109,8 @@ public abstract class SpecificationLoaderTestAbstract {
         specificationLoader.init();
         
         specification = loadSpecification(specificationLoader);
+        
+        
     }
 
     @After

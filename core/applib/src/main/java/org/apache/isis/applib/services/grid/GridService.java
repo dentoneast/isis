@@ -16,6 +16,8 @@
  */
 package org.apache.isis.applib.services.grid;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.apache.isis.applib.annotation.ActionLayout;
 import org.apache.isis.applib.annotation.CollectionLayout;
 import org.apache.isis.applib.annotation.DomainObjectLayout;
@@ -24,6 +26,7 @@ import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.annotation.PropertyLayout;
 import org.apache.isis.applib.layout.grid.Grid;
 
+@ApplicationScoped
 public interface GridService {
 
     /**

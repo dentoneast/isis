@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.activation.DataSource;
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.annotation.Programmatic;
 
@@ -34,6 +35,7 @@ import org.apache.isis.applib.annotation.Programmatic;
  * HTML message, using an external SMTP provider.  See the Isis website for further details.
  * </p>
  */
+@ApplicationScoped
 public interface EmailService extends Serializable {
 
     /**

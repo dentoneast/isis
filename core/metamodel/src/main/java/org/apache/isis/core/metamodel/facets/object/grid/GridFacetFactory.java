@@ -34,7 +34,7 @@ public class GridFacetFactory extends FacetFactoryAbstract {
     public void process(final ProcessClassContext processClassContext) {
         final FacetHolder facetHolder = processClassContext.getFacetHolder();
 
-        final GridService gridService = getServiceInjector().lookupServiceElseFail(GridService.class);
+        final GridService gridService = getServiceRegistry().lookupServiceElseFail(GridService.class);
 
         FacetUtil.addFacet(GridFacetDefault.create(facetHolder, gridService));
     }

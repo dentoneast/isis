@@ -37,7 +37,7 @@
         <jar-plugin.automaticModuleName>org.apache.isis.commons</jar-plugin.automaticModuleName>
         <git-plugin.propertiesDir>org/apache/isis/commons</git-plugin.propertiesDir>
         
-        <lombok.version>1.18.4</lombok.version>
+        <lombok.version>[1.18.,)</lombok.version>
     </properties>
 
     <build>
