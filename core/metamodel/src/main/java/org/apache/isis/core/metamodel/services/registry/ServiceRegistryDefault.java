@@ -53,11 +53,12 @@ import org.apache.isis.core.metamodel.services.ServiceUtil;
 import static org.apache.isis.commons.internal.base._NullSafe.stream;
 
 import lombok.val;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @since 2.0.0-M2
  */
-@Singleton
+@Singleton @Slf4j
 public final class ServiceRegistryDefault implements ServiceRegistry {
     
     /**
@@ -90,10 +91,10 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
             for (Bean<?> bean : beans) {
                 
                 val type = bean.getBeanClass();
-                val debug = type.getName().startsWith("org.apache.isis.");
+                val logScope = type.getName().startsWith("org.apache.isis.");
                 
-                if(debug) {
-                    System.out.println("!!! " + bean);    
+                if(logScope) {
+                    log.info("processing bean {}", bean);
                 } 
                 
                 if(!isServiceType(type)) {
@@ -106,14 +107,14 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
                 if(managedObject.isPresent()) {
                     registeredServiceInstances.add(managedObject.get());
                     
-                    if(debug) {
-                        System.out.println("!!!\t registering: " + managedObject.get());
+                    if(logScope) {
+                        log.info("registering as a service {}", managedObject.get());
                     }
                     
                 } else {
                     
-                    if(debug) {
-                        System.out.println("!!!\t bean not present: " + type.getName());    
+                    if(logScope) {
+                        log.warn("failed to register bean as a service {}", bean);
                     }
                 }
                 

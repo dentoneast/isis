@@ -126,8 +126,6 @@ abstract class SpecificationLoaderTestAbstract {
     @BeforeEach
     public void setUp() throws Exception {
         
-        System.out.println("!!! setting up");
-        
         // PRODUCTION
         
         AppManifest.Registry.instance().setDomainServiceTypes(_Sets.newHashSet());

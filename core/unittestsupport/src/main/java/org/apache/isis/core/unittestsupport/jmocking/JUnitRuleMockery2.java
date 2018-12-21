@@ -27,6 +27,7 @@ import java.util.List;
 
 import javax.ejb.Singleton;
 import javax.enterprise.context.ApplicationScoped;
+import javax.imageio.spi.ServiceRegistry;
 
 import org.jmock.Expectations;
 import org.jmock.auto.Mock;
@@ -230,13 +231,7 @@ public class JUnitRuleMockery2 extends JUnit4Mockery implements MethodRule {
         
         if(isSingleton(typeToMock)) {
             _Context.putSingleton(typeToMock, mock);
-            
-            System.out.println("!!! + " + typeToMock.getSimpleName());
-            
-        } else {
-            
-            System.out.println("!!! - " + typeToMock.getSimpleName());
-        }
+        } 
         
         return mock;
     }

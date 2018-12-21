@@ -19,6 +19,7 @@ package org.apache.isis.core.metamodel.specloader;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import javax.ejb.Singleton;
@@ -33,6 +34,7 @@ import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.collections._Lists;
+import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.commons.ensure.Assert;
 import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.commons.lang.ClassUtil;
@@ -53,6 +55,7 @@ import org.apache.isis.core.metamodel.specloader.specimpl.dflt.ObjectSpecificati
 import org.apache.isis.core.metamodel.specloader.specimpl.standalonelist.ObjectSpecificationOnStandaloneList;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidator;
 import org.apache.isis.core.metamodel.specloader.validator.ValidationFailures;
+import org.apache.isis.core.runtime.threadpool.ThreadPoolSupport;
 import org.apache.isis.progmodels.dflt.ProgrammingModelFacetsJava5;
 import org.apache.isis.schema.utils.CommonDtoUtils;
 
@@ -207,28 +210,16 @@ public class SpecificationLoader {
             callables.add(callable);
         }
         
-        System.out.println("!!! calling callables size="+callables.size());
-        
-//        ThreadPoolSupport threadPoolSupport = ThreadPoolSupport.getInstance();
-//        final boolean parallelize = _Config.getConfiguration()
-//                .getBoolean(INTROSPECTOR_PARALLELIZE_KEY, INTROSPECTOR_PARALLELIZE_DEFAULT);
-//        List<Future<Object>> futures;
-//        if(parallelize) {
-//            futures = threadPoolSupport.invokeAll(callables);
-//        } else {
-//            futures = threadPoolSupport.invokeAllSequential(callables);
-//        }
-//        threadPoolSupport.joinGatherFailures(futures);
-        
-        callables.forEach(c->{
-            try {
-                c.call();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-        
-
+        ThreadPoolSupport threadPoolSupport = ThreadPoolSupport.getInstance();
+        final boolean parallelize = _Config.getConfiguration()
+                .getBoolean(INTROSPECTOR_PARALLELIZE_KEY, INTROSPECTOR_PARALLELIZE_DEFAULT);
+        List<Future<Object>> futures;
+        if(parallelize) {
+            futures = threadPoolSupport.invokeAll(callables);
+        } else {
+            futures = threadPoolSupport.invokeAllSequential(callables);
+        }
+        threadPoolSupport.joinGatherFailures(futures);
 
         // for debugging only
         final Collection<ObjectSpecification> cachedSpecificationsAfter = cache.allSpecifications();
