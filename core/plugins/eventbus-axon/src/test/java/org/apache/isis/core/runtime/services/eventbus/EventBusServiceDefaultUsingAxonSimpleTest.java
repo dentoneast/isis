@@ -147,7 +147,7 @@ class EventBusServiceDefaultUsingAxonSimpleTest {
 
             eventBusService.post(new Object());
 
-            // when
+            // then
             assertThrows(IllegalStateException.class, 
                     ()->eventBusService.register(new Subscriber1()));
             

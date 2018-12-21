@@ -24,10 +24,8 @@ import com.google.common.eventbus.Subscribe;
 import org.jboss.weld.junit5.EnableWeld;
 import org.jboss.weld.junit5.WeldInitiator;
 import org.jboss.weld.junit5.WeldSetup;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
@@ -39,6 +37,7 @@ import org.apache.isis.core.metamodel.services.registry.ServiceRegistryDefault;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class EventBusServiceDefaultUsingGuavaTest {
 
@@ -107,15 +106,11 @@ class EventBusServiceDefaultUsingGuavaTest {
             }
         }
         
-
-        @Rule
-        public ExpectedException expectedException = ExpectedException.none();
-
         Subscriber1 subscriber1;
         Subscriber2 subscriber2;
         Subscriber3 subscriber3;
 
-        @Before
+        @BeforeEach
         public void setUp() throws Exception {
             super.setUp();
             subscriber1 = new Subscriber1();
@@ -154,11 +149,9 @@ class EventBusServiceDefaultUsingGuavaTest {
 
             eventBusService.post(new Object());
 
-            // expect
-            expectedException.expect(IllegalStateException.class);
-
-            // when
-            eventBusService.register(new Subscriber1());
+            // then
+            assertThrows(IllegalStateException.class, 
+                    ()->eventBusService.register(new Subscriber1()));
         }
 
         @Test
