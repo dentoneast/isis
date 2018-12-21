@@ -218,7 +218,8 @@ public final class Annotations  {
             return annotation;
         }
 
-
+        //TODO [2033] too much heap pollution due to lots of stacktraces produced ...
+        
         // search for field
         if ( shouldSearchForField(annotationClass) ) {
 
@@ -613,6 +614,13 @@ public final class Annotations  {
 
         final Class<?> methodDeclaringClass = method.getDeclaringClass();
 
+        //TODO [2033] too much heap pollution due to lots of stacktraces produced
+        // suggested replacement ...
+//        return
+//        _Reflect.streamAllMethods(methodDeclaringClass)
+//        .filter(m->methodEquals(method, m))
+//        .anyMatch(m->m.isAnnotationPresent(annotationClass));
+    
         // search superclasses
         final Class<?> superclass = methodDeclaringClass.getSuperclass();
         if (superclass != null) {
@@ -663,6 +671,21 @@ public final class Annotations  {
         }
 
         return Collections.emptyList();
+    }
+    
+    //used by code that is commented out above
+    private static boolean methodEquals(Method m, Method superM) {
+        if(!m.getName().equals(superM.getName())) {
+            return false;
+        }
+        if(!m.getReturnType().isAssignableFrom(superM.getReturnType())) {
+            return false;
+        }
+        if(!Arrays.equals(m.getParameterTypes(), superM.getParameterTypes())) {
+            return false;
+        }
+        return true;
+        
     }
 
 }

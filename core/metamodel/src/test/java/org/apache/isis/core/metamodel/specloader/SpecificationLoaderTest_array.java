@@ -62,4 +62,13 @@ class SpecificationLoaderTest_array extends SpecificationLoaderTestAbstract {
         assertEquals(ReflectorTestPojo.class, facet.value());
     }
 
+//[2033] performance testing the spec loader
+//    @Test @RepeatedTest(1000)
+//    public void testTypeOfFacet1000(TestInfo testInfo) throws Exception {
+//        final TypeOfFacet facet =
+//        _Timing.callVerbose("!!! Loop " + testInfo.getDisplayName(), ()->specification.getFacet(TypeOfFacet.class));
+//        assertNull(facet);
+//    }
+
+
 }

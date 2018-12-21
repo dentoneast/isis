@@ -49,7 +49,7 @@ public class ServiceRegistryBuilder_forTesting {
         val registry = new ServiceRegistryDefault();
         
         stream(services)
-        .forEach(registry::registerServiceInstance);
+        .forEach(mockeryContext::put);
         
         mockeryContext.put(registry);
         

@@ -35,6 +35,8 @@ import org.apache.isis.core.security.authentication.AuthenticationSessionProvide
 import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
 import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
 
+import lombok.Getter;
+
 /**
  * 
  * @since 2.0.0-M2
@@ -43,79 +45,71 @@ import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
 public final class MetaModelContexts {
 
     static class MetaModelContextUsingCDI implements MetaModelContext {
-        
-        @Override
-        public final IsisConfiguration getConfiguration() {
-            return _Config.getConfiguration();
-        }
-        
-        @Override
-        public final ObjectAdapterProvider getObjectAdapterProvider() {
-            return _CDI.getSingleton(ObjectAdapterProvider.class);
-        }
-        
-        @Override
-        public final ServiceInjector getServiceInjector() {
-            return _CDI.getSingleton(ServiceInjector.class);
-        }
 
-        @Override
-        public final ServiceRegistry getServiceRegistry() {
-            return _CDI.getSingleton(ServiceRegistry.class);
-        }
-        
-        @Override
-        public final SpecificationLoader getSpecificationLoader() {
-            return _CDI.getSingleton(SpecificationLoader.class);
-        }
+        @Getter(lazy=true) 
+        private final IsisConfiguration configuration = 
+        _Config.getConfiguration();
 
-        @Override
-        public final AuthenticationSessionProvider getAuthenticationSessionProvider() {
-            return _CDI.getSingleton(AuthenticationSessionProvider.class);
-        }
-        
-        @Override
-        public final TranslationService getTranslationService() {
-            return _CDI.getSingleton(TranslationService.class);
-        }
-        
+        @Getter(lazy=true) 
+        private final ObjectAdapterProvider objectAdapterProvider =
+        _CDI.getSingleton(ObjectAdapterProvider.class);
+
+        @Getter(lazy=true) 
+        private final ServiceInjector serviceInjector =
+        _CDI.getSingleton(ServiceInjector.class);
+
+        @Getter(lazy=true) 
+        private final ServiceRegistry serviceRegistry =
+        _CDI.getSingleton(ServiceRegistry.class);
+
+        @Getter(lazy=true) 
+        private final SpecificationLoader specificationLoader = 
+        _CDI.getSingleton(SpecificationLoader.class);
+
+        @Getter(lazy=true) 
+        private final AuthenticationSessionProvider authenticationSessionProvider =
+        _CDI.getSingleton(AuthenticationSessionProvider.class);
+
+        @Getter(lazy=true) 
+        private final TranslationService translationService =
+        _CDI.getSingleton(TranslationService.class);
+
+        @Getter(lazy=true) 
+        private final AuthorizationManager authorizationManager =
+        _CDI.getSingleton(AuthorizationManager.class); 
+
+        @Getter(lazy=true) 
+        private final AuthenticationManager authenticationManager =
+        _CDI.getSingleton(AuthenticationManager.class);
+
+        @Getter(lazy=true) 
+        private final TitleService titleService =
+        _CDI.getSingleton(TitleService.class);
+
+        @Getter(lazy=true) 
+        private final PersistenceSessionServiceInternal persistenceSessionServiceInternal =
+        _CDI.getSingleton(PersistenceSessionServiceInternal.class);
+
+
         @Override
         public final AuthenticationSession getAuthenticationSession() {
             return getAuthenticationSessionProvider().getAuthenticationSession();
         }
-        
-        @Override
-        public final AuthorizationManager getAuthorizationManager() {
-            return _CDI.getSingleton(AuthorizationManager.class); 
-        }
-        
-        @Override
-        public final AuthenticationManager getAuthenticationManager() {
-            return _CDI.getSingleton(AuthenticationManager.class); 
-        }
-        
-        @Override
-        public final TitleService getTitleService() {
-            return getServiceRegistry().lookupServiceElseFail(TitleService.class);
-        }
-        
+
         @Override
         public final ObjectSpecification getSpecification(final Class<?> type) {
             return type != null ? getSpecificationLoader().loadSpecification(type) : null;
         }
 
         @Override
-        public PersistenceSessionServiceInternal getPersistenceSessionServiceInternal() {
-            return _CDI.getSingleton(PersistenceSessionServiceInternal.class);
-        }
-
-        @Override
-        public TransactionState getTransactionState() {
+        public final TransactionState getTransactionState() {
             return getPersistenceSessionServiceInternal().getTransactionState();
         }
-        
+
     }
-    
-    final static MetaModelContext usingCDI = new MetaModelContextUsingCDI();
-    
+
+    final static MetaModelContext usingCDI() {
+        return new MetaModelContextUsingCDI();
+    }
+
 }

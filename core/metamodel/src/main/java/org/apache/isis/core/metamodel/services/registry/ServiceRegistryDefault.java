@@ -72,12 +72,6 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
     private final SetMultimap<Class<?>, Object> servicesAssignableToType = _Multimaps.newSetMultimap();
     private final _Lazy<Map<Class<?>, Object>> serviceByConcreteType = _Lazy.of(this::initServiceByConcreteType);
 
-
-    @Override
-    public void registerServiceInstance(Object serviceInstance) {
-        //registeredServiceInstances.add(serviceInstance);
-        //serviceByConcreteType.clear(); // invalidate
-    }
     
     @Override
     public <T> Optional<T> lookupService(Class<T> serviceClass) {
@@ -181,8 +175,6 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
         final ListMultimap<String, Object> servicesById = _Multimaps.newListMultimap();
         serviceInstances.forEach(serviceInstance->{
             String id = ServiceUtil.idOfPojo(serviceInstance);
-            System.out.println("!!! id="+id);
-            
             servicesById.putElement(id, serviceInstance);
         });
 

@@ -75,7 +75,7 @@ public interface MetaModelContext {
     
     static MetaModelContext current() {
         return _Context.computeIfAbsent(MetaModelContext.class, 
-                __->MetaModelContexts.usingCDI); // default
+                __->MetaModelContexts.usingCDI()); // default
     }
     
     static void preset(MetaModelContext metaModelContext) {

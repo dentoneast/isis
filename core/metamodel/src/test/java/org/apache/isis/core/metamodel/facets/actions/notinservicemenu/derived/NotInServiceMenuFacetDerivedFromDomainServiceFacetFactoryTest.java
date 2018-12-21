@@ -39,7 +39,8 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-public class NotInServiceMenuFacetDerivedFromDomainServiceFacetFactoryTest extends AbstractFacetFactoryJUnit4TestCase {
+public class NotInServiceMenuFacetDerivedFromDomainServiceFacetFactoryTest 
+extends AbstractFacetFactoryJUnit4TestCase {
 
     private NotInServiceMenuFacetDerivedFromDomainServiceFacetFactory facetFactory;
 

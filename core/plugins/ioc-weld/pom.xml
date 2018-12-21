@@ -35,14 +35,11 @@
     </description>
 
     <properties>
-    
-    	<weld.version>3.0.5.Final</weld.version>
-    
         <jar-plugin.automaticModuleName>org.apache.isis.plugins.ioc-weld</jar-plugin.automaticModuleName>
 		<git-plugin.propertiesDir>org/apache/isis/plugins/ioc-weld</git-plugin.propertiesDir>
     </properties>
 
-    	<build>
+    <build>
 		<resources>
 			<resource>
 				<filtering>false</filtering>
@@ -74,7 +71,6 @@
         <dependency>
         	<groupId>org.jboss.weld.se</groupId>
         	<artifactId>weld-se-shaded</artifactId>
-        	<version>${weld.version}</version>
         </dependency>
 
 	</dependencies>

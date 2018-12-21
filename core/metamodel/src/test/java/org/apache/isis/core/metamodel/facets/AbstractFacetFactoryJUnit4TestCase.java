@@ -33,6 +33,7 @@ import org.apache.isis.applib.Identifier;
 import org.apache.isis.applib.services.eventbus.EventBusService;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facetapi.FeatureType;
@@ -105,28 +106,19 @@ public abstract class AbstractFacetFactoryJUnit4TestCase {
 
     @Before
     public void setUpFacetedMethodAndParameter() throws Exception {
-
+        
         // PRODUCTION
         
         context.checking(new Expectations() {{
 
-//            allowing(mockServicesInjector).getPersistenceSessionServiceInternal();
-//            will(returnValue(mockPersistenceSessionServiceInternal));
-
             allowing(mockServicesInjector).lookupService(TranslationService.class);
             will(returnValue(Optional.of(mockTranslationService)));
-
-//            allowing(mockServicesInjector).getAuthenticationSessionProvider();
-//            will(returnValue(mockAuthenticationSessionProvider));
 
             allowing(mockServicesInjector).lookupService(AuthenticationSessionProvider.class);
             will(returnValue(mockAuthenticationSessionProvider));
 
             allowing(mockServicesInjector).lookupServiceElseFail(EventBusService.class);
             will(returnValue(mockEventBusService));
-            
-//            allowing(mockServicesInjector).getSpecificationLoader();
-//            will(returnValue(mockSpecificationLoader));
 
         }});
 

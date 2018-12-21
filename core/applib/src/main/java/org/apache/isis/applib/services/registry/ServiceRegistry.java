@@ -38,9 +38,6 @@ import org.apache.isis.commons.internal.cdi._CDI;
 @ApplicationScoped
 public interface ServiceRegistry {
 
-    @Deprecated
-    void registerServiceInstance(Object serviceInstance);
-    
     /**
      * Whether or not the given type is a application-scoped singleton, that
      * qualifies as a service to be managed by the framework. 
@@ -64,7 +61,7 @@ public interface ServiceRegistry {
     }
     
     /**
-     * Obtains a child Instance for the given required type and additional required qualifiers. 
+     * Obtains a managed bean for the given required type and additional required qualifiers. 
      * @param type
      * @param annotations
      * @return an optional, empty if passed two instances of the same qualifier type, or an 
@@ -105,7 +102,8 @@ public interface ServiceRegistry {
      *
      * <p>
      * Typically there will only ever be one domain service implementing a given type,
-     * (eg {@link org.apache.isis.applib.services.repository.RepositoryService}), but for some services there can be
+     * (eg {@link org.apache.isis.applib.services.repository.RepositoryService}), 
+     * but for some services there can be
      * more than one (eg {@link ExceptionRecognizer}).
      */
     public <T> Optional<T> lookupService(final Class<T> serviceClass);
@@ -123,8 +121,8 @@ public interface ServiceRegistry {
     boolean isRegisteredService(Class<?> cls);
     
     /**
-     * @param cls
-     * @return whether the exact object is registered as service
+     * @param pojo
+     * @return whether the pojo equals one of the registered service instances
      */
     boolean isRegisteredServiceInstance(Object pojo);
 

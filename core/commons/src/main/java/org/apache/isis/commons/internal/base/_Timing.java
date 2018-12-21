@@ -20,6 +20,7 @@
 package org.apache.isis.commons.internal.base;
 
 import java.util.Locale;
+import java.util.function.Supplier;
 
 /**
  * <h1>- internal use only -</h1>
@@ -113,6 +114,16 @@ public final class _Timing {
         final StopWatch watch = run(runnable);
         System.out.println(String
                 .format(Locale.US, "Running '%s' took %.2f ms", label, watch.getMillis()));
+    }
+    
+    public static <T> T callVerbose(String label, Supplier<T> callable) {
+        System.out.println(String.format("Calling '%s'", label));
+        final StopWatch watch = now();
+        T result = callable.get();
+        watch.stop();
+        System.out.println(String
+                .format(Locale.US, "Calling '%s' took %.2f ms", label, watch.getMillis()));
+        return result;
     }
 
 

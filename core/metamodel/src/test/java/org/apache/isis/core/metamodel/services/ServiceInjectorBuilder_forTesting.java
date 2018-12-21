@@ -27,6 +27,9 @@ import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
+/**
+ * @deprecated Only introduced to support existing tests, don't use for new tests
+ */
 @RequiredArgsConstructor(staticName="of")
 public class ServiceInjectorBuilder_forTesting {
 
