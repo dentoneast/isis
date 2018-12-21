@@ -82,12 +82,6 @@
 			<groupId>org.jboss.weld</groupId>
 			<artifactId>weld-junit5</artifactId>
 		</dependency>
-		<!-- only to override weld-junit5 dependency, in order to fix convergence issue -->		
-		<dependency>
-			<groupId>org.jboss.logging</groupId>
-			<artifactId>jboss-logging</artifactId>
-			<version>3.3.0.Final</version>
-		</dependency>
 		
 		<dependency>
 		  <groupId>org.mockito</groupId>

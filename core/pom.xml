@@ -1983,6 +1983,13 @@ ${license.additional-notes}
 				<groupId>org.jboss.weld</groupId>
 				<artifactId>weld-junit5</artifactId>
 				<version>${weld-junit.version}</version>
+				<exclusions>
+					<exclusion>
+						<!-- also provided by weld-se -->
+						<groupId>org.jboss.logging</groupId>
+						<artifactId>jboss-logging</artifactId>
+					</exclusion>
+				</exclusions>			
 			</dependency>
 			
 			<!-- MOCKITO -->
