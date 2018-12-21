@@ -114,6 +114,7 @@ public class AuthorizationManagerStandard implements AuthorizationManager {
         baseProgrammingModel.addFactory(facetFactory);
     }
 
-    @Inject Authorizor authorizor;
+    @Inject
+    protected Authorizor authorizor;
 
 }

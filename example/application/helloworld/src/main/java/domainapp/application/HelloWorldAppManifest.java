@@ -25,6 +25,12 @@ import javax.enterprise.inject.Produces;
 import org.apache.isis.applib.AppManifestAbstract2;
 import org.apache.isis.config.AppConfig;
 import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.core.runtime.authorization.standard.AuthorizationManagerStandard;
+import org.apache.isis.core.security.authentication.bypass.AuthenticatorBypass;
+import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
+import org.apache.isis.core.security.authentication.standard.AuthenticationManagerStandard;
+import org.apache.isis.core.security.authorization.bypass.AuthorizorBypass;
+import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
 
 import domainapp.dom.HelloWorldModule;
 
@@ -45,8 +51,25 @@ public class HelloWorldAppManifest extends AppManifestAbstract2 implements AppCo
 
     // Implementing AppConfig, to tell the framework how to bootstrap the configuration.
     @Override @Produces @ApplicationScoped
-    public IsisConfiguration isisConfiguration () {
+    public IsisConfiguration isisConfiguration() {
         return IsisConfiguration.buildFromAppManifest(this);
     }
 
+    @Produces @ApplicationScoped
+    public AuthenticationManager authenticationManagerWithBypass() {
+        final AuthenticationManagerStandard authenticationManager = new AuthenticationManagerStandard();
+        authenticationManager.addAuthenticator(new AuthenticatorBypass());
+        return authenticationManager;
+    }
+    
+    @Produces @ApplicationScoped
+    public AuthorizationManager authorizationManagerWithBypass() {
+        final AuthorizationManagerStandard authorizationManager = new AuthorizationManagerStandard() {
+            {
+                authorizor = new AuthorizorBypass();
+            }  
+        };
+        return authorizationManager;
+    }
+    
 }

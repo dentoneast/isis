@@ -64,6 +64,7 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
     /**
      * This is mutable internally, but only ever exposed (in {@link #streamRegisteredServices()}).
      */
+    private final Set<Bean<?>> registeredServiceBeans = _Sets.newHashSet();
     private final Set<Object> registeredServiceInstances = _Sets.newHashSet();
 
     /**
@@ -85,10 +86,8 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
         
         if(registeredServiceInstances.isEmpty()) {
          
-            BeanManager beanManager = _CDI.getBeanManager();
-            
-            Set<Bean<?>> beans = beanManager.getBeans(Object.class, QUALIFIER_ANY);
-            for (Bean<?> bean : beans) {
+            registeredServiceBeans.stream()
+            .forEach(bean->{
                 
                 val type = bean.getBeanClass();
                 val logScope = type.getName().startsWith("org.apache.isis.");
@@ -96,10 +95,6 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
                 if(logScope) {
                     log.info("processing bean {}", bean);
                 } 
-                
-                if(!isServiceType(type)) {
-                    continue;
-                }
                 
                 Optional<?> managedObject = 
                         _CDI.getManagedBean(type, bean.getQualifiers());
@@ -117,9 +112,7 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
                         log.warn("failed to register bean as a service {}", bean);
                     }
                 }
-                
-            }
-            
+            });
         }
         
         return registeredServiceInstances.stream();
@@ -160,7 +153,7 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
     
     @Override
     public void validateServices() {
-        validate(streamServices());
+        validate(streamServiceBeans());
     }
 
     // -- HELPER ...
@@ -169,21 +162,51 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
             new AnnotationLiteral<Any>() {
         private static final long serialVersionUID = 1L;};
         
+    private Stream<Bean<?>> streamServiceBeans() {
+        
+        if(registeredServiceBeans.isEmpty()) {
+            
+            BeanManager beanManager = _CDI.getBeanManager();
+            
+            Set<Bean<?>> beans = beanManager.getBeans(Object.class, QUALIFIER_ANY);
+            for (Bean<?> bean : beans) {
+                
+                val type = bean.getBeanClass();
+                val logScope = type.getName().startsWith("org.apache.isis.");
+                
+//                if(logScope) {
+//                    log.info("processing bean {}", bean);
+//                } 
+                
+                if(!isServiceType(type)) {
+                    continue;
+                }
+                
+                if(logScope) {
+                    log.info("registering as a service {}", bean);
+                }
+                
+            }
+            
+        }
+        
+        return registeredServiceBeans.stream();
+    }        
     // -- VALIDATE
         
-    private static void validate(final Stream<Object> serviceInstances) {
+    private static void validate(final Stream<Bean<?>> serviceBeans) {
 
-        final ListMultimap<String, Object> servicesById = _Multimaps.newListMultimap();
-        serviceInstances.forEach(serviceInstance->{
-            String id = ServiceUtil.idOfPojo(serviceInstance);
-            servicesById.putElement(id, serviceInstance);
+        final ListMultimap<String, Bean<?>> servicesById = _Multimaps.newListMultimap();
+        serviceBeans.forEach(serviceBean->{
+            String id = ServiceUtil.idOfBean(serviceBean);
+            servicesById.putElement(id, serviceBean);
         });
 
         final String errorMsg = servicesById.entrySet().stream()
                 .filter(entry->entry.getValue().size()>1) // filter for duplicates
                 .map(entry->{
                     String serviceId = entry.getKey();
-                    List<Object> duplicateServiceEntries = entry.getValue();
+                    List<Bean<?>> duplicateServiceEntries = entry.getValue();
                     return String.format("serviceId '%s' is declared by domain services %s",
                             serviceId, classNamesFor(duplicateServiceEntries));
                 })
@@ -194,9 +217,9 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
         }
     }
     
-    private static String classNamesFor(Collection<Object> services) {
-        return stream(services)
-                .map(Object::getClass)
+    private static String classNamesFor(Collection<Bean<?>> serviceBeans) {
+        return stream(serviceBeans)
+                .map(Bean::getBeanClass)
                 .map(Class::getName)
                 .collect(Collectors.joining(", "));
     }

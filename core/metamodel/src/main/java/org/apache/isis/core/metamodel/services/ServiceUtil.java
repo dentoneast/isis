@@ -21,6 +21,8 @@ package org.apache.isis.core.metamodel.services;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
+import javax.enterprise.inject.spi.Bean;
+
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.functions._Functions;
@@ -32,6 +34,12 @@ public final class ServiceUtil {
     private ServiceUtil() {
     }
 
+    public static String idOfBean(final Bean<?> serviceBean) {
+        final Class<?> serviceClass = serviceBean.getBeanClass();
+        return explicitIdOfType(serviceClass, serviceClass::newInstance)
+                .orElseGet(()->normalize(serviceClass));
+    }
+    
     public static String idOfPojo(final Object serviceObject) {
         final Class<?> serviceClass = serviceObject.getClass();
         return explicitIdOfType(serviceClass, ()->serviceObject)
@@ -93,5 +101,7 @@ public final class ServiceUtil {
     private static String normalize(Class<?> serviceClass) {
         return serviceClass.getName();
     }
+
+
 
 }
