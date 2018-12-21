@@ -1,3 +1,5 @@
+:toc:
+
 == Migration Notes 2.0.0-M1 to 2.0.0-M2
 
 === @MemberGroupLayout was removed
@@ -131,7 +133,7 @@ strong.isis-component-with-tooltip  {
 .ui-helper-hidden-accessible { display:none; } /* accessibility support disabled */
 ----
 
-==== REST Viewer
+=== REST Viewer
 
 The content negotiation parameter 'suppress' does now allow more control on which '$$..' properties one wants to suppress. New options are
  
@@ -263,7 +265,7 @@ if(digest.isSuccess()) {
 }
 ----
 
-==== Concurrent Computation
+=== Concurrent Computation
 
 Support for concurrent computation within an open session utilizing a ForkJoinPool
 
