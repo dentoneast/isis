@@ -152,7 +152,7 @@ public class OneToOneAssociationContributee extends OneToOneAssociationDefault i
     }
 
     private ObjectAdapter getServiceAdapter() {
-        return adapterProvider().adapterFor(servicePojo);
+        return getObjectAdapterProvider().adapterFor(servicePojo);
     }
 
     // -- Contributee impl - getServiceContributedBy()

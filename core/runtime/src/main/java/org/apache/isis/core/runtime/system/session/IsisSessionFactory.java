@@ -74,7 +74,7 @@ public class IsisSessionFactory {
 
     @Inject private IsisConfiguration configuration;
     
-    private ServiceInjector servicesInjector;
+    private ServiceInjector serviceInjector;
     private SpecificationLoader specificationLoader;
     private AuthenticationManager authenticationManager;
     private AuthorizationManager authorizationManager;
@@ -103,7 +103,7 @@ public class IsisSessionFactory {
     }
     
     void setServicesInjector(ServiceInjector servicesInjector) {
-        this.servicesInjector = servicesInjector;
+        this.serviceInjector = servicesInjector;
         this.specificationLoader = IsisContext.getSpecificationLoader();
         this.authenticationManager = IsisContext.getAuthenticationManager();
         this.authorizationManager = IsisContext.getAuthorizationManager();
@@ -113,7 +113,7 @@ public class IsisSessionFactory {
     void constructServices() {
 
         // do postConstruct.  We store the initializer to do preDestroy on shutdown
-        serviceInitializer = new ServiceInitializer(configuration, servicesInjector.streamServices().collect(Collectors.toList()));
+        serviceInitializer = new ServiceInitializer(configuration, serviceInjector.streamServices().collect(Collectors.toList()));
         serviceInitializer.validate();
 
         openSession(new InitialisationSession());
@@ -137,8 +137,8 @@ public class IsisSessionFactory {
             // translateServicesAndEnumConstants
             //
 
-            final List<Object> services = servicesInjector.streamServices().collect(Collectors.toList());
-            final TitleService titleService = servicesInjector.lookupServiceElseFail(TitleService.class);
+            final List<Object> services = serviceInjector.streamServices().collect(Collectors.toList());
+            final TitleService titleService = serviceInjector.lookupServiceElseFail(TitleService.class);
             for (Object service : services) {
                 final String unused = titleService.titleOf(service);
                 _Blackhole.consume(unused);
@@ -158,7 +158,7 @@ public class IsisSessionFactory {
             }
 
             // as used by the Wicket UI
-            final TranslationService translationService = servicesInjector.lookupServiceElseFail(TranslationService.class);
+            final TranslationService translationService = serviceInjector.lookupServiceElseFail(TranslationService.class);
 
             final String context = IsisSessionFactoryBuilder.class.getName();
             final MessageRegistry messageRegistry = new MessageRegistry();
@@ -227,7 +227,7 @@ public class IsisSessionFactory {
         closeSession();
 
         final PersistenceSession persistenceSession =
-                persistenceSessionFactory.createPersistenceSession(servicesInjector, authenticationSession);
+                persistenceSessionFactory.createPersistenceSession(serviceInjector, authenticationSession);
         IsisSession session = new IsisSession(authenticationSession, persistenceSession);
         currentSession.set(session);
         session.open();
@@ -333,9 +333,8 @@ public class IsisSessionFactory {
     /**
      * The {@link ApplicationScopedComponent application-scoped} {@link ServiceInjector}.
      */
-    @Produces @ApplicationScoped
     public ServiceInjector getServicesInjector() {
-        return servicesInjector;
+        return serviceInjector;
     }
 
     /**

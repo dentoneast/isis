@@ -95,7 +95,7 @@ public abstract class ByteValueSemanticsProviderAbstract extends ValueSemanticsP
 
     @Override
     public ObjectAdapter createValue(final Byte value) {
-        return adapterProvider().adapterFor(value);
+        return getObjectAdapterProvider().adapterFor(value);
     }
 
     // ///// toString ///////

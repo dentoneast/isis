@@ -60,7 +60,7 @@ public abstract class AutoCompleteFacetAbstract extends FacetAbstract implements
 
         this.repositoryClass = repositoryClass;
         this.repositoryMethod = repositoryMethod;
-        this.adapterProvider = adapterProvider();
+        this.adapterProvider = getObjectAdapterProvider();
     }
 
     public Class<?> getRepositoryClass() {

@@ -99,7 +99,7 @@ public class UUIDValueSemanticsProvider extends ValueSemanticsProviderAndFacetAb
 
     @Override
     public ObjectAdapter createValue(final UUID value) {
-        return adapterProvider().adapterFor(value);
+        return getObjectAdapterProvider().adapterFor(value);
     }
 
     // /////// toString ///////

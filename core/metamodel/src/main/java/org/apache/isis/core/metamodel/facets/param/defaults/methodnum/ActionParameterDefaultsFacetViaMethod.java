@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.ImperativeFacet;
 import org.apache.isis.core.metamodel.facets.param.defaults.ActionParameterDefaultsFacetAbstract;
@@ -33,13 +32,10 @@ import org.apache.isis.core.metamodel.facets.param.defaults.ActionParameterDefau
 public class ActionParameterDefaultsFacetViaMethod extends ActionParameterDefaultsFacetAbstract implements ImperativeFacet {
 
     private final Method method;
-    private final ObjectAdapterProvider adapterProvider;
 
-    public ActionParameterDefaultsFacetViaMethod(
-            final Method method, final FacetHolder holder, final ObjectAdapterProvider adapterProvider) {
+    public ActionParameterDefaultsFacetViaMethod(final Method method, final FacetHolder holder) {
         super(holder);
         this.method = method;
-        this.adapterProvider = adapterProvider;
     }
 
     /**
@@ -64,14 +60,6 @@ public class ActionParameterDefaultsFacetViaMethod extends ActionParameterDefaul
     @Override
     protected String toStringValues() {
         return "method=" + method;
-    }
-
-    // /////////////////////////////////////////////////////////
-    // Dependencies
-    // /////////////////////////////////////////////////////////
-
-    protected ObjectAdapterProvider getObjectAdapterProvider() {
-        return adapterProvider;
     }
 
     @Override public void appendAttributesTo(final Map<String, Object> attributeMap) {

@@ -75,7 +75,7 @@ implements ImperativeFacet {
 
         boolean filterForVisibility = _Config.getConfiguration().getBoolean("isis.reflector.facet.filterVisibility", true);
         if(filterForVisibility) {
-            final ObjectAdapter referencedAdapter = adapterProvider().adapterFor(referencedObject);
+            final ObjectAdapter referencedAdapter = getObjectAdapterProvider().adapterFor(referencedObject);
             final boolean visible = ObjectAdapter.Util
                     .isVisible(referencedAdapter, interactionInitiatedBy);
             if (!visible) {

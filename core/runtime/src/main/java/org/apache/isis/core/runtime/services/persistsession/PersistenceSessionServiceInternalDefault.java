@@ -129,7 +129,7 @@ public class PersistenceSessionServiceInternalDefault implements PersistenceSess
 
     @Override
     public Bookmark bookmarkFor(Class<?> cls, String identifier) {
-        final ObjectSpecification objectSpec = getSpecificationLoader().loadSpecification(cls);
+        final ObjectSpecification objectSpec = specificationLoader.loadSpecification(cls);
         String objectType = objectSpec.getSpecId().asString();
         return new Bookmark(objectType, identifier);
     }
@@ -219,12 +219,12 @@ public class PersistenceSessionServiceInternalDefault implements PersistenceSess
     public IsisTransactionManager getTransactionManager() {
         return getPersistenceSession().getTransactionManager();
     }
+///
+//    protected SpecificationLoader getSpecificationLoader() {
+//        return getIsisSessionFactory().getSpecificationLoader();
+//    }
 
-    protected SpecificationLoader getSpecificationLoader() {
-        return getIsisSessionFactory().getSpecificationLoader();
-    }
-
-
+    @Inject SpecificationLoader specificationLoader;
     @Inject IsisSessionFactory isisSessionFactory;
 
 }

@@ -118,7 +118,7 @@ public class DomainObjectInvocationHandler<T> extends DelegatingInvocationHandle
         final MetaModelContext context = MetaModelContext.current();
         
         this.authenticationSessionProvider = context.getAuthenticationSessionProvider(); 
-        this.objectAdapterProvider = context.adapterProvider();
+        this.objectAdapterProvider = context.getObjectAdapterProvider();
 
         try {
             titleMethod = delegate.getClass().getMethod("title", new Class[]{});

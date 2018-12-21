@@ -68,7 +68,7 @@ public class ParseableFacetUsingParser extends FacetAbstract implements Parseabl
         // check string is valid
         // (eg pick up any @RegEx on value type)
         if (getFacetHolder().containsFacet(ValueFacet.class)) {
-            final ObjectAdapter entryAdapter = adapterProvider().adapterFor(entry);
+            final ObjectAdapter entryAdapter = getObjectAdapterProvider().adapterFor(entry);
             final Identifier identifier = getIdentified().getIdentifier();
             final ParseValueContext parseValueContext =
                     new ParseValueContext(
@@ -89,7 +89,7 @@ public class ParseableFacetUsingParser extends FacetAbstract implements Parseabl
 
             // check resultant object is also valid
             // (eg pick up any validate() methods on it)
-            final ObjectAdapter adapter = adapterProvider().adapterFor(parsed);
+            final ObjectAdapter adapter = getObjectAdapterProvider().adapterFor(parsed);
             final ObjectSpecification specification = adapter.getSpecification();
             final ObjectValidityContext validateContext =
                     specification.createValidityInteractionContext(

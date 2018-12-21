@@ -90,7 +90,7 @@ public abstract class CharValueSemanticsProviderAbstract extends ValueSemanticsP
 
     @Override
     public ObjectAdapter createValue(final Character value) {
-        return adapterProvider().adapterFor(value);
+        return getObjectAdapterProvider().adapterFor(value);
     }
 
     // /////// toString ///////

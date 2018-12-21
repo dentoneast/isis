@@ -123,7 +123,7 @@ public class TitleFacetViaTitleAnnotation extends TitleFacetAbstract {
     @Override
     public String title(ManagedObject contextAdapter, ManagedObject targetAdapter) {
         final StringBuilder stringBuilder = new StringBuilder();
-        final ObjectAdapterProvider adapterProvider = adapterProvider();
+        final ObjectAdapterProvider adapterProvider = getObjectAdapterProvider();
         
         try {
             for (final TitleComponent component : this.components) {

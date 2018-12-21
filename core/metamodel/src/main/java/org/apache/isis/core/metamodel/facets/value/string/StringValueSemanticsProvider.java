@@ -113,7 +113,7 @@ public class StringValueSemanticsProvider extends ValueSemanticsProviderAndFacet
 
     @Override
     public ObjectAdapter createValue(final String value) {
-        return adapterProvider().adapterFor(value);
+        return getObjectAdapterProvider().adapterFor(value);
     }
 
     // /////// toString ///////

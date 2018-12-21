@@ -98,7 +98,7 @@ public abstract class MixinFacetAbstract extends SingleValueFacetAbstract<String
                 declaredField.setAccessible(true);
                 try {
                     Object o = declaredField.get(mixin);
-                    return adapterProvider().adapterFor(o);
+                    return getObjectAdapterProvider().adapterFor(o);
                 } catch (IllegalAccessException e) {
                     if(policy == Policy.FAIL_FAST) {
                         throw new RuntimeException(

@@ -513,7 +513,7 @@ public class ObjectActionDefault extends ObjectMemberAbstract implements ObjectA
     }
 
     private ObjectAdapter adapterFor(final Object pojo) {
-        return pojo == null ? null : adapterProvider().adapterFor(pojo);
+        return pojo == null ? null : getObjectAdapterProvider().adapterFor(pojo);
     }
 
     private static ThreadLocal<List<ObjectAdapter>> commandTargetAdaptersHolder = new ThreadLocal<>();

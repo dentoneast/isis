@@ -144,7 +144,7 @@ public class OneToOneAssociationDefault extends ObjectAssociationAbstract implem
             return null;
         }
 
-        return adapterProvider().adapterFor(referencedPojo);
+        return getObjectAdapterProvider().adapterFor(referencedPojo);
     }
     
 
@@ -159,7 +159,7 @@ public class OneToOneAssociationDefault extends ObjectAssociationAbstract implem
             return null;
         }
         
-        return adapterProvider().adapterFor(referencedPojo);
+        return getObjectAdapterProvider().adapterFor(referencedPojo);
     }
     
     @Override
@@ -285,7 +285,7 @@ public class OneToOneAssociationDefault extends ObjectAssociationAbstract implem
                 interactionInitiatedBy);
         
         List<ObjectAdapter> adapters = _NullSafe.stream(pojoOptions)
-                .map(  adapterProvider()::adapterFor )
+                .map(  getObjectAdapterProvider()::adapterFor )
                 .collect(Collectors.toList());
         return adapters.toArray(new ObjectAdapter[]{});
     }
@@ -308,7 +308,7 @@ public class OneToOneAssociationDefault extends ObjectAssociationAbstract implem
         if (pojoOptions != null) {
             final ObjectAdapter[] options = new ObjectAdapter[pojoOptions.length];
             for (int i = 0; i < options.length; i++) {
-                options[i] = adapterProvider().adapterFor(pojoOptions[i]);
+                options[i] = getObjectAdapterProvider().adapterFor(pojoOptions[i]);
             }
             return options;
         }

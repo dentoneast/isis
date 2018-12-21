@@ -22,10 +22,12 @@ import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.title.TitleService;
+import org.apache.isis.applib.services.xactn.TransactionState;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
+import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -48,7 +50,7 @@ public final class MetaModelContexts {
         }
         
         @Override
-        public final ObjectAdapterProvider adapterProvider() {
+        public final ObjectAdapterProvider getObjectAdapterProvider() {
             return _CDI.getSingleton(ObjectAdapterProvider.class);
         }
         
@@ -100,6 +102,16 @@ public final class MetaModelContexts {
         @Override
         public final ObjectSpecification getSpecification(final Class<?> type) {
             return type != null ? getSpecificationLoader().loadSpecification(type) : null;
+        }
+
+        @Override
+        public PersistenceSessionServiceInternal getPersistenceSessionServiceInternal() {
+            return _CDI.getSingleton(PersistenceSessionServiceInternal.class);
+        }
+
+        @Override
+        public TransactionState getTransactionState() {
+            return getPersistenceSessionServiceInternal().getTransactionState();
         }
         
     }

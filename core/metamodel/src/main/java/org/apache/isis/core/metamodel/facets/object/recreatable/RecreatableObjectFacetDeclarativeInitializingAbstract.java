@@ -57,7 +57,7 @@ extends RecreatableObjectFacetAbstract {
 
         final Set<String> mementoKeys = memento.keySet();
 
-        final ObjectAdapter viewModelAdapter = adapterProvider().adapterForViewModel(viewModelPojo, mementoStr);
+        final ObjectAdapter viewModelAdapter = getObjectAdapterProvider().adapterForViewModel(viewModelPojo, mementoStr);
                     
 
         final ObjectSpecification spec = viewModelAdapter.getSpecification();
@@ -74,7 +74,7 @@ extends RecreatableObjectFacetAbstract {
             }
 
             if(propertyValue != null) {
-                property.set(viewModelAdapter, adapterProvider().adapterFor(propertyValue), InteractionInitiatedBy.FRAMEWORK);
+                property.set(viewModelAdapter, getObjectAdapterProvider().adapterFor(propertyValue), InteractionInitiatedBy.FRAMEWORK);
             }
         });
         
@@ -88,7 +88,7 @@ extends RecreatableObjectFacetAbstract {
 
         final _Mementos.Memento memento = _Mementos.create(codec, serializer);
 
-        final ManagedObject ownerAdapter = adapterProvider().disposableAdapterForViewModel(viewModelPojo);
+        final ManagedObject ownerAdapter = getObjectAdapterProvider().disposableAdapterForViewModel(viewModelPojo);
         final ObjectSpecification spec = ownerAdapter.getSpecification();
         
         final Stream<OneToOneAssociation> properties = spec.streamProperties(Contributed.EXCLUDED);

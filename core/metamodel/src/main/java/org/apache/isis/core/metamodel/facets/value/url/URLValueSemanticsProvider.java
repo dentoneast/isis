@@ -114,7 +114,7 @@ public class URLValueSemanticsProvider extends ValueSemanticsProviderAndFacetAbs
 
     @Override
     public ObjectAdapter createValue(final java.net.URL value) {
-        return adapterProvider().adapterFor(value);
+        return getObjectAdapterProvider().adapterFor(value);
     }
 
     // /////// toString ///////

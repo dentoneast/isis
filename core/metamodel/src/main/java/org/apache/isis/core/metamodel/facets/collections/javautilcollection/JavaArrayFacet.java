@@ -58,7 +58,7 @@ public class JavaArrayFacet extends CollectionFacetAbstract {
             return Stream.of();
         }
         
-        final ObjectAdapterProvider adapterProvider = adapterProvider();
+        final ObjectAdapterProvider adapterProvider = getObjectAdapterProvider();
         
         return Stream.of(array)
                 .map(adapterProvider::adapterFor) //FIXME[ISIS-1976] we always generate an OA here

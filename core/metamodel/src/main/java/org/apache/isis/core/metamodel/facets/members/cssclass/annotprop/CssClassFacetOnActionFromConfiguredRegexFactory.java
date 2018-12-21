@@ -61,7 +61,7 @@ public class CssClassFacetOnActionFromConfiguredRegexFactory extends FacetFactor
         // if we don't do this, then any contributed properties or collections end up picking up the CssClass; almost
         // certainly not what is expected/required.
         final Class<?> owningType = facetHolder.getOwningType();
-        if(getServiceRegistry().isService(owningType)) {
+        if(getServiceRegistry().isServiceType(owningType)) {
             return;
         }
         CssClassFacet cssClassFacet = createFromConfiguredRegexIfPossible(name, facetHolder);

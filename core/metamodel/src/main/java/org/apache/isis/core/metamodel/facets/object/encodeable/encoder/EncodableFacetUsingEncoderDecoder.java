@@ -52,7 +52,7 @@ public class EncodableFacetUsingEncoderDecoder extends FacetAbstract implements 
         } else {
             getServiceInjector().injectServicesInto(encoderDecoder);
             final Object decodedObject = encoderDecoder.fromEncodedString(encodedData);
-            return adapterProvider().adapterFor(decodedObject);
+            return getObjectAdapterProvider().adapterFor(decodedObject);
         }
 
     }

@@ -30,11 +30,24 @@ import javax.enterprise.inject.Instance;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
 import org.apache.isis.commons.internal.cdi._CDI;
 
+/**
+ * 
+ * @since 2.0.0-M2
+ *
+ */
 @ApplicationScoped
 public interface ServiceRegistry {
 
     @Deprecated
     void registerServiceInstance(Object serviceInstance);
+    
+    /**
+     * Whether or not the given type is a application-scoped singleton, that
+     * qualifies as a service to be managed by the framework. 
+     * @param cls
+     * @return
+     */
+    boolean isServiceType(Class<?> cls);
     
     /**
      * Obtains a child Instance for the given required type and additional required qualifiers. 
@@ -95,19 +108,12 @@ public interface ServiceRegistry {
      * (eg {@link org.apache.isis.applib.services.repository.RepositoryService}), but for some services there can be
      * more than one (eg {@link ExceptionRecognizer}).
      */
-    public default <T> Optional<T> lookupService(final Class<T> serviceClass) {
-        return streamServices(serviceClass)
-                .findFirst();
-    }
+    public <T> Optional<T> lookupService(final Class<T> serviceClass);
 
     public default <T> T lookupServiceElseFail(final Class<T> serviceClass) {
         return lookupService(serviceClass)
                 .orElseThrow(()->
                     new NoSuchElementException("Could not locate service of type '" + serviceClass + "'"));
-    }
-    
-    public default boolean isService(final Class<?> serviceClass) {
-        return lookupService(serviceClass).isPresent();
     }
     
     /**
@@ -127,6 +133,8 @@ public interface ServiceRegistry {
      * @throws IllegalStateException - if validation fails
      */
     void validateServices();
+
+
 
 
     

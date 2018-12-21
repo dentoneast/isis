@@ -31,9 +31,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.applib.NonRecoverableException;
 import org.apache.isis.applib.RecoverableException;
 import org.apache.isis.applib.events.domain.AbstractDomainEvent;
@@ -71,7 +68,6 @@ import org.apache.isis.core.metamodel.facets.actions.semantics.ActionSemanticsFa
 import org.apache.isis.core.metamodel.facets.collections.modify.CollectionFacet;
 import org.apache.isis.core.metamodel.facets.object.viewmodel.ViewModelFacet;
 import org.apache.isis.core.metamodel.services.ixn.InteractionDtoServiceInternal;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.services.publishing.PublishingServiceInternal;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
@@ -85,8 +81,7 @@ public abstract class ActionInvocationFacetForDomainEventAbstract
 extends ActionInvocationFacetAbstract
 implements ImperativeFacet {
 
-    @SuppressWarnings("unused")
-    private final static Logger LOG = LoggerFactory.getLogger(ActionInvocationFacetForDomainEventAbstract.class);
+    //private final static Logger LOG = LoggerFactory.getLogger(ActionInvocationFacetForDomainEventAbstract.class);
 
     private final Method method;
     private final ObjectSpecification onType;
@@ -538,17 +533,6 @@ implements ImperativeFacet {
     // Dependencies (from constructor)
     // /////////////////////////////////////////////////////////
 
-    private ObjectAdapterProvider getObjectAdapterProvider() {
-        return objectAdapterProvider;
-    }
-    
-    private PersistenceSessionServiceInternal getPersistenceSessionServiceInternal() {
-        return (PersistenceSessionServiceInternal) objectAdapterProvider;
-    }
-
-    public TransactionState getTransactionState() {
-        return getPersistenceSessionServiceInternal().getTransactionState();
-    }
 
     @Override public void appendAttributesTo(final Map<String, Object> attributeMap) {
         super.appendAttributesTo(attributeMap);

@@ -84,7 +84,7 @@ public class MarkupValueSemanticsProvider extends ValueSemanticsProviderAndFacet
     @Override
     public ObjectAdapter createValue(final ObjectAdapter object, final String html) {
         final Markup markup = new Markup(html);
-        return adapterProvider().adapterFor(markup);
+        return getObjectAdapterProvider().adapterFor(markup);
     }
 
     // //////////////////////////////////////////////////////////////////

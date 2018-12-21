@@ -93,7 +93,7 @@ public class ActionChoicesFacetViaMethod extends ActionChoicesFacetAbstract impl
             return null;
         }
 
-        final ObjectAdapter collectionAdapter = adapterProvider().adapterFor(collectionOrArray);
+        final ObjectAdapter collectionAdapter = getObjectAdapterProvider().adapterFor(collectionOrArray);
 
         final List<ObjectAdapter> visibleAdapters =
                 ObjectAdapter.Util.visibleAdapters(
@@ -103,7 +103,7 @@ public class ActionChoicesFacetViaMethod extends ActionChoicesFacetAbstract impl
                 _Lists.map(visibleAdapters, ObjectAdapter.Util::unwrapPojo);
 
         final ObjectSpecification parameterSpec = getSpecification(parameterType);
-        return CollectionUtils.getCollectionAsObjectArray(filteredObjects, parameterSpec, adapterProvider());
+        return CollectionUtils.getCollectionAsObjectArray(filteredObjects, parameterSpec, getObjectAdapterProvider());
     }
 
     @Override

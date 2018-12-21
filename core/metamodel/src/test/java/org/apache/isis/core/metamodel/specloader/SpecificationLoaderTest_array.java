@@ -19,15 +19,18 @@
 
 package org.apache.isis.core.metamodel.specloader;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import org.apache.isis.core.metamodel.facetapi.Facet;
-import org.apache.isis.core.metamodel.facets.collections.modify.CollectionFacet;
 import org.apache.isis.core.metamodel.facets.actcoll.typeof.TypeOfFacet;
+import org.apache.isis.core.metamodel.facets.collections.modify.CollectionFacet;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 
-public class SpecificationLoaderTest_array extends SpecificationLoaderTestAbstract {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class SpecificationLoaderTest_array extends SpecificationLoaderTestAbstract {
 
     @Override
     protected ObjectSpecification loadSpecification(final SpecificationLoader reflector) {
@@ -36,27 +39,27 @@ public class SpecificationLoaderTest_array extends SpecificationLoaderTestAbstra
 
     @Test
     public void testType() throws Exception {
-        Assert.assertTrue(specification.isParentedOrFreeCollection());
+        assertTrue(specification.isParentedOrFreeCollection());
     }
 
     @Test
     public void testName() throws Exception {
-        Assert.assertEquals(ReflectorTestPojo[].class.getName(), specification.getFullIdentifier());
+        assertEquals(ReflectorTestPojo[].class.getName(), specification.getFullIdentifier());
     }
 
     @Test
     @Override
     public void testCollectionFacet() throws Exception {
         final Facet facet = specification.getFacet(CollectionFacet.class);
-        Assert.assertNotNull(facet);
+        assertNotNull(facet);
     }
 
     @Test
     @Override
     public void testTypeOfFacet() throws Exception {
         final TypeOfFacet facet = specification.getFacet(TypeOfFacet.class);
-        Assert.assertNotNull(facet);
-        Assert.assertEquals(ReflectorTestPojo.class, facet.value());
+        assertNotNull(facet);
+        assertEquals(ReflectorTestPojo.class, facet.value());
     }
 
 }

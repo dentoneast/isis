@@ -83,7 +83,7 @@ extends ActionParameterAutoCompleteFacetAbstract implements ImperativeFacet {
         if (collectionOrArray == null) {
             return _Constants.emptyObjects;
         }
-        final ObjectAdapter collectionAdapter = adapterProvider().adapterFor(collectionOrArray);
+        final ObjectAdapter collectionAdapter = getObjectAdapterProvider().adapterFor(collectionOrArray);
 
         final FacetedMethodParameter facetedMethodParameter = (FacetedMethodParameter) getFacetHolder();
         final Class<?> parameterType = facetedMethodParameter.getType();
@@ -96,7 +96,7 @@ extends ActionParameterAutoCompleteFacetAbstract implements ImperativeFacet {
                 _Lists.map(visibleAdapters, ObjectAdapter.Util::unwrapPojo);
 
         final ObjectSpecification parameterSpec = getSpecification(parameterType);
-        return CollectionUtils.getCollectionAsObjectArray(visibleObjects, parameterSpec, adapterProvider());
+        return CollectionUtils.getCollectionAsObjectArray(visibleObjects, parameterSpec, getObjectAdapterProvider());
     }
 
     @Override

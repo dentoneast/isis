@@ -97,7 +97,7 @@ public abstract class IntValueSemanticsProviderAbstract extends ValueSemanticsPr
 
     @Override
     public ObjectAdapter createValue(final Integer value) {
-        return value == null ? null : adapterProvider().adapterFor(value);
+        return value == null ? null : getObjectAdapterProvider().adapterFor(value);
     }
 
     // /////// toString ///////

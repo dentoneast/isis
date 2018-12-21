@@ -70,7 +70,7 @@ implements ChoicesFacet, DisablingInteractionAdvisor, ValidatingInteractionAdvis
             final FacetHolder holder) {
         super(type(), holder, Derivation.NOT_DERIVED);
         this.authenticationSessionProvider = getAuthenticationSessionProvider();
-        this.persistenceSessionServiceInternal = (PersistenceSessionServiceInternal) adapterProvider();
+        this.persistenceSessionServiceInternal = getPersistenceSessionServiceInternal();
     }
 
     public PersistenceSessionServiceInternal getPersistenceSessionService() {

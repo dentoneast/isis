@@ -323,7 +323,7 @@ public abstract class ObjectMemberAbstract implements ObjectMember, MetaModelCon
         final ObjectSpecification objectSpecification = getSpecificationLoader().loadSpecification(mixinType);
         final MixinFacet mixinFacet = objectSpecification.getFacet(MixinFacet.class);
         final Object mixinPojo = mixinFacet.instantiate(mixedInAdapter.getPojo());
-        return adapterProvider().adapterFor(mixinPojo);
+        return getObjectAdapterProvider().adapterFor(mixinPojo);
     }
 
     public static String determineNameFrom(final ObjectAction mixinAction) {

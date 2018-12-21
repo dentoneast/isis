@@ -81,7 +81,7 @@ public class PropertyAutoCompleteFacetMethod extends PropertyAutoCompleteFacetAb
             return null;
         }
 
-        final ObjectAdapter collectionAdapter = adapterProvider().adapterFor(collectionOrArray);
+        final ObjectAdapter collectionAdapter = getObjectAdapterProvider().adapterFor(collectionOrArray);
 
         final FacetedMethod facetedMethod = (FacetedMethod) getFacetHolder();
         final Class<?> propertyType = facetedMethod.getType();
@@ -94,7 +94,7 @@ public class PropertyAutoCompleteFacetMethod extends PropertyAutoCompleteFacetAb
                 _Lists.map(visibleAdapters, ObjectAdapter.Util::unwrapPojo);
 
         final ObjectSpecification propertySpec = getSpecification(propertyType);
-        return CollectionUtils.getCollectionAsObjectArray(filteredObjects, propertySpec, adapterProvider());
+        return CollectionUtils.getCollectionAsObjectArray(filteredObjects, propertySpec, getObjectAdapterProvider());
     }
 
     @Override

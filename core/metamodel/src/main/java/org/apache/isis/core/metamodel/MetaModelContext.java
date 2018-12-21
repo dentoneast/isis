@@ -22,9 +22,11 @@ import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.title.TitleService;
+import org.apache.isis.applib.services.xactn.TransactionState;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
+import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -43,7 +45,7 @@ public interface MetaModelContext {
     
     IsisConfiguration getConfiguration();
     
-    ObjectAdapterProvider adapterProvider();
+    ObjectAdapterProvider getObjectAdapterProvider();
 
     ServiceInjector getServiceInjector();
 
@@ -64,11 +66,16 @@ public interface MetaModelContext {
     TitleService getTitleService();
 
     ObjectSpecification getSpecification(Class<?> type);
+    
+    PersistenceSessionServiceInternal getPersistenceSessionServiceInternal();
+    
+    TransactionState getTransactionState();
 
     // -- PRESET INSTANCES
     
     static MetaModelContext current() {
-        return _Context.computeIfAbsent(MetaModelContext.class, __->MetaModelContexts.usingCDI); // default
+        return _Context.computeIfAbsent(MetaModelContext.class, 
+                __->MetaModelContexts.usingCDI); // default
     }
     
     static void preset(MetaModelContext metaModelContext) {
@@ -85,8 +92,8 @@ public interface MetaModelContext {
             return getMetaModelContext().getConfiguration();
         }
         
-        public default ObjectAdapterProvider adapterProvider() {
-            return getMetaModelContext().adapterProvider();
+        public default ObjectAdapterProvider getObjectAdapterProvider() {
+            return getMetaModelContext().getObjectAdapterProvider();
         }
 
         public default ServiceInjector getServiceInjector() {
@@ -127,6 +134,14 @@ public interface MetaModelContext {
 
         public default ObjectSpecification getSpecification(Class<?> type) {
             return getMetaModelContext().getSpecification(type);
+        }
+        
+        public default PersistenceSessionServiceInternal getPersistenceSessionServiceInternal() {
+            return getMetaModelContext().getPersistenceSessionServiceInternal();
+        }
+        
+        public default TransactionState getTransactionState() {
+            return getMetaModelContext().getTransactionState();
         }
         
     }

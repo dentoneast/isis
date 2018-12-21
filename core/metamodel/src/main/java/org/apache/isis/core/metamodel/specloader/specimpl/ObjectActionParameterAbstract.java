@@ -519,8 +519,6 @@ public abstract class ObjectActionParameterAbstract implements ObjectActionParam
         return arguments;
     }
 
-
-
     // -- Dependencies (from parent)
 
     protected SpecificationLoader getSpecificationLoader() {
@@ -528,11 +526,11 @@ public abstract class ObjectActionParameterAbstract implements ObjectActionParam
     }
 
     protected ObjectAdapterProvider getObjectAdapterProvider() {
-        return parentAction.adapterProvider();
+        return parentAction.getObjectAdapterProvider();
     }
 
     protected PersistenceSessionServiceInternal getObjectPersistor() {
-        return (PersistenceSessionServiceInternal) parentAction.adapterProvider();
+        return parentAction.getPersistenceSessionServiceInternal();
     }
 
 

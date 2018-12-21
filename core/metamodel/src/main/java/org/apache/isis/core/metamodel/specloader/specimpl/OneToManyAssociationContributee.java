@@ -170,7 +170,7 @@ public class OneToManyAssociationContributee extends OneToManyAssociationDefault
     }
 
     private ObjectAdapter getServiceAdapter() {
-        return adapterProvider().adapterFor(servicePojo);
+        return getObjectAdapterProvider().adapterFor(servicePojo);
     }
 
     // -- ContributeeMember2 impl (getServiceContributedBy)

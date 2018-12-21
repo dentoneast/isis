@@ -31,6 +31,7 @@ import java.util.stream.Stream;
 
 import javax.ejb.Singleton;
 import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.AnnotationLiteral;
@@ -41,6 +42,7 @@ import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.cdi._CDI;
+import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.collections._Multimaps;
 import org.apache.isis.commons.internal.collections._Multimaps.ListMultimap;
@@ -78,6 +80,12 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
     }
     
     @Override
+    public <T> Optional<T> lookupService(Class<T> serviceClass) {
+        return _CDI.getInstance(serviceClass, _Lists.of(QUALIFIER_ANY))
+                .map(Instance::get);
+    }
+    
+    @Override
     public Stream<Object> streamServices() {
         
         if(registeredServiceInstances.isEmpty()) {
@@ -94,7 +102,7 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
                     System.out.println("!!! " + bean);    
                 } 
                 
-                if(!isSingleton(type)) {
+                if(!isServiceType(type)) {
                     continue;
                 }
                 
@@ -131,6 +139,15 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
     }
 
     @Override
+    public boolean isServiceType(Class<?> cls) {
+        if(cls.isAnnotationPresent(Singleton.class) ||
+                cls.isAnnotationPresent(DomainService.class)) {
+            return true;
+        }
+        return false;
+    }
+    
+    @Override
     public boolean isRegisteredService(final Class<?> cls) {
         return serviceByConcreteType.get().containsKey(cls);
     }
@@ -156,16 +173,6 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
     private final static AnnotationLiteral<Any> QUALIFIER_ANY = 
             new AnnotationLiteral<Any>() {
         private static final long serialVersionUID = 1L;};
-
-    private boolean isSingleton(Class<?> cls) {
-        
-        if(cls.isAnnotationPresent(Singleton.class) ||
-                cls.isAnnotationPresent(DomainService.class)) {
-            return true;
-        }
-        
-        return false;
-    }
         
     // -- VALIDATE
         
@@ -227,6 +234,8 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
     private static final Predicate<Object> isOfType(final Class<?> cls) {
         return obj->cls.isAssignableFrom(obj.getClass());
     }
+
+
 
 
     

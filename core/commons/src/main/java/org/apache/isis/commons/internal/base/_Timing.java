@@ -19,6 +19,8 @@
 
 package org.apache.isis.commons.internal.base;
 
+import java.util.Locale;
+
 /**
  * <h1>- internal use only -</h1>
  * <p>
@@ -99,5 +101,19 @@ public final class _Timing {
         }
         
     }
+
+    public static StopWatch run(Runnable runnable) {
+        final StopWatch watch = now();
+        runnable.run();
+        return watch.stop();
+    }
+    
+    public static void runVerbose(String label, Runnable runnable) {
+        System.out.println(String.format("Running '%s'", label));
+        final StopWatch watch = run(runnable);
+        System.out.println(String
+                .format(Locale.US, "Running '%s' took %.2f ms", label, watch.getMillis()));
+    }
+
 
 }

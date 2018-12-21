@@ -324,7 +324,7 @@ public abstract class ValueSemanticsProviderAbstractTemporal<T> extends ValueSem
 
     @Override
     public final ObjectAdapter createValue(final Date date) {
-        return adapterProvider().adapterFor(setDate(date));
+        return getObjectAdapterProvider().adapterFor(setDate(date));
     }
 
 

@@ -326,10 +326,6 @@ extends SingleValueFacetAbstract<Class<? extends PropertyDomainEvent<?,?>>> {
         return getServiceRegistry().lookupServiceElseFail(PublishingServiceInternal.class);
     }
 
-    private PersistenceSessionServiceInternal getPersistenceSessionServiceInternal() {
-        return (PersistenceSessionServiceInternal)adapterProvider();
-    }
-
     @Override public void appendAttributesTo(final Map<String, Object> attributeMap) {
         super.appendAttributesTo(attributeMap);
         attributeMap.put("getterFacet", getterFacet);

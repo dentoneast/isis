@@ -19,21 +19,25 @@
 
 package org.apache.isis.core.metamodel.specloader;
 
-import org.jmock.Expectations;
-import org.jmock.auto.Mock;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+
+import org.jboss.weld.junit5.EnableWeld;
+import org.jboss.weld.junit5.WeldInitiator;
+import org.jboss.weld.junit5.WeldSetup;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.services.grid.GridService;
-import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.i18n.TranslationService;
+import org.apache.isis.applib.services.i18n.TranslationService.Mode;
 import org.apache.isis.applib.services.message.MessageService;
-import org.apache.isis.applib.services.registry.ServiceRegistry;
+import org.apache.isis.commons.internal.base._Timing;
 import org.apache.isis.commons.internal.collections._Sets;
+import org.apache.isis.core.metamodel.BeansForTesting;
 import org.apache.isis.core.metamodel.facetapi.Facet;
 import org.apache.isis.core.metamodel.facets.actcoll.typeof.TypeOfFacet;
 import org.apache.isis.core.metamodel.facets.all.describedas.DescribedAsFacet;
@@ -45,59 +49,87 @@ import org.apache.isis.core.metamodel.progmodel.ProgrammingModelAbstract.Depreca
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
-import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
-import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2.Mode;
 import org.apache.isis.progmodels.dflt.ProgrammingModelFacetsJava5;
 
-public abstract class SpecificationLoaderTestAbstract {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.when;
 
-    @Rule
-    public JUnitRuleMockery2 context = JUnitRuleMockery2.createFor(Mode.INTERFACES_AND_CLASSES);
+import lombok.val;
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+@EnableWeld
+abstract class SpecificationLoaderTestAbstract {
 
-    @Mock
-    private AuthenticationSessionProvider mockAuthenticationSessionProvider;
-    @Mock
-    private GridService mockGridService;
-    @Mock
-    private PersistenceSessionServiceInternal mockPersistenceSessionServiceInternal;
-    @Mock
-    private MessageService mockMessageService;
-    @Mock
-    private ServiceInjector mockServiceInjector;
-    @Mock
-    private ServiceRegistry mockServiceRegistry;
+    static class Factories {
+        
+        @Produces
+        AuthenticationSessionProvider mockAuthenticationSessionProvider() {
+            return Mockito.mock(AuthenticationSessionProvider.class);
+        }
+        
+        @Produces
+        GridService mockGridService() {
+            return Mockito.mock(GridService.class);
+        }
+        
+        @Produces
+        PersistenceSessionServiceInternal mockPersistenceSessionServiceInternal() {
+            return Mockito.mock(PersistenceSessionServiceInternal.class);
+        }
+        
+        @Produces
+        MessageService mockMessageService() {
+            return Mockito.mock(MessageService.class);
+        }
+        
+        @Produces
+        TranslationService mockTranslationService() {
+            val mock = Mockito.mock(TranslationService.class);
+            when(mock.getMode()).thenReturn(Mode.DISABLED);
+            return mock;
+        }
+        
+        @Produces
+        SpecificationLoader getSpecificationLoader() {
+            return new SpecificationLoader(
+                    new ProgrammingModelFacetsJava5(DeprecatedPolicy.HONOUR),
+                    new MetaModelValidatorDefault());
+        }
+        
+    }
+
+    @WeldSetup
+    public WeldInitiator weld = WeldInitiator.from(
+            
+            BeansForTesting.builder()
+            .injector()
+            .addAll(
+                    Factories.class
+                    )
+            .build()
+            
+            )
+    .build();
+    
+    
+    @Inject protected AuthenticationSessionProvider mockAuthenticationSessionProvider;
+    @Inject protected GridService mockGridService;
+    @Inject protected PersistenceSessionServiceInternal mockPersistenceSessionServiceInternal;
+    @Inject protected MessageService mockMessageService;
+    @Inject protected SpecificationLoader specificationLoader;
+    
     
     // is loaded by subclasses
     protected ObjectSpecification specification;
 
-    SpecificationLoader specificationLoader;
 
-
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         
-        // PRODUCTION
-
-        context.checking(new Expectations() {{
-            
-            ignoring(mockServiceInjector);
-            ignoring(mockServiceRegistry);
-
-//            ignoring(mockGridService).existsFor(with(any(Class.class)));
-//            ignoring(mockPersistenceSessionServiceInternal);
-//            ignoring(mockMessageService);
-
-        }});
-
-        specificationLoader = new SpecificationLoader(
-                new ProgrammingModelFacetsJava5(DeprecatedPolicy.HONOUR),
-                new MetaModelValidatorDefault());
+        System.out.println("!!! setting up");
         
-        context.put(specificationLoader);
-
+        // PRODUCTION
+        
         AppManifest.Registry.instance().setDomainServiceTypes(_Sets.newHashSet());
         AppManifest.Registry.instance().setFixtureScriptTypes(_Sets.newHashSet());
         AppManifest.Registry.instance().setDomainObjectTypes(_Sets.newHashSet());
@@ -106,14 +138,16 @@ public abstract class SpecificationLoaderTestAbstract {
         AppManifest.Registry.instance().setPersistenceCapableTypes(_Sets.newHashSet());
         AppManifest.Registry.instance().setXmlElementTypes(_Sets.newHashSet());
 
-        specificationLoader.init();
+        _Timing.runVerbose("specificationLoader.init()", specificationLoader::init);
+        
+        //specificationLoader.init();
         
         specification = loadSpecification(specificationLoader);
         
         
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         specificationLoader.shutdown();
     }
@@ -123,31 +157,31 @@ public abstract class SpecificationLoaderTestAbstract {
     @Test
     public void testCollectionFacet() throws Exception {
         final Facet facet = specification.getFacet(CollectionFacet.class);
-        Assert.assertNull(facet);
+        assertNull(facet);
     }
 
     @Test
     public void testTypeOfFacet() throws Exception {
         final TypeOfFacet facet = specification.getFacet(TypeOfFacet.class);
-        Assert.assertNull(facet);
+        assertNull(facet);
     }
 
     @Test
     public void testNamedFaced() throws Exception {
         final Facet facet = specification.getFacet(NamedFacet.class);
-        Assert.assertNotNull(facet);
+        assertNotNull(facet);
     }
 
     @Test
     public void testPluralFaced() throws Exception {
         final Facet facet = specification.getFacet(PluralFacet.class);
-        Assert.assertNotNull(facet);
+        assertNotNull(facet);
     }
 
     @Test
     public void testDescriptionFacet() throws Exception {
         final Facet facet = specification.getFacet(DescribedAsFacet.class);
-        Assert.assertNotNull(facet);
+        assertNotNull(facet);
     }
 
 }

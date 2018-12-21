@@ -58,7 +58,7 @@ public class JavaCollectionFacet extends CollectionFacetAbstract {
     @Override
     public <T extends ManagedObject> Stream<T> stream(T collectionAdapter) {
         
-        final ObjectAdapterProvider adapterProvider = adapterProvider();
+        final ObjectAdapterProvider adapterProvider = getObjectAdapterProvider();
         
         return pojoCollection(collectionAdapter)
                 .stream()

@@ -114,7 +114,7 @@ public class ColorValueSemanticsProvider extends ValueSemanticsProviderAndFacetA
     @Override
     public ObjectAdapter createValue(final ObjectAdapter object, final int colorAsInt) {
         final Color color = new Color(colorAsInt);
-        return adapterProvider().adapterFor(color);
+        return getObjectAdapterProvider().adapterFor(color);
     }
 
     @Override

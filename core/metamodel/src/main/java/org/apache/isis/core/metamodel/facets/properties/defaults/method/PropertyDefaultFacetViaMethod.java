@@ -68,7 +68,7 @@ public class PropertyDefaultFacetViaMethod extends PropertyDefaultFacetAbstract 
     private ObjectAdapter createAdapter(final Class<?> type, final Object object) {
         final ObjectSpecification specification = getSpecificationLoader().loadSpecification(type);
         if (specification.isNotCollection()) {
-            return adapterProvider().adapterFor(object);
+            return getObjectAdapterProvider().adapterFor(object);
         } else {
             throw new UnknownTypeException("not an object, is this a collection?");
         }
