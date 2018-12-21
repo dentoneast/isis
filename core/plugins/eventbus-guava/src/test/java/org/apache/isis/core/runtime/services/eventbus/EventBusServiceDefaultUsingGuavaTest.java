@@ -16,35 +16,63 @@
  */
 package org.apache.isis.core.runtime.services.eventbus;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import com.google.common.eventbus.Subscribe;
 
+import org.jboss.weld.junit5.EnableWeld;
+import org.jboss.weld.junit5.WeldInitiator;
+import org.jboss.weld.junit5.WeldSetup;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import org.apache.isis.applib.annotation.DomainService;
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.config.internal._Config;
+import org.apache.isis.core.metamodel.BeansForTesting;
 import org.apache.isis.core.metamodel.services.ServiceInjectorDefault;
+import org.apache.isis.core.metamodel.services.registry.ServiceRegistryDefault;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-public class EventBusServiceDefaultUsingGuavaTest {
+class EventBusServiceDefaultUsingGuavaTest {
 
-    EventBusServiceDefault eventBusService;
-
-    @Before
-    public void setUp() throws Exception {
-        eventBusService = new EventBusServiceDefault() {
-        	{
-        	    servicesInjector = new ServiceInjectorDefault();
-        	}
-        };
+    @ApplicationScoped @DomainService
+    static class EventBusServiceForTest extends EventBusServiceDefault {
+        
     }
 
-    public static class Post extends EventBusServiceDefaultTest {
+    private static WeldInitiator weld() {
+        
+        return WeldInitiator.from(
+            
+            BeansForTesting.builder()
+            .injector()
+            .addAll(
+                    EventBusServiceForTest.class,
+                    ServiceInjectorDefault.class,
+                    ServiceRegistryDefault.class
+                    )
+            .build()
+            
+            )
+        .build();
+    }
+    
+    @EnableWeld
+    static class Post extends EventBusServiceDefaultTest {
     	
+        @WeldSetup
+        public WeldInitiator weld = weld();
+        
+        @Inject protected ServiceInjector injector;
+        @Inject protected EventBusServiceDefault eventBusService;
+        
     	private final static String EVENTBUS_IMPL_NAME = "guava";
     	
     	public static class Type1 {

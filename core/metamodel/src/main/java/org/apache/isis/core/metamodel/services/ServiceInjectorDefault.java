@@ -125,18 +125,20 @@ public class ServiceInjectorDefault implements ServiceInjector {
 
     }
     
+    @SuppressWarnings("unchecked")
     private void injectToField_nonScalar(
             final Object targetPojo, 
             final Field field, 
             final Class<?> elementType) {
         
-        @SuppressWarnings("unchecked")
         final Class<? extends Collection<Object>> collectionTypeToBeInjected =
-        (Class<? extends Collection<Object>>) field.getType();
-
+                (Class<? extends Collection<Object>>) field.getType();
         
         serviceRegistry.getInstance(elementType, field.getAnnotations())
-        .map((Instance<?> instance)->((Instance<Object>)instance)) // explicit cast required by OpenJDK complier
+        
+        // explicit cast required by OpenJDK complier, not eclipse
+        .map((Instance<?> instance)->((Instance<Object>)instance))
+        
         .ifPresent(instance->{
             final Collection<Object> collectionOfServices = instance.stream()
                     .filter(isOfType(elementType))

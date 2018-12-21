@@ -16,9 +16,9 @@
  */
 package org.apache.isis.core.runtime.services.eventbus;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.metamodel.services.ServiceInjectorDefault;
@@ -30,9 +30,9 @@ import static org.junit.Assert.assertThat;
 
 public class EventBusServiceDefaultTest {
 
-    EventBusServiceDefault eventBusService;
+    protected EventBusServiceDefault eventBusService;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         
         _Config.clear(); 
@@ -82,7 +82,7 @@ public class EventBusServiceDefaultTest {
             assertThat(eventBusService.isAllowLateRegistration(), is(false));
         }
 
-        @Test @Ignore("why would we allow this?")
+        @Test @Disabled("why would we allow this?")
         public void allowLateRegistration_setToGarbage() throws Exception {
             _Config.put(EventBusServiceDefault.KEY_ALLOW_LATE_REGISTRATION, "SDF$%FDVDFG");
             eventBusService.init();
