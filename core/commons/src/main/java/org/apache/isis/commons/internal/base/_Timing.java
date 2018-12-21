@@ -110,21 +110,22 @@ public final class _Timing {
     }
     
     public static void runVerbose(String label, Runnable runnable) {
-        System.out.println(String.format("Running '%s'", label));
         final StopWatch watch = run(runnable);
-        System.out.println(String
-                .format(Locale.US, "Running '%s' took %.2f ms", label, watch.getMillis()));
+        info(String.format(Locale.US, "Running '%s' took %.2f ms", label, watch.getMillis()));
     }
     
     public static <T> T callVerbose(String label, Supplier<T> callable) {
-        System.out.println(String.format("Calling '%s'", label));
         final StopWatch watch = now();
         T result = callable.get();
         watch.stop();
-        System.out.println(String
-                .format(Locale.US, "Calling '%s' took %.2f ms", label, watch.getMillis()));
+        info(String.format(Locale.US, "Calling '%s' took %.2f ms", label, watch.getMillis()));
         return result;
     }
 
+    // -- HELPER
+    
+    private static void info(String msg) {
+        System.out.println(msg);
+    }
 
 }

@@ -36,16 +36,16 @@ public interface ServiceInjector {
 
     // -- DEPRECATIONS
     
-    @Deprecated
+    @Deprecated // use ServiceRegistry instead
     Stream<Object> streamServices();
 
-    @Deprecated
+    @Deprecated // use ServiceRegistry instead
     <T> Stream<T> streamServices(Class<T> serviceClass);
     
-    @Deprecated
+    @Deprecated // use ServiceRegistry instead
     <T> Optional<T> lookupService(final Class<T> serviceClass);
     
-    @Deprecated
+    @Deprecated // use ServiceRegistry instead
     <T> T lookupServiceElseFail(final Class<T> serviceClass);
     
 //FIXME [2033]

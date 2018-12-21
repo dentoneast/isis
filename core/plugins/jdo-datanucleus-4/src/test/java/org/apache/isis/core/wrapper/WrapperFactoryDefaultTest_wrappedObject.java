@@ -35,6 +35,7 @@ import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.command.CommandContext;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.message.MessageService;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.wrapper.DisabledException;
 import org.apache.isis.applib.services.wrapper.HiddenException;
 import org.apache.isis.applib.services.wrapper.InvalidException;
@@ -96,6 +97,8 @@ public class WrapperFactoryDefaultTest_wrappedObject {
     @Mock
     private ServiceInjector mockServicesInjector;
     @Mock
+    private ServiceRegistry mockServiceRegistry;
+    @Mock
     private CommandContext mockCommandContext;
     @Mock
     private Command mockCommand;
@@ -105,6 +108,7 @@ public class WrapperFactoryDefaultTest_wrappedObject {
     private ObjectSpecification mockOnType;
     @Mock
     private SpecificationLoader mockSpecificationLoader;
+
     @Mock
     private IsisSessionFactory mockIsisSessionFactory;
 
@@ -304,9 +308,9 @@ public class WrapperFactoryDefaultTest_wrappedObject {
     public void shouldBeAbleToReadVisibleProperty() {
 
         allowingEmployeeHasSmithAdapter();
-
-        _Config.put("isis.reflector.facet.filterVisibility", true);
         
+        _Config.put("isis.reflector.facet.filterVisibility", true);
+
         context.checking(new Expectations() {{
 
             allowing(mockAdapterForStringSmith).getSpecification();
@@ -348,6 +352,13 @@ public class WrapperFactoryDefaultTest_wrappedObject {
 
         context.checking(new Expectations() {
             {
+                
+                allowing(mockServiceRegistry).lookupServiceElseFail(CommandDtoServiceInternal.class);
+                will(returnValue(mockCommandDtoServiceInternal));
+                
+                allowing(mockServiceRegistry).lookupServiceElseFail(CommandContext.class);
+                will(returnValue(mockCommandContext));
+                
                 allowing(mockAdapterForStringJones).titleString(null);
 
                 ignoring(mockCommand);
