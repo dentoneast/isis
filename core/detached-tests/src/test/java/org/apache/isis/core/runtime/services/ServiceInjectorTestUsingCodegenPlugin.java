@@ -26,67 +26,87 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.Bean;
+import javax.inject.Inject;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.jboss.weld.junit.MockBean;
+import org.jboss.weld.junit5.EnableWeld;
+import org.jboss.weld.junit5.WeldInitiator;
+import org.jboss.weld.junit5.WeldSetup;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
-import org.apache.isis.commons.internal.collections._Lists;
-import org.apache.isis.core.metamodel.services.ServiceInjectorBuilder_forTesting;
-import org.apache.isis.core.metamodel.services.registry.ServiceRegistryBuilder_forTesting;
-import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
+import org.apache.isis.core.metamodel.BeansForTesting;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class ServiceInjectorTestUsingCodegenPlugin {
+@EnableWeld
+class ServiceInjectorTestUsingCodegenPlugin {
+    
+    static class Factories {
+        
+        private final ServiceInstantiator serviceInstantiator = new ServiceInstantiator();
+        
+        @Produces
+        AccumulatingCalculator getAccumulatingCalculator() {
+            return serviceInstantiator.createInstance(AccumulatingCalculator.class);
+        }
+        
+    }
+    
+    static Bean<?> createSingletonCalculatorBean() {
+        return MockBean.<SingletonCalculator>builder()
+            .types(SingletonCalculator.class)
+            .scope(ApplicationScoped.class)
+            .create(ctx -> new SingletonCalculator()).build();
+    }
+    
 
-    @Rule
-    public JUnitRuleMockery2 context = JUnitRuleMockery2.createFor(JUnitRuleMockery2.Mode.INTERFACES_AND_CLASSES);
+    @WeldSetup
+    public WeldInitiator weld = WeldInitiator.from(
+            BeansForTesting.builder()
+            .injector()
+            .addAll(
+                    Factories.class
+                    )
+            .build()
+            
+            )
+    .addBeans(createSingletonCalculatorBean())
+    .build();
 
-    private ServiceInstantiator serviceInstantiator;
-    private ServiceInjector serviceInjector;
-    private ServiceRegistry serviceRegistry;
-
-    @Before
+    @Inject private ServiceInjector serviceInjector;
+    @Inject private ServiceRegistry serviceRegistry;
+    
+    @BeforeEach
     public void setUp() throws Exception {
-
-        serviceInstantiator = new ServiceInstantiator();
-        
-        final List<Object> services = _Lists.of(
-                serviceInstantiator.createInstance(SingletonCalculator.class),
-                serviceInstantiator.createInstance(AccumulatingCalculator.class)
-                );
-        
-        serviceRegistry = ServiceRegistryBuilder_forTesting.of(context)
-                .addServices(services)
-                .build();
-        
-        serviceInjector = ServiceInjectorBuilder_forTesting.of(context)
-                .serviceRegistry(serviceRegistry)
-                .build();
-        
     }
 
     @Test
-    public void singleton() {
-        SingletonCalculator calculator = serviceRegistry.lookupService(SingletonCalculator.class).get();
+    void singleton() {
+        SingletonCalculator calculator;
+        
+        calculator = serviceRegistry.lookupServiceElseFail(SingletonCalculator.class);
         assertThat(calculator.add(3), is(3));
-        calculator = serviceRegistry.lookupService(SingletonCalculator.class).get();
+        
+        calculator = serviceRegistry.lookupServiceElseFail(SingletonCalculator.class);
         assertThat(calculator.add(4), is(7));
     }
 
     @Test
-    public void requestScoped_instantiate() {
+    void requestScoped_instantiate() {
         final AccumulatingCalculator calculator = serviceRegistry.lookupService(AccumulatingCalculator.class).get();
         assertThat(calculator instanceof RequestScopedService, is(true));
     }
 
     @Test
-    public void requestScoped_justOneThread() {
+    void requestScoped_justOneThread() {
         final AccumulatingCalculator calculator = serviceRegistry.lookupService(AccumulatingCalculator.class).get();
         
         try {
@@ -100,7 +120,7 @@ public class ServiceInjectorTestUsingCodegenPlugin {
     }
 
     @Test
-    public void requestScoped_multipleThreads() throws InterruptedException, ExecutionException {
+    void requestScoped_multipleThreads() throws InterruptedException, ExecutionException {
         
         final AccumulatingCalculator calculator = serviceRegistry.lookupService(AccumulatingCalculator.class).get();
         final ExecutorService executor = Executors.newFixedThreadPool(10);
@@ -133,7 +153,7 @@ public class ServiceInjectorTestUsingCodegenPlugin {
         }
     }
 
-    public static class SingletonCalculator {
+    static class SingletonCalculator {
         private int total;
         public int add(int x) {
             total += x;
@@ -145,7 +165,7 @@ public class ServiceInjectorTestUsingCodegenPlugin {
     }
 
     @RequestScoped
-    public static class AccumulatingCalculator {
+    static class AccumulatingCalculator {
         private int total;
         public int add(int x) {
             total += x;
