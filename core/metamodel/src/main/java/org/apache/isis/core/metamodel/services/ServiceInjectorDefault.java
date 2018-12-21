@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -135,8 +136,8 @@ public class ServiceInjectorDefault implements ServiceInjector {
 
         
         serviceRegistry.getInstance(elementType, field.getAnnotations())
+        .map((Instance<?> instance)->((Instance<Object>)instance)) // explicit cast required by OpenJDK complier
         .ifPresent(instance->{
-            
             final Collection<Object> collectionOfServices = instance.stream()
                     .filter(isOfType(elementType))
                     .collect(_Collections.toUnmodifiableOfType(collectionTypeToBeInjected));
