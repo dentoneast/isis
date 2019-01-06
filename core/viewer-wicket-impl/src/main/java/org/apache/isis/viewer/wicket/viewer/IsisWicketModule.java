@@ -91,7 +91,22 @@ public class IsisWicketModule {
 //
 //        bind(InputStream.class).annotatedWith(Names.named("metaInfManifest"))
 //                .toProvider(() -> servletContext.getResourceAsStream("/META-INF/MANIFEST.MF"));
-
+//
+//        final Provider<String> welcomeFile = string("isis.viewer.wicket.welcome.file", "welcome.html");
+//        bind(String.class).annotatedWith(Names.named("welcomeMessage"))
+//                .toProvider(() -> {
+//                    final String fallback = getConfiguration().getString("isis.viewer.wicket.welcome.text");
+//                    final URL resource;
+//                    try {
+//                        resource = servletContext.getResource(prefix(welcomeFile.get(), "/"));
+//                        if(resource!=null) {
+//                            return readLines(resource, fallback);    
+//                        }
+//                    } catch (MalformedURLException e) {
+//                        // fall through
+//                    }
+//                    return fallback;
+//                });
     }
     
     // -- HELPER

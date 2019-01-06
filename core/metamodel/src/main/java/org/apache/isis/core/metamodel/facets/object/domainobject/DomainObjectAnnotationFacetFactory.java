@@ -48,6 +48,7 @@ import org.apache.isis.core.metamodel.facetapi.MetaModelValidatorRefiner;
 import org.apache.isis.core.metamodel.facets.Annotations;
 import org.apache.isis.core.metamodel.facets.FacetFactoryAbstract;
 import org.apache.isis.core.metamodel.facets.MethodFinderUtils;
+import org.apache.isis.core.metamodel.facets.ObjectSpecIdFacetFactory;
 import org.apache.isis.core.metamodel.facets.PostConstructMethodCache;
 import org.apache.isis.core.metamodel.facets.object.audit.AuditableFacet;
 import org.apache.isis.core.metamodel.facets.object.autocomplete.AutoCompleteFacet;
@@ -87,7 +88,7 @@ import org.apache.isis.objectstore.jdo.metamodel.facets.object.persistencecapabl
 
 
 public class DomainObjectAnnotationFacetFactory extends FacetFactoryAbstract
-implements MetaModelValidatorRefiner, PostConstructMethodCache {
+implements MetaModelValidatorRefiner, PostConstructMethodCache, ObjectSpecIdFacetFactory {
 
     private final MetaModelValidatorForValidationFailures autoCompleteMethodInvalid = new MetaModelValidatorForValidationFailures();
     private final MetaModelValidatorForMixinTypes mixinTypeValidator = new MetaModelValidatorForMixinTypes("@DomainObject#nature=MIXIN");
@@ -99,6 +100,12 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache {
     }
 
     @Override
+    public void process(final ProcessObjectSpecIdContext processClassContext) {
+        processObjectType(processClassContext);
+    }
+
+
+    @Override
     public void process(final ProcessClassContext processClassContext) {
 
         processAuditing(processClassContext);
@@ -106,7 +113,6 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache {
         processAutoComplete(processClassContext);
         processBounded(processClassContext);
         processEditing(processClassContext);
-        processObjectType(processClassContext);
         processNature(processClassContext);
         processLifecycleEvents(processClassContext);
         processDomainEvents(processClassContext);
@@ -247,7 +253,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache {
         FacetUtil.addFacet(facet);
     }
 
-    void processObjectType(final ProcessClassContext processClassContext) {
+    void processObjectType(final ProcessObjectSpecIdContext processClassContext) {
         final Class<?> cls = processClassContext.getCls();
         final List<DomainObject> domainObjects = Annotations.getAnnotations(cls, DomainObject.class);
         final FacetHolder facetHolder = processClassContext.getFacetHolder();

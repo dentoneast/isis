@@ -1,6 +1,140 @@
 :toc:
 
+Search also for: "TODO: v2: " in the .adoc documentation.
+
 == Migration Notes 2.0.0-M1 to 2.0.0-M2
+
+=== Table Tree Viewer (ISIS-898)
+
+also: ISIS-1943,ISIS-1944,ISIS-1947
+
+NOTE: TODO - needs documenting how to use.
+
+public API is:
+
+* `TreeAdapter`
+* `TreeNode` and `LazyTreeNode`
+* `TreePath`
+* `TreeNode`
+
+eg in `isis-2-demo`,
+
+
+implementation of `TreeAdapter`:
+
+[source,java]
+----
+public class FileSystemTreeAdapter implements TreeAdapter<FileNode> {
+
+	@Override
+	public Optional<FileNode> parentOf(FileNode value) {
+		if(value.getType()==FileNode.Type.FileSystemRoot) {
+			return Optional.empty();
+		}
+		val parentFolderIfAny = value.asFile().getParentFile();
+		if(parentFolderIfAny==null) {
+			return Optional.empty(); // unexpected code reach, but just in case
+		}
+		return Optional.ofNullable(parentFolderIfAny)
+				.map(FileNodeFactory::toFileNode);
+	}
+
+	@Override
+	public int childCountOf(FileNode value) {
+		return (int) streamChildFiles(value).count();
+	}
+
+	@Override
+	public Stream<FileNode> childrenOf(FileNode value) {
+		return streamChildFiles(value)
+				.map(FileNodeFactory::toFileNode);
+	}
+
+	// -- HELPER
+	private static Stream<File> streamChildFiles(FileNode value){
+		val file = value.asFile();
+		val childFiles = file.listFiles();
+		if(childFiles==null) {
+			return Stream.empty();
+		}
+		return Stream.of(childFiles)
+				.filter(f->!f.isHidden());
+	}
+}
+----
+
+where `FileNode` doesn't, actually, need to implement `TreeNode`, it's just a regular view model:
+
+[source,java]
+----
+@XmlRootElement(name="FileNode")
+@DomainObject(nature=Nature.VIEW_MODEL)
+@ToString
+public class FileNode {
+
+	public static enum Type {
+		FileSystemRoot,
+		Folder,
+		File
+	}
+
+	@Getter @Setter protected String path;
+	@Getter @Setter protected Type type;
+
+	public String title() {
+		if(path==null) {
+			return null;
+		}
+		val file = asFile();
+		return file.getName().length()!=0 ? file.getName() : file.toString();
+	}
+
+	public String iconName() {
+		return type!=null ? type.name() : "";
+	}
+
+	// -- BREADCRUMB SUPPORT
+
+	@PropertyLayout(navigable=Navigable.PARENT, hidden=Where.EVERYWHERE)
+	public FileNode getParent() {
+	    val parentFile = asFile().getParentFile();
+	    return parentFile!=null ? FileNodeFactory.toFileNode(parentFile) : null;
+	}
+
+	// -- INIT
+
+	void init(File file) {
+		this.path = file.getAbsolutePath();
+		if(file.isDirectory()) {
+			type = isRoot(file) ? Type.FileSystemRoot : Type.Folder;
+		} else {
+			type = Type.File;
+		}
+	}
+
+	// -- HELPER
+
+	File asFile() {
+		return new File(path);
+	}
+
+	private static boolean isRoot(File file) {
+		return file.getParent()==null;
+	}
+}
+----
+
+
+=== isis-core-wrapper removed (ISIS-1838/1839)
+
+
+=== guice removed from applib and core (ISIS-1892)
+
+
+=== web.xml now much simpler (ISIS-1895)
+
+NOTE: see 'Servlet Context' below
+
 
 === @MemberGroupLayout was removed
 
@@ -101,7 +235,7 @@ ObjectAdapter is no longer holding a reference to an ObjectSpecification for the
 ServicesInjector was removed. New interface ServiceInjector and ServiceRegistry redefined.
 //TODO work in progress with ISIS-2033
 
-=== JAXB XmlAdapters
+=== JAXB XmlAdapters (ISIS-1972)
 
 We do now provide JAXB XmlAdapters for Java built-in temporal types in 'applib': org.apache.isis.applib.adapters.JaxbAdapters
  
@@ -311,6 +445,8 @@ _@PostConstuct_ methods declared with domain objects no longer get passed over t
 
 === Wicket-Viewer
 
+==== custom theme providers (ISIS-2047)
+
 Customize the ThemeChooser by providing your own implementation of IsisWicketThemeSupport
 
 [source,java]
@@ -325,3 +461,136 @@ to be configured using
 ----
 isis.viewer.wicket.themes.provider=org.my.IsisWicketThemeSupport
 ----
+
+=== Removed o.a.i.WebServer (ISIS-2067)
+
+might need to reinstate, or long-term will have SpringBoot etc do the bootstrapping.
+
+
+== Migration Notes 1.x to 2.0.0-M1
+
+=== java.time support (ISIS-1636)
+
+The framework supports following temporal values from the Java Time API (and Joda):
+
+==== Date only
+
+* java.sql.Date
+* java.time.LocalDate (since 2.0.0-M1)
+* org.joda.time.LocalDate
+
+==== Date and Time
+
+* java.util.Date
+* java.sql.Timestamp
+* java.time.LocalDateTime (since 2.0.0-M1)
+* java.time.OffsetDateTime (since 2.0.0-M1)
+* org.joda.time.DateTime
+* org.joda.time.LocalDateTime
+
+==== View Model Example
+
+If used with JAXB View Models, you need to specify specific XmlAdapters as provided by org.apache.isis.applib.util.JaxbAdapters.*. See this JAXB Viewmodel example using lombok:
+
+[source,java]
+----
+@XmlRootElement(name = "Demo")
+@XmlType
+@XmlAccessorType(XmlAccessType.FIELD)
+@DomainObject(nature=Nature.VIEW_MODEL)
+public class TemporalDemo {
+
+    // -- DATE ONLY (LOCAL TIME)
+    
+    @XmlElement @XmlJavaTypeAdapter(SqlDateAdapter.class)
+    @Getter @Setter private java.sql.Date javaSqlDate;
+    
+    @XmlElement @XmlJavaTypeAdapter(LocalDateAdapter.class)
+    @Getter @Setter private LocalDate javaLocalDate;
+    
+    // -- DATE AND TIME (LOCAL TIME)
+    
+    @XmlElement @XmlJavaTypeAdapter(DateAdapter.class)
+    @Getter @Setter private Date javaUtilDate;
+    
+    @XmlElement @XmlJavaTypeAdapter(SqlTimestampAdapter.class)
+    @Getter @Setter private java.sql.Timestamp javaSqlTimestamp;
+        
+    @XmlElement @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
+    @Getter @Setter private LocalDateTime javaLocalDateTime;
+    
+    // -- DATE AND TIME (WITH TIMEZONE OFFSET)
+
+    @XmlElement @XmlJavaTypeAdapter(OffsetDateTimeAdapter.class)
+    @Getter @Setter private OffsetDateTime javaOffsetDateTime;
+    
+    // --
+    
+    public void initDefaults() {
+        
+        log.info("TemporalDemo::initDefaults");
+        
+        javaUtilDate = new Date();
+        javaSqlDate = new java.sql.Date(System.currentTimeMillis());
+        javaSqlTimestamp = new java.sql.Timestamp(System.currentTimeMillis());
+        
+        javaLocalDate = LocalDate.now();
+        javaLocalDateTime = LocalDateTime.now();
+        javaOffsetDateTime = OffsetDateTime.now();
+    }
+    
+}
+----
+
+=== web-docker (ISIS-1969)
+
+NOTE: TODO - To document, in particular how to use in the helloworld/simpleapp archetypes.
+
+NB: ISIS-1969: the Docker image isn't yet being released, pending https://issues.apache.org/jira/browse/INFRA-17518[INFRA-17518].
+
+=== Plugin architecture (ISIS-1753 and others)
+
+NOTE: TODO ...
+
+* describe the plugin architecture in general, use of ServiceLoader etc
+* describe in particular the event bus plugin architecture (ISIS-1753)
+* describe in particular the other plugins (objectstore, security, resteasy, bytecode enhancement, ...)
+
+=== Ticket (for ErrorReportingService) is now an interface, not a class (ISIS-1955)
+
+NOTE: TODO - ... and so any concrete implementations will need to be changed
+
+=== Override hsqldb for integtests (ISIS-1958)
+
+sample usage:
+
+[source,java]
+----
+public abstract class MyIntegTestAbstract extends IntegrationTestJupiter {
+
+  public MyIntegTestAbstract() {
+    super(new MyModule()
+      .withAdditionalModules(...)
+      ...
+      .withConfigurationProperties(databaseConfigForTest())
+    );
+  }
+
+  private static Map<String, String> databaseConfigForTest() {
+    Map<String, String> map = new HashMap<>();
+
+    // for refernce see AppManifest.Util.withJavaxJdoRunInMemoryProperties(map)
+
+    map.put(AppManifest.Util.ISIS_PERSISTOR_DATANUCLEUS_IMPL + "javax.jdo.option.ConnectionURL", "jdbc:mariadb://127.0.0.1/demo");
+    map.put(AppManifest.Util.ISIS_PERSISTOR_DATANUCLEUS_IMPL + "javax.jdo.option.ConnectionDriverName", "org.mariadb.jdbc.MariaDbDataSource");
+    map.put(AppManifest.Util.ISIS_PERSISTOR_DATANUCLEUS_IMPL + "javax.jdo.option.ConnectionUserName", "sven");
+    map.put(AppManifest.Util.ISIS_PERSISTOR_DATANUCLEUS_IMPL + "javax.jdo.option.ConnectionPassword", "pass");
+
+    return map;
+  }
+  ...
+
+}
+----
+
+

@@ -35,6 +35,7 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAssociation;
 import org.apache.isis.core.metamodel.specloader.facetprocessor.FacetProcessor;
+import org.apache.isis.core.metamodel.specloader.postprocessor.PostProcessor;
 import org.apache.isis.core.metamodel.specloader.specimpl.ObjectSpecificationAbstract;
 
 import static org.apache.isis.commons.internal.base._With.mapIfPresentElse;
@@ -51,9 +52,14 @@ public class ObjectSpecificationOnStandaloneList extends ObjectSpecificationAbst
 
     // -- constructor
 
-    public ObjectSpecificationOnStandaloneList(final FacetProcessor facetProcessor) {
-        super(FreeStandingList.class, NAME, facetProcessor);
+    public ObjectSpecificationOnStandaloneList(
+            final FacetProcessor facetProcessor,
+            final PostProcessor postProcessor) {
+        super(FreeStandingList.class, NAME, facetProcessor, postProcessor);
         this.specId = ObjectSpecId.of(getCorrespondingClass().getName());
+
+        FacetUtil.addFacet(
+                new ObjectSpecIdFacetOnStandaloneList(specId, this));
     }
 
 
@@ -61,8 +67,8 @@ public class ObjectSpecificationOnStandaloneList extends ObjectSpecificationAbst
     // -- Introspection
 
     @Override
-    public void introspectTypeHierarchyAndMembers() {
-        updateSuperclass(Object.class);
+    protected void introspectTypeHierarchy() {
+        loadSpecOfSuperclass(Object.class);
 
         addFacet(new CollectionFacetOnStandaloneList(this));
         addFacet(new TypeOfFacetDefaultToObject(this) {
@@ -76,6 +82,10 @@ public class ObjectSpecificationOnStandaloneList extends ObjectSpecificationAbst
         // don't install anything for NotPersistableFacet
     }
 
+    @Override
+    protected void introspectMembers() {
+        // no-op.
+    }
 
 
     // -- isXxx

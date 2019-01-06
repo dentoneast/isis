@@ -184,6 +184,9 @@
 
         <junit.version>5.3.2</junit.version>
         <mockito.version>2.23.4</mockito.version>
+
+        <junit-legacy.version>4.12</junit-legacy.version>
+        <assertj.version>3.11.1</assertj.version>
         
         <!-- 2.8.1 depends on cglib-nodep 3.1 whereas axonframework depends on 2.2.2 -->
         <jmock.version>2.6.0</jmock.version>
@@ -508,6 +511,7 @@
                             <exclude>**/application.js</exclude>
 
                             <exclude>**/jquery.zclip.js</exclude>
+                            <exclude>**/simple-sidebar.css</exclude>
                             <exclude>**/bootstrap-growl.js</exclude>
                             <exclude>**/moment.js</exclude>
 

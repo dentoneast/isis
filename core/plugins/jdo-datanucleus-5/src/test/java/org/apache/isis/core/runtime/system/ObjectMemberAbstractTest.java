@@ -30,6 +30,7 @@ import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.metamodel.adapter.oid.Oid.Factory;
 import org.apache.isis.core.metamodel.consent.Consent;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.facetapi.FeatureType;
@@ -54,6 +55,7 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.specimpl.ObjectMemberAbstract;
+import org.apache.isis.core.runtime.persistence.adapter.PojoAdapter;
 import org.apache.isis.core.runtime.persistence.objectstore.transaction.PojoAdapterBuilder;
 import org.apache.isis.core.runtime.persistence.objectstore.transaction.PojoAdapterBuilder.Persistence;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -114,16 +116,25 @@ public class ObjectMemberAbstractTest {
             allowing(mockAuthenticationSessionProvider).getAuthenticationSession();
             will(returnValue(mockAuthenticationSession));
         }});
-        persistentAdapter = PojoAdapterBuilder.create()
-                                .with(mockSpecificationLoader)
-                                .withOid("CUS|1")
-                                .withPojo(mockPersistable)
-                                .build();
+//        persistentAdapter = PojoAdapterBuilder.create()
+//                .with(mockSpecificationLoader)
+//                .withOid("CUS|1")
+//                .withPojo(mockPersistable)
+//                .build();
+
+        persistentAdapter = PojoAdapter.of(
+                mockPersistable,
+                Factory.persistentOf(ObjectSpecId.of("CUS"), "1"),
+                mockAuthenticationSession,
+                mockSpecificationLoader,
+                null);
+
+
         transientAdapter = PojoAdapterBuilder.create()
-                                .with(mockSpecificationLoader)
-                                .with(Persistence.TRANSIENT)
-                                .withPojo(mockPersistable)
-                                .build();
+                .with(mockSpecificationLoader)
+                .with(Persistence.TRANSIENT)
+                .withPojo(mockPersistable)
+                .build();
 
         testMember = new ObjectMemberAbstractImpl("id");
 

@@ -36,7 +36,6 @@ import org.apache.isis.applib.services.grid.GridService;
 import org.apache.isis.applib.services.metamodel.DomainMember;
 import org.apache.isis.applib.services.metamodel.DomainModel;
 import org.apache.isis.applib.services.metamodel.MetaModelService;
-import org.apache.isis.commons.internal.base._Blackhole;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.config.internal._Config;
@@ -97,17 +96,7 @@ public class MetaModelServiceDefault implements MetaModelService {
         
         GridService gridService = _CDI.getManagedBean(GridService.class).get();
         gridService.remove(domainType);
-        
-        final ObjectSpecification objectSpecification = specificationLookup.loadSpecification(domainType);
-        
-        // ensure the spec is fully rebuilt
-        objectSpecification.streamObjectActions(Contributed.INCLUDED)
-        .forEach(_Blackhole::consume);
-        
-        objectSpecification.streamAssociations(Contributed.INCLUDED)
-        .forEach(_Blackhole::consume);
-        
-        specificationLookup.postProcess(objectSpecification);
+        specificationLookup.loadSpecification(domainType);
     }
 
     // //////////////////////////////////////

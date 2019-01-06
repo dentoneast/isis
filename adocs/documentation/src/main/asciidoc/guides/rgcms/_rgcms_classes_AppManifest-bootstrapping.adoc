@@ -15,7 +15,7 @@ The framework-provided `AppManifestAbstract2` and `AppManifestAbstract2.Builder`
 The app manifest can then be used both to bootstrap the application "proper", or for integration tests.
 ====
 
-
+TODO: v2: these two versions of `AppManifestAbstract` and `AppManifestAbstract2` will be unified.
 
 [[__rgcms_classes_AppManifest-bootstrapping_api]]
 == API
@@ -210,9 +210,9 @@ This will allow the architectural layering of the overall application to be enfo
 
 What then remains is to update the bootstrapping code itself.
 
-There are several different contexts in which the framework needs to be bootstrapped:
+There are a couple of contexts in which the framework needs to be bootstrapped:
 
-* the first is as a "regular" webapp (using the xref:../ugvw/ugvw.adoc#[Wicket viewer]).
+* the normal situation is as a "regular" webapp (using the xref:../ugvw/ugvw.adoc#[Wicket viewer]).
 Here the `AppManifest` just needs to be specified as a configuration property, usually done using the `WEB-INF/isis.properties` configuration file: +
 +
 [source,ini]
@@ -220,17 +220,7 @@ Here the `AppManifest` just needs to be specified as a configuration property, u
 isis.appManifest=domainapp.app.MyAppAppManifest
 ----
 
-* the second is also as a webapp, but from within the context of the IDE. +
-+
-Here, it's common to use the `org.apache.isis.WebServer` class to launch your application from the xref:../ugbtb/ugbtb.adoc#_ugbtb_deployment_cmd-line[command line].
-This allows the `AppManifest` to be specified using the `-m` (or `--manifest`) flag: +
-+
-[source,ini]
-----
-java org.apache.isis.WebServer -m com.mycompany.myapp.MyAppAppManifestWithFixtures
-----
-
-* the third case is within an integration test. +
+* the other main use-case is within an integration test. +
 +
 The code to boostrap an integration test is shown in the xref:../ugtst/ugtst.adoc#_ugtst_integ-test-support_bootstrapping[testing guide], but once again an `AppManifest` is required.
 
@@ -327,28 +317,6 @@ public abstract class DomainAppIntegTestAbstract extends IntegrationTestAbstract
 ----
 
 
-
-
-
-
-[[__rgcms_classes_AppManifest-bootstrapping_subsidiary-goals]]
-== Subsidiary Goals
-
-There are a number of subsidiary goals of the `AppManifest` class (though not all of these are fully implemented):
-
-* Allow different integration tests to run with different manifests.
-
-** Normally the running application is shared (on a thread-local) between integration tests.
-What the framework could perhaps do is to be intelligent enough to keep track of the manifest in use for each integration test and tear down the shared state if the "next" test uses a different manifest
-
-* Provide a programmatic way to contribute elements of `web.xml`.
-
-* Provide a programmatic way to configure Shiro security.
-
-* Anticipate the module changes forthcoming in Java 9.
-
-** Eventually we see that the `AppManifest` class acting as an "aggregator", with the list of modules will become Java 9 modules each advertising the types that they export.
-** It might even be possible for ``AppManifest``s to be switched on and off dynamically (eg if Java9 is compatible with OSGi, being one of the design goals).
 
 
 

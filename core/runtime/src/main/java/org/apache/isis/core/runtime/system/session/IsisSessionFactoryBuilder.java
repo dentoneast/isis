@@ -206,7 +206,7 @@ public class IsisSessionFactoryBuilder {
 
             // wait on this thread for tasks to complete
             ThreadPoolSupport.getInstance().joinGatherFailures(futures);
-            specificationLoader.postProcess();
+
 
             persistenceSessionFactory.catalogNamedQueries(specificationLoader);
 
