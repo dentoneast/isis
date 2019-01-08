@@ -25,6 +25,7 @@ import java.util.Properties;
 import javax.activation.DataSource;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.mail.DefaultAuthenticator;
@@ -42,7 +43,7 @@ import org.apache.isis.config.IsisConfiguration;
 /**
  * A service that sends email notifications when specific events occur
  */
-@Singleton
+@Singleton @ApplicationScoped
 public class EmailServiceDefault implements EmailService {
 
     private static final long serialVersionUID = 1L;

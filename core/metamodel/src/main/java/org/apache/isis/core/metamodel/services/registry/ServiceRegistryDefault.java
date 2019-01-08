@@ -19,6 +19,8 @@
 
 package org.apache.isis.core.metamodel.services.registry;
 
+import static org.apache.isis.commons.internal.base._NullSafe.stream;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +32,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.Bean;
@@ -50,15 +53,13 @@ import org.apache.isis.commons.internal.collections._Multimaps.SetMultimap;
 import org.apache.isis.commons.internal.collections._Sets;
 import org.apache.isis.core.metamodel.services.ServiceUtil;
 
-import static org.apache.isis.commons.internal.base._NullSafe.stream;
-
 import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * @since 2.0.0-M2
  */
-@Singleton @Slf4j
+@Singleton @ApplicationScoped @Slf4j
 public final class ServiceRegistryDefault implements ServiceRegistry {
     
     /**

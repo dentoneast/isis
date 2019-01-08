@@ -19,6 +19,7 @@
 package org.apache.isis.core.runtime.services.message;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.RecoverableException;
 import org.apache.isis.applib.services.i18n.TranslatableString;
@@ -27,7 +28,7 @@ import org.apache.isis.applib.services.message.MessageService;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.security.authentication.MessageBroker;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class MessageServiceDefault implements MessageService {
 
     @Override

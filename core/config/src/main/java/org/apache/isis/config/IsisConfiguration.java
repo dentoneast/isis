@@ -19,24 +19,22 @@
 
 package org.apache.isis.config;
 
+import static org.apache.isis.commons.internal.base._NullSafe.stream;
+import static org.apache.isis.config.internal._Config.acceptBuilder;
+import static org.apache.isis.config.internal._Config.clear;
+import static org.apache.isis.config.internal._Config.getConfiguration;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.Module;
 import org.apache.isis.applib.PropertyResource;
 import org.apache.isis.config.builder.IsisConfigurationBuilder;
 import org.apache.isis.config.resource.ResourceStreamSource;
-
-import static org.apache.isis.commons.internal.base._NullSafe.stream;
-import static org.apache.isis.config.internal._Config.acceptBuilder;
-import static org.apache.isis.config.internal._Config.clear;
-import static org.apache.isis.config.internal._Config.getConfiguration;
 
 /**
  * Immutable set of properties representing the configuration of the running
@@ -52,7 +50,6 @@ import static org.apache.isis.config.internal._Config.getConfiguration;
  * Thus the {@link IsisConfiguration} held by different components may vary, but
  * with each being a possible superset of the previous.
  */
-@ApplicationScoped
 public interface IsisConfiguration {
     
     /**

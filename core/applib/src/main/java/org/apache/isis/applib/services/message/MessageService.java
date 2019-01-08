@@ -19,12 +19,9 @@
 
 package org.apache.isis.applib.services.message;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.i18n.TranslatableString;
 
-@ApplicationScoped
 public interface MessageService {
 
     /**

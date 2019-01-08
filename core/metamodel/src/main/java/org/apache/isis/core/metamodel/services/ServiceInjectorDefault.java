@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
@@ -45,7 +46,7 @@ import org.apache.isis.core.commons.util.ToString;
 import org.apache.isis.core.metamodel.exceptions.MetaModelException;
 import org.apache.isis.core.metamodel.spec.InjectorMethodEvaluator;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class ServiceInjectorDefault implements ServiceInjector {
     
     private static final Logger LOG = LoggerFactory.getLogger(ServiceInjectorDefault.class);

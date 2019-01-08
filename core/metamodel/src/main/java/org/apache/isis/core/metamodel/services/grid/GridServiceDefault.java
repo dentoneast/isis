@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -33,7 +34,7 @@ import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.commons.internal.collections._Lists;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class GridServiceDefault implements GridService {
 
     //private static final Logger LOG = LoggerFactory.getLogger(GridServiceDefault.class);

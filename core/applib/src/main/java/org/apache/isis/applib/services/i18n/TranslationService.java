@@ -21,11 +21,8 @@ package org.apache.isis.applib.services.i18n;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.apache.isis.applib.annotation.Programmatic;
 
-@ApplicationScoped
 public interface TranslationService {
 
     /**

@@ -21,6 +21,7 @@ package org.apache.isis.core.runtime.services.i18n.po;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ import org.apache.isis.commons.internal.context._Context;
 
 import static org.apache.isis.config.internal._Config.getConfiguration;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class TranslationServicePo implements TranslationService {
 
     public static Logger LOG = LoggerFactory.getLogger(TranslationServicePo.class);

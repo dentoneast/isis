@@ -24,7 +24,6 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
@@ -35,7 +34,6 @@ import org.apache.isis.commons.internal.cdi._CDI;
  * @since 2.0.0-M2
  *
  */
-@ApplicationScoped
 public interface ServiceRegistry {
 
     /**
