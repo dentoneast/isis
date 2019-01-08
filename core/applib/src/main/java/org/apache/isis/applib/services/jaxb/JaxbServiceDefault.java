@@ -19,6 +19,7 @@ package org.apache.isis.applib.services.jaxb;
 import java.util.Map;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -33,7 +34,7 @@ import org.apache.isis.applib.services.metamodel.MetaModelService;
 import org.apache.isis.schema.utils.jaxbadapters.PersistentEntitiesAdapter;
 import org.apache.isis.schema.utils.jaxbadapters.PersistentEntityAdapter;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class JaxbServiceDefault extends JaxbService.Simple {
 
     @Override

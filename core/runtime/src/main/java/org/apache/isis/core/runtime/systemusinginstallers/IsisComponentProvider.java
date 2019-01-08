@@ -19,9 +19,13 @@
 
 package org.apache.isis.core.runtime.systemusinginstallers;
 
+import static org.apache.isis.config.internal._Config.getConfiguration;
+
 import java.util.Collection;
 
-import org.apache.isis.applib.services.inject.ServiceInjector;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.commons.factory.InstanceUtil;
 import org.apache.isis.core.metamodel.facetapi.MetaModelRefiner;
@@ -35,8 +39,6 @@ import org.apache.isis.core.security.authentication.manager.AuthenticationManage
 import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
 import org.apache.isis.progmodels.dflt.JavaReflectorHelper;
 import org.apache.isis.progmodels.dflt.ProgrammingModelFacetsJava5;
-
-import static org.apache.isis.config.internal._Config.getConfiguration;
 
 /**
  * 
@@ -74,17 +76,17 @@ public final class IsisComponentProvider {
 
     // -- provideSpecificationLoader
 
+    @Produces @ApplicationScoped
     public SpecificationLoader provideSpecificationLoader(
             final Collection<MetaModelRefiner> metaModelRefiners)  throws IsisSystemException {
 
         final IsisConfiguration configuration = getConfiguration();
         
         final ProgrammingModel programmingModel = createProgrammingModel(configuration);
-        final MetaModelValidator mmv = createMetaModelValidator(configuration);
+        final MetaModelValidator mmValidator = createMetaModelValidator(configuration);
 
-        return JavaReflectorHelper.createObjectReflector(
-                programmingModel, metaModelRefiners,
-                mmv);
+        return JavaReflectorHelper.createSpecificationLoader(
+                programmingModel, metaModelRefiners, mmValidator);
     }
 
     protected MetaModelValidator createMetaModelValidator(IsisConfiguration configuration) {

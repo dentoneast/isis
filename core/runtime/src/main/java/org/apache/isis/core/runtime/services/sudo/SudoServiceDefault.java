@@ -22,6 +22,7 @@ package org.apache.isis.core.runtime.services.sudo;
 import java.util.concurrent.Callable;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -29,7 +30,7 @@ import javax.inject.Inject;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.sudo.SudoService;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class SudoServiceDefault implements SudoService {
 
     @Programmatic

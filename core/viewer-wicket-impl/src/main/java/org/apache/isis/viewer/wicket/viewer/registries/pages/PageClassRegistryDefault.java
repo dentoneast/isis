@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.google.common.collect.Maps;
@@ -38,7 +39,7 @@ import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistrySpi;
  * Default implementation of {@link PageClassRegistry}; just delegates to an
  * underlying {@link PageClassList}.
  */
-@Singleton
+@Singleton @ApplicationScoped
 public class PageClassRegistryDefault implements PageClassRegistry, PageClassRegistrySpi {
 
     private static final long serialVersionUID = 1L;

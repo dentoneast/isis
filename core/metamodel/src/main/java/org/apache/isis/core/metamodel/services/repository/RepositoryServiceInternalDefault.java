@@ -19,6 +19,8 @@
 
 package org.apache.isis.core.metamodel.services.repository;
 
+import static org.apache.isis.config.internal._Config.getConfiguration;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.PersistFailedException;
 import org.apache.isis.applib.RepositoryException;
@@ -41,9 +44,7 @@ import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 
-import static org.apache.isis.config.internal._Config.getConfiguration;
-
-@Singleton
+@Singleton @ApplicationScoped
 public class RepositoryServiceInternalDefault implements RepositoryService {
 
     private boolean autoFlush;

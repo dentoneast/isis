@@ -22,6 +22,8 @@ package org.apache.isis.core.runtime.services.xactn;
 import java.util.concurrent.CountDownLatch;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.xactn.Transaction;
@@ -31,7 +33,7 @@ import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.runtime.system.transaction.IsisTransaction;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class TransactionServiceDefault implements TransactionService {
 
 
@@ -101,8 +103,7 @@ public class TransactionServiceDefault implements TransactionService {
         return persistenceSessionServiceInternal.getTransactionState();
     }
 
-    @javax.inject.Inject
-    PersistenceSessionServiceInternal persistenceSessionServiceInternal;
+    @Inject PersistenceSessionServiceInternal persistenceSessionServiceInternal;
 
 
 }

@@ -20,6 +20,7 @@
 package org.apache.isis.core.metamodel.services.title;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.isis.applib.annotation.Programmatic;
@@ -29,7 +30,7 @@ import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class TitleServiceDefault implements TitleService {
 
     @Programmatic

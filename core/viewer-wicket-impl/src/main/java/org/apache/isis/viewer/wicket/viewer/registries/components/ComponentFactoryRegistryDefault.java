@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Multimap;
@@ -46,7 +47,7 @@ import org.apache.isis.viewer.wicket.ui.app.registry.ComponentFactoryRegistry;
  * Implementation of {@link ComponentFactoryRegistry} that delegates to a
  * provided {@link ComponentFactoryRegistrar}.
  */
-@Singleton
+@Singleton @ApplicationScoped
 public class ComponentFactoryRegistryDefault implements ComponentFactoryRegistry {
 
     private final Multimap<ComponentType, ComponentFactory> componentFactoriesByType;

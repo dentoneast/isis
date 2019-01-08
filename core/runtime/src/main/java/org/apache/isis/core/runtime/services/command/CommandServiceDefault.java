@@ -17,13 +17,14 @@
 package org.apache.isis.core.runtime.services.command;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.command.CommandDefault;
 import org.apache.isis.applib.services.command.spi.CommandService;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class CommandServiceDefault implements CommandService {
 
     @Programmatic

@@ -22,6 +22,7 @@ package org.apache.isis.core.runtime.services.ixn;
 import java.util.List;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.bookmark.Bookmark;
@@ -44,7 +45,7 @@ import org.apache.isis.schema.ixn.v1.PropertyEditDto;
 import org.apache.isis.schema.utils.CommandDtoUtils;
 import org.apache.isis.schema.utils.InteractionDtoUtils;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class InteractionDtoServiceInternalDefault implements InteractionDtoServiceInternal {
 
 

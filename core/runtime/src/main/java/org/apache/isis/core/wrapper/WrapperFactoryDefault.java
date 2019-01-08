@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.isis.applib.annotation.Programmatic;
@@ -67,7 +68,7 @@ import org.apache.isis.core.wrapper.proxy.ProxyCreator;
  * <p>
  * This implementation has no UI-visible actions and is the supported implementation.
  */
-@Singleton
+@Singleton @ApplicationScoped
 public class WrapperFactoryDefault implements WrapperFactory {
 
     private final List<InteractionListener> listeners = new ArrayList<InteractionListener>();

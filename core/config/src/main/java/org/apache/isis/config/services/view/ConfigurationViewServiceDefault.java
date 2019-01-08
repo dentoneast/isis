@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.services.confview.ConfigurationProperty;
 import org.apache.isis.applib.services.confview.ConfigurationViewService;
@@ -36,7 +37,7 @@ import org.apache.isis.config.internal._Config;
 /**
  * @since 2.0.0-M2
  */
-@Singleton
+@Singleton @ApplicationScoped
 public class ConfigurationViewServiceDefault implements ConfigurationViewService {
     
     @Override

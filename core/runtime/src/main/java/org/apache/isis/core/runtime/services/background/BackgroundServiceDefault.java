@@ -23,6 +23,7 @@ import java.util.concurrent.Executors;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -53,7 +54,7 @@ import static org.apache.isis.commons.internal.base._Casts.uncheckedCast;
  * {@link org.apache.isis.applib.services.background.BackgroundCommandService} to
  * be configured.
  */
-@Singleton
+@Singleton @ApplicationScoped
 public class BackgroundServiceDefault implements BackgroundService {
 
     static final Logger LOG = LoggerFactory.getLogger(BackgroundServiceDefault.class);

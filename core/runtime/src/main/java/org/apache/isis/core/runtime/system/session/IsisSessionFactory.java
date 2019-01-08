@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
@@ -67,7 +66,7 @@ import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
  *     it can be {@link Inject}'d into other domain services.
  * </p>
  */
-@Singleton @ApplicationScoped @Startup
+@Singleton @ApplicationScoped
 public class IsisSessionFactory {
 
     //private final static Logger LOG = LoggerFactory.getLogger(IsisSessionFactory.class);
@@ -83,12 +82,14 @@ public class IsisSessionFactory {
 
     @PostConstruct
     public void init() {
+        
+        System.out.println("!!!!!!!!!!!!! IsisSessionFactory INIT " + hashCode());
 
         if(_Context.getIfAny(IsisSessionFactory.class)!=null) {
             return;
         }
         
-        System.out.println("!!!!!!!!!!!!! IsisSessionFactory INIT " + hashCode());
+        //System.out.println("!!!!!!!!!!!!! IsisSessionFactory INIT " + hashCode());
         
         final IsisComponentProvider componentProvider = IsisComponentProvider
                 .builder()
@@ -332,6 +333,7 @@ public class IsisSessionFactory {
 
     /**
      * The {@link ApplicationScopedComponent application-scoped} {@link ServiceInjector}.
+     * @deprecated use IsisContext instead
      */
     public ServiceInjector getServicesInjector() {
         return serviceInjector;
@@ -340,6 +342,7 @@ public class IsisSessionFactory {
     /**
      * The {@link ApplicationScopedComponent application-scoped}
      * {@link SpecificationLoader}.
+     * @deprecated use IsisContext instead
      */
     @Produces @ApplicationScoped
     public SpecificationLoader getSpecificationLoader() {
@@ -351,6 +354,7 @@ public class IsisSessionFactory {
      * create {@link AuthenticationSession}s
      * {@link IsisSession#getAuthenticationSession() within} the
      * {@link IsisSession}.
+     * @deprecated use IsisContext instead
      */
     public AuthenticationManager getAuthenticationManager() {
         return authenticationManager;
@@ -359,6 +363,7 @@ public class IsisSessionFactory {
     /**
      * The {@link AuthorizationManager} that will be used to authorize access to
      * domain objects.
+     * @deprecated use IsisContext instead
      */
     public AuthorizationManager getAuthorizationManager() {
         return authorizationManager;
@@ -368,6 +373,7 @@ public class IsisSessionFactory {
      * The {@link org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory} that will be used to create
      * {@link PersistenceSession} {@link IsisSession#getPersistenceSession()
      * within} the {@link IsisSession}.
+     * @deprecated use IsisContext instead
      */
     public PersistenceSessionFactory getPersistenceSessionFactory() {
         return persistenceSessionFactory;

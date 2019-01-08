@@ -24,6 +24,7 @@ import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -45,7 +46,7 @@ import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.resources._Resources;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class GridLoaderServiceDefault implements GridLoaderService {
 
     private static final Logger LOG = LoggerFactory.getLogger(GridLoaderServiceDefault.class);

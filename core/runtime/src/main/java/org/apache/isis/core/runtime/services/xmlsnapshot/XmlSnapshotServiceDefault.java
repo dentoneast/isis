@@ -17,6 +17,7 @@
 package org.apache.isis.core.runtime.services.xmlsnapshot;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.xmlsnapshot.XmlSnapshotService;
@@ -36,7 +37,7 @@ import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
  * with {@link org.apache.isis.applib.annotation.DomainService}.  Because this class is implemented in core, this means
  * that it is automatically registered and available for use; no further configuration is required.
  */
-@Singleton
+@Singleton @ApplicationScoped
 public class XmlSnapshotServiceDefault extends XmlSnapshotServiceAbstract {
 
     static class XmlSnapshotServiceDefaultBuilder implements XmlSnapshotService.Builder{

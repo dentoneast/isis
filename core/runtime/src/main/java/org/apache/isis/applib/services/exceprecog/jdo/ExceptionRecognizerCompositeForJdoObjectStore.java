@@ -20,6 +20,7 @@ package org.apache.isis.applib.services.exceprecog.jdo;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
@@ -37,7 +38,7 @@ import org.apache.isis.config.internal._Config;
  *     the first one found).
  * </p>
  */
-@Singleton
+@Singleton @ApplicationScoped
 public class ExceptionRecognizerCompositeForJdoObjectStore extends ExceptionRecognizerComposite {
 
     public static final String KEY_DISABLE = 

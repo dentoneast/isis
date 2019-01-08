@@ -22,9 +22,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.ejb.Singleton;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.annotation.Where;
@@ -38,14 +36,13 @@ import org.apache.isis.core.metamodel.facets.actions.homepage.HomePageFacet;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.Contributed;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class HomePageProviderServiceDefault implements HomePageProviderService {
-
-    @SuppressWarnings("unused")
-    private final static Logger LOG = LoggerFactory.getLogger(HomePageProviderServiceDefault.class);
+    
+    //private final static Logger LOG = LoggerFactory.getLogger(HomePageProviderServiceDefault.class);
 
     @Programmatic
     @Override
@@ -56,7 +53,10 @@ public class HomePageProviderServiceDefault implements HomePageProviderService {
     private final _Lazy<Object> homePage = _Lazy.of(this::lookupHomePage);
 
     private Object lookupHomePage() {
-        final Stream<ObjectAdapter> serviceAdapters = getPersistenceSession().streamServices();
+        final Stream<ObjectAdapter> serviceAdapters = 
+                IsisContext.getPersistenceSession()
+                .map(PersistenceSession::streamServices)
+                .orElse(Stream.empty());
         
         return serviceAdapters.map(serviceAdapter->{
             final ObjectSpecification serviceSpec = serviceAdapter.getSpecification();
@@ -116,14 +116,5 @@ public class HomePageProviderServiceDefault implements HomePageProviderService {
     // be hidden/disabled, but will be visible/enabled (perhaps incorrectly)
     // for any other value for Where
     protected static final Where WHERE_FOR_ACTION_INVOCATION = Where.ANYWHERE;
-
-
-    @javax.inject.Inject
-    IsisSessionFactory isisSessionFactory;
-
-    protected PersistenceSession getPersistenceSession() {
-        return isisSessionFactory.getCurrentSession().getPersistenceSession();
-    }
-
 
 }

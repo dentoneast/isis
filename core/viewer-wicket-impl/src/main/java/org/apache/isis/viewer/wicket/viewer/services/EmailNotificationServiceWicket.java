@@ -17,6 +17,7 @@
 package org.apache.isis.viewer.wicket.viewer.services;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.services.userreg.EmailNotificationService;
 import org.apache.isis.applib.services.userreg.events.EmailRegistrationEvent;
@@ -24,7 +25,7 @@ import org.apache.isis.applib.services.userreg.events.PasswordResetEvent;
 import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class EmailNotificationServiceWicket implements EmailNotificationService {
 
     private static final long serialVersionUID = 1L;

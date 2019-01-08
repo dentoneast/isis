@@ -21,6 +21,7 @@ package org.apache.isis.core.runtime.services.menubars;
 import java.nio.charset.StandardCharsets;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -37,7 +38,7 @@ import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 
 import static org.apache.isis.commons.internal.resources._Resources.loadAsString;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class MenuBarsLoaderServiceDefault implements MenuBarsLoaderService {
     
     private final static Logger log = LoggerFactory.getLogger(MenuBarsLoaderServiceDefault.class);

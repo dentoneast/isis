@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Supplier;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.query.Query;
 import org.apache.isis.applib.services.bookmark.Bookmark;
@@ -33,7 +31,6 @@ import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 
-@ApplicationScoped
 public interface PersistenceSessionServiceInternal extends ObjectAdapterProvider.Delegating {
     
     // -- instantiate

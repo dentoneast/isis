@@ -19,17 +19,18 @@
 package org.apache.isis.core.metamodel.services.appfeat;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import org.apache.isis.applib.services.factory.FactoryService;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class ApplicationFeatureFactory {
 
     public ApplicationFeature newApplicationFeature() {
         return factoryService.instantiate(ApplicationFeature.class);
     }
 
-    @javax.inject.Inject
-    FactoryService factoryService;
+    @Inject FactoryService factoryService;
 
 }

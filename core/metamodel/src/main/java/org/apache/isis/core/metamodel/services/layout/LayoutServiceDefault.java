@@ -26,6 +26,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.bind.Marshaller;
 
@@ -45,7 +46,7 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.objectstore.jdo.metamodel.facets.object.persistencecapable.JdoPersistenceCapableFacet;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class LayoutServiceDefault implements LayoutService2 {
 
     //private static final Logger LOG = LoggerFactory.getLogger(LayoutServiceDefault.class);

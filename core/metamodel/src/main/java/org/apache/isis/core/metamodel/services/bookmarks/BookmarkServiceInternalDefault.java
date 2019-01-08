@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.isis.applib.annotation.Programmatic;
@@ -52,7 +53,7 @@ import org.apache.isis.core.runtime.persistence.ObjectNotFoundException;
  * with {@link org.apache.isis.applib.annotation.DomainService}.  Because this class is implemented in core, this means
  * that it is automatically registered and available for use; no further configuration is required.
  */
-@Singleton
+@Singleton @ApplicationScoped
 public class BookmarkServiceInternalDefault implements BookmarkService, SerializingAdapter {
 
 

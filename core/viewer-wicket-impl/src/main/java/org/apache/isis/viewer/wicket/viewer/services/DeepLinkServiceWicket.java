@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.wicket.Page;
@@ -42,7 +43,7 @@ import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistry;
  * An implementation of {@link org.apache.isis.applib.services.linking.DeepLinkService}
  * for Wicket Viewer
  */
-@Singleton
+@Singleton @ApplicationScoped
 public class DeepLinkServiceWicket implements DeepLinkService {
 
     @Programmatic

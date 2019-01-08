@@ -20,6 +20,7 @@
 package org.apache.isis.viewer.wicket.viewer.registries.pages;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.wicket.Page;
 
@@ -42,7 +43,7 @@ import org.apache.isis.viewer.wicket.ui.pages.voidreturn.VoidReturnPage;
  * Default implementation of {@link PageClassList}, specifying the default pages
  * for each of the {@link PageType}s.
  */
-@Singleton
+@Singleton @ApplicationScoped
 public class PageClassListDefault implements PageClassList {
 
     private static final long serialVersionUID = 1L;

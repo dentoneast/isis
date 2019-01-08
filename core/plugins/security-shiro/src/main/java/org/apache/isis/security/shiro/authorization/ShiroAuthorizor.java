@@ -19,6 +19,7 @@
 package org.apache.isis.security.shiro.authorization;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.RealmSecurityManager;
@@ -39,7 +40,7 @@ import org.apache.isis.security.shiro.ShiroSecurityContext;
  * However, although there are two objects, they are set up to share the same {@link SecurityManager Shiro SecurityManager}
  * (bound to a thread-local).
  */
-@Singleton
+@Singleton @ApplicationScoped
 public class ShiroAuthorizor implements Authorizor {
 
     //private static final Logger LOG = LoggerFactory.getLogger(ShiroAuthorizor.class);

@@ -20,6 +20,7 @@ package org.apache.isis.core.metamodel.services.swagger;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.isis.applib.annotation.Programmatic;
@@ -32,7 +33,7 @@ import static org.apache.isis.commons.internal.base._With.ifPresentElse;
 import static org.apache.isis.commons.internal.resources._Resources.getRestfulPathIfAny;
 import static org.apache.isis.commons.internal.resources._Resources.prependContextPathIfPresent;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class SwaggerServiceDefault implements SwaggerService {
 
     // private final static Logger LOG = LoggerFactory.getLogger(SwaggerServiceDefault.class);

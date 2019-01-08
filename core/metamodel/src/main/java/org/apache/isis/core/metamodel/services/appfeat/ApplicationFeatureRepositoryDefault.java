@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.annotation.SemanticsOf;
@@ -57,7 +58,7 @@ import org.apache.isis.core.metamodel.specloader.specimpl.ContributeeMember;
 import static org.apache.isis.commons.internal.base._NullSafe.stream;
 import static org.apache.isis.config.internal._Config.getConfiguration;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class ApplicationFeatureRepositoryDefault implements ApplicationFeatureRepository {
 
     // -- caches

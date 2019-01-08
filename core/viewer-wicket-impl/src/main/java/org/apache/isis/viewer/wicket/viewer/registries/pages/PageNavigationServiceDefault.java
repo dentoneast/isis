@@ -20,6 +20,7 @@
 package org.apache.isis.viewer.wicket.viewer.registries.pages;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.wicket.Page;
@@ -35,7 +36,7 @@ import org.apache.isis.viewer.wicket.ui.pages.PageNavigationService;
 /**
  * Default implementation of {@link org.apache.isis.viewer.wicket.ui.pages.PageNavigationService}
  */
-@Singleton
+@Singleton @ApplicationScoped
 public class PageNavigationServiceDefault implements PageNavigationService {
 
     private static final long serialVersionUID = 1L;

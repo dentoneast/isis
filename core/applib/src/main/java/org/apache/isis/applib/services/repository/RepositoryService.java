@@ -22,12 +22,9 @@ package org.apache.isis.applib.services.repository;
 import java.util.List;
 import java.util.function.Predicate;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.query.Query;
 
-@ApplicationScoped
 public interface RepositoryService {
 
     /**

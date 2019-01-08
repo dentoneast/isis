@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.isis.applib.annotation.Programmatic;
@@ -43,7 +44,7 @@ import static java.util.regex.Pattern.quote;
 /**
  * A service that sends email notifications when specific events occur
  */
-@Singleton
+@Singleton @ApplicationScoped
 public class EmailNotificationServiceDefault implements EmailNotificationService {
     
     private static final long serialVersionUID = 1L;

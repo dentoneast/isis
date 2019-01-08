@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import com.google.common.collect.Maps;
 
@@ -45,7 +46,7 @@ import images.Images;
  * <p>
  * Searches for a fixed set of suffixes: <code>png, gif, jpeg, jpg, svg</code>.
  */
-@Singleton
+@Singleton @ApplicationScoped
 public class ImageResourceCacheClassPath implements ImageResourceCache {
 
     private static final long serialVersionUID = 1L;

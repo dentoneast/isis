@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.bookmark.Bookmark;
@@ -49,7 +50,7 @@ import org.apache.isis.schema.common.v1.ValueWithTypeDto;
 import org.apache.isis.schema.utils.CommandDtoUtils;
 import org.apache.isis.schema.utils.CommonDtoUtils;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class CommandDtoServiceInternalDefault implements CommandDtoServiceInternal {
 
     @Programmatic

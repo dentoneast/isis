@@ -33,12 +33,12 @@ public final class JavaReflectorHelper  {
 
     private JavaReflectorHelper(){}
 
-    public static SpecificationLoader createObjectReflector(
+    public static SpecificationLoader createSpecificationLoader(
             final ProgrammingModel programmingModel,
             final Collection<MetaModelRefiner> metaModelRefiners,
-            final MetaModelValidator mmv) {
+            final MetaModelValidator mmValidator) {
 
-        MetaModelValidatorComposite metaModelValidator = MetaModelValidatorComposite.asComposite(mmv);
+        MetaModelValidatorComposite metaModelValidator = MetaModelValidatorComposite.asComposite(mmValidator);
         for (MetaModelRefiner metaModelRefiner : metaModelRefiners) {
             metaModelRefiner.refineProgrammingModel(programmingModel);
             metaModelRefiner.refineMetaModelValidator(metaModelValidator);
@@ -48,5 +48,7 @@ public final class JavaReflectorHelper  {
 
         return new SpecificationLoader(programmingModel, metaModelValidator);
     }
+    
+    
 
 }

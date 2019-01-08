@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -45,7 +46,7 @@ import org.apache.isis.core.runtime.services.changes.PreAndPostValues;
 /**
  * Wrapper around {@link org.apache.isis.applib.services.audit.AuditerService}.
  */
-@Singleton
+@Singleton @ApplicationScoped
 public class AuditingServiceInternal {
 
     Boolean whetherCanAudit;

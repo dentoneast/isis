@@ -20,13 +20,10 @@ package org.apache.isis.core.metamodel.specloader.postprocessor;
 
 import java.util.List;
 
-import javax.enterprise.context.ApplicationScoped;
-
 import org.apache.isis.core.metamodel.progmodel.ObjectSpecificationPostProcessor;
 import org.apache.isis.core.metamodel.progmodel.ProgrammingModel;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 
-@ApplicationScoped
 public class PostProcessor {
 
     private final ProgrammingModel programmingModel;

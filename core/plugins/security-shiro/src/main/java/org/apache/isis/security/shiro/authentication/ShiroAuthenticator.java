@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -65,7 +66,7 @@ import static org.apache.isis.config.internal._Config.getConfiguration;
  * {@link SecurityManager Shiro SecurityManager}
  * (bound to a thread-local).
  */
-@Singleton
+@Singleton @ApplicationScoped
 public class ShiroAuthenticator implements Authenticator {
 
     private static final Logger LOG = LoggerFactory.getLogger(ShiroAuthenticator.class);

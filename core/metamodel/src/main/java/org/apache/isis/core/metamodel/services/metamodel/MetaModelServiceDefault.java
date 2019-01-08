@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.isis.applib.AppManifest;
@@ -55,7 +56,7 @@ import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.schema.metamodel.v1.MetamodelDto;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class MetaModelServiceDefault implements MetaModelService {
 
     // private final static Logger LOG = LoggerFactory.getLogger(MetaModelServiceDefault.class);

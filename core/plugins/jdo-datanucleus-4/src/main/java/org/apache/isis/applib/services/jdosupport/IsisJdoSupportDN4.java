@@ -30,6 +30,7 @@ import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.datastore.JDOConnection;
@@ -60,7 +61,7 @@ import static org.apache.isis.commons.internal.base._NullSafe.stream;
  * with {@link org.apache.isis.applib.annotation.DomainService}.  Because it is implemented in the core, this means
  * that it is automatically registered and available for use; no further configuration is required.
  */
-@Singleton
+@Singleton @ApplicationScoped
 public class IsisJdoSupportDN4 implements IsisJdoSupport_v3_1 {
 
     @Programmatic

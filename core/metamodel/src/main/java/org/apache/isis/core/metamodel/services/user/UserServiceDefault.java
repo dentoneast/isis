@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.isis.applib.annotation.Programmatic;
@@ -34,7 +35,7 @@ import org.apache.isis.core.security.authentication.AuthenticationSessionProvide
 
 import static org.apache.isis.commons.internal.base._NullSafe.stream;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class UserServiceDefault implements UserService {
 
     @Programmatic

@@ -17,6 +17,7 @@
 package org.apache.isis.core.runtime.services.authsess;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.isis.applib.annotation.Programmatic;
@@ -26,7 +27,7 @@ import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 import org.apache.isis.core.security.authentication.standard.SimpleSession;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class AuthenticationSessionProviderDefault implements AuthenticationSessionProvider {
 
     /**

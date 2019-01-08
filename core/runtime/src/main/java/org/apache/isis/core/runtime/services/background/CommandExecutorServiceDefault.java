@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -72,7 +73,7 @@ import org.apache.isis.schema.common.v1.ValueWithTypeDto;
 import org.apache.isis.schema.utils.CommandDtoUtils;
 import org.apache.isis.schema.utils.CommonDtoUtils;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class CommandExecutorServiceDefault implements CommandExecutorService {
 
     private final static Logger LOG = LoggerFactory.getLogger(CommandExecutorServiceDefault.class);

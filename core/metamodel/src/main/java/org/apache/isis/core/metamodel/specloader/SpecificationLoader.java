@@ -23,9 +23,6 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.ejb.Singleton;
-import javax.enterprise.context.ApplicationScoped;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +86,6 @@ import org.apache.isis.schema.utils.CommonDtoUtils;
  * </p>
  *
  */
-@Singleton @ApplicationScoped
 public class SpecificationLoader {
 
     private final static Logger LOG = LoggerFactory.getLogger(SpecificationLoader.class);
@@ -107,7 +103,6 @@ public class SpecificationLoader {
     private final ProgrammingModel programmingModel;
     private final FacetProcessor facetProcessor;
 
-    //private final ServiceInjector servicesInjector;
 
     private final MetaModelValidator metaModelValidator;
     private final SpecificationCacheDefault cache = new SpecificationCacheDefault();

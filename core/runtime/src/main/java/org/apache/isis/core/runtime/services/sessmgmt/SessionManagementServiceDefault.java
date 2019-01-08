@@ -20,6 +20,7 @@
 package org.apache.isis.core.runtime.services.sessmgmt;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.sessmgmt.SessionManagementService;
@@ -27,7 +28,7 @@ import org.apache.isis.core.metamodel.services.persistsession.PersistenceSession
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class SessionManagementServiceDefault implements SessionManagementService {
 
     @Programmatic

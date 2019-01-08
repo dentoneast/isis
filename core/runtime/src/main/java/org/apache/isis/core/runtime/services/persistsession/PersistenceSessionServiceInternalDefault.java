@@ -23,6 +23,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.function.Supplier;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.apache.isis.applib.NonRecoverableException;
@@ -53,7 +54,7 @@ import static java.util.Optional.ofNullable;
 import static org.apache.isis.commons.internal.base._With.acceptIfPresent;
 import static org.apache.isis.commons.internal.base._With.mapIfPresentElse;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class PersistenceSessionServiceInternalDefault implements PersistenceSessionServiceInternal {
 
     @Override

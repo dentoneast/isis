@@ -22,10 +22,11 @@ package org.apache.isis.core.metamodel.specloader;
 import java.lang.reflect.Method;
 
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.core.metamodel.spec.InjectorMethodEvaluator;
 
-@Singleton
+@Singleton @ApplicationScoped
 public final class InjectorMethodEvaluatorDefault implements InjectorMethodEvaluator {
 
 //    private final Map<Method, Map<Class<?>, Boolean>> isInjectorMethod = _Maps.newConcurrentHashMap();

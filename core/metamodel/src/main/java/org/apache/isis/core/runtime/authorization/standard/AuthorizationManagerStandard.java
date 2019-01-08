@@ -22,6 +22,7 @@ package org.apache.isis.core.runtime.authorization.standard;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -32,7 +33,7 @@ import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
 import org.apache.isis.core.security.authorization.standard.Authorizor;
 
-@Singleton
+@Singleton @ApplicationScoped
 public class AuthorizationManagerStandard implements AuthorizationManager {
 
 
@@ -108,13 +109,11 @@ public class AuthorizationManagerStandard implements AuthorizationManager {
         return (identifier.getClassName().equals(""));
     }
 
-
-    public void refineProgrammingModel(@Observes ProgrammingModel baseProgrammingModel) {
+    public static void refineProgrammingModel(@Observes ProgrammingModel baseProgrammingModel) {
         final AuthorizationFacetFactory facetFactory = new AuthorizationFacetFactory();
         baseProgrammingModel.addFactory(facetFactory);
     }
 
-    @Inject
-    protected Authorizor authorizor;
+    @Inject protected Authorizor authorizor;
 
 }
