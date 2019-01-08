@@ -97,7 +97,7 @@ public class IsisSessionFactoryBuilder {
         try {
 
             final ServiceRegistry servicesRegistry = IsisContext.getServiceRegistry();
-            final ServiceInjector servicesInjector = IsisContext.getServicesInjector();
+            final ServiceInjector servicesInjector = IsisContext.getServiceInjector();
             final AuthenticationManager authenticationManager = componentProvider.provideAuthenticationManager();
             final AuthorizationManager authorizationManager = componentProvider.provideAuthorizationManager();
 

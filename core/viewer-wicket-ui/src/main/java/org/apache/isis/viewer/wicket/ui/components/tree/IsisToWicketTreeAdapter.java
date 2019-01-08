@@ -228,7 +228,7 @@ class IsisToWicketTreeAdapter {
                 return wrappedTreeAdapter;
             }
             try {
-                final FactoryService factoryService = IsisContext.getServicesInjector()
+                final FactoryService factoryService = IsisContext.getServiceRegistry()
                         .lookupServiceElseFail(FactoryService.class);
                 return wrappedTreeAdapter = factoryService.instantiate(treeAdapterClass);
             } catch (Exception e) {

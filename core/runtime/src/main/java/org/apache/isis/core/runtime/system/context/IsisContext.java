@@ -143,7 +143,7 @@ public interface IsisContext {
      * @return framework's ServicesInjector
      * @throws NoSuchElementException - if ServicesInjector not managed
      */
-    public static ServiceInjector getServicesInjector() {
+    public static ServiceInjector getServiceInjector() {
         return _CDI.getSingleton(ServiceInjector.class);
     }
     

@@ -54,7 +54,7 @@ public class EmailNotificationServiceWicket implements EmailNotificationService 
     private final transient _Lazy<EmailNotificationService> delegate = _Lazy.of(this::loadDelegate);   
     
     private EmailNotificationService loadDelegate() {
-        return IsisContext.getServicesInjector().lookupServiceElseFail(EmailNotificationService.class);
+        return IsisContext.getServiceRegistry().lookupServiceElseFail(EmailNotificationService.class);
     }
 
 }
