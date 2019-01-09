@@ -22,7 +22,6 @@ package org.apache.isis.core.metamodel.facets.actions.action.invocation;
 import java.lang.reflect.Method;
 
 import org.apache.isis.applib.events.domain.ActionDomainEvent;
-import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 

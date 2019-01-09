@@ -18,6 +18,8 @@
  */
 package org.apache.isis.core.metamodel.specloader.validator;
 
+import static org.apache.isis.commons.internal.base._NullSafe.stream;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +33,6 @@ import org.apache.isis.applib.services.metamodel.MetaModelService;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
-
-import static org.apache.isis.commons.internal.base._NullSafe.stream;
 
 public class MetaModelValidatorToCheckModuleExtent extends MetaModelValidatorComposite {
 

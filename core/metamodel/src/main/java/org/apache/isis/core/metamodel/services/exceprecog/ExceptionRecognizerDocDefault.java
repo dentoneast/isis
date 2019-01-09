@@ -21,9 +21,8 @@ package org.apache.isis.core.metamodel.services.exceprecog;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.isis.applib.RecoverableException;
 import org.apache.isis.applib.annotation.Programmatic;

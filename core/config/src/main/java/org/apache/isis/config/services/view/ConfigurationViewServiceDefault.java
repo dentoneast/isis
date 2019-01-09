@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.services.confview.ConfigurationProperty;
 import org.apache.isis.applib.services.confview.ConfigurationViewService;

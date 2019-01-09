@@ -21,7 +21,6 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.bookmark.Bookmark;

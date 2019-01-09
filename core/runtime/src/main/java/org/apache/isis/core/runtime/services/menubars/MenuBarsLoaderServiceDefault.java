@@ -18,11 +18,12 @@
  */
 package org.apache.isis.core.runtime.services.menubars;
 
+import static org.apache.isis.commons.internal.resources._Resources.loadAsString;
+
 import java.nio.charset.StandardCharsets;
 
-import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +36,6 @@ import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-
-import static org.apache.isis.commons.internal.resources._Resources.loadAsString;
 
 @Singleton
 public class MenuBarsLoaderServiceDefault implements MenuBarsLoaderService {

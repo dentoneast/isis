@@ -19,7 +19,6 @@
 package org.apache.isis.core.runtime.services.message;
 
 import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.RecoverableException;
 import org.apache.isis.applib.services.i18n.TranslatableString;

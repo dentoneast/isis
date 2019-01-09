@@ -19,6 +19,8 @@
 
 package org.apache.isis.core.metamodel.facets;
 
+import static org.apache.isis.commons.internal.base._Casts.uncheckedCast;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -40,8 +42,6 @@ import org.apache.isis.core.metamodel.facetapi.IdentifiedHolder;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.spec.feature.ObjectActionParameter;
-
-import static org.apache.isis.commons.internal.base._Casts.uncheckedCast;
 
 public class DomainEventHelper {
 

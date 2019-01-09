@@ -24,9 +24,8 @@ import java.util.Properties;
 
 import javax.activation.DataSource;
 import javax.annotation.PostConstruct;
-import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.EmailException;

@@ -19,21 +19,20 @@
 
 package org.apache.isis.core.metamodel.services.user;
 
+import static org.apache.isis.commons.internal.base._NullSafe.stream;
+
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.security.UserMemento;
 import org.apache.isis.applib.services.user.UserService;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
-
-import static org.apache.isis.commons.internal.base._NullSafe.stream;
 
 @Singleton
 public class UserServiceDefault implements UserService {

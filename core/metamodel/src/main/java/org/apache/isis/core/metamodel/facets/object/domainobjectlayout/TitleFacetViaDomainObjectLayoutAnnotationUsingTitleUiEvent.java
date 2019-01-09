@@ -22,7 +22,6 @@ package org.apache.isis.core.metamodel.facets.object.domainobjectlayout;
 import java.util.List;
 import java.util.Map;
 
-
 import org.apache.isis.applib.NonRecoverableException;
 import org.apache.isis.applib.annotation.DomainObjectLayout;
 import org.apache.isis.applib.events.ui.TitleUiEvent;

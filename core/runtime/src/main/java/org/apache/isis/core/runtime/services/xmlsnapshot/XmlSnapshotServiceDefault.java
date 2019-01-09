@@ -17,7 +17,6 @@
 package org.apache.isis.core.runtime.services.xmlsnapshot;
 
 import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.xmlsnapshot.XmlSnapshotService;

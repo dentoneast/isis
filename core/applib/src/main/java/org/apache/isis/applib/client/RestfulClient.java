@@ -18,6 +18,8 @@
  */
 package org.apache.isis.applib.client;
 
+import static org.apache.isis.commons.internal.base._NullSafe.stream;
+
 import java.util.EnumSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
@@ -34,8 +36,6 @@ import org.apache.isis.applib.client.auth.BasicAuthFilter.Credentials;
 import org.apache.isis.applib.client.log.RestfulLoggingFilter;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.context._Context;
-
-import static org.apache.isis.commons.internal.base._NullSafe.stream;
 
 /**
  * Setup the Restful Client with Basic-Auth:

@@ -18,6 +18,8 @@
  */
 package org.apache.isis.applib.client.auth;
 
+import static org.apache.isis.commons.internal.base._With.requires;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
@@ -27,8 +29,6 @@ import javax.ws.rs.client.ClientRequestFilter;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.isis.commons.internal.base._Strings;
-
-import static org.apache.isis.commons.internal.base._With.requires;
 
 /**
  * 

@@ -19,6 +19,8 @@
 
 package org.apache.isis.core.metamodel.specloader.specimpl.standalonelist;
 
+import static org.apache.isis.commons.internal.base._With.mapIfPresentElse;
+
 import java.util.List;
 
 import org.apache.isis.commons.internal.base._Lazy;
@@ -37,8 +39,6 @@ import org.apache.isis.core.metamodel.spec.feature.ObjectAssociation;
 import org.apache.isis.core.metamodel.specloader.facetprocessor.FacetProcessor;
 import org.apache.isis.core.metamodel.specloader.postprocessor.PostProcessor;
 import org.apache.isis.core.metamodel.specloader.specimpl.ObjectSpecificationAbstract;
-
-import static org.apache.isis.commons.internal.base._With.mapIfPresentElse;
 
 /**
  * A custom {@link ObjectSpecification} that is designed to treat the

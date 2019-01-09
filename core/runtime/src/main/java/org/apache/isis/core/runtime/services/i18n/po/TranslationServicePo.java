@@ -18,10 +18,11 @@
  */
 package org.apache.isis.core.runtime.services.i18n.po;
 
+import static org.apache.isis.config.internal._Config.getConfiguration;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +32,6 @@ import org.apache.isis.applib.services.i18n.LocaleProvider;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.i18n.TranslationsResolver;
 import org.apache.isis.commons.internal.context._Context;
-
-import static org.apache.isis.config.internal._Config.getConfiguration;
 
 @Singleton
 public class TranslationServicePo implements TranslationService {

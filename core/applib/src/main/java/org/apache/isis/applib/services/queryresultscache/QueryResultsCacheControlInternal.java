@@ -18,7 +18,6 @@ package org.apache.isis.applib.services.queryresultscache;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.AbstractSubscriber;
 import org.apache.isis.applib.annotation.Programmatic;

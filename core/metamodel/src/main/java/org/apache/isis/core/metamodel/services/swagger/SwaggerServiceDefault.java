@@ -18,20 +18,19 @@
  */
 package org.apache.isis.core.metamodel.services.swagger;
 
+import static org.apache.isis.commons.internal.base._Strings.prefix;
+import static org.apache.isis.commons.internal.base._With.ifPresentElse;
+import static org.apache.isis.commons.internal.resources._Resources.getRestfulPathIfAny;
+import static org.apache.isis.commons.internal.resources._Resources.prependContextPathIfPresent;
+
 import javax.annotation.PostConstruct;
-import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.swagger.SwaggerService;
 import org.apache.isis.core.metamodel.services.swagger.internal.SwaggerSpecGenerator;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-
-import static org.apache.isis.commons.internal.base._Strings.prefix;
-import static org.apache.isis.commons.internal.base._With.ifPresentElse;
-import static org.apache.isis.commons.internal.resources._Resources.getRestfulPathIfAny;
-import static org.apache.isis.commons.internal.resources._Resources.prependContextPathIfPresent;
 
 @Singleton
 public class SwaggerServiceDefault implements SwaggerService {

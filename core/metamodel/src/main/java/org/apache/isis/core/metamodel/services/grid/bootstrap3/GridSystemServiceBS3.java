@@ -16,6 +16,8 @@
  */
 package org.apache.isis.core.metamodel.services.grid.bootstrap3;
 
+import static org.apache.isis.commons.internal.base._NullSafe.stream;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -25,7 +27,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.annotation.ActionLayout;
 import org.apache.isis.applib.annotation.Programmatic;
@@ -58,8 +59,6 @@ import org.apache.isis.core.metamodel.spec.feature.ObjectAssociation;
 import org.apache.isis.core.metamodel.spec.feature.ObjectMember;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
-
-import static org.apache.isis.commons.internal.base._NullSafe.stream;
 
 @Singleton
 public class GridSystemServiceBS3 extends GridSystemServiceAbstract<BS3Grid> {

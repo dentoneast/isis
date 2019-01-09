@@ -24,7 +24,6 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Map;
 
-import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.facetapi.Facet;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;

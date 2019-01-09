@@ -19,6 +19,9 @@
 
 package org.apache.isis.core.metamodel.facets.collections.javautilcollection;
 
+import static org.apache.isis.commons.internal.base._NullSafe.isEmpty;
+import static org.apache.isis.commons.internal.collections._Arrays.toArray;
+
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -28,9 +31,6 @@ import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.collections.CollectionFacetAbstract;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
-
-import static org.apache.isis.commons.internal.base._NullSafe.isEmpty;
-import static org.apache.isis.commons.internal.collections._Arrays.toArray;
 
 public class JavaArrayFacet extends CollectionFacetAbstract {
 

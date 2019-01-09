@@ -19,14 +19,14 @@
 
 package org.apache.isis.core.metamodel.facets.object.value.vsp;
 
+import static org.apache.isis.commons.internal.base._Casts.uncheckedCast;
+
 import org.apache.isis.applib.adapters.ValueSemanticsProvider;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.commons.lang.ClassUtil;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
-
-import static org.apache.isis.commons.internal.base._Casts.uncheckedCast;
 
 public final class ValueSemanticsProviderUtil {
 

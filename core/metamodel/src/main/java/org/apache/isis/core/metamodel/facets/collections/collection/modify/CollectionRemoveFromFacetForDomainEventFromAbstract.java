@@ -22,13 +22,12 @@ package org.apache.isis.core.metamodel.facets.collections.collection.modify;
 import static org.apache.isis.commons.internal.base._Casts.uncheckedCast;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.apache.isis.applib.events.domain.AbstractDomainEvent;
 import org.apache.isis.applib.events.domain.CollectionDomainEvent;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.base._Casts;
-import java.util.Map;
-
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.facetapi.Facet;

@@ -20,7 +20,6 @@
 package org.apache.isis.core.metamodel.facets.members.order.annotprop;
 
 import org.apache.isis.applib.annotation.MemberOrder;
-import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.core.metamodel.facetapi.FacetUtil;
 import org.apache.isis.core.metamodel.facetapi.FeatureType;
 import org.apache.isis.core.metamodel.facets.Annotations;

@@ -22,7 +22,6 @@ package org.apache.isis.core.metamodel.specloader;
 import java.lang.reflect.Method;
 
 import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.core.metamodel.spec.InjectorMethodEvaluator;
 

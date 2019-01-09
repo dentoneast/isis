@@ -18,6 +18,8 @@
  */
 package org.apache.isis.schema.utils;
 
+import static org.apache.isis.commons.internal.collections._Maps.entry;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collection;
@@ -55,8 +57,6 @@ import org.apache.isis.schema.utils.jaxbadapters.JodaDateTimeXMLGregorianCalenda
 import org.apache.isis.schema.utils.jaxbadapters.JodaLocalDateTimeXMLGregorianCalendarAdapter;
 import org.apache.isis.schema.utils.jaxbadapters.JodaLocalDateXMLGregorianCalendarAdapter;
 import org.apache.isis.schema.utils.jaxbadapters.JodaLocalTimeXMLGregorianCalendarAdapter;
-
-import static org.apache.isis.commons.internal.collections._Maps.entry;
 
 public final class CommonDtoUtils {
 

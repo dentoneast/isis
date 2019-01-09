@@ -21,9 +21,8 @@ package org.apache.isis.core.runtime.services.xactn;
 
 import java.util.concurrent.CountDownLatch;
 
-import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.xactn.Transaction;

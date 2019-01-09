@@ -19,6 +19,12 @@
 
 package org.apache.isis.core.runtime.threadpool;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.isis.commons.internal.base._Casts.uncheckedCast;
+import static org.apache.isis.commons.internal.base._With.requires;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -45,12 +51,6 @@ import org.slf4j.LoggerFactory;
 import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.context._Context;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.isis.commons.internal.base._Casts.uncheckedCast;
-import static org.apache.isis.commons.internal.base._With.requires;
 
 /**
  * ThreadPoolSupport is application-scoped, meaning ThreadPoolSupport is closed on

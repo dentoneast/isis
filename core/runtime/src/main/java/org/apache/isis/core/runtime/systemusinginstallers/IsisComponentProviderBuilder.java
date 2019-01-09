@@ -18,12 +18,12 @@
  */
 package org.apache.isis.core.runtime.systemusinginstallers;
 
+import static org.apache.isis.commons.internal.base._With.computeIfAbsent;
+
 import org.apache.isis.core.runtime.authorization.standard.AuthorizationManagerStandard;
 import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
 import org.apache.isis.core.security.authentication.standard.AuthenticationManagerStandard;
 import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
-
-import static org.apache.isis.commons.internal.base._With.computeIfAbsent;
 
 public class IsisComponentProviderBuilder {
     

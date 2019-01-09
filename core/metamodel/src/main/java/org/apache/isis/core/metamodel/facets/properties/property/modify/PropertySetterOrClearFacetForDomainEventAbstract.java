@@ -19,6 +19,8 @@
 
 package org.apache.isis.core.metamodel.facets.properties.property.modify;
 
+import static org.apache.isis.commons.internal.base._Casts.uncheckedCast;
+
 import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Objects;
@@ -44,12 +46,9 @@ import org.apache.isis.core.metamodel.facets.properties.publish.PublishedPropert
 import org.apache.isis.core.metamodel.facets.properties.update.clear.PropertyClearFacet;
 import org.apache.isis.core.metamodel.facets.properties.update.modify.PropertySetterFacet;
 import org.apache.isis.core.metamodel.services.ixn.InteractionDtoServiceInternal;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.services.publishing.PublishingServiceInternal;
 import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
 import org.apache.isis.schema.ixn.v1.PropertyEditDto;
-
-import static org.apache.isis.commons.internal.base._Casts.uncheckedCast;
 
 public abstract class PropertySetterOrClearFacetForDomainEventAbstract
 extends SingleValueFacetAbstract<Class<? extends PropertyDomainEvent<?,?>>> {

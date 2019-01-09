@@ -32,6 +32,7 @@ import org.apache.isis.applib.annotation.RestrictTo;
 import org.apache.isis.applib.annotation.SemanticsOf;
 import org.apache.isis.applib.value.LocalResourcePath;
 import org.apache.isis.commons.internal.base._Strings;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 
 @DomainService(
         nature = NatureOfService.VIEW_MENU_ONLY,
@@ -49,11 +50,13 @@ public class H2ManagerMenu {
 
     @PostConstruct
     public void init(Map<String,String> properties) {
-        this.url = properties.get("isis.persistor.datanucleus.impl.javax.jdo.option.ConnectionURL");
+        this.url = IsisContext.getConfiguration()
+                .getString("isis.persistor.datanucleus.impl.javax.jdo.option.ConnectionURL");
     }
 
 
-    public static class ActionDomainEvent extends IsisApplibModule.ActionDomainEvent<H2ManagerMenu>{ private static final long serialVersionUID = 1L; }
+    public static class ActionDomainEvent extends IsisApplibModule.ActionDomainEvent<H2ManagerMenu>{ 
+        private static final long serialVersionUID = 1L; }
 
     @Action(
             semantics = SemanticsOf.SAFE,

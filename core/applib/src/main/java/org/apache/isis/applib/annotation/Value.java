@@ -27,6 +27,7 @@ import java.lang.annotation.Target;
 
 import org.apache.isis.applib.adapters.EncoderDecoder;
 import org.apache.isis.applib.adapters.ValueSemanticsProvider;
+import org.apache.isis.core.commons.encoding.Encodable;
 
 /**
  * Indicates that the class has value semantics.

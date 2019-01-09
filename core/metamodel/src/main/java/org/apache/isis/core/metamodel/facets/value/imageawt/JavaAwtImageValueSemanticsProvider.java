@@ -21,7 +21,6 @@ package org.apache.isis.core.metamodel.facets.value.imageawt;
 
 import java.awt.Image;
 
-import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.value.image.ImageValueSemanticsProviderAbstract;

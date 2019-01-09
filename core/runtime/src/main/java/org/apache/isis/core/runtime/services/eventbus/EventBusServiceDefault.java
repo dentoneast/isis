@@ -16,6 +16,8 @@
  */
 package org.apache.isis.core.runtime.services.eventbus;
 
+import static org.apache.isis.config.internal._Config.getConfiguration;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -30,8 +32,6 @@ import org.apache.isis.core.commons.lang.ClassUtil;
 import org.apache.isis.core.metamodel.facets.Annotations;
 import org.apache.isis.core.plugins.eventbus.EventBusPlugin;
 import org.apache.isis.core.runtime.services.RequestScopedService;
-
-import static org.apache.isis.config.internal._Config.getConfiguration;
 
 /**
  * Holds common runtime logic for EventBusService implementations.
