@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
+import javax.inject.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.annotation.Programmatic;

@@ -20,7 +20,7 @@ package org.apache.isis.core.runtime.services.i18n.po;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.ejb.Singleton;
+import javax.inject.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.slf4j.Logger;

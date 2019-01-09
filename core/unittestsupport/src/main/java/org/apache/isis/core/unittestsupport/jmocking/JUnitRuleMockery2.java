@@ -25,7 +25,7 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
 
-import javax.ejb.Singleton;
+import javax.inject.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 import javax.imageio.spi.ServiceRegistry;
 

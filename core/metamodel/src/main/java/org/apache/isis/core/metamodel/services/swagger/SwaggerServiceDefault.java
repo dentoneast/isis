@@ -19,7 +19,7 @@
 package org.apache.isis.core.metamodel.services.swagger;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
+import javax.inject.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 

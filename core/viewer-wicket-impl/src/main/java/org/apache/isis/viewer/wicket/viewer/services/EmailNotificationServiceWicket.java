@@ -16,7 +16,7 @@
  */
 package org.apache.isis.viewer.wicket.viewer.services;
 
-import javax.ejb.Singleton;
+import javax.inject.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.services.userreg.EmailNotificationService;

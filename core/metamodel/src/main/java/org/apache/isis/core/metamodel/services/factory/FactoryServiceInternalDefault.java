@@ -22,7 +22,7 @@ package org.apache.isis.core.metamodel.services.factory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import javax.ejb.Singleton;
+import javax.inject.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 

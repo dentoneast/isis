@@ -18,7 +18,7 @@
  */
 package org.apache.isis.applib.services.routing;
 
-import javax.ejb.Singleton;
+import javax.inject.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 

@@ -21,7 +21,7 @@ package org.apache.isis.core.runtime.services.ixn;
 
 import java.util.List;
 
-import javax.ejb.Singleton;
+import javax.inject.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.annotation.Programmatic;

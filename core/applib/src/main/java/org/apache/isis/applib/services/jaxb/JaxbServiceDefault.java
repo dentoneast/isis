@@ -18,7 +18,7 @@ package org.apache.isis.applib.services.jaxb;
 
 import java.util.Map;
 
-import javax.ejb.Singleton;
+import javax.inject.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.bind.JAXBContext;

@@ -21,7 +21,7 @@ package org.apache.isis.viewer.wicket.viewer.services;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import javax.ejb.Singleton;
+import javax.inject.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 

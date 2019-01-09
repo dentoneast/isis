@@ -18,7 +18,7 @@
  */
 package org.apache.isis.core.runtime.services.userprof;
 
-import javax.ejb.Singleton;
+import javax.inject.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 

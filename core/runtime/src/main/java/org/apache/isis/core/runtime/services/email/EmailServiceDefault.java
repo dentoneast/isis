@@ -24,7 +24,7 @@ import java.util.Properties;
 
 import javax.activation.DataSource;
 import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
+import javax.inject.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 

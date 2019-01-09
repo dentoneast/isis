@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.ejb.Singleton;
+import javax.inject.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.services.confview.ConfigurationProperty;

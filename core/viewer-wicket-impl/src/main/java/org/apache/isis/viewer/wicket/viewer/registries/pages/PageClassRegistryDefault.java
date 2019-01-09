@@ -22,7 +22,7 @@ package org.apache.isis.viewer.wicket.viewer.registries.pages;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
+import javax.inject.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 

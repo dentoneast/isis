@@ -28,6 +28,7 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
@@ -67,7 +68,7 @@ import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
  *     it can be {@link Inject}'d into other domain services.
  * </p>
  */
-@ApplicationScoped
+@Singleton @ApplicationScoped
 public class IsisSessionFactoryDefault implements IsisSessionFactory {
 
     //private final static Logger LOG = LoggerFactory.getLogger(IsisSessionFactory.class);

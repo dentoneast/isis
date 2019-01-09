@@ -16,7 +16,7 @@
  */
 package org.apache.isis.core.runtime.services.authsess;
 
-import javax.ejb.Singleton;
+import javax.inject.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 

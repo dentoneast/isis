@@ -19,7 +19,7 @@
 
 package org.apache.isis.viewer.wicket.viewer.settings;
 
-import javax.ejb.Singleton;
+import javax.inject.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.annotation.PromptStyle;

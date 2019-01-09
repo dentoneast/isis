@@ -18,7 +18,7 @@
  */
 package org.apache.isis.security.shiro.authorization;
 
-import javax.ejb.Singleton;
+import javax.inject.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.shiro.SecurityUtils;
