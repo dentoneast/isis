@@ -130,7 +130,7 @@ public class IsisSessionFactoryBuilder {
             _Context.putSingleton(IsisSessionFactory.class, isisSessionFactory);
 
             // execute tasks using a threadpool
-            final List<Future<Object>> futures = ThreadPoolSupport.getInstance().invokeAll(
+            final List<Future<Object>> futures = ThreadPoolSupport.getInstance().invokeAll(Arrays.asList(
                     new Callable<Object>() {
                         @Override
                         public Object call() {
@@ -201,7 +201,7 @@ public class IsisSessionFactoryBuilder {
                             return "CommandDtoUtils.init()";
                         }
                     }
-                ); 
+                )); 
 
 
             // wait on this thread for tasks to complete

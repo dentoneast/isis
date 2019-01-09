@@ -59,6 +59,7 @@ import org.apache.isis.core.metamodel.specloader.specimpl.dflt.ObjectSpecificati
 import org.apache.isis.core.metamodel.specloader.specimpl.standalonelist.ObjectSpecificationOnStandaloneList;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidator;
 import org.apache.isis.core.metamodel.specloader.validator.ValidationFailures;
+import org.apache.isis.core.runtime.threadpool.ThreadPoolExecutionMode;
 import org.apache.isis.core.runtime.threadpool.ThreadPoolSupport;
 import org.apache.isis.progmodels.dflt.ProgrammingModelFacetsJava5;
 import org.apache.isis.schema.utils.CommonDtoUtils;
@@ -268,9 +269,13 @@ public class SpecificationLoader {
     private void invokeAndWait(final List<Callable<Object>> callables) {
         final ThreadPoolSupport threadPoolSupport = ThreadPoolSupport.getInstance();
         final boolean parallelize = CONFIG_PROPERTY_PARALLELIZE.from(getConfiguration());
-        final List<Future<Object>> futures = parallelize
-                ? threadPoolSupport.invokeAll(callables)
-                : threadPoolSupport.invokeAllSequential(callables);
+        
+        final ThreadPoolExecutionMode executionModeFromConfig = parallelize
+                ? ThreadPoolExecutionMode.PARALLEL
+                        : ThreadPoolExecutionMode.SEQUENTIAL;
+        
+        final List<Future<Object>> futures = 
+                threadPoolSupport.invokeAll(executionModeFromConfig, callables);
         threadPoolSupport.joinGatherFailures(futures);
     }
 
