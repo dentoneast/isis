@@ -467,6 +467,36 @@ isis.viewer.wicket.themes.provider=org.my.IsisWicketThemeSupport
 
 might need to reinstate, or long-term will have SpringBoot etc do the bootstrapping.
 
+=== Changes to SystemConstant Translations
+
+Was ...
+
+[source,java]
+----
+String context = IsisSessionFactoryBuilder.class.getName();
+
+String areYouSure = translationService.translate(context, SystemConstants.MSG_ARE_YOU_SURE);
+String confirm = translationService.translate(context, SystemConstants.MSG_CONFIRM);
+String cancel = translationService.translate(context, SystemConstants.MSG_CANCEL);
+----
+
+changed to ...
+
+[source,java]
+----
+String context = SystemConstants.class.getName();
+
+...
+----
+
+
+
+
+
+
+
+
+
 
 == Migration Notes 1.x to 2.0.0-M1
 

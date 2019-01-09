@@ -27,12 +27,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.applib.clock.Clock;
 import org.apache.isis.applib.fixtures.FixtureClock;
-import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.IsisConfiguration;
@@ -55,10 +51,10 @@ import org.apache.isis.schema.utils.ChangesDtoUtils;
 import org.apache.isis.schema.utils.CommandDtoUtils;
 import org.apache.isis.schema.utils.InteractionDtoUtils;
 
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class IsisSessionFactoryBuilder {
-
-    public static final Logger LOG = LoggerFactory.getLogger(IsisSessionFactoryBuilder.class);
 
     // -- constructors, accessors
 
@@ -74,13 +70,13 @@ public class IsisSessionFactoryBuilder {
 
     // -- buildSessionFactory
 
-    public IsisSessionFactory buildSessionFactory(Supplier<IsisSessionFactory> sfInstanceSupplier) {
+    public IsisSessionFactory buildSessionFactory(Supplier<IsisSessionFactoryDefault> sfInstanceSupplier) {
 
-        LOG.info("initialising Isis System");
-        LOG.info("working directory: {}", new File(".").getAbsolutePath());
+        log.info("initialising Isis System");
+        log.info("working directory: {}", new File(".").getAbsolutePath());
 
         final IsisConfiguration configuration = _Config.getConfiguration();
-        LOG.info("resource stream source: {}", configuration.getResourceStreamSource());
+        log.info("resource stream source: {}", configuration.getResourceStreamSource());
 
         localeInitializer.initLocale(configuration);
         timeZoneInitializer.initTimeZone(configuration);
@@ -93,11 +89,11 @@ public class IsisSessionFactoryBuilder {
             FixtureClock.initialize();
         }
 
-        IsisSessionFactory isisSessionFactory;
+        IsisSessionFactoryDefault isisSessionFactory;
         try {
 
             final ServiceRegistry servicesRegistry = IsisContext.getServiceRegistry();
-            final ServiceInjector servicesInjector = IsisContext.getServiceInjector();
+            
             final AuthenticationManager authenticationManager = componentProvider.provideAuthenticationManager();
             final AuthorizationManager authorizationManager = componentProvider.provideAuthorizationManager();
 
@@ -115,7 +111,7 @@ public class IsisSessionFactoryBuilder {
 
             // instantiate or reuse the IsisSessionFactory
             isisSessionFactory = sfInstanceSupplier.get();
-            isisSessionFactory.setServicesInjector(servicesInjector);
+            isisSessionFactory.initDependenecies();
 
             // now, add the IsisSessionFactory itself into ServicesInjector, so it can be @javax.inject.Inject'd
             // into any internal domain services
@@ -220,8 +216,8 @@ public class IsisSessionFactoryBuilder {
                         } catch (final MetaModelInvalidException ex) {
                             // no need to use a higher level, such as error(...); the calling code will expose any metamodel
                             // validation errors in their own particular way.
-                            if(LOG.isDebugEnabled()) {
-                                LOG.debug("Meta model invalid", ex);
+                            if(log.isDebugEnabled()) {
+                                log.debug("Meta model invalid", ex);
                             }
                             _Context.putSingleton(MetaModelInvalidException.class, ex);
                         }
@@ -230,7 +226,7 @@ public class IsisSessionFactoryBuilder {
 
 
         } catch (final IsisSystemException ex) {
-            LOG.error("failed to initialise", ex);
+            log.error("failed to initialise", ex);
             throw new RuntimeException(ex);
         }
 

@@ -138,9 +138,7 @@ class ActionParametersForm extends PromptFormAbstract<ActionModel> {
         final ObjectAction action = actionModel.getActionMemento().getAction(getSpecificationLoader());
         SemanticsOf semanticsOf = action.getSemantics();
 
-        final ServiceInjector servicesInjector = getPersistenceSession().getServicesInjector();
-
-        PanelUtil.addConfirmationDialogIfAreYouSureSemantics(button, semanticsOf, servicesInjector);
+        PanelUtil.addConfirmationDialogIfAreYouSureSemantics(button, semanticsOf);
     }
 
     @Override

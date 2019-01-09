@@ -32,6 +32,7 @@ import org.apache.isis.core.runtime.headless.auth.AuthenticationRequestNameOnly;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactoryBuilder;
+import org.apache.isis.core.runtime.system.session.IsisSessionFactoryDefault;
 import org.apache.isis.core.runtime.systemusinginstallers.IsisComponentProvider;
 import org.apache.isis.core.security.authentication.AuthenticationRequest;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -128,7 +129,7 @@ public final class IsisSystem {
             // ensures that a FixtureClock is installed as the singleton underpinning the ClockService
             FixtureClock.initialize();
 
-            isisSessionFactory = isisSessionFactoryBuilder.buildSessionFactory(IsisSessionFactory::new);
+            isisSessionFactory = isisSessionFactoryBuilder.buildSessionFactory(IsisSessionFactoryDefault::new);
             // REVIEW: does no harm, but is this required?
             closeSession();
 

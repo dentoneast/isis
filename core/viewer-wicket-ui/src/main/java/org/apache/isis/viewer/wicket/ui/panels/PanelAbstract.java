@@ -149,15 +149,12 @@ public abstract class PanelAbstract<T extends IModel<?>> extends Panel {
      * @return The found domain service
      */
     protected <S> S lookupService(final Class<S> serviceClass) {
-        return getPersistenceSession().getServicesInjector().lookupService(serviceClass).orElse(null);
+        return IsisContext.getServiceRegistry().lookupService(serviceClass).orElse(null);
     }
 
 
     protected void addConfirmationDialogIfAreYouSureSemantics(final Component component, final SemanticsOf semanticsOf) {
-
-        final ServiceInjector servicesInjector = getPersistenceSession().getServicesInjector();
-
-        PanelUtil.addConfirmationDialogIfAreYouSureSemantics(component, semanticsOf, servicesInjector);
+        PanelUtil.addConfirmationDialogIfAreYouSureSemantics(component, semanticsOf);
     }
 
     // ///////////////////////////////////////////////////////////////////

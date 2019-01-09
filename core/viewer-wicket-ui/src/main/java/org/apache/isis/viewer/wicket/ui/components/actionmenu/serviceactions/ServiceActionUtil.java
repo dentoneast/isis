@@ -48,7 +48,6 @@ import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.runtime.system.SystemConstants;
 import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactoryBuilder;
 import org.apache.isis.viewer.wicket.model.models.EntityModel;
 import org.apache.isis.viewer.wicket.model.models.ServiceActionsModel;
 import org.apache.isis.viewer.wicket.ui.components.actionmenu.CssClassFaBehavior;
@@ -270,11 +269,11 @@ public final class ServiceActionUtil {
             final ServiceInjector servicesInjector) {
 
         final TranslationService translationService =
-                servicesInjector.lookupService(TranslationService.class).orElse(null);;
+                IsisContext.getServiceRegistry().lookupServiceElseFail(TranslationService.class);
 
         ConfirmationConfig confirmationConfig = new ConfirmationConfig();
 
-        final String context = IsisSessionFactoryBuilder.class.getName();
+        final String context = SystemConstants.class.getName();
         final String areYouSure = translationService.translate(context, SystemConstants.MSG_ARE_YOU_SURE);
         final String confirm = translationService.translate(context, SystemConstants.MSG_CONFIRM);
         final String cancel = translationService.translate(context, SystemConstants.MSG_CANCEL);
