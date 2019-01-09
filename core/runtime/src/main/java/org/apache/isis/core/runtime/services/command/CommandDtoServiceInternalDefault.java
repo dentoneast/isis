@@ -50,7 +50,7 @@ import org.apache.isis.schema.common.v1.ValueWithTypeDto;
 import org.apache.isis.schema.utils.CommandDtoUtils;
 import org.apache.isis.schema.utils.CommonDtoUtils;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class CommandDtoServiceInternalDefault implements CommandDtoServiceInternal {
 
     @Programmatic

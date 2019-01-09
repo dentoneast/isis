@@ -58,7 +58,7 @@ import org.apache.isis.core.metamodel.specloader.specimpl.ContributeeMember;
 import static org.apache.isis.commons.internal.base._NullSafe.stream;
 import static org.apache.isis.config.internal._Config.getConfiguration;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class ApplicationFeatureRepositoryDefault implements ApplicationFeatureRepository {
 
     // -- caches

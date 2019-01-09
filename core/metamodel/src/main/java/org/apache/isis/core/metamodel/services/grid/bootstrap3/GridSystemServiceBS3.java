@@ -61,7 +61,7 @@ import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
 
 import static org.apache.isis.commons.internal.base._NullSafe.stream;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class GridSystemServiceBS3 extends GridSystemServiceAbstract<BS3Grid> {
 
     public static final String TNS = "http://isis.apache.org/applib/layout/grid/bootstrap3";

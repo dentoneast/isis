@@ -43,7 +43,7 @@ import org.apache.isis.config.IsisConfiguration;
 /**
  * A service that sends email notifications when specific events occur
  */
-@Singleton @ApplicationScoped
+@Singleton
 public class EmailServiceDefault implements EmailService {
 
     private static final long serialVersionUID = 1L;

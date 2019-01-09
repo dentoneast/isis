@@ -66,7 +66,7 @@ import static org.apache.isis.config.internal._Config.getConfiguration;
  * {@link SecurityManager Shiro SecurityManager}
  * (bound to a thread-local).
  */
-@Singleton @ApplicationScoped
+@Singleton
 public class ShiroAuthenticator implements Authenticator {
 
     private static final Logger LOG = LoggerFactory.getLogger(ShiroAuthenticator.class);

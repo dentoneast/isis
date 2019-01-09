@@ -37,7 +37,7 @@ import org.apache.isis.config.internal._Config;
 /**
  * @since 2.0.0-M2
  */
-@Singleton @ApplicationScoped
+@Singleton
 public class ConfigurationViewServiceDefault implements ConfigurationViewService {
     
     @Override

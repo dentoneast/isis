@@ -43,7 +43,7 @@ import org.apache.isis.viewer.wicket.ui.pages.voidreturn.VoidReturnPage;
  * Default implementation of {@link PageClassList}, specifying the default pages
  * for each of the {@link PageType}s.
  */
-@Singleton @ApplicationScoped
+@Singleton
 public class PageClassListDefault implements PageClassList {
 
     private static final long serialVersionUID = 1L;

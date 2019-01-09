@@ -34,7 +34,7 @@ import org.apache.isis.applib.services.metamodel.MetaModelService;
 import org.apache.isis.schema.utils.jaxbadapters.PersistentEntitiesAdapter;
 import org.apache.isis.schema.utils.jaxbadapters.PersistentEntityAdapter;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class JaxbServiceDefault extends JaxbService.Simple {
 
     @Override

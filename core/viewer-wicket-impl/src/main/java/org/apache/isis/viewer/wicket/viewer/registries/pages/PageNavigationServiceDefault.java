@@ -36,7 +36,7 @@ import org.apache.isis.viewer.wicket.ui.pages.PageNavigationService;
 /**
  * Default implementation of {@link org.apache.isis.viewer.wicket.ui.pages.PageNavigationService}
  */
-@Singleton @ApplicationScoped
+@Singleton
 public class PageNavigationServiceDefault implements PageNavigationService {
 
     private static final long serialVersionUID = 1L;

@@ -33,7 +33,7 @@ import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
 import org.apache.isis.core.security.authorization.standard.Authorizor;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class AuthorizationManagerStandard implements AuthorizationManager {
 
 

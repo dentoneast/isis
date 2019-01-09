@@ -54,7 +54,7 @@ import static org.apache.isis.commons.internal.base._Casts.uncheckedCast;
  * {@link org.apache.isis.applib.services.background.BackgroundCommandService} to
  * be configured.
  */
-@Singleton @ApplicationScoped
+@Singleton
 public class BackgroundServiceDefault implements BackgroundService {
 
     static final Logger LOG = LoggerFactory.getLogger(BackgroundServiceDefault.class);

@@ -46,7 +46,7 @@ import images.Images;
  * <p>
  * Searches for a fixed set of suffixes: <code>png, gif, jpeg, jpg, svg</code>.
  */
-@Singleton @ApplicationScoped
+@Singleton
 public class ImageResourceCacheClassPath implements ImageResourceCache {
 
     private static final long serialVersionUID = 1L;

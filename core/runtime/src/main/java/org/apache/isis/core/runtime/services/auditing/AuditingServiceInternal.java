@@ -46,7 +46,7 @@ import org.apache.isis.core.runtime.services.changes.PreAndPostValues;
 /**
  * Wrapper around {@link org.apache.isis.applib.services.audit.AuditerService}.
  */
-@Singleton @ApplicationScoped
+@Singleton
 public class AuditingServiceInternal {
 
     Boolean whetherCanAudit;

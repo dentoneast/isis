@@ -33,7 +33,7 @@ import static org.apache.isis.commons.internal.base._With.ifPresentElse;
 import static org.apache.isis.commons.internal.resources._Resources.getRestfulPathIfAny;
 import static org.apache.isis.commons.internal.resources._Resources.prependContextPathIfPresent;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class SwaggerServiceDefault implements SwaggerService {
 
     // private final static Logger LOG = LoggerFactory.getLogger(SwaggerServiceDefault.class);

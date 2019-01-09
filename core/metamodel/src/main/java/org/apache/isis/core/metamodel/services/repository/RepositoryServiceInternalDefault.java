@@ -44,7 +44,7 @@ import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class RepositoryServiceInternalDefault implements RepositoryService {
 
     private boolean autoFlush;

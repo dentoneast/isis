@@ -54,7 +54,7 @@ import static java.util.Optional.ofNullable;
 import static org.apache.isis.commons.internal.base._With.acceptIfPresent;
 import static org.apache.isis.commons.internal.base._With.mapIfPresentElse;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class PersistenceSessionServiceInternalDefault implements PersistenceSessionServiceInternal {
 
     @Override

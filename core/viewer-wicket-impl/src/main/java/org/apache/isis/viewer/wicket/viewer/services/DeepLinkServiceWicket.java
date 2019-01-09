@@ -43,7 +43,7 @@ import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistry;
  * An implementation of {@link org.apache.isis.applib.services.linking.DeepLinkService}
  * for Wicket Viewer
  */
-@Singleton @ApplicationScoped
+@Singleton
 public class DeepLinkServiceWicket implements DeepLinkService {
 
     @Programmatic

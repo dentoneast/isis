@@ -68,7 +68,7 @@ import org.apache.isis.core.wrapper.proxy.ProxyCreator;
  * <p>
  * This implementation has no UI-visible actions and is the supported implementation.
  */
-@Singleton @ApplicationScoped
+@Singleton
 public class WrapperFactoryDefault implements WrapperFactory {
 
     private final List<InteractionListener> listeners = new ArrayList<InteractionListener>();

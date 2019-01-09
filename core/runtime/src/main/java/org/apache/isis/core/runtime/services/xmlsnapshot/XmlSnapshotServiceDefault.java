@@ -37,7 +37,7 @@ import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
  * with {@link org.apache.isis.applib.annotation.DomainService}.  Because this class is implemented in core, this means
  * that it is automatically registered and available for use; no further configuration is required.
  */
-@Singleton @ApplicationScoped
+@Singleton
 public class XmlSnapshotServiceDefault extends XmlSnapshotServiceAbstract {
 
     static class XmlSnapshotServiceDefaultBuilder implements XmlSnapshotService.Builder{

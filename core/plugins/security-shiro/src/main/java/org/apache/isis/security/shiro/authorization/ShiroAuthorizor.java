@@ -40,7 +40,7 @@ import org.apache.isis.security.shiro.ShiroSecurityContext;
  * However, although there are two objects, they are set up to share the same {@link SecurityManager Shiro SecurityManager}
  * (bound to a thread-local).
  */
-@Singleton @ApplicationScoped
+@Singleton
 public class ShiroAuthorizor implements Authorizor {
 
     //private static final Logger LOG = LoggerFactory.getLogger(ShiroAuthorizor.class);

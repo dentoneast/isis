@@ -18,13 +18,12 @@
  */
 package org.apache.isis.core.metamodel.services.appfeat;
 
-import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.isis.applib.services.factory.FactoryService;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class ApplicationFeatureFactory {
 
     public ApplicationFeature newApplicationFeature() {

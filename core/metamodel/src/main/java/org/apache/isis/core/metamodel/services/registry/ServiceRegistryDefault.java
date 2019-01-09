@@ -59,7 +59,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * @since 2.0.0-M2
  */
-@Singleton @ApplicationScoped @Slf4j
+@Singleton @Slf4j
 public final class ServiceRegistryDefault implements ServiceRegistry {
     
     /**

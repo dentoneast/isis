@@ -33,7 +33,7 @@ import org.apache.isis.applib.services.exceprecog.ExceptionRecognizerForType;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.adapter.version.ConcurrencyException;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class ExceptionRecognizerDocDefault
 implements ExceptionRecognizer {
 

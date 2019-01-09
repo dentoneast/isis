@@ -64,7 +64,7 @@ import org.apache.isis.core.metamodel.spec.feature.Contributed;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class MenuBarsServiceBS3 implements MenuBarsService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MenuBarsServiceBS3.class);

@@ -37,7 +37,7 @@ import org.apache.isis.core.metamodel.services.persistsession.PersistenceSession
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class FactoryServiceInternalDefault implements FactoryService {
 
 

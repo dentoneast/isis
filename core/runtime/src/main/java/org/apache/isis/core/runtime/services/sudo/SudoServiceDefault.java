@@ -30,7 +30,7 @@ import javax.inject.Inject;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.sudo.SudoService;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class SudoServiceDefault implements SudoService {
 
     @Programmatic

@@ -94,7 +94,7 @@ import org.apache.isis.viewer.wicket.ui.components.widgets.entitysimplelink.Enti
  * implementations loaded using {@link ServiceLoader} (ie from
  * <tt>META-INF/services</tt>).
  */
-@Singleton @ApplicationScoped
+@Singleton
 public class ComponentFactoryRegistrarDefault implements ComponentFactoryRegistrar {
 
     @Override

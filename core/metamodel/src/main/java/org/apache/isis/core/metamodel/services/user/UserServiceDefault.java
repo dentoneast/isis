@@ -35,7 +35,7 @@ import org.apache.isis.core.security.authentication.AuthenticationSessionProvide
 
 import static org.apache.isis.commons.internal.base._NullSafe.stream;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class UserServiceDefault implements UserService {
 
     @Programmatic

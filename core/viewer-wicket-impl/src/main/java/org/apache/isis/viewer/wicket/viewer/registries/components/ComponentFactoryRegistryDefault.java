@@ -47,7 +47,7 @@ import org.apache.isis.viewer.wicket.ui.app.registry.ComponentFactoryRegistry;
  * Implementation of {@link ComponentFactoryRegistry} that delegates to a
  * provided {@link ComponentFactoryRegistrar}.
  */
-@Singleton @ApplicationScoped
+@Singleton
 public class ComponentFactoryRegistryDefault implements ComponentFactoryRegistry {
 
     private final Multimap<ComponentType, ComponentFactory> componentFactoriesByType;

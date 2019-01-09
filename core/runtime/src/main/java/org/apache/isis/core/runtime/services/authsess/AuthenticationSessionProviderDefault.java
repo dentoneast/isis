@@ -27,7 +27,7 @@ import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 import org.apache.isis.core.security.authentication.standard.SimpleSession;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class AuthenticationSessionProviderDefault implements AuthenticationSessionProvider {
 
     /**

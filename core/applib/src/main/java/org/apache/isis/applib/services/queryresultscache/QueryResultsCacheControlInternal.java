@@ -29,7 +29,7 @@ import org.apache.isis.applib.fixturescripts.events.FixturesInstallingEvent;
 /**
  * In separate class because {@link QueryResultsCache} itself is request-scoped
  */
-@Singleton @ApplicationScoped
+@Singleton
 public class QueryResultsCacheControlInternal extends AbstractSubscriber implements QueryResultCacheControl {
 
     @PostConstruct

@@ -28,7 +28,7 @@ import org.apache.isis.applib.services.message.MessageService;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.security.authentication.MessageBroker;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class MessageServiceDefault implements MessageService {
 
     @Override

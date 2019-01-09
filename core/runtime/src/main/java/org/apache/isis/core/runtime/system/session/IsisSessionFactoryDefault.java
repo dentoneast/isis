@@ -68,7 +68,7 @@ import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
  *     it can be {@link Inject}'d into other domain services.
  * </p>
  */
-@Singleton @ApplicationScoped
+@Singleton
 public class IsisSessionFactoryDefault implements IsisSessionFactory {
 
     //private final static Logger LOG = LoggerFactory.getLogger(IsisSessionFactory.class);

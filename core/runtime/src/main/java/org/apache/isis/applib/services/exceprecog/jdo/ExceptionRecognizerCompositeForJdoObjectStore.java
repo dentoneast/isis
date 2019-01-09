@@ -38,7 +38,7 @@ import org.apache.isis.config.internal._Config;
  *     the first one found).
  * </p>
  */
-@Singleton @ApplicationScoped
+@Singleton
 public class ExceptionRecognizerCompositeForJdoObjectStore extends ExceptionRecognizerComposite {
 
     public static final String KEY_DISABLE = 

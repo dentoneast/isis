@@ -26,7 +26,7 @@ import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.userprof.UserProfileService;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class UserProfileServiceDefault implements UserProfileService {
 
     @Programmatic

@@ -34,7 +34,7 @@ import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.commons.internal.collections._Lists;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class GridServiceDefault implements GridService {
 
     //private static final Logger LOG = LoggerFactory.getLogger(GridServiceDefault.class);

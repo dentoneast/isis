@@ -33,7 +33,7 @@ import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.runtime.system.transaction.IsisTransaction;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class TransactionServiceDefault implements TransactionService {
 
 

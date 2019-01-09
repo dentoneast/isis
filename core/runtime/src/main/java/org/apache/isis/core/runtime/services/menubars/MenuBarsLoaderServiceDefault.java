@@ -38,7 +38,7 @@ import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 
 import static org.apache.isis.commons.internal.resources._Resources.loadAsString;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class MenuBarsLoaderServiceDefault implements MenuBarsLoaderService {
     
     private final static Logger log = LoggerFactory.getLogger(MenuBarsLoaderServiceDefault.class);

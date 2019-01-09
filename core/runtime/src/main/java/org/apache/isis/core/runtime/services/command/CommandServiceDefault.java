@@ -24,7 +24,7 @@ import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.command.CommandDefault;
 import org.apache.isis.applib.services.command.spi.CommandService;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class CommandServiceDefault implements CommandService {
 
     @Programmatic

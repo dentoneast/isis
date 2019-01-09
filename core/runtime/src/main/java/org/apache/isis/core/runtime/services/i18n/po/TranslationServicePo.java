@@ -34,7 +34,7 @@ import org.apache.isis.commons.internal.context._Context;
 
 import static org.apache.isis.config.internal._Config.getConfiguration;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class TranslationServicePo implements TranslationService {
 
     public static Logger LOG = LoggerFactory.getLogger(TranslationServicePo.class);

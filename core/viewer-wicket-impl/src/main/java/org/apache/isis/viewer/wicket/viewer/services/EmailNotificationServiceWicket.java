@@ -25,7 +25,7 @@ import org.apache.isis.applib.services.userreg.events.PasswordResetEvent;
 import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class EmailNotificationServiceWicket implements EmailNotificationService {
 
     private static final long serialVersionUID = 1L;

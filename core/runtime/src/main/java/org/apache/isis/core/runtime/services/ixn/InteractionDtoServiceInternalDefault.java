@@ -45,7 +45,7 @@ import org.apache.isis.schema.ixn.v1.PropertyEditDto;
 import org.apache.isis.schema.utils.CommandDtoUtils;
 import org.apache.isis.schema.utils.InteractionDtoUtils;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class InteractionDtoServiceInternalDefault implements InteractionDtoServiceInternal {
 
 

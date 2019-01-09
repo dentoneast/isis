@@ -39,7 +39,7 @@ import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistrySpi;
  * Default implementation of {@link PageClassRegistry}; just delegates to an
  * underlying {@link PageClassList}.
  */
-@Singleton @ApplicationScoped
+@Singleton
 public class PageClassRegistryDefault implements PageClassRegistry, PageClassRegistrySpi {
 
     private static final long serialVersionUID = 1L;

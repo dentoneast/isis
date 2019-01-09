@@ -56,7 +56,7 @@ import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.schema.metamodel.v1.MetamodelDto;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class MetaModelServiceDefault implements MetaModelService {
 
     // private final static Logger LOG = LoggerFactory.getLogger(MetaModelServiceDefault.class);

@@ -44,7 +44,7 @@ import static java.util.regex.Pattern.quote;
 /**
  * A service that sends email notifications when specific events occur
  */
-@Singleton @ApplicationScoped
+@Singleton
 public class EmailNotificationServiceDefault implements EmailNotificationService {
     
     private static final long serialVersionUID = 1L;

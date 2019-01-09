@@ -46,7 +46,7 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.objectstore.jdo.metamodel.facets.object.persistencecapable.JdoPersistenceCapableFacet;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class LayoutServiceDefault implements LayoutService2 {
 
     //private static final Logger LOG = LoggerFactory.getLogger(LayoutServiceDefault.class);

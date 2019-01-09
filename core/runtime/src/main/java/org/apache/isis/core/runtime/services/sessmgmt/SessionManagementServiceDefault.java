@@ -28,7 +28,7 @@ import org.apache.isis.core.metamodel.services.persistsession.PersistenceSession
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class SessionManagementServiceDefault implements SessionManagementService {
 
     @Programmatic

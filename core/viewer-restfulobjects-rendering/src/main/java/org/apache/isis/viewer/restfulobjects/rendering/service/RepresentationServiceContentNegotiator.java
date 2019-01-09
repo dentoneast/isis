@@ -38,7 +38,7 @@ import org.apache.isis.viewer.restfulobjects.rendering.domainobjects.ObjectAndPr
 import org.apache.isis.viewer.restfulobjects.rendering.service.conneg.ContentNegotiationService;
 import org.apache.isis.viewer.restfulobjects.rendering.service.conneg.ContentNegotiationServiceForRestfulObjectsV1_0;
 
-@Singleton @ApplicationScoped
+@Singleton
 public class RepresentationServiceContentNegotiator implements RepresentationService {
 
 
