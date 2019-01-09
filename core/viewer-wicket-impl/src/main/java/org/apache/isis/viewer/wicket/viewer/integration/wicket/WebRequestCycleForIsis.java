@@ -357,7 +357,7 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
     
     
     protected ServiceInjector getServicesInjector() {
-        return getIsisSessionFactory().getServicesInjector();
+        return getIsisSessionFactory().getServiceInjector();
     }
 
     protected IsisTransactionManager getTransactionManager() {

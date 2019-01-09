@@ -64,7 +64,7 @@ public class ServiceActionsPanelFactory extends ComponentFactoryAbstract {
         final ServiceActionsModel serviceActionsModel = (ServiceActionsModel) model;
 
         final MenuBarsService menuBarsService =
-                getIsisSessionFactory().getServicesInjector().lookupServiceElseFail(MenuBarsService.class);
+                getIsisSessionFactory().getServiceInjector().lookupServiceElseFail(MenuBarsService.class);
 
         final MenuBars menuBars = menuBarsService.menuBars();
 

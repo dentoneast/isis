@@ -112,7 +112,7 @@ public class ResourceContext implements RendererContext {
 
         final IsisSessionFactory isisSessionFactory = IsisContext.getSessionFactory(); 
 
-        this.servicesInjector = isisSessionFactory.getServicesInjector();
+        this.servicesInjector = isisSessionFactory.getServiceInjector();
         this.configuration = IsisContext.getConfiguration();
 
         this.authenticationSession = isisSessionFactory.getCurrentSession().getAuthenticationSession();

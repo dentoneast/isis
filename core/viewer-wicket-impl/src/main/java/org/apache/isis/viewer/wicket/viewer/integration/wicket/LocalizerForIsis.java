@@ -151,7 +151,7 @@ public class LocalizerForIsis extends Localizer {
     }
 
     protected ServiceInjector getServicesInjector() {
-        return getIsisSessionFactory().getServicesInjector();
+        return getIsisSessionFactory().getServiceInjector();
     }
 
     IsisSessionFactory getIsisSessionFactory() {

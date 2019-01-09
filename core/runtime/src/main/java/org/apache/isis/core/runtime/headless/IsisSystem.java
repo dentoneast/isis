@@ -199,7 +199,7 @@ public final class IsisSystem {
     // -- getService
 
     public <C> C getService(Class<C> serviceClass) {
-        final ServiceInjector servicesInjector = isisSessionFactory.getServicesInjector();
+        final ServiceInjector servicesInjector = isisSessionFactory.getServiceInjector();
         return servicesInjector.lookupServiceElseFail(serviceClass);
     }
 

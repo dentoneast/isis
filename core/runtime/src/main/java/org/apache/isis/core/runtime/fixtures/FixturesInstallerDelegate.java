@@ -137,7 +137,7 @@ public class FixturesInstallerDelegate {
     }
 
     private void installFixture(final Object fixture) {
-        isisSessionFactory.getServicesInjector().injectServicesInto(fixture);
+        isisSessionFactory.getServiceInjector().injectServicesInto(fixture);
 
         if (fixture instanceof InstallableFixture) {
             final InstallableFixture installableFixture = (InstallableFixture) fixture;
@@ -162,7 +162,7 @@ public class FixturesInstallerDelegate {
     // -- dependencies (derived)
 
     private ServiceInjector getServicesInjector() {
-        return isisSessionFactory.getServicesInjector();
+        return isisSessionFactory.getServiceInjector();
     }
 
     private EventBusService getEventBusService() {

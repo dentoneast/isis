@@ -173,7 +173,7 @@ UiHintContainer {
                 if(sortedBy != null) {
                     @SuppressWarnings("unchecked")
                     final Comparator<Object> comparator = (Comparator<Object>) InstanceUtil.createInstance(sortedBy);
-                    entityCollectionModel.getIsisSessionFactory().getServicesInjector().injectServicesInto(comparator);
+                    entityCollectionModel.getIsisSessionFactory().getServiceInjector().injectServicesInto(comparator);
                     Collections.sort(objectList, comparator);
                 }
 

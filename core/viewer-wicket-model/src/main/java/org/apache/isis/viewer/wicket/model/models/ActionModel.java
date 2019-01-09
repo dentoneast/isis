@@ -717,7 +717,7 @@ public class ActionModel extends BookmarkableModel<ObjectAdapter> implements For
 
 
     ServiceInjector getServicesInjector() {
-        return getIsisSessionFactory().getServicesInjector();
+        return getIsisSessionFactory().getServiceInjector();
     }
 
 }

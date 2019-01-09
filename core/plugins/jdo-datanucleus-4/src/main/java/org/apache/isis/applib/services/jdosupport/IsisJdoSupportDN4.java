@@ -211,7 +211,7 @@ public class IsisJdoSupportDN4 implements IsisJdoSupport_v3_1 {
     }
 
     protected ServiceInjector getServicesInjector() {
-        return isisSessionFactory.getServicesInjector();
+        return isisSessionFactory.getServiceInjector();
     }
 
     @Programmatic

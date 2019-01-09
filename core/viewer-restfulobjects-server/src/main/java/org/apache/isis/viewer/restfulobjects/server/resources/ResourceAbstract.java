@@ -167,7 +167,7 @@ public abstract class ResourceAbstract {
     }
 
     protected ServiceInjector getServicesInjector () {
-        return getIsisSessionFactory().getServicesInjector();
+        return getIsisSessionFactory().getServiceInjector();
     }
 
     protected AuthenticationSession getAuthenticationSession() {

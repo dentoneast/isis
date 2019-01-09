@@ -45,7 +45,7 @@ class TargetRespondListenerToResetQueryResultCache implements AjaxRequestTarget.
     }
 
     private ServiceInjector getServicesInjector() {
-        return getSessionFactory().getServicesInjector();
+        return getSessionFactory().getServiceInjector();
     }
 
     private IsisSessionFactory getSessionFactory() {

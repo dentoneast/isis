@@ -162,18 +162,19 @@ public abstract class PanelAbstract<T extends IModel<?>> extends Panel {
     // ///////////////////////////////////////////////////////////////////
 
     public PersistenceSession getPersistenceSession() {
-        return getIsisSessionFactory().getCurrentSession().getPersistenceSession();
+        return IsisContext.getPersistenceSession().orElse(null);
     }
+    
     protected IsisConfiguration getConfiguration() {
         return IsisContext.getConfiguration();
     }
 
     public SpecificationLoader getSpecificationLoader() {
-        return getIsisSessionFactory().getSpecificationLoader();
+        return IsisContext.getSpecificationLoader();
     }
 
-    protected ServiceInjector getServicesInjector() {
-        return getIsisSessionFactory().getServicesInjector();
+    protected ServiceInjector getServiceInjector() {
+        return IsisContext.getServiceInjector();
     }
 
     protected IsisSessionFactory getIsisSessionFactory() {

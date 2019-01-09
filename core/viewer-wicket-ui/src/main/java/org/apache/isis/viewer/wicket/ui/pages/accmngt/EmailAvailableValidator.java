@@ -58,7 +58,7 @@ public class EmailAvailableValidator implements IValidator<String> {
         });
 
     }ServiceInjector getServicesInjector() {
-        return getIsisSessionFactory().getServicesInjector();
+        return getIsisSessionFactory().getServiceInjector();
     }
 
     IsisSessionFactory getIsisSessionFactory() {

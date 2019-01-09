@@ -192,7 +192,7 @@ public class AuthenticatedWebSessionForIsis extends AuthenticatedWebSession impl
 
     protected @NotNull SessionLoggingService getSessionLoggingService() {
         try {
-            final SessionLoggingService service = getIsisSessionFactory().getServicesInjector()
+            final SessionLoggingService service = getIsisSessionFactory().getServiceInjector()
                     .lookupService(SessionLoggingService.class)
                     .orElseGet(SessionLoggingService.Stderr::new);
             return service;

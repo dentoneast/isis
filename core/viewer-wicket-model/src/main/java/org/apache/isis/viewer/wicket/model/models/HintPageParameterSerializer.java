@@ -83,7 +83,7 @@ class HintPageParameterSerializer implements Serializable {
     }
 
     private static HintStore getHintStore() {
-        return getIsisSessionFactory().getServicesInjector().lookupService(HintStore.class).orElse(null);
+        return getIsisSessionFactory().getServiceInjector().lookupService(HintStore.class).orElse(null);
     }
 
     private static IsisSessionFactory getIsisSessionFactory() {

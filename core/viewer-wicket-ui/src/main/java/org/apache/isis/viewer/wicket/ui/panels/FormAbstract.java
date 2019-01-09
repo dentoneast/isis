@@ -113,7 +113,7 @@ implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor {
     }
 
     protected ServiceInjector getServicesInjector() {
-        return getIsisSessionFactory().getServicesInjector();
+        return getIsisSessionFactory().getServiceInjector();
     }
 
     protected IsisSessionFactory getIsisSessionFactory() {

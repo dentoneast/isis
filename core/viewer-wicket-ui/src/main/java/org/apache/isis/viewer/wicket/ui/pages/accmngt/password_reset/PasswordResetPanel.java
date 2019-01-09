@@ -83,7 +83,7 @@ public class PasswordResetPanel extends Panel {
                     public Boolean call() throws Exception {
                         String email = accountConfirmationMap.get(uuid);
 
-                        UserRegistrationService userRegistrationService = getIsisSessionFactory().getServicesInjector()
+                        UserRegistrationService userRegistrationService = getIsisSessionFactory().getServiceInjector()
                                 .lookupServiceElseFail(UserRegistrationService.class);
                         return userRegistrationService.updatePasswordByEmail(email, password);
                     }

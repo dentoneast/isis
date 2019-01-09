@@ -61,7 +61,7 @@ public class ExceptionRecognizerTranslate implements MethodRule {
      * Simply invokes {@link org.apache.isis.applib.services.exceprecog.ExceptionRecognizer#recognize(Throwable)} for all registered {@link org.apache.isis.applib.services.exceprecog.ExceptionRecognizer}s for the provided exception, so that the message will be translated.
      */
     private void recognize(final Throwable ex) {
-        final Stream<ExceptionRecognizer> exceptionRecognizers = getIsisSessionFactory().getServicesInjector().streamServices(ExceptionRecognizer.class);
+        final Stream<ExceptionRecognizer> exceptionRecognizers = getIsisSessionFactory().getServiceInjector().streamServices(ExceptionRecognizer.class);
         exceptionRecognizers.forEach(exceptionRecognizer->{
             @SuppressWarnings("unused")
             final String unused = exceptionRecognizer.recognize(ex);

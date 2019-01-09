@@ -87,7 +87,7 @@ public final class Responses {
 
         final MediaType mediaType = renderer.getMediaType();
 
-        final Date now = IsisContext.getSessionFactory().getServicesInjector()
+        final Date now = IsisContext.getSessionFactory().getServiceInjector()
                 .lookupServiceElseFail(ClockService.class).nowAsDateTime().toDate();
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));

@@ -479,7 +479,7 @@ implements FormExecutor {
     }
 
     protected ServiceInjector getServicesInjector() {
-        return getIsisSessionFactory().getServicesInjector();
+        return getIsisSessionFactory().getServiceInjector();
     }
 
     protected SpecificationLoader getSpecificationLoader() {

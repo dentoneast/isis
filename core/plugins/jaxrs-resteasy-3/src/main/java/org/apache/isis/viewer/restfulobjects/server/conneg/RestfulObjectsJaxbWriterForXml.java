@@ -65,7 +65,7 @@ public class RestfulObjectsJaxbWriterForXml extends JAXBXmlRootElementProvider {
     }
 
     ServiceInjector getServicesInjector() {
-        return getIsisSessionFactory().getServicesInjector();
+        return getIsisSessionFactory().getServiceInjector();
     }
 
     IsisSessionFactory getIsisSessionFactory() {

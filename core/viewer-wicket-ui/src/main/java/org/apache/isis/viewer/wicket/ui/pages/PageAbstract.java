@@ -521,7 +521,7 @@ public abstract class PageAbstract extends WebPage implements ActionPromptProvid
     }
 
     protected ServiceInjector getServicesInjector() {
-        return getIsisSessionFactory().getServicesInjector();
+        return getIsisSessionFactory().getServiceInjector();
     }
 
     // -- derived from injected components (session-scope)

@@ -156,7 +156,7 @@ public class HeadlessTransactionSupportDefault implements HeadlessTransactionSup
     // -- getService
 
     private <C> C getService(Class<C> serviceClass) {
-        final ServiceInjector servicesInjector = isisSessionFactory().getServicesInjector();
+        final ServiceInjector servicesInjector = isisSessionFactory().getServiceInjector();
         return servicesInjector.lookupServiceElseFail(serviceClass);
     }
 

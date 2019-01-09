@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.ejb.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
@@ -36,6 +35,7 @@ import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.commons.internal.base._Blackhole;
 import org.apache.isis.commons.internal.context._Context;
+import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.ServiceInitializer;
@@ -67,7 +67,7 @@ import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
  *     it can be {@link Inject}'d into other domain services.
  * </p>
  */
-@Singleton @ApplicationScoped
+@ApplicationScoped
 public class IsisSessionFactoryDefault implements IsisSessionFactory {
 
     //private final static Logger LOG = LoggerFactory.getLogger(IsisSessionFactory.class);
@@ -86,6 +86,8 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
     public void init() {
         
         System.out.println("!!!!!!!!!!!!! IsisSessionFactory INIT " + hashCode());
+        
+        _Exceptions.dumpStackTrace(System.out, 0, 200);
 
         if(_Context.getIfAny(IsisSessionFactoryDefault.class)!=null) {
             return;
@@ -300,7 +302,7 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
     // -- component accessors
 
     @Override
-    public ServiceInjector getServicesInjector() {
+    public ServiceInjector getServiceInjector() {
         return serviceInjector;
     }
 

@@ -98,7 +98,11 @@ public final class AppConfigLocator {
         try {
             appManifestClass = _Casts.uncheckedCast(_Context.loadClassAndInitialize(appManifestClassName));
         } catch (ClassNotFoundException e) {
-            throw new IsisException("Failed to locate the AppManifest using config properties.", e);
+            throw new IsisException(
+                    String.format(
+                            "Failed to locate the AppManifest using config property 'isis.appManifest=%s'.",
+                            appManifestClassName), 
+                    e);
         }
         
         final AppManifest appManifest;

@@ -109,7 +109,7 @@ public interface IsisSessionFactory {
      * The {@link ApplicationScopedComponent application-scoped} {@link ServiceInjector}.
      * @deprecated use IsisContext instead
      */
-    public ServiceInjector getServicesInjector();
+    public ServiceInjector getServiceInjector();
 
     /**
      * The {@link ApplicationScopedComponent application-scoped}

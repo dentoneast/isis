@@ -132,7 +132,7 @@ public class WrapperFactoryDefaultTest_wrappedObject_transient {
 
         context.checking(new Expectations() {
             {
-                allowing(mockIsisSessionFactory).getServicesInjector();
+                allowing(mockIsisSessionFactory).getServiceInjector();
                 will(returnValue(mockServicesInjector));
 
                 allowing(mockIsisSessionFactory).getSpecificationLoader();

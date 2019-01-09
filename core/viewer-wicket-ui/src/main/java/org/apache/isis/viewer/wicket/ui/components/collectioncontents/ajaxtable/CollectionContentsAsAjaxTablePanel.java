@@ -243,7 +243,7 @@ extends PanelAbstract<EntityCollectionModel> implements CollectionCountProvider 
         
         // optional SPI to reorder
         final List<TableColumnOrderService> tableColumnOrderServices =
-                getServicesInjector().streamServices(TableColumnOrderService.class)
+                getServiceInjector().streamServices(TableColumnOrderService.class)
                 .collect(Collectors.toList());
 
         for (final TableColumnOrderService tableColumnOrderService : tableColumnOrderServices) {
