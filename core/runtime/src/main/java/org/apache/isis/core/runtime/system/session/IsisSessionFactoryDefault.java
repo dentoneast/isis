@@ -19,6 +19,8 @@
 
 package org.apache.isis.core.runtime.system.session;
 
+import static org.apache.isis.commons.internal.base._With.requires;
+
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
@@ -71,16 +73,16 @@ import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
 @Singleton
 public class IsisSessionFactoryDefault implements IsisSessionFactory {
 
-    //private final static Logger LOG = LoggerFactory.getLogger(IsisSessionFactory.class);
-
     @Inject private IsisConfiguration configuration;
+    
+    //@Inject 
+    private PersistenceSessionFactory persistenceSessionFactory;
     
     private ServiceInjector serviceInjector;
     private ServiceRegistry serviceRegistry;
     private SpecificationLoader specificationLoader;
     private AuthenticationManager authenticationManager;
     private AuthorizationManager authorizationManager;
-    private PersistenceSessionFactory persistenceSessionFactory;
     private ServiceInitializer serviceInitializer;
 
     @PostConstruct
@@ -88,13 +90,14 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
         
         System.out.println("!!!!!!!!!!!!! IsisSessionFactory INIT " + hashCode());
         
-        _Exceptions.dumpStackTrace(System.out, 0, 200);
-
+        // guard against this class not being a singleton
         if(_Context.getIfAny(IsisSessionFactoryDefault.class)!=null) {
+            _Exceptions.unexpectedCodeReach();
             return;
         }
         
-        //System.out.println("!!!!!!!!!!!!! IsisSessionFactory INIT " + hashCode());
+        requires(configuration, "configuration");
+        //requires(persistenceSessionFactory, "persistenceSessionFactory");
         
         final IsisComponentProvider componentProvider = IsisComponentProvider
                 .builder()
@@ -106,16 +109,18 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
         // as a side-effect, if the metamodel turns out to be invalid, then
         // this will push the MetaModelInvalidException into IsisContext.
         builder.buildSessionFactory(()->this);
+        
+        requires(persistenceSessionFactory, "persistenceSessionFactory");
     }
     
-    void initDependenecies() {
+    @Deprecated //replace with injection
+    void initDependencies(PersistenceSessionFactory persistenceSessionFactory) {
         this.serviceInjector = IsisContext.getServiceInjector();
         this.serviceRegistry = IsisContext.getServiceRegistry();
         this.specificationLoader = IsisContext.getSpecificationLoader();
         this.authenticationManager = IsisContext.getAuthenticationManager();
         this.authorizationManager = IsisContext.getAuthorizationManager();
-        this.persistenceSessionFactory = IsisContext.getServiceRegistry()
-                .lookupServiceElseFail(PersistenceSessionFactory.class);
+        this.persistenceSessionFactory = persistenceSessionFactory;
     }
 
     void constructServices() {

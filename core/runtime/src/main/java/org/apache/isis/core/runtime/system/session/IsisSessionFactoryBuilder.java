@@ -34,6 +34,7 @@ import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.commons.lang.ListExtensions;
+import org.apache.isis.core.metamodel.IsisJdoRuntimePlugin;
 import org.apache.isis.core.metamodel.facetapi.MetaModelRefiner;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidException;
@@ -99,19 +100,22 @@ public class IsisSessionFactoryBuilder {
 
             // specificationLoader
             final Collection<MetaModelRefiner> metaModelRefiners = refiners(
-                    authenticationManager, authorizationManager, new PersistenceSessionFactoryMetamodelRefiner());
+                    authenticationManager, 
+                    authorizationManager, 
+                    new PersistenceSessionFactoryMetamodelRefiner());
             
             final SpecificationLoader specificationLoader =
                     componentProvider.provideSpecificationLoader(metaModelRefiners);
 
             // persistenceSessionFactory
-            final PersistenceSessionFactory persistenceSessionFactory = PersistenceSessionFactory.get();
+            final PersistenceSessionFactory persistenceSessionFactory = 
+                    IsisJdoRuntimePlugin.get().getPersistenceSessionFactory();
 
             servicesRegistry.validateServices();
 
             // instantiate or reuse the IsisSessionFactory
             isisSessionFactory = sfInstanceSupplier.get();
-            isisSessionFactory.initDependenecies();
+            isisSessionFactory.initDependencies(persistenceSessionFactory);
 
             // now, add the IsisSessionFactory itself into ServicesInjector, so it can be @javax.inject.Inject'd
             // into any internal domain services
