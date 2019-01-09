@@ -42,7 +42,7 @@ public class IsisTransactionFilterForRestfulObjects implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         // no-op if no session available.
         final IsisSessionFactory isisSessionFactory = isisSessionFactoryFrom(request);
-        if(!isisSessionFactory.inSession()) {
+        if(!isisSessionFactory.isInSession()) {
             chain.doFilter(request, response);
             return;
         }
@@ -52,7 +52,7 @@ public class IsisTransactionFilterForRestfulObjects implements Filter {
         try {
             chain.doFilter(request, response);
         } finally {
-            final boolean inTransaction = isisSessionFactory.inTransaction();
+            final boolean inTransaction = isisSessionFactory.isInTransaction();
             if(inTransaction) {
                 // user/logout will have invalidated the current transaction and also persistence session.
                 try {

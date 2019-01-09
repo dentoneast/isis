@@ -69,7 +69,7 @@ public class LocalizerForIsis extends Localizer {
     protected String translate(final String key, final Component component) {
         final Class<?> contextClass = determineContextClassElse(component, IsisWicketApplication.class);
         final String context = contextClass.getName();
-        if(getIsisSessionFactory().inSession()) {
+        if(getIsisSessionFactory().isInSession()) {
             return translate(key, context);
         } else {
             return getIsisSessionFactory().doInSession(new Callable<String>() {

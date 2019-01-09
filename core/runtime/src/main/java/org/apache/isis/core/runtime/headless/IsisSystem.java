@@ -190,7 +190,7 @@ public final class IsisSystem {
     }
 
     public void closeSession() throws Exception {
-        if(isisSessionFactory!=null && isisSessionFactory.inSession()) {
+        if(isisSessionFactory!=null && isisSessionFactory.isInSession()) {
             isisSessionFactory.closeSession();
         }
     }

@@ -109,7 +109,7 @@ public abstract class ResourceAbstract {
             final Where where,
             final RepresentationService.Intent intent,
             final String urlUnencodedQueryString) {
-        if (!getIsisSessionFactory().inSession()) {
+        if (!getIsisSessionFactory().isInSession()) {
             throw RestfulObjectsApplicationException.create(HttpStatusCode.UNAUTHORIZED);
         }
         if (getAuthenticationSession() == null) {

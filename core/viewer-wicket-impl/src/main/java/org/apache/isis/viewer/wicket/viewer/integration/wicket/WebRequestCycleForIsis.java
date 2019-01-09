@@ -135,7 +135,7 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
             ConcurrencyChecking.reset(ConcurrencyChecking.CHECK);
         }
 
-        if (getIsisSessionFactory().inSession()) {
+        if (getIsisSessionFactory().isInSession()) {
             try {
                 // will commit (or abort) the transaction;
                 // an abort will cause the exception to be thrown.
@@ -166,7 +166,7 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
      */
     @Override
     public synchronized void onEndRequest(RequestCycle cycle) {
-        if (getIsisSessionFactory().inSession()) {
+        if (getIsisSessionFactory().isInSession()) {
             try {
                 // belt and braces
                 getTransactionManager().endTransaction();
@@ -365,7 +365,7 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
     }
 
     protected boolean inIsisSession() {
-        return getIsisSessionFactory().inSession();
+        return getIsisSessionFactory().isInSession();
     }
 
     protected AuthenticationSession getAuthenticationSession() {

@@ -253,12 +253,18 @@ public class IsisSessionFactory {
         return currentSession.getPersistenceSession().getTransactionManager();
     }
 
-    public boolean inSession() {
+    /**
+     * @return whether the calling thread is within the context of an open IsisSession
+     */
+    public boolean isInSession() {
         return getCurrentSession() != null;
     }
 
-    public boolean inTransaction() {
-        if (inSession()) {
+    /**
+     * @return whether the calling thread is within the context of an open IsisTransaction
+     */
+    public boolean isInTransaction() {
+        if (isInSession()) {
             if (getCurrentSession().getCurrentTransaction() != null) {
                 if (!getCurrentSession().getCurrentTransaction().getState().isComplete()) {
                     return true;
@@ -311,7 +317,7 @@ public class IsisSessionFactory {
      */
     public <R> R doInSession(final Callable<R> callable, final AuthenticationSession authenticationSession) {
         final IsisSessionFactory sessionFactory = this;
-        boolean noSession = !sessionFactory.inSession();
+        boolean noSession = !sessionFactory.isInSession();
         try {
             if (noSession) {
                 sessionFactory.openSession(authenticationSession);
