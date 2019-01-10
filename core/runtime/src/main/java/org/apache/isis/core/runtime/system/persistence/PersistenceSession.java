@@ -31,7 +31,6 @@ import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.runtime.persistence.objectstore.transaction.PersistenceCommand;
 import org.apache.isis.core.runtime.persistence.objectstore.transaction.TransactionalResource;
-import org.apache.isis.core.runtime.runner.opts.OptionHandlerFixtureAbstract;
 import org.apache.isis.core.runtime.system.persistence.adaptermanager.ObjectAdapterContext.MementoRecreateObjectSupport;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 
@@ -159,7 +158,7 @@ extends
     /**
      * @see #isFixturesInstalled()
      */
-    static final String INSTALL_FIXTURES_KEY = OptionHandlerFixtureAbstract.DATANUCLEUS_INSTALL_FIXTURES_KEY;
+    static final String INSTALL_FIXTURES_KEY = "isis.persistor.datanucleus.install-fixtures";
     static final boolean INSTALL_FIXTURES_DEFAULT = false;
     
     boolean isFixturesInstalled();
