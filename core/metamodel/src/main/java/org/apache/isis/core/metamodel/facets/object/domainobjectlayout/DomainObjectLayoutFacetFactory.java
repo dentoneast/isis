@@ -46,11 +46,29 @@ public class DomainObjectLayoutFacetFactory extends FacetFactoryAbstract {
                 TitleFacetViaDomainObjectLayoutAnnotationUsingTitleUiEvent.create(
                         domainObjectLayouts, getServiceInjector(), getConfiguration(), facetHolder));
         FacetUtil.addFacet(
+                TitleFacetViaViewModelLayoutAnnotationUsingTitleUiEvent.create(
+                        viewModelLayouts, getServiceInjector(), getConfiguration(), facetHolder));
+
+        FacetUtil.addFacet(
                 IconFacetViaDomainObjectLayoutAnnotationUsingIconUiEvent.create(
                         domainObjectLayouts, getServiceInjector(), getConfiguration(), facetHolder));
         FacetUtil.addFacet(
+                IconFacetViaViewModelLayoutAnnotationUsingIconUiEvent.create(
+                        viewModelLayouts, getServiceInjector(), getConfiguration(), facetHolder));
+
+        FacetUtil.addFacet(
                 CssClassFacetViaDomainObjectLayoutAnnotationUsingCssClassUiEvent.create(
                         domainObjectLayouts, getServiceInjector(), getConfiguration(), facetHolder));
+        FacetUtil.addFacet(
+                CssClassFacetViaViewModelLayoutAnnotationUsingCssClassUiEvent.create(
+                        viewModelLayouts, getServiceInjector(), getConfiguration(), facetHolder));
+
+        FacetUtil.addFacet(
+                LayoutFacetViaDomainObjectLayoutAnnotationUsingLayoutUiEvent.create(
+                        domainObjectLayouts, getServiceInjector(), getConfiguration(), facetHolder));
+        FacetUtil.addFacet(
+                LayoutFacetViaViewModelLayoutAnnotationUsingLayoutUiEvent.create(
+                        viewModelLayouts, getServiceInjector(), getConfiguration(), facetHolder));
 
         FacetUtil.addFacet(
                 CssClassFacetForDomainObjectLayoutAnnotation.create(domainObjectLayouts, facetHolder));
