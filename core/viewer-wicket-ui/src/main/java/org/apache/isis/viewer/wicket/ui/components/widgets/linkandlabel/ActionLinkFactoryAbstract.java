@@ -168,7 +168,7 @@ public abstract class ActionLinkFactoryAbstract implements ActionLinkFactory {
             final ActionPromptProvider promptProvider = ActionPromptProvider.Util.getFrom(actionLink.getPage());
             final ObjectSpecification specification = actionModel.getTargetAdapter().getSpecification();
 
-            final MetaModelService metaModelService = getIsisSessionFactory().getServicesInjector()
+            final MetaModelService metaModelService = getIsisSessionFactory().getServiceInjector()
                     .lookupServiceElseFail(MetaModelService.class);
             final MetaModelService.Sort sort = metaModelService.sortOf(specification.getCorrespondingClass(), MetaModelService.Mode.RELAXED);
             final ActionPrompt prompt = promptProvider.getActionPrompt(promptStyle, sort);
