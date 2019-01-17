@@ -29,9 +29,6 @@ import org.apache.isis.commons.internal.context._Plugin;
 import org.apache.isis.config.builder.IsisConfigurationBuilder;
 import org.apache.isis.core.commons.exceptions.IsisException;
 
-/**
- * @since 2.0.0-M2
- */
 public final class AppConfigLocator {
     
     private static final Logger LOG = LoggerFactory.getLogger(AppConfigLocator.class);
@@ -39,7 +36,7 @@ public final class AppConfigLocator {
     private AppConfigLocator() { }
     
     public static AppConfig getAppConfig() {
-        return _Context.computeIfAbsent(AppConfig.class, __->lookupAppConfigAndInitCDI());
+        return _Context.computeIfAbsent(AppConfig.class, ()->lookupAppConfig());
     }
     
     // -- HELPER

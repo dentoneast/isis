@@ -28,6 +28,41 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
+import org.apache.isis.applib.annotation.PromptStyle;
+import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
+import org.apache.isis.applib.services.exceprecog.ExceptionRecognizerComposite;
+import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.metamodel.MetaModelService;
+import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.config.beans.WebAppConfigBean;
+import org.apache.isis.config.property.ConfigPropertyEnum;
+import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
+import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import org.apache.isis.core.security.authentication.AuthenticationSession;
+import org.apache.isis.viewer.wicket.model.common.PageParametersUtils;
+import org.apache.isis.viewer.wicket.model.hints.IsisEnvelopeEvent;
+import org.apache.isis.viewer.wicket.model.hints.IsisEventLetterAbstract;
+import org.apache.isis.viewer.wicket.model.hints.UiHintContainer;
+import org.apache.isis.viewer.wicket.model.models.ActionPrompt;
+import org.apache.isis.viewer.wicket.model.models.ActionPromptProvider;
+import org.apache.isis.viewer.wicket.model.models.BookmarkableModel;
+import org.apache.isis.viewer.wicket.model.models.BookmarkedPagesModel;
+import org.apache.isis.viewer.wicket.model.models.EntityModel;
+import org.apache.isis.viewer.wicket.model.models.PageType;
+import org.apache.isis.viewer.wicket.ui.ComponentFactory;
+import org.apache.isis.viewer.wicket.ui.ComponentType;
+import org.apache.isis.viewer.wicket.ui.DialogMode;
+import org.apache.isis.viewer.wicket.ui.app.registry.ComponentFactoryRegistry;
+import org.apache.isis.viewer.wicket.ui.app.registry.ComponentFactoryRegistryAccessor;
+import org.apache.isis.viewer.wicket.ui.components.actionprompt.ActionPromptModalWindow;
+import org.apache.isis.viewer.wicket.ui.components.actionpromptsb.ActionPromptSidebar;
+import org.apache.isis.viewer.wicket.ui.components.bookmarkedpages.BookmarkedPagesPanel;
+import org.apache.isis.viewer.wicket.ui.components.widgets.breadcrumbs.BreadcrumbPanel;
+import org.apache.isis.viewer.wicket.ui.components.widgets.favicon.Favicon;
+import org.apache.isis.viewer.wicket.ui.errors.ExceptionModel;
+import org.apache.isis.viewer.wicket.ui.errors.JGrowlBehaviour;
+import org.apache.isis.viewer.wicket.ui.util.CssClassAppender;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
@@ -62,41 +97,6 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.isis.applib.annotation.PromptStyle;
-import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
-import org.apache.isis.applib.services.exceprecog.ExceptionRecognizerComposite;
-import org.apache.isis.applib.services.inject.ServiceInjector;
-import org.apache.isis.config.IsisConfiguration;
-import org.apache.isis.config.beans.WebAppConfigBean;
-import org.apache.isis.config.property.ConfigPropertyEnum;
-import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-import org.apache.isis.core.security.authentication.AuthenticationSession;
-import org.apache.isis.viewer.wicket.model.common.PageParametersUtils;
-import org.apache.isis.viewer.wicket.model.hints.IsisEnvelopeEvent;
-import org.apache.isis.viewer.wicket.model.hints.IsisEventLetterAbstract;
-import org.apache.isis.viewer.wicket.model.hints.UiHintContainer;
-import org.apache.isis.viewer.wicket.model.models.ActionPrompt;
-import org.apache.isis.viewer.wicket.model.models.ActionPromptProvider;
-import org.apache.isis.viewer.wicket.model.models.BookmarkableModel;
-import org.apache.isis.viewer.wicket.model.models.BookmarkedPagesModel;
-import org.apache.isis.viewer.wicket.model.models.EntityModel;
-import org.apache.isis.viewer.wicket.model.models.PageType;
-import org.apache.isis.viewer.wicket.ui.ComponentFactory;
-import org.apache.isis.viewer.wicket.ui.ComponentType;
-import org.apache.isis.viewer.wicket.ui.DialogMode;
-import org.apache.isis.viewer.wicket.ui.app.registry.ComponentFactoryRegistry;
-import org.apache.isis.viewer.wicket.ui.app.registry.ComponentFactoryRegistryAccessor;
-import org.apache.isis.viewer.wicket.ui.components.actionprompt.ActionPromptModalWindow;
-import org.apache.isis.viewer.wicket.ui.components.actionpromptsb.ActionPromptSidebar;
-import org.apache.isis.viewer.wicket.ui.components.bookmarkedpages.BookmarkedPagesPanel;
-import org.apache.isis.viewer.wicket.ui.components.widgets.breadcrumbs.BreadcrumbPanel;
-import org.apache.isis.viewer.wicket.ui.components.widgets.favicon.Favicon;
-import org.apache.isis.viewer.wicket.ui.errors.ExceptionModel;
-import org.apache.isis.viewer.wicket.ui.errors.JGrowlBehaviour;
-import org.apache.isis.viewer.wicket.ui.util.CssClassAppender;
-
 import de.agilecoders.wicket.core.Bootstrap;
 import de.agilecoders.wicket.core.markup.html.references.BootlintHeaderItem;
 import de.agilecoders.wicket.core.markup.html.references.BootstrapJavaScriptReference;
@@ -115,6 +115,8 @@ public abstract class PageAbstract extends WebPage implements ActionPromptProvid
 
     public static final ConfigPropertyEnum<DialogMode> CONFIG_DIALOG_MODE =
             new ConfigPropertyEnum<>("isis.viewer.wicket.dialogMode", DialogMode.SIDEBAR);
+    public static final ConfigPropertyEnum<DialogMode> CONFIG_DIALOG_MODE_FOR_MENUS =
+            new ConfigPropertyEnum<>("isis.viewer.wicket.dialogModeForMenu", DialogMode.MODAL);
 
     /**
      * @see <a href="http://github.com/brandonaaron/livequery">livequery</a>
@@ -460,21 +462,28 @@ public abstract class PageAbstract extends WebPage implements ActionPromptProvid
     private ActionPromptModalWindow actionPromptModalWindow;
     private ActionPromptSidebar actionPromptSidebar;
 
-    public ActionPrompt getActionPrompt(final PromptStyle promptStyle) {
+    public ActionPrompt getActionPrompt(
+            final PromptStyle promptStyle,
+            final MetaModelService.Sort sort) {
+
         switch (promptStyle) {
         case AS_CONFIGURED:
         case DIALOG:
         case INLINE:
         case INLINE_AS_IF_EDIT:
         default:
-        final DialogMode dialogMode = CONFIG_DIALOG_MODE.from(getConfiguration());
-        switch (dialogMode) {
+            final ConfigPropertyEnum<DialogMode> configProp =
+                    sort == MetaModelService.Sort.DOMAIN_SERVICE
+                            ? CONFIG_DIALOG_MODE_FOR_MENUS
+                            : CONFIG_DIALOG_MODE;
+            final DialogMode dialogMode = configProp.from(getConfiguration());
+            switch (dialogMode) {
             case SIDEBAR:
                 return actionPromptSidebar;
             case MODAL:
             default:
-        return actionPromptModalWindow;
-    }
+                return actionPromptModalWindow;
+            }
         case DIALOG_SIDEBAR:
             return actionPromptSidebar;
         case DIALOG_MODAL:

@@ -1,3 +1,6 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
 /**
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
@@ -30,15 +33,15 @@ import domainapp.modules.simple.dom.impl.SimpleObjects;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-public class SimpleObjectMenuGlue extends CukeGlueAbstract2 {
+public class SimpleObjectsGlue extends CukeGlueAbstract2 {
 
-    @Given("^there are.* (\\d+) simple objects$")
+    @Given("^there are.* (${symbol_escape}${symbol_escape}d+) simple objects${symbol_dollar}")
     public void there_are_N_simple_objects(int n) throws Throwable {
         final List<SimpleObject> list = wrap(simpleObjects).listAll();
         assertThat(list.size(), is(n));
     }
     
-    @When("^.*create a .*simple object$")
+    @When("^.*create a .*simple object${symbol_dollar}")
     public void create_a_simple_object() throws Throwable {
         wrap(simpleObjects).create(UUID.randomUUID().toString());
     }

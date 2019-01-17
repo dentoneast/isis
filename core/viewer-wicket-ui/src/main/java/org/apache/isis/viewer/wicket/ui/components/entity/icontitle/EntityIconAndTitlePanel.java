@@ -33,6 +33,7 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.facets.members.cssclassfa.CssClassFaFacet;
+import org.apache.isis.core.metamodel.facets.object.projection.ProjectionFacet;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
 import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
@@ -148,18 +149,36 @@ public class EntityIconAndTitlePanel extends PanelAbstract<ObjectAdapterModel> {
     }
 
     private AbstractLink createDynamicallyVisibleLink() {
-        final PageParameters pageParameters = getModel().getPageParametersWithoutUiHints();
+
+        final ObjectAdapterModel entityModel = getModel();
+
+        final ObjectAdapter targetAdapter = entityModel.getObject();
+        final ObjectAdapterModel redirectToModel;
+        
+        if(targetAdapter != null) {
+            final ProjectionFacet projectionFacet = entityModel.getTypeOfSpecification().getFacet(ProjectionFacet.class);
+
+            final ObjectAdapter redirectToAdapter =
+                    projectionFacet != null ? projectionFacet.projected(targetAdapter) : targetAdapter;
+
+            redirectToModel = new EntityModel(redirectToAdapter);
+        } else {
+            redirectToModel = entityModel;
+        }
+
+        final PageParameters pageParameters = redirectToModel.getPageParametersWithoutUiHints();
 
         final Class<? extends Page> pageClass = getPageClassRegistry().getPageClass(PageType.ENTITY);
 
-        return new BookmarkablePageLink<Void>(ID_ENTITY_LINK, pageClass, pageParameters) {
-            private static final long serialVersionUID = 1L;
-
+        final BookmarkablePageLink<Void> link = new BookmarkablePageLink<Void>(ID_ENTITY_LINK, pageClass, pageParameters) {
             @Override
             public boolean isVisible() {
-                return EntityIconAndTitlePanel.this.getModel().getObject() != null;
+                final ObjectAdapter targetAdapter = entityModel.getObject();
+                return targetAdapter != null;
             }
         };
+
+        return link;
     }
 
     private Label newLabel(final String id, final String title) {

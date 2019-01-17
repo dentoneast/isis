@@ -19,7 +19,11 @@
 
 package org.apache.isis.viewer.wicket.ui.components.tree;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
+
 import org.apache.isis.viewer.wicket.model.models.ValueModel;
+import org.apache.isis.viewer.wicket.ui.components.tree.themes.TreeThemeProvider;
 import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
 
 public class StandaloneTreePanel extends PanelAbstract<ValueModel> {
@@ -29,7 +33,11 @@ public class StandaloneTreePanel extends PanelAbstract<ValueModel> {
 
     public StandaloneTreePanel(final String id, final ValueModel valueModel) {
         super(id, valueModel);
-        add(IsisToWicketTreeAdapter.adapt(ID_TREE, valueModel));
+        
+        final Component tree = IsisToWicketTreeAdapter.adapt(ID_TREE, valueModel);
+        final Behavior treeTheme = TreeThemeProvider.get().treeThemeFor(valueModel); 
+        
+        add(tree.add(treeTheme));
     }
 
 
