@@ -107,7 +107,7 @@ public interface IsisConfiguration {
     // -- VERSION
     
     public static String getVersion() {
-        return "2.0.0-M2";
+        return "2.0.0-M3";
     }
     
     // --
