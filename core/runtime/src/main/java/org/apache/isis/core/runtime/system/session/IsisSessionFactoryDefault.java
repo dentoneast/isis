@@ -19,27 +19,19 @@
 
 package org.apache.isis.core.runtime.system.session;
 
-import static org.apache.isis.commons.internal.base._With.requires;
-
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.Vetoed;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.commons.internal.base._Blackhole;
-import org.apache.isis.commons.internal.context._Context;
-import org.apache.isis.commons.internal.debug._Probe;
-import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.ServiceInitializer;
@@ -52,7 +44,6 @@ import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManagerException;
-import org.apache.isis.core.runtime.systemusinginstallers.IsisComponentProvider;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
 import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
@@ -71,7 +62,7 @@ import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
  *     it can be {@link Inject}'d into other domain services.
  * </p>
  */
-@Singleton
+@Vetoed // has a producer 
 public class IsisSessionFactoryDefault implements IsisSessionFactory {
 
     @Inject private IsisConfiguration configuration;
@@ -86,35 +77,31 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
     private AuthorizationManager authorizationManager;
     private ServiceInitializer serviceInitializer;
 
-    private final static _Probe probe = _Probe.unlimited().label("IsisSessionFactoryDefault");  
-    
-    @PostConstruct
-    public void init() {
-    	
-    	probe.println("INIT " + hashCode());
-        
-        // guard against this class not being a singleton
-        if(_Context.getIfAny(IsisSessionFactoryDefault.class)!=null) {
-            _Exceptions.unexpectedCodeReach();
-            return;
-        }
-        
-        requires(configuration, "configuration");
-        //requires(persistenceSessionFactory, "persistenceSessionFactory");
-        
-        final IsisComponentProvider componentProvider = IsisComponentProvider
-                .builder()
-                .build();
-        
-        final IsisSessionFactoryBuilder builder =
-                new IsisSessionFactoryBuilder(componentProvider);
-        
-        // as a side-effect, if the metamodel turns out to be invalid, then
-        // this will push the MetaModelInvalidException into IsisContext.
-        builder.buildSessionFactory(()->this);
-        
-        requires(persistenceSessionFactory, "persistenceSessionFactory");
-    }
+//    private final static _Probe probe = _Probe.maxCallsThenExitWithStacktrace(1).label("IsisSessionFactoryDefault");  
+//    
+//    @PostConstruct
+//    public void init() {
+//    	
+//    	probe.println("INIT " + hashCode());
+//        
+//        // guard against this class not being a singleton
+//        if(_Context.getIfAny(IsisSessionFactoryDefault.class)!=null) {
+//            _Exceptions.unexpectedCodeReach();
+//            return;
+//        }
+//        
+//        requires(configuration, "configuration");
+//        //requires(persistenceSessionFactory, "persistenceSessionFactory");
+//        
+//        
+//        final IsisSessionFactoryBuilder builder = new IsisSessionFactoryBuilder();
+//        
+//        // as a side-effect, if the metamodel turns out to be invalid, then
+//        // this will push the MetaModelInvalidException into IsisContext.
+//        builder.buildSessionFactory(()->this);
+//        
+//        requires(persistenceSessionFactory, "persistenceSessionFactory");
+//    }
     
     @Deprecated //replace with injection
     void initDependencies(PersistenceSessionFactory persistenceSessionFactory) {
@@ -315,7 +302,6 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
         return serviceInjector;
     }
 
-    @Produces @ApplicationScoped
     @Override
     public SpecificationLoader getSpecificationLoader() {
         return specificationLoader;

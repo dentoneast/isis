@@ -21,6 +21,16 @@ package org.apache.isis.tool.mavenplugin;
 import java.io.IOException;
 import java.util.Set;
 
+import org.apache.isis.applib.AppManifest;
+import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.core.commons.factory.InstanceUtil;
+import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidException;
+import org.apache.isis.core.plugins.environment.IsisSystemEnvironment;
+import org.apache.isis.core.runtime.logging.IsisLoggingConfigurer;
+import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import org.apache.isis.core.runtime.system.session.IsisSessionFactory_producer;
+import org.apache.isis.tool.mavenplugin.util.MavenProjects;
 import org.apache.log4j.Level;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
@@ -30,19 +40,6 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-
-import org.apache.isis.applib.AppManifest;
-import org.apache.isis.config.IsisConfiguration;
-import org.apache.isis.core.commons.factory.InstanceUtil;
-import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidException;
-import org.apache.isis.core.plugins.environment.IsisSystemEnvironment;
-import org.apache.isis.core.runtime.logging.IsisLoggingConfigurer;
-import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactoryBuilder;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactoryDefault;
-import org.apache.isis.core.runtime.systemusinginstallers.IsisComponentProvider;
-import org.apache.isis.tool.mavenplugin.util.MavenProjects;
 
 public abstract class IsisMojoAbstract extends AbstractMojo {
 
@@ -70,17 +67,13 @@ public abstract class IsisMojoAbstract extends AbstractMojo {
         final AppManifest appManifest = InstanceUtil.createInstance(this.appManifest, AppManifest.class);
         IsisConfiguration.buildFromAppManifest(appManifest); // build and finalize config
         
-        final IsisComponentProvider isisComponentProvider = IsisComponentProvider.builder()
-                .build();
-        final IsisSessionFactoryBuilder isisSessionFactoryBuilder = 
-                new IsisSessionFactoryBuilder(isisComponentProvider);
-        
         IsisSessionFactory isisSessionFactory = null;
         try {
-            isisSessionFactory = isisSessionFactoryBuilder.buildSessionFactory(IsisSessionFactoryDefault::new);
-            if(!isisSessionFactoryBuilder.isMetaModelValid()) {
-                MetaModelInvalidException metaModelInvalidException = IsisContext
-                        .getMetaModelInvalidExceptionIfAny();
+            isisSessionFactory = new IsisSessionFactory_producer().produce();
+            		
+            final MetaModelInvalidException metaModelInvalidException = 
+            		IsisContext.getMetaModelInvalidExceptionIfAny();
+            if(metaModelInvalidException!=null) {
                 Set<String> validationErrors = metaModelInvalidException.getValidationErrors();
                 context.throwFailureException(validationErrors.size() + " meta-model problems found.", validationErrors);
                 return;

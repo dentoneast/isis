@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
-import java.util.function.Supplier;
 
 import org.apache.isis.applib.clock.Clock;
 import org.apache.isis.applib.fixtures.FixtureClock;
@@ -55,7 +54,7 @@ import org.apache.isis.schema.utils.InteractionDtoUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class IsisSessionFactoryBuilder {
+class IsisSessionFactoryBuilder {
 
     // -- constructors, accessors
 
@@ -63,15 +62,17 @@ public class IsisSessionFactoryBuilder {
     private final IsisLocaleInitializer localeInitializer;
     private final IsisTimeZoneInitializer timeZoneInitializer;
 
-    public IsisSessionFactoryBuilder(final IsisComponentProvider componentProvider) {
-        this.componentProvider = componentProvider;
+    public IsisSessionFactoryBuilder() {
+        this.componentProvider = 
+        		IsisComponentProvider.builder()
+        		.build();
         this.localeInitializer = new IsisLocaleInitializer();
         this.timeZoneInitializer = new IsisTimeZoneInitializer();
     }
 
     // -- buildSessionFactory
 
-    public IsisSessionFactory buildSessionFactory(Supplier<IsisSessionFactoryDefault> sfInstanceSupplier) {
+    public IsisSessionFactory buildSessionFactory() {
 
         log.info("initialising Isis System");
         log.info("working directory: {}", new File(".").getAbsolutePath());
@@ -113,8 +114,8 @@ public class IsisSessionFactoryBuilder {
 
             servicesRegistry.validateServices();
 
-            // instantiate or reuse the IsisSessionFactory
-            isisSessionFactory = sfInstanceSupplier.get();
+            // instantiate the IsisSessionFactory
+            isisSessionFactory = new IsisSessionFactoryDefault();
             isisSessionFactory.initDependencies(persistenceSessionFactory);
 
             // now, add the IsisSessionFactory itself into ServicesInjector, so it can be @javax.inject.Inject'd
@@ -239,11 +240,6 @@ public class IsisSessionFactoryBuilder {
 
     private static Collection<MetaModelRefiner> refiners(Object... possibleRefiners ) {
         return ListExtensions.filtered(Arrays.asList(possibleRefiners), MetaModelRefiner.class);
-    }
-
-    // region > metaModel validity
-    public boolean isMetaModelValid() {
-        return IsisContext.getMetaModelInvalidExceptionIfAny() == null;
     }
 
 }
