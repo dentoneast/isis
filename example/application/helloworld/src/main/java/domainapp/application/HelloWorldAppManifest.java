@@ -25,6 +25,8 @@ import org.apache.isis.applib.AppManifestAbstract2;
 import org.apache.isis.config.AppConfig;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.runtime.authorization.standard.AuthorizationManagerStandard;
+import org.apache.isis.core.runtime.threadpool.ThreadPoolExecutionMode;
+import org.apache.isis.core.runtime.threadpool.ThreadPoolSupport;
 import org.apache.isis.core.security.authentication.bypass.AuthenticatorBypass;
 import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
 import org.apache.isis.core.security.authentication.standard.AuthenticationManagerStandard;
@@ -47,6 +49,10 @@ public class HelloWorldAppManifest extends AppManifestAbstract2 implements AppCo
 
     public HelloWorldAppManifest() {
         super(BUILDER);
+        
+        ThreadPoolSupport.HIGHEST_CONCURRENCY_EXECUTION_MODE_ALLOWED = 
+        		ThreadPoolExecutionMode.SEQUENTIAL_WITHIN_CALLING_THREAD;
+        
     }
 
     // Implementing AppConfig, to tell the framework how to bootstrap the configuration.

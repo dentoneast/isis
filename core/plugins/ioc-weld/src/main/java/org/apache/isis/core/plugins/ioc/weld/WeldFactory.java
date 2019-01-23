@@ -26,6 +26,7 @@ import org.jboss.weld.environment.se.WeldContainer;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.collections._Arrays;
 import org.apache.isis.commons.internal.context._Context;
+import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 
 import static org.apache.isis.commons.internal.base._NullSafe.stream;
@@ -35,6 +36,8 @@ import static org.apache.isis.commons.internal.base._NullSafe.stream;
  */
 public class WeldFactory {
     
+	private final static _Probe probe = _Probe.unlimited().label("WeldFactory");
+	
     public static int invokeCount = 0;
 
 	public static WeldContainer newContainer(@Nullable Stream<Class<?>> discover) {
@@ -65,9 +68,9 @@ public class WeldFactory {
 	                    );
 	    
 	    stream(classes)
-	    .forEach(p->System.out.println("!!! scanning c "+p));
+	    .forEach(c->probe.println("scanning class %s", c));
 	    stream(additionalPackages)
-        .forEach(p->System.out.println("!!! scanning p "+p));
+	    .forEach(p->probe.println("scanning additionalPackag %s", p));
 	    
         boolean scanRecursively = true;
         

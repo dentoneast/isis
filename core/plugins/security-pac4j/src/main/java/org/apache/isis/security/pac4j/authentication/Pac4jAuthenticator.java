@@ -18,6 +18,7 @@
  */
 package org.apache.isis.security.pac4j.authentication;
 
+import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.core.security.authentication.AuthenticationRequest;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -26,18 +27,21 @@ import org.apache.isis.core.security.authentication.standard.SimpleSession;
 
 public class Pac4jAuthenticator implements Authenticator {
 
+	private final static _Probe probe = _Probe.unlimited().label("Pac4jAuthenticator");
+	
+	
     @Override
     public void init() {
         // TODO Auto-generated method stub
 
-        System.out.println("!!! Pac4jAuthenticator.init");
+    	probe.println("init");
     }
 
     @Override
     public void shutdown() {
         // TODO Auto-generated method stub
         
-        System.out.println("!!! Pac4jAuthenticator.shutdown");
+        probe.println("shutdown");
 
     }
 
@@ -45,7 +49,7 @@ public class Pac4jAuthenticator implements Authenticator {
     public boolean canAuthenticate(Class<? extends AuthenticationRequest> authenticationRequestClass) {
         // TODO Auto-generated method stub
         
-        System.out.println("!!! Pac4jAuthenticator.canAuthenticate authenticationRequestClass="+authenticationRequestClass);
+    	probe.println("canAuthenticate authenticationRequestClass=%s", authenticationRequestClass);
         
         _Exceptions.dumpStackTrace(System.out, 0, 1000);
         
@@ -55,7 +59,7 @@ public class Pac4jAuthenticator implements Authenticator {
     @Override
     public AuthenticationSession authenticate(AuthenticationRequest request, String code) {
         
-        System.out.println("!!! Pac4jAuthenticator.authenticate request=" + request + ", code="+code);
+    	probe.println("authenticate request=%s, code=%s", request, code);
         
         String[] roles = {};
         return new SimpleSession(request.getName(), roles, code);
@@ -65,7 +69,7 @@ public class Pac4jAuthenticator implements Authenticator {
     public void logout(AuthenticationSession session) {
         // TODO Auto-generated method stub
         
-        System.out.println("!!! Pac4jAuthenticator.logout session="+session);
+    	probe.println("logout session=%s", session);
 
     }
     

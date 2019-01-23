@@ -38,6 +38,7 @@ import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.commons.internal.base._Blackhole;
 import org.apache.isis.commons.internal.context._Context;
+import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
@@ -85,10 +86,12 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
     private AuthorizationManager authorizationManager;
     private ServiceInitializer serviceInitializer;
 
+    private final static _Probe probe = _Probe.unlimited().label("IsisSessionFactoryDefault");  
+    
     @PostConstruct
     public void init() {
-        
-        System.out.println("!!!!!!!!!!!!! IsisSessionFactory INIT " + hashCode());
+    	
+    	probe.println("INIT " + hashCode());
         
         // guard against this class not being a singleton
         if(_Context.getIfAny(IsisSessionFactoryDefault.class)!=null) {
