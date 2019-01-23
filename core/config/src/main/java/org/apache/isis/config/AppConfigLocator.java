@@ -18,16 +18,15 @@
  */
 package org.apache.isis.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.isis.applib.AppManifest;
-import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.context._Plugin;
-import org.apache.isis.config.builder.IsisConfigurationBuilder;
+import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.core.commons.exceptions.IsisException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import lombok.val;
 
 public final class AppConfigLocator {
     
@@ -36,14 +35,29 @@ public final class AppConfigLocator {
     private AppConfigLocator() { }
     
     public static AppConfig getAppConfig() {
-        return _Context.computeIfAbsent(AppConfig.class, ()->lookupAppConfigAndInitCDI());
+        return _Context.computeIfAbsent(AppConfig.class, ()->lookupAppConfigAndVerifyCDI());
     }
     
     // -- HELPER
     
-    private static AppConfig lookupAppConfigAndInitCDI() {
+    private final static _Probe probe = 
+    		_Probe.unlimited().label("AppConfigLocator");
+    
+    private static AppConfig lookupAppConfigAndVerifyCDI() {
         final AppConfig appConfig = lookupAppConfig();
-        _CDI.init(appConfig.isisConfiguration()::streamClassesToDiscover);
+        
+		_CDI.streamAllBeans().forEach(bean->{
+
+			val type = bean.getBeanClass();
+			val logScope = type.getName().startsWith("org.apache.isis.") ||
+					type.getName().startsWith("domainapp.");
+            if(logScope) {
+            	probe.println("discovered bean %s", bean);
+            } 
+		});
+		
+		// TODO ensure critical services are managed by CDI
+        
         return appConfig;
     }
     
@@ -54,22 +68,27 @@ public final class AppConfigLocator {
         appConfig = lookupAppConfig_UsingCDI();
         if(appConfig!=null) {
             LOG.info(String.format("Located AppConfig '%s' via CDI.", appConfig.getClass().getName()));
+            
             return appConfig;
         }
         
         appConfig = lookupAppConfig_UsingServiceLoader();
         if(appConfig!=null) {
             LOG.info(String.format("Located AppConfig '%s' via ServiceLoader.", appConfig.getClass().getName()));
+            
+            // as we are in a non-managed environment, we need to bootstrap CDI ourself
+            _CDI.init(appConfig.isisConfiguration()::streamClassesToDiscover);
+            
             return appConfig;
         }
         
-        appConfig = lookupAppConfig_UsingConfigProperties();
-        if(appConfig!=null) {
-            LOG.info(String.format("Located AppConfig '%s' using config properties.", appConfig.getClass().getName()));
-            return appConfig;    
-        }
+//        appConfig = lookupAppConfig_UsingConfigProperties();
+//        if(appConfig!=null) {
+//            LOG.info(String.format("Located AppConfig '%s' using config properties.", appConfig.getClass().getName()));
+//            return appConfig;    
+//        }
         
-        throw new IsisException("Failed to locate the AppManifest");
+        throw new IsisException("Failed to locate the AppConfig");
     }
     
     private static AppConfig lookupAppConfig_UsingCDI() {
@@ -85,35 +104,35 @@ public final class AppConfigLocator {
                 ()->null);
     }
     
-    // to support pre 2.0.0-M2 behavior    
-    private static AppConfig lookupAppConfig_UsingConfigProperties() {
-        
-        IsisConfigurationBuilder builder = IsisConfigurationBuilder.getDefault();
-        String appManifestClassName =  builder.peekAtString("isis.appManifest");
-        
-        final Class<AppManifest> appManifestClass;
-        try {
-            appManifestClass = _Casts.uncheckedCast(_Context.loadClassAndInitialize(appManifestClassName));
-        } catch (ClassNotFoundException e) {
-            throw new IsisException(
-                    String.format(
-                            "Failed to locate the AppManifest using config property 'isis.appManifest=%s'.",
-                            appManifestClassName), 
-                    e);
-        }
-        
-        final AppManifest appManifest;
-        try {
-            appManifest = appManifestClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new IsisException(
-                    String.format("Failed to create instance of AppManifest '%s'.", appManifestClass), e);
-        }
-        
-        // Note: AppConfig is a FunctionalInterface
-        return ()->IsisConfiguration.buildFromAppManifest(appManifest);
-        
-    }
+//    // to support pre 2.0.0-M2 behavior    
+//    private static AppConfig lookupAppConfig_UsingConfigProperties() {
+//        
+//        IsisConfigurationBuilder builder = IsisConfigurationBuilder.getDefault();
+//        String appManifestClassName =  builder.peekAtString("isis.appManifest");
+//        
+//        final Class<AppManifest> appManifestClass;
+//        try {
+//            appManifestClass = _Casts.uncheckedCast(_Context.loadClassAndInitialize(appManifestClassName));
+//        } catch (ClassNotFoundException e) {
+//            throw new IsisException(
+//                    String.format(
+//                            "Failed to locate the AppManifest using config property 'isis.appManifest=%s'.",
+//                            appManifestClassName), 
+//                    e);
+//        }
+//        
+//        final AppManifest appManifest;
+//        try {
+//            appManifest = appManifestClass.newInstance();
+//        } catch (InstantiationException | IllegalAccessException e) {
+//            throw new IsisException(
+//                    String.format("Failed to create instance of AppManifest '%s'.", appManifestClass), e);
+//        }
+//        
+//        // Note: AppConfig is a FunctionalInterface
+//        return ()->IsisConfiguration.buildFromAppManifest(appManifest);
+//        
+//    }
     
     
     

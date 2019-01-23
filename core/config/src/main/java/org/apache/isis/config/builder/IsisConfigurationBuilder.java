@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.Module;
 import org.apache.isis.applib.PropertyResource;
+import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.NotFoundPolicy;
 import org.apache.isis.config.resource.ResourceStreamSource;

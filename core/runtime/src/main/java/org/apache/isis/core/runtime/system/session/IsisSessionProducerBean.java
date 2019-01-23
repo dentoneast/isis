@@ -27,8 +27,6 @@ import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory;
-import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
-import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
 
 @ApplicationScoped
 public class IsisSessionProducerBean {
@@ -41,16 +39,6 @@ public class IsisSessionProducerBean {
 	@Produces @ApplicationScoped
 	public SpecificationLoader produceSpecificationLoader() {
 		return produceIsisSessionFactory().getSpecificationLoader();
-	}
-	
-	@Produces @ApplicationScoped
-	public AuthenticationManager produceAuthenticationManager() {
-		return produceIsisSessionFactory().getAuthenticationManager();
-	}
-	
-	@Produces @ApplicationScoped
-	public AuthorizationManager produceAuthorizationManager() {
-		return produceIsisSessionFactory().getAuthorizationManager();
 	}
 	
 	@Produces @ApplicationScoped

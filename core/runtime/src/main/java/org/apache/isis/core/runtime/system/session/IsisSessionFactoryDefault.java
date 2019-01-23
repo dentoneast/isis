@@ -65,8 +65,7 @@ import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
 @Vetoed // has a producer 
 public class IsisSessionFactoryDefault implements IsisSessionFactory {
 
-    @Inject private IsisConfiguration configuration;
-    
+    private IsisConfiguration configuration;
     private PersistenceSessionFactory persistenceSessionFactory;
     private ServiceInjector serviceInjector;
     private ServiceRegistry serviceRegistry;
@@ -105,6 +104,7 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
     void initDependencies(
     		PersistenceSessionFactory persistenceSessionFactory, 
     		SpecificationLoader specificationLoader) {
+    	this.configuration = IsisContext.getConfiguration();
         this.serviceInjector = IsisContext.getServiceInjector();
         this.serviceRegistry = IsisContext.getServiceRegistry();
         this.authorizationManager = IsisContext.getAuthorizationManager();

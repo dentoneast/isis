@@ -23,14 +23,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.inject.spi.CDIProvider;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Qualifier;
 
 import org.apache.isis.commons.internal.context._Context;
@@ -206,6 +210,18 @@ public final class _CDI {
             new NoSuchElementException(String.format("Could not resolve an instance of type '%s'", type.getName())));
     }
     
+    // -- ENUMERATE BEANS
+    
+    public final static AnnotationLiteral<Any> QUALIFIER_ANY = 
+            new AnnotationLiteral<Any>() {
+        private static final long serialVersionUID = 1L;};
+    
+    public static Stream<Bean<?>> streamAllBeans() {
+		BeanManager beanManager = _CDI.getBeanManager();
+        Set<Bean<?>> beans = beanManager.getBeans(Object.class, _CDI.QUALIFIER_ANY);
+        return beans.stream();
+	}
+        
     // -- HELPER
     
     private _CDI() {}
@@ -231,7 +247,7 @@ public final class _CDI {
         }
     }
 
-
+	
 
 
 }

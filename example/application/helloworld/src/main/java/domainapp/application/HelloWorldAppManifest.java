@@ -45,7 +45,8 @@ public class HelloWorldAppManifest extends AppManifestAbstract2 implements AppCo
             .forModule(new HelloWorldModule())
             .withConfigurationPropertiesFile(
                     HelloWorldAppManifest.class, "isis-non-changing.properties")
-            .withAuthMechanism("shiro");
+            .withAuthMechanism("shiro")
+            ;
 
     public HelloWorldAppManifest() {
         super(BUILDER);
@@ -60,8 +61,8 @@ public class HelloWorldAppManifest extends AppManifestAbstract2 implements AppCo
     public IsisConfiguration isisConfiguration() {
         return IsisConfiguration.buildFromAppManifest(this);
     }
-
-    /**
+    
+	 /**
      * The standard authentication manager, configured with the 'bypass' authenticator 
      * (allows all requests through).
      * <p>

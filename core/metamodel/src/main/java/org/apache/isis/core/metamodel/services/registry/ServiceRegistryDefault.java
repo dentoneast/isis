@@ -31,11 +31,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Singleton;
 
 import org.apache.isis.applib.annotation.DomainService;
@@ -77,7 +74,7 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
     
     @Override
     public <T> Optional<T> lookupService(Class<T> serviceClass) {
-        return _CDI.getInstance(serviceClass, _Lists.of(QUALIFIER_ANY))
+        return _CDI.getInstance(serviceClass, _Lists.of(_CDI.QUALIFIER_ANY))
                 .map(Instance::get);
     }
     
@@ -158,35 +155,29 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
 
     // -- HELPER ...
     
-    private final static AnnotationLiteral<Any> QUALIFIER_ANY = 
-            new AnnotationLiteral<Any>() {
-        private static final long serialVersionUID = 1L;};
-        
     private Stream<Bean<?>> streamServiceBeans() {
         
-        if(registeredServiceBeans.isEmpty()) {
-            
-            BeanManager beanManager = _CDI.getBeanManager();
-            
-            Set<Bean<?>> beans = beanManager.getBeans(Object.class, QUALIFIER_ANY);
-            for (Bean<?> bean : beans) {
-                
-                val type = bean.getBeanClass();
-                val logScope = type.getName().startsWith("org.apache.isis.");
-                
-//                if(logScope) {
-//                    log.info("processing bean {}", bean);
-//                } 
-                
-                if(!isServiceType(type)) {
-                    continue;
-                }
-                
-                if(logScope) {
-                    log.info("registering as a service {}", bean);
-                }
-                
-            }
+    	if(registeredServiceBeans.isEmpty()) {
+
+    		_CDI.streamAllBeans().forEach(bean->{
+
+    			val type = bean.getBeanClass();
+    			val logScope = type.getName().startsWith("org.apache.isis.");
+
+    			//                if(logScope) {
+    			//                    log.info("processing bean {}", bean);
+    			//                } 
+
+    			if(!isServiceType(type)) {
+    				return;
+    			}
+
+    			if(logScope) {
+    				log.info("registering as a service {}", bean);
+    				registeredServiceBeans.add(bean);
+    			}
+
+    		});
             
         }
         

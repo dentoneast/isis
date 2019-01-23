@@ -16,20 +16,19 @@
  */
 package org.apache.isis.core.plugins.ioc.weld;
 
+import static org.apache.isis.commons.internal.base._NullSafe.stream;
+
 import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
-
-import org.jboss.weld.environment.se.Weld;
-import org.jboss.weld.environment.se.WeldContainer;
 
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.collections._Arrays;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
-
-import static org.apache.isis.commons.internal.base._NullSafe.stream;
+import org.jboss.weld.environment.se.Weld;
+import org.jboss.weld.environment.se.WeldContainer;
 
 /**
  * @since 2.0.0-M2
@@ -49,7 +48,7 @@ public class WeldFactory {
 	    final Class<?>[] classes = stream(discover)
 	            .collect(_Arrays.toArray(Class.class));
 	    
-	    final Class<?> beanScanInterceptor = classForName("org.apache.isis.core.webapp.jee.IsisCDIBeanScanInterceptor");
+	    //final Class<?> beanScanInterceptor = classForName("org.apache.isis.core.webapp.jee.IsisCDIBeanScanInterceptor");
 	    final Class<?>[] additionalPackages = 
 	            classesForClassNames(
 	                    
@@ -70,7 +69,7 @@ public class WeldFactory {
 	    stream(classes)
 	    .forEach(c->probe.println("scanning class %s", c));
 	    stream(additionalPackages)
-	    .forEach(p->probe.println("scanning additionalPackag %s", p));
+	    .forEach(p->probe.println("scanning additionalPackage %s", p));
 	    
         boolean scanRecursively = true;
         
@@ -91,13 +90,13 @@ public class WeldFactory {
         
 	}
 	
-	private static Package[] packagesForClassNames(String ... names) {
-	    final Package[] packages = stream(names)
-	            .map(WeldFactory::classForName)
-	            .map(Class::getPackage)
-                .collect(_Arrays.toArray(Package.class));
-	    return packages;
-	}
+//	private static Package[] packagesForClassNames(String ... names) {
+//	    final Package[] packages = stream(names)
+//	            .map(WeldFactory::classForName)
+//	            .map(Class::getPackage)
+//                .collect(_Arrays.toArray(Package.class));
+//	    return packages;
+//	}
 	
 	private static Class<?>[] classesForClassNames(String ... names) {
         final Class<?>[] classes = stream(names)

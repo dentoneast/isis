@@ -34,6 +34,7 @@ import org.apache.isis.applib.Module;
 import org.apache.isis.applib.PropertyResource;
 import org.apache.isis.commons.internal.collections._Sets;
 import org.apache.isis.commons.internal.context._Context;
+import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.config.ConfigurationConstants;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.NotFoundPolicy;
@@ -80,11 +81,15 @@ final class IsisConfigurationBuilderDefault implements IsisConfigurationBuilder 
         return builder;
     }
     
+    private final static _Probe probe = _Probe.maxCallsThenExitWithStacktrace(2).label("IsisConfigurationBuilderDefault");
+    
     static IsisConfigurationBuilder getDefault() {
         
         if(_Context.isUnitTesting()) {
             return empty();
         }
+        
+        probe.println("getDefault()");
         
         final ResourceStreamSourceChainOfResponsibility chain = createComposite(Arrays.asList(
                 ResourceStreamSourceFileSystem.create(ConfigurationConstants.DEFAULT_CONFIG_DIRECTORY)        

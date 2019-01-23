@@ -30,16 +30,19 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.isis.commons.internal.base._Blackhole;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
+import org.apache.isis.commons.internal.base._With;
+import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.AppConfigLocator;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
+import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
 import org.apache.isis.core.webapp.modules.WebModule;
 import org.apache.isis.core.webapp.modules.WebModuleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -62,6 +65,19 @@ public class IsisWebAppContextListener implements ServletContextListener {
     
     private final List<ServletContextListener> activeListeners = new ArrayList<>();
 
+    // -- SANITY CHECK 
+
+ 	public static void verifyCDISetup() {
+ 		_CDI.getBeanManager();
+ 		_With.requires(_CDI.getSingleton(IsisConfiguration.class), "IsisConfiguration");
+ 		_With.requires(_CDI.getSingleton(ServiceRegistry.class), "ServiceRegistry");
+ 		_With.requires(_CDI.getSingleton(AuthenticationManager.class), "AuthenticationManager");
+ 		_With.requires(_CDI.getSingleton(AuthorizationManager.class), "AuthorizationManager");
+ 		
+ 		// TODO list registered beans
+ 		
+ 	}
+    
     // -- INTERFACE IMPLEMENTATION
     
     @Override
@@ -79,8 +95,10 @@ public class IsisWebAppContextListener implements ServletContextListener {
         
         // finalize the config (build and regard immutable)
         // as a side-effect bootstrap CDI, if the environment we are running on does not already have its own 
-        IsisConfiguration isisConfiguration = AppConfigLocator.getAppConfig().isisConfiguration();
-        _Blackhole.consume(isisConfiguration);
+        AppConfigLocator.getAppConfig();
+        
+        verifyCDISetup();
+        
         
         LOG.info("=== PHASE 2 === Preparing the ServletContext");
         
