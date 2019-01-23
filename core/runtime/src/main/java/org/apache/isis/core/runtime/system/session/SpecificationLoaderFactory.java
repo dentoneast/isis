@@ -17,14 +17,11 @@
  *  under the License.
  */
 
-package org.apache.isis.core.runtime.systemusinginstallers;
+package org.apache.isis.core.runtime.system.session;
 
 import static org.apache.isis.config.internal._Config.getConfiguration;
 
 import java.util.Collection;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
 
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.commons.factory.InstanceUtil;
@@ -35,49 +32,17 @@ import org.apache.isis.core.metamodel.specloader.ReflectorConstants;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidator;
 import org.apache.isis.core.runtime.system.IsisSystemException;
-import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
-import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
 import org.apache.isis.progmodels.dflt.JavaReflectorHelper;
 import org.apache.isis.progmodels.dflt.ProgrammingModelFacetsJava5;
 
 /**
  * 
  */
-public final class IsisComponentProvider {
+final class SpecificationLoaderFactory {
     
-    // -- BUILDER - DEFAULT
-    
-    public static IsisComponentProviderBuilder builder() {
-        return new IsisComponentProviderBuilder();
-    }
+    // -- CREATE SPECIFICATION LOADER
 
-    // -- CONSTRUCTOR
-
-    protected final AuthenticationManager authenticationManager;
-    protected final AuthorizationManager authorizationManager;
-
-    IsisComponentProvider(
-            final AuthenticationManager authenticationManager,
-            final AuthorizationManager authorizationManager) {
-
-        this.authenticationManager = authenticationManager;
-        this.authorizationManager = authorizationManager;
-    }
-
-    // -- provideAuth*
-
-    public AuthenticationManager provideAuthenticationManager() {
-        return authenticationManager;
-    }
-
-    public AuthorizationManager provideAuthorizationManager() {
-        return authorizationManager;
-    }
-
-    // -- provideSpecificationLoader
-
-    @Produces @ApplicationScoped
-    public SpecificationLoader provideSpecificationLoader(
+    public SpecificationLoader createSpecificationLoader(
             final Collection<MetaModelRefiner> metaModelRefiners)  throws IsisSystemException {
 
         final IsisConfiguration configuration = getConfiguration();
@@ -89,7 +54,9 @@ public final class IsisComponentProvider {
                 programmingModel, metaModelRefiners, mmValidator);
     }
 
-    protected MetaModelValidator createMetaModelValidator(IsisConfiguration configuration) {
+    // -- HELPER
+    
+    private MetaModelValidator createMetaModelValidator(IsisConfiguration configuration) {
         
         final String metaModelValidatorClassName =
                 configuration.getString(
@@ -98,7 +65,7 @@ public final class IsisComponentProvider {
         return InstanceUtil.createInstance(metaModelValidatorClassName, MetaModelValidator.class);
     }
 
-    protected ProgrammingModel createProgrammingModel(IsisConfiguration configuration) {
+    private ProgrammingModel createProgrammingModel(IsisConfiguration configuration) {
         
         final DeprecatedPolicy deprecatedPolicy = DeprecatedPolicy.parse(configuration);
 

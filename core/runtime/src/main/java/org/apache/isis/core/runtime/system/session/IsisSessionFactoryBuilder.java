@@ -43,7 +43,6 @@ import org.apache.isis.core.runtime.system.internal.IsisLocaleInitializer;
 import org.apache.isis.core.runtime.system.internal.IsisTimeZoneInitializer;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactoryMetamodelRefiner;
-import org.apache.isis.core.runtime.systemusinginstallers.IsisComponentProvider;
 import org.apache.isis.core.runtime.threadpool.ThreadPoolSupport;
 import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
 import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
@@ -58,14 +57,12 @@ class IsisSessionFactoryBuilder {
 
     // -- constructors, accessors
 
-    private final IsisComponentProvider componentProvider;
+    private final SpecificationLoaderFactory componentProvider;
     private final IsisLocaleInitializer localeInitializer;
     private final IsisTimeZoneInitializer timeZoneInitializer;
 
     public IsisSessionFactoryBuilder() {
-        this.componentProvider = 
-        		IsisComponentProvider.builder()
-        		.build();
+        this.componentProvider = new SpecificationLoaderFactory();
         this.localeInitializer = new IsisLocaleInitializer();
         this.timeZoneInitializer = new IsisTimeZoneInitializer();
     }
@@ -95,9 +92,8 @@ class IsisSessionFactoryBuilder {
         try {
 
             final ServiceRegistry servicesRegistry = IsisContext.getServiceRegistry();
-            
-            final AuthenticationManager authenticationManager = componentProvider.provideAuthenticationManager();
-            final AuthorizationManager authorizationManager = componentProvider.provideAuthorizationManager();
+            final AuthenticationManager authenticationManager = IsisContext.getAuthenticationManager();
+            final AuthorizationManager authorizationManager = IsisContext.getAuthorizationManager();
 
             // specificationLoader
             final Collection<MetaModelRefiner> metaModelRefiners = refiners(
@@ -106,7 +102,7 @@ class IsisSessionFactoryBuilder {
                     new PersistenceSessionFactoryMetamodelRefiner());
             
             final SpecificationLoader specificationLoader =
-                    componentProvider.provideSpecificationLoader(metaModelRefiners);
+                    componentProvider.createSpecificationLoader(metaModelRefiners);
 
             // persistenceSessionFactory
             final PersistenceSessionFactory persistenceSessionFactory = 
@@ -116,7 +112,10 @@ class IsisSessionFactoryBuilder {
 
             // instantiate the IsisSessionFactory
             isisSessionFactory = new IsisSessionFactoryDefault();
-            isisSessionFactory.initDependencies(persistenceSessionFactory);
+            isisSessionFactory.initDependencies(
+            		persistenceSessionFactory,
+            		specificationLoader
+            		);
 
             // now, add the IsisSessionFactory itself into ServicesInjector, so it can be @javax.inject.Inject'd
             // into any internal domain services
@@ -132,76 +131,34 @@ class IsisSessionFactoryBuilder {
 
             // execute tasks using a threadpool
             final List<Future<Object>> futures = ThreadPoolSupport.getInstance().invokeAll(Arrays.asList(
-                    new Callable<Object>() {
-                        @Override
-                        public Object call() {
+                    callableOf("SpecificationLoader.init()", ()->{
+                    	// time to initialize...
+                        specificationLoader.init();
 
-                            // time to initialize...
-                            specificationLoader.init();
+                        // we need to do this before checking if the metamodel is valid.
+                        //
+                        // eg ActionChoicesForCollectionParameterFacetFactory metamodel validator requires a runtime...
+                        // at o.a.i.core.metamodel.specloader.specimpl.ObjectActionContributee.getServiceAdapter(ObjectActionContributee.java:287)
+                        // at o.a.i.core.metamodel.specloader.specimpl.ObjectActionContributee.determineParameters(ObjectActionContributee.java:138)
+                        // at o.a.i.core.metamodel.specloader.specimpl.ObjectActionDefault.getParameters(ObjectActionDefault.java:182)
+                        // at o.a.i.core.metamodel.facets.actions.action.ActionChoicesForCollectionParameterFacetFactory$1.validate(ActionChoicesForCollectionParameterFacetFactory.java:85)
+                        // at o.a.i.core.metamodel.facets.actions.action.ActionChoicesForCollectionParameterFacetFactory$1.visit(ActionChoicesForCollectionParameterFacetFactory.java:76)
+                        // at o.a.i.core.metamodel.specloader.validator.MetaModelValidatorVisiting.validate(MetaModelValidatorVisiting.java:47)
+                        //
+                        // also, required so that can still call isisSessionFactory#doInSession
+                        //
+                        // eg todoapp has a custom UserSettingsThemeProvider that is called when rendering any page
+                        // (including the metamodel invalid page)
+                        // at o.a.i.core.runtime.system.session.IsisSessionFactory.doInSession(IsisSessionFactory.java:327)
+                        // at todoapp.webapp.UserSettingsThemeProvider.getActiveTheme(UserSettingsThemeProvider.java:36)
 
-                            // we need to do this before checking if the metamodel is valid.
-                            //
-                            // eg ActionChoicesForCollectionParameterFacetFactory metamodel validator requires a runtime...
-                            // at o.a.i.core.metamodel.specloader.specimpl.ObjectActionContributee.getServiceAdapter(ObjectActionContributee.java:287)
-                            // at o.a.i.core.metamodel.specloader.specimpl.ObjectActionContributee.determineParameters(ObjectActionContributee.java:138)
-                            // at o.a.i.core.metamodel.specloader.specimpl.ObjectActionDefault.getParameters(ObjectActionDefault.java:182)
-                            // at o.a.i.core.metamodel.facets.actions.action.ActionChoicesForCollectionParameterFacetFactory$1.validate(ActionChoicesForCollectionParameterFacetFactory.java:85)
-                            // at o.a.i.core.metamodel.facets.actions.action.ActionChoicesForCollectionParameterFacetFactory$1.visit(ActionChoicesForCollectionParameterFacetFactory.java:76)
-                            // at o.a.i.core.metamodel.specloader.validator.MetaModelValidatorVisiting.validate(MetaModelValidatorVisiting.java:47)
-                            //
-                            // also, required so that can still call isisSessionFactory#doInSession
-                            //
-                            // eg todoapp has a custom UserSettingsThemeProvider that is called when rendering any page
-                            // (including the metamodel invalid page)
-                            // at o.a.i.core.runtime.system.session.IsisSessionFactory.doInSession(IsisSessionFactory.java:327)
-                            // at todoapp.webapp.UserSettingsThemeProvider.getActiveTheme(UserSettingsThemeProvider.java:36)
-
-                            authenticationManager.init();
-                            authorizationManager.init();
-
-                            return null;
-                        }
-                        public String toString() {
-                            return "SpecificationLoader#init()";
-                        }
-
-                    },
-                    new Callable<Object>() {
-                        @Override public Object call() {
-                            persistenceSessionFactory.init();
-                            return null;
-                        }
-                        public String toString() {
-                            return "persistenceSessionFactory#init()";
-                        }
-                    },
-                    new Callable<Object>() {
-                        @Override public Object call() throws Exception {
-                            ChangesDtoUtils.init();
-                            return null;
-                        }
-                        public String toString() {
-                            return "ChangesDtoUtils.init()";
-                        }
-                    },
-                    new Callable<Object>() {
-                        @Override public Object call() throws Exception {
-                            InteractionDtoUtils.init();
-                            return null;
-                        }
-                        public String toString() {
-                            return "InteractionDtoUtils.init()";
-                        }
-                    },
-                    new Callable<Object>() {
-                        @Override public Object call() throws Exception {
-                            CommandDtoUtils.init();
-                            return null;
-                        }
-                        public String toString() {
-                            return "CommandDtoUtils.init()";
-                        }
-                    }
+                        authenticationManager.init();
+                        authorizationManager.init();
+                    }),
+                    callableOf("PersistenceSessionFactory.init()", persistenceSessionFactory::init),
+                    callableOf("ChangesDtoUtils.init()", ChangesDtoUtils::init),
+                    callableOf("InteractionDtoUtils.init()", InteractionDtoUtils::init),
+                    callableOf("CommandDtoUtils.init()", CommandDtoUtils::init)
                 )); 
 
 
@@ -240,6 +197,18 @@ class IsisSessionFactoryBuilder {
 
     private static Collection<MetaModelRefiner> refiners(Object... possibleRefiners ) {
         return ListExtensions.filtered(Arrays.asList(possibleRefiners), MetaModelRefiner.class);
+    }
+    
+    private static Callable<Object> callableOf(String label, Runnable action) {
+    	return new Callable<Object>() {
+            @Override public Object call() throws Exception {
+            	action.run();
+                return null;
+            }
+            public String toString() {
+                return label;
+            }
+        };
     }
 
 }

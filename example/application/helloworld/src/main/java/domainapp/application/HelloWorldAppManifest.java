@@ -61,6 +61,12 @@ public class HelloWorldAppManifest extends AppManifestAbstract2 implements AppCo
         return IsisConfiguration.buildFromAppManifest(this);
     }
 
+    /**
+     * The standard authentication manager, configured with the 'bypass' authenticator 
+     * (allows all requests through).
+     * <p>
+     * integration tests ignore appManifest for authentication and authorization.
+     */
     @Produces @ApplicationScoped
     public AuthenticationManager authenticationManagerWithBypass() {
         final AuthenticationManagerStandard authenticationManager = new AuthenticationManagerStandard();
@@ -77,5 +83,6 @@ public class HelloWorldAppManifest extends AppManifestAbstract2 implements AppCo
         };
         return authorizationManager;
     }
+
     
 }

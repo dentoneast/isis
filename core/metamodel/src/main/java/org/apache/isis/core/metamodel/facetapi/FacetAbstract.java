@@ -56,7 +56,7 @@ public abstract class FacetAbstract implements Facet, MetaModelContext.Delegatin
             final FacetHolder holder,
             final Derivation derivation) {
         this.facetType = requires(facetType, "facetType"); 
-        setFacetHolder(requires(holder, "holder"));
+        setFacetHolder(holder);
         this.derived = (derivation == Derivation.DERIVED);
     }
 
@@ -147,7 +147,9 @@ public abstract class FacetAbstract implements Facet, MetaModelContext.Delegatin
     @Override
     public void setFacetHolder(final FacetHolder facetHolder) {
         this.holder = facetHolder;
-        this.identifiedHolder = holder instanceof IdentifiedHolder ? (IdentifiedHolder) holder : null;
+        this.identifiedHolder = (holder!=null && holder instanceof IdentifiedHolder) 
+        		? (IdentifiedHolder) holder 
+        				: null;
     }
 
     protected String toStringValues() {

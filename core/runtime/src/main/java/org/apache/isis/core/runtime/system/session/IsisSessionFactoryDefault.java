@@ -67,9 +67,7 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
 
     @Inject private IsisConfiguration configuration;
     
-    //@Inject 
     private PersistenceSessionFactory persistenceSessionFactory;
-    
     private ServiceInjector serviceInjector;
     private ServiceRegistry serviceRegistry;
     private SpecificationLoader specificationLoader;
@@ -102,17 +100,20 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
 //        
 //        requires(persistenceSessionFactory, "persistenceSessionFactory");
 //    }
-    
-    @Deprecated //replace with injection
-    void initDependencies(PersistenceSessionFactory persistenceSessionFactory) {
+
+    // called by builder
+    void initDependencies(
+    		PersistenceSessionFactory persistenceSessionFactory, 
+    		SpecificationLoader specificationLoader) {
         this.serviceInjector = IsisContext.getServiceInjector();
         this.serviceRegistry = IsisContext.getServiceRegistry();
-        this.specificationLoader = IsisContext.getSpecificationLoader();
-        this.authenticationManager = IsisContext.getAuthenticationManager();
         this.authorizationManager = IsisContext.getAuthorizationManager();
+        this.authenticationManager = IsisContext.getAuthenticationManager();
+        this.specificationLoader = specificationLoader;
         this.persistenceSessionFactory = persistenceSessionFactory;
     }
 
+    // called by builder
     void constructServices() {
 
         // do postConstruct.  We store the initializer to do preDestroy on shutdown

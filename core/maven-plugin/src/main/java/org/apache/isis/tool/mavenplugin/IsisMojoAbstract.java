@@ -29,7 +29,7 @@ import org.apache.isis.core.plugins.environment.IsisSystemEnvironment;
 import org.apache.isis.core.runtime.logging.IsisLoggingConfigurer;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory_producer;
+import org.apache.isis.core.runtime.system.session.IsisSessionProducerBean;
 import org.apache.isis.tool.mavenplugin.util.MavenProjects;
 import org.apache.log4j.Level;
 import org.apache.maven.model.Plugin;
@@ -69,7 +69,7 @@ public abstract class IsisMojoAbstract extends AbstractMojo {
         
         IsisSessionFactory isisSessionFactory = null;
         try {
-            isisSessionFactory = new IsisSessionFactory_producer().produce();
+            isisSessionFactory = new IsisSessionProducerBean().produceIsisSessionFactory();
             		
             final MetaModelInvalidException metaModelInvalidException = 
             		IsisContext.getMetaModelInvalidExceptionIfAny();
