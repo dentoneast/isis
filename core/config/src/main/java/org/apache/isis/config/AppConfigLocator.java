@@ -18,10 +18,16 @@
  */
 package org.apache.isis.config;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.isis.commons.internal.cdi._CDI;
+import org.apache.isis.commons.internal.collections._Sets;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.context._Plugin;
 import org.apache.isis.commons.internal.debug._Probe;
+import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.core.commons.exceptions.IsisException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +46,19 @@ public final class AppConfigLocator {
     
     // -- HELPER
     
+    // for sanity check
+    private final static Set<String> criticalServices() {
+    	return _Sets.newHashSet(_Sets.of(
+    		"org.apache.isis.applib.services.registry.ServiceRegistry", 
+    		"org.apache.isis.config.IsisConfiguration", 
+    		"org.apache.isis.core.runtime.system.session.IsisSessionFactory", 
+    		"org.apache.isis.core.security.authentication.manager.AuthenticationManager", 
+    		"org.apache.isis.core.security.authorization.manager.AuthorizationManager",
+    		"org.apache.isis.core.metamodel.specloader.SpecificationLoader",
+    		"org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory"
+    		));
+    }
+    
     private final static _Probe probe = 
     		_Probe.unlimited().label("AppConfigLocator");
     
@@ -56,7 +75,35 @@ public final class AppConfigLocator {
             } 
 		});
 		
-		// TODO ensure critical services are managed by CDI
+		
+		// ensure critical services are managed by CDI
+		final Set<String> managedTypes = new HashSet<>();
+		for(String serviceClassName : criticalServices()) {
+			try {
+				val type = _Context.loadClassAndInitialize(serviceClassName);
+				
+				_CDI.getSingleton(type);
+				
+				probe.println("SANITY-CHECK Critical service managed by CDI %s", type.getSimpleName());
+				managedTypes.add(serviceClassName);
+				
+			} catch (Exception e) {
+				probe.println("failed to resolve bean %s cause: %s", serviceClassName, e.getMessage());
+			}
+		}
+		
+		
+		val criticalServicesNotManaged = criticalServices();
+		criticalServicesNotManaged.removeAll(managedTypes);
+		if(criticalServicesNotManaged.size()>0) {
+			
+			val servicesLiteral = criticalServicesNotManaged.stream()
+					.collect(Collectors.joining(", "));
+			
+			throw _Exceptions.unrecoverable(
+					String.format("Some critical services are not managed by CDI: {%s}", servicesLiteral));
+		}
+		
         
         return appConfig;
     }

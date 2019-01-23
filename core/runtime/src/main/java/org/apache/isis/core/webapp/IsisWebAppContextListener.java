@@ -31,12 +31,14 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 
 import org.apache.isis.applib.services.registry.ServiceRegistry;
+import org.apache.isis.commons.internal.base._Blackhole;
 import org.apache.isis.commons.internal.base._With;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.AppConfigLocator;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
 import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
 import org.apache.isis.core.webapp.modules.WebModule;
@@ -73,6 +75,8 @@ public class IsisWebAppContextListener implements ServletContextListener {
  		_With.requires(_CDI.getSingleton(ServiceRegistry.class), "ServiceRegistry");
  		_With.requires(_CDI.getSingleton(AuthenticationManager.class), "AuthenticationManager");
  		_With.requires(_CDI.getSingleton(AuthorizationManager.class), "AuthorizationManager");
+ 		_With.requires(_CDI.getSingleton(IsisSessionFactory.class), "IsisSessionFactory");
+ 		
  		
  		// TODO list registered beans
  		
@@ -95,10 +99,7 @@ public class IsisWebAppContextListener implements ServletContextListener {
         
         // finalize the config (build and regard immutable)
         // as a side-effect bootstrap CDI, if the environment we are running on does not already have its own 
-        AppConfigLocator.getAppConfig();
-        
-        verifyCDISetup();
-        
+        _Blackhole.consume(AppConfigLocator.getAppConfig());
         
         LOG.info("=== PHASE 2 === Preparing the ServletContext");
         
