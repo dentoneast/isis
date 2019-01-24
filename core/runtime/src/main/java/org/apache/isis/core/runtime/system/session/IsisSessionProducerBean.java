@@ -46,7 +46,6 @@ public class IsisSessionProducerBean {
 		return produceIsisSessionFactory().getPersistenceSessionFactory();
 	}
 	
-	
 	// -- HELPER
 	
 	private final _Lazy<IsisSessionFactory> isisSessionFactorySingleton = 

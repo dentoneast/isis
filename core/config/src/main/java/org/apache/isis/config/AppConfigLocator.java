@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.isis.commons.internal.cdi._CDI;
+import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Sets;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.context._Plugin;
@@ -48,19 +49,38 @@ public final class AppConfigLocator {
     
     // for sanity check
     private final static Set<String> criticalServices() {
-    	return _Sets.newHashSet(_Sets.of(
+    	return _Sets.newLinkedHashSet(_Lists.of(
     		"org.apache.isis.applib.services.registry.ServiceRegistry", 
     		"org.apache.isis.config.IsisConfiguration", 
     		"org.apache.isis.core.runtime.system.session.IsisSessionFactory", 
     		"org.apache.isis.core.security.authentication.manager.AuthenticationManager", 
     		"org.apache.isis.core.security.authorization.manager.AuthorizationManager",
     		"org.apache.isis.core.metamodel.specloader.SpecificationLoader",
-    		"org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory"
+    		"org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory",
+    		
+    		"org.apache.isis.applib.services.eventbus.EventBusService",
+    		"org.apache.isis.applib.services.factory.FactoryService",
+    		
+    		"org.apache.isis.applib.services.i18n.LocaleProvider",
+    		"org.apache.isis.applib.services.i18n.TranslationsResolver",
+    		"org.apache.isis.applib.services.i18n.TranslationService",
+    		"org.apache.isis.applib.services.message.MessageService",
+    		
+    		"org.apache.isis.applib.services.repository.RepositoryService",
+    		"org.apache.isis.applib.services.title.TitleService",
+    		"org.apache.isis.applib.services.user.UserService",
+    		"org.apache.isis.applib.services.xactn.TransactionService",
+    		
+    		"org.apache.isis.applib.services.homepage.HomePageProviderService"
+    		
+    		
     		));
     }
     
     private final static _Probe probe = 
     		_Probe.unlimited().label("AppConfigLocator");
+    private final static _Probe probeSanity = 
+    		_Probe.unlimited().label("AppConfigLocator SANITY");
     
     private static AppConfig lookupAppConfigAndVerifyCDI() {
         final AppConfig appConfig = lookupAppConfig();
@@ -75,7 +95,6 @@ public final class AppConfigLocator {
             } 
 		});
 		
-		
 		// ensure critical services are managed by CDI
 		final Set<String> managedTypes = new HashSet<>();
 		for(String serviceClassName : criticalServices()) {
@@ -84,11 +103,14 @@ public final class AppConfigLocator {
 				
 				_CDI.getSingleton(type);
 				
-				probe.println("SANITY-CHECK Critical service managed by CDI %s", type.getSimpleName());
+				probeSanity.println("%s ... managed by CDI", type.getSimpleName());
 				managedTypes.add(serviceClassName);
 				
 			} catch (Exception e) {
-				probe.println("failed to resolve bean %s cause: %s", serviceClassName, e.getMessage());
+				probeSanity.println("*%s ... failed to resolve bean '%s' cause: %s",
+						serviceClassName.substring(1+serviceClassName.lastIndexOf(".")),
+						serviceClassName, 
+						e.getMessage());
 			}
 		}
 		

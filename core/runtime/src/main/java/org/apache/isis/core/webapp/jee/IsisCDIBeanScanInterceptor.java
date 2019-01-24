@@ -28,11 +28,13 @@ import javax.enterprise.inject.spi.BeforeBeanDiscovery;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 
+import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
+import org.apache.isis.applib.services.metrics.MetricsService;
+import org.apache.isis.commons.internal.debug._Probe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
-import org.apache.isis.applib.services.metrics.MetricsService;
+import lombok.val;
 
 /**
  *
@@ -54,6 +56,8 @@ import org.apache.isis.applib.services.metrics.MetricsService;
 public final class IsisCDIBeanScanInterceptor implements Extension {
 
     private static final Logger log = LoggerFactory.getLogger(IsisCDIBeanScanInterceptor.class);
+    private final static _Probe probe = 
+    		_Probe.unlimited().label("IsisCDIBeanScanInterceptor");
 
     /**
      * Declaration of Beans that are managed by Isis and should be ignored by CDI.
@@ -74,7 +78,16 @@ public final class IsisCDIBeanScanInterceptor implements Extension {
         final Class<?> clazz = event.getAnnotatedType().getJavaClass();
         final String className = clazz.getName();
 
-        if(isTabu(clazz, event)) {
+        val logScope = className.startsWith("org.apache.isis.") ||
+        		className.startsWith("domainapp.");
+        
+        val isTabu = isTabu(clazz, event);
+
+        if(logScope) {
+        	probe.println("processAnnotatedType(%s)", className);
+        } 
+        
+        if(isTabu) {
             log.debug("veto type: " + className);
             event.veto();
         } else {

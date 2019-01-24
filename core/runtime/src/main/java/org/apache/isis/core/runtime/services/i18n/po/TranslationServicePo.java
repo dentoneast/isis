@@ -22,37 +22,36 @@ import static org.apache.isis.config.internal._Config.getConfiguration;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.i18n.LocaleProvider;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.i18n.TranslationsResolver;
 import org.apache.isis.commons.internal.context._Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Singleton
+import lombok.AccessLevel;
+import lombok.Getter;
+
+@ApplicationScoped //FIXME [2033] cannot provision with @Singleton
 public class TranslationServicePo implements TranslationService {
 
     public static Logger LOG = LoggerFactory.getLogger(TranslationServicePo.class);
 
     public static final String KEY_PO_MODE = "isis.services.translation.po.mode";
 
-    private PoAbstract po;
-
     /**
-     * Defaults to writer mode because the service won't have been init'd while the metamodel is bring instantiated,
+     * Defaults to writer mode because the service won't have been init'd while the metamodel is being instantiated,
      * and we want to ensure that we capture all requests for translation.
      */
-    public TranslationServicePo() {
-        po = new PoWriter(this);
-    }
+    private PoAbstract po = new PoWriter(this);
+
 
     // -- init, shutdown
 
-    @Programmatic
     @PostConstruct
     public void init() {
 
@@ -89,7 +88,6 @@ public class TranslationServicePo implements TranslationService {
         return _Context.isPrototyping();
     }
 
-    @Programmatic
     @PreDestroy
     public void shutdown() {
         po.shutdown();
@@ -98,7 +96,6 @@ public class TranslationServicePo implements TranslationService {
 
 
     @Override
-    @Programmatic
     public String translate(final String context, final String text) {
         return po.translate(context, text);
     }
@@ -116,7 +113,6 @@ public class TranslationServicePo implements TranslationService {
     /**
      * Not API
      */
-    @Programmatic
     public String toPot() {
         if (!getMode().isWrite()) {
             return null;
@@ -130,7 +126,6 @@ public class TranslationServicePo implements TranslationService {
     /**
      * Not API
      */
-    @Programmatic
     void clearCache() {
         if (!getMode().isRead()) {
             return;
@@ -144,7 +139,6 @@ public class TranslationServicePo implements TranslationService {
     /**
      * Not API
      */
-    @Programmatic
     public void toggleMode() {
         if(getMode().isRead()) {
             previousPoReader = (PoReader) po;
@@ -168,20 +162,11 @@ public class TranslationServicePo implements TranslationService {
 
     // //////////////////////////////////////
 
-    @javax.inject.Inject
+    @Inject @Getter(AccessLevel.PACKAGE) 
     private TranslationsResolver translationsResolver;
 
-    @Programmatic
-    TranslationsResolver getTranslationsResolver() {
-        return translationsResolver;
-    }
-
-    @javax.inject.Inject
+    @Inject @Getter(AccessLevel.PACKAGE)
     private LocaleProvider localeProvider;
-
-    @Programmatic
-    LocaleProvider getLocaleProvider() {
-        return localeProvider;
-    }
+    
 
 }

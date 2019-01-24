@@ -18,6 +18,7 @@
  */
 package org.apache.isis.core.runtime.services.message;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.isis.applib.RecoverableException;
@@ -104,10 +105,7 @@ public class MessageServiceDefault implements MessageService {
         return isisSessionFactory.getCurrentSession().getAuthenticationSession().getMessageBroker();
     }
 
-    @javax.inject.Inject
-    IsisSessionFactory isisSessionFactory;
-
-    @javax.inject.Inject
-    TranslationService translationService;
+    @Inject IsisSessionFactory isisSessionFactory;
+    @Inject TranslationService translationService;
 
 }

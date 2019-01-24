@@ -30,17 +30,10 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 
-import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.base._Blackhole;
-import org.apache.isis.commons.internal.base._With;
-import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.AppConfigLocator;
-import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
-import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
 import org.apache.isis.core.webapp.modules.WebModule;
 import org.apache.isis.core.webapp.modules.WebModuleContext;
 import org.slf4j.Logger;
@@ -67,21 +60,6 @@ public class IsisWebAppContextListener implements ServletContextListener {
     
     private final List<ServletContextListener> activeListeners = new ArrayList<>();
 
-    // -- SANITY CHECK 
-
- 	public static void verifyCDISetup() {
- 		_CDI.getBeanManager();
- 		_With.requires(_CDI.getSingleton(IsisConfiguration.class), "IsisConfiguration");
- 		_With.requires(_CDI.getSingleton(ServiceRegistry.class), "ServiceRegistry");
- 		_With.requires(_CDI.getSingleton(AuthenticationManager.class), "AuthenticationManager");
- 		_With.requires(_CDI.getSingleton(AuthorizationManager.class), "AuthorizationManager");
- 		_With.requires(_CDI.getSingleton(IsisSessionFactory.class), "IsisSessionFactory");
- 		
- 		
- 		// TODO list registered beans
- 		
- 	}
-    
     // -- INTERFACE IMPLEMENTATION
     
     @Override
