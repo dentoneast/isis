@@ -86,6 +86,12 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
             registeredServiceBeans.stream()
             .forEach(bean->{
                 
+            	val scope = bean.getScope().getSimpleName();
+            	
+            	if(!"Singleton".equals(scope)) {
+            		return;
+            	}
+            	
                 val type = bean.getBeanClass();
                 val logScope = type.getName().startsWith("org.apache.isis.");
                 
@@ -100,7 +106,7 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
                     registeredServiceInstances.add(managedObject.get());
                     
                     if(logScope) {
-                        log.info("registering as a service {}", managedObject.get());
+                        log.info("registering as a {} service {}", scope, managedObject.get());
                     }
                     
                 } else {

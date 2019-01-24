@@ -23,6 +23,8 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.enterprise.inject.Vetoed;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,6 +89,7 @@ import org.apache.isis.schema.utils.CommonDtoUtils;
  * </p>
  *
  */
+@Vetoed // has a producer
 public class SpecificationLoader {
 
     private final static Logger LOG = LoggerFactory.getLogger(SpecificationLoader.class);

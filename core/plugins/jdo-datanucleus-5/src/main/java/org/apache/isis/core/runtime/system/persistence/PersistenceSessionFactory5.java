@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.enterprise.inject.Vetoed;
 import javax.jdo.PersistenceManagerFactory;
 
 import org.datanucleus.PropertyNames;
@@ -50,6 +51,7 @@ import org.apache.isis.objectstore.jdo.service.RegisterEntities;
  * must be annotated using {@link Programmatic}.
  * </p>
  */
+@Vetoed // has a producer
 public class PersistenceSessionFactory5
 implements PersistenceSessionFactory, FixturesInstalledFlag {
 

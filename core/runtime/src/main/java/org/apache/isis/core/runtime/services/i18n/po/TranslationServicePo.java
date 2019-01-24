@@ -47,12 +47,12 @@ public class TranslationServicePo implements TranslationService {
      * Defaults to writer mode because the service won't have been init'd while the metamodel is being instantiated,
      * and we want to ensure that we capture all requests for translation.
      */
-    private PoAbstract po = new PoWriter(this);
+    private PoAbstract po = new PoDisabled(this); //TODO [2033] was ... new PoWriter(this);
 
 
     // -- init, shutdown
 
-    @PostConstruct
+    //TODO [2033] @PostConstruct
     public void init() {
 
         final String translationMode = getConfiguration().getString(KEY_PO_MODE);
@@ -80,7 +80,7 @@ public class TranslationServicePo implements TranslationService {
 
         // switch to read mode
         final PoReader poReader = new PoReader(this);
-        poReader.init();
+        poReader.init(); //TODO [2033] why does this require a Wicket application ?
         po = poReader;
     }
 

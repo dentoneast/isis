@@ -19,8 +19,8 @@
 
 package org.apache.isis.core.runtime.system.session;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
+import javax.inject.Singleton;
 
 import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.commons.internal.context._Context;
@@ -28,20 +28,20 @@ import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory;
 
-@ApplicationScoped
+@Singleton
 public class IsisSessionProducerBean {
 
-	@Produces @ApplicationScoped
+	@Produces @Singleton
 	public IsisSessionFactory produceIsisSessionFactory() {
 		return _Context.computeIfAbsent(IsisSessionFactory.class, this::newIsisSessionFactory);
 	}
 
-	@Produces @ApplicationScoped
+	@Produces @Singleton
 	public SpecificationLoader produceSpecificationLoader() {
 		return produceIsisSessionFactory().getSpecificationLoader();
 	}
 	
-	@Produces @ApplicationScoped
+	@Produces @Singleton
 	public PersistenceSessionFactory producePersistenceSessionFactory() {
 		return produceIsisSessionFactory().getPersistenceSessionFactory();
 	}
