@@ -19,6 +19,7 @@
 package org.apache.isis.config;
 
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -101,13 +102,15 @@ public final class AppConfigLocator {
 			try {
 				val type = _Context.loadClassAndInitialize(serviceClassName);
 				
-				_CDI.getSingleton(type);
+				if(!_CDI.getManagedBean(type).isPresent()) {
+					throw new NoSuchElementException(serviceClassName);
+				};
 				
 				probeSanity.println("%s ... managed by CDI", type.getSimpleName());
 				managedTypes.add(serviceClassName);
 				
 			} catch (Exception e) {
-				probeSanity.println("*%s ... failed to resolve bean '%s' cause: %s",
+				probeSanity.println("!!%s ... failed to resolve bean '%s' cause: %s",
 						serviceClassName.substring(1+serviceClassName.lastIndexOf(".")),
 						serviceClassName, 
 						e.getMessage());
