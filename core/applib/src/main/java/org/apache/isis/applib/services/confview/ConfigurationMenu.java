@@ -22,6 +22,7 @@ package org.apache.isis.applib.services.confview;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.isis.applib.IsisApplibModule;
 import org.apache.isis.applib.annotation.Action;
@@ -40,6 +41,7 @@ import org.apache.isis.applib.annotation.SemanticsOf;
         menuBar = DomainServiceLayout.MenuBar.TERTIARY,
         menuOrder = "500.900"
         )
+@Singleton
 public class ConfigurationMenu {
 
     public static abstract class ActionDomainEvent

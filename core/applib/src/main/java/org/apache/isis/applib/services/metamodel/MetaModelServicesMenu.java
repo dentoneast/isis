@@ -123,9 +123,11 @@ public class MetaModelServicesMenu {
             
             @ParameterLayout(named = ".xml file name")
             final String fileName,
+            
             @ParameterLayout(named = "Packages",
                 describedAs="Subset of the complete meta model, only including packages starting with given prefix.")
             final List<String> packages,
+            
             @ParameterLayout(named = "Ignore Interfaces")
             @Parameter(optionality=Optionality.MANDATORY)
             final boolean ignoreInterfaces
@@ -136,15 +138,15 @@ public class MetaModelServicesMenu {
                 new MetaModelService.Config()
                 .withIgnoreNoop()
                 .withIgnoreAbstractClasses()
-                        .withIgnoreInterfaces()
-                        .withIgnoreBuiltInValueTypes();
+                .withIgnoreBuiltInValueTypes();
+        
         for (final String pkg : packages) {
             config = config.withPackagePrefix(pkg);
         }
+        
         if(ignoreInterfaces) {
             config = config.withIgnoreInterfaces();
         }
-        
 
         final MetamodelDto metamodelDto =  metaModelService.exportMetaModel(config);
 

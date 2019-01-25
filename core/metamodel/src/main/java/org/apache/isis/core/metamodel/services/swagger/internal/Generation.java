@@ -30,6 +30,7 @@ import org.apache.isis.applib.annotation.SemanticsOf;
 import org.apache.isis.applib.services.swagger.SwaggerService;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.collections._Sets;
+import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.core.metamodel.facets.actcoll.typeof.TypeOfFacet;
 import org.apache.isis.core.metamodel.facets.object.domainservice.DomainServiceFacet;
 import org.apache.isis.core.metamodel.facets.object.mixin.MixinFacet;
@@ -175,10 +176,14 @@ class Generation {
 //        System .out.println(all);
 //    }
 
+    private final static _Probe probe = _Probe.unlimited().label("Generation");
+    
     void appendObjectPathsAndDefinitions() {
         // (previously we took a protective copy to avoid a concurrent modification exception,
         // but this is now done by SpecificationLoader itself)
         for (final ObjectSpecification objectSpec : specificationLoader.allSpecifications()) {
+        	
+        	probe.println("objectSpec %s", objectSpec);
 
             final DomainServiceFacet domainServiceFacet = objectSpec.getFacet(DomainServiceFacet.class);
             if (domainServiceFacet != null) {

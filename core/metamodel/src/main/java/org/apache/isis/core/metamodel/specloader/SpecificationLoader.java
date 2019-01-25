@@ -25,17 +25,18 @@ import java.util.stream.Stream;
 
 import javax.enterprise.inject.Vetoed;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.jaxb.JaxbService;
+import org.apache.isis.applib.services.metamodel.MetaModelService;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
+import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.context._Context;
+import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
 import org.apache.isis.config.property.ConfigPropertyBoolean;
@@ -60,13 +61,17 @@ import org.apache.isis.core.metamodel.specloader.specimpl.ObjectSpecificationAbs
 import org.apache.isis.core.metamodel.specloader.specimpl.dflt.ObjectSpecificationDefault;
 import org.apache.isis.core.metamodel.specloader.specimpl.standalonelist.ObjectSpecificationOnStandaloneList;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelDeficiencies;
-import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidException;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidator;
 import org.apache.isis.core.metamodel.specloader.validator.ValidationFailures;
 import org.apache.isis.core.runtime.threadpool.ThreadPoolExecutionMode;
 import org.apache.isis.core.runtime.threadpool.ThreadPoolSupport;
 import org.apache.isis.progmodels.dflt.ProgrammingModelFacetsJava5;
+import org.apache.isis.schema.metamodel.v1.MetamodelDto;
 import org.apache.isis.schema.utils.CommonDtoUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import lombok.val;
 
 /**
  * Builds the meta-model.
@@ -210,7 +215,32 @@ public class SpecificationLoader {
         }
 
         LOG.info("init() - done");
+        
+        //FIXME [2033] remove
+        {
+        	streamServiceClasses()
+        	.forEach(service->probe.println("using service %s", service));
+        	
+        	
+        	val metaModelService = _CDI.getSingleton(MetaModelService.class);
+        	val jaxbService = _CDI.getSingleton(JaxbService.class);
+        	
+        	val metamodelDto =
+        			metaModelService.exportMetaModel(
+        					new MetaModelService.Config()
+        							.withIgnoreNoop()
+        							.withIgnoreAbstractClasses()
+        							.withIgnoreBuiltInValueTypes()
+        							.withIgnoreInterfaces()
+        							.withPackagePrefix("domainapp")
+        			);
+			
+			final String xml = jaxbService.toXml(metamodelDto);
+			//probe.println(xml);
+        }
     }
+    
+    private final static _Probe probe = _Probe.unlimited().label("SpecificationLoader");
 
     private void logBefore(
             final List<ObjectSpecification> specificationsFromRegistry,

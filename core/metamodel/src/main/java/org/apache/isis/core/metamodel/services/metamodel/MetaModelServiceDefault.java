@@ -29,7 +29,6 @@ import javax.inject.Singleton;
 
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.AppManifest2;
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.bookmark.Bookmark;
 import org.apache.isis.applib.services.command.CommandDtoProcessor;
 import org.apache.isis.applib.services.grid.GridService;
@@ -58,24 +57,20 @@ import org.apache.isis.schema.metamodel.v1.MetamodelDto;
 @Singleton
 public class MetaModelServiceDefault implements MetaModelService {
 
-    // private final static Logger LOG = LoggerFactory.getLogger(MetaModelServiceDefault.class);
-
     private MetaModelExporter metaModelExporter;
 
     @PostConstruct
-    @Programmatic
     public void init() {
-        metaModelExporter = new MetaModelExporter(specificationLookup);
+        metaModelExporter = new MetaModelExporter(specificationLoader);
     }
 
     @Override
-    @Programmatic
     public Class<?> fromObjectType(final String objectType) {
         if(objectType == null) {
             return null;
         }
         final ObjectSpecId objectSpecId = ObjectSpecId.of(objectType);
-        final ObjectSpecification objectSpecification = specificationLookup.lookupBySpecId(objectSpecId);
+        final ObjectSpecification objectSpecification = specificationLoader.lookupBySpecId(objectSpecId);
         return objectSpecification != null? objectSpecification.getCorrespondingClass(): null;
     }
 
@@ -84,7 +79,7 @@ public class MetaModelServiceDefault implements MetaModelService {
         if(domainType == null) {
             return null;
         }
-        final ObjectSpecification objectSpecification = specificationLookup.loadSpecification(domainType);
+        final ObjectSpecification objectSpecification = specificationLoader.loadSpecification(domainType);
         final ObjectSpecIdFacet objectSpecIdFacet = objectSpecification.getFacet(ObjectSpecIdFacet.class);
         final ObjectSpecId objectSpecId = objectSpecIdFacet.value();
         return objectSpecId.asString();
@@ -92,11 +87,11 @@ public class MetaModelServiceDefault implements MetaModelService {
 
     @Override
     public void rebuild(final Class<?> domainType) {
-        specificationLookup.invalidateCache(domainType);
+        specificationLoader.invalidateCache(domainType);
         
         GridService gridService = _CDI.getManagedBean(GridService.class).get();
         gridService.remove(domainType);
-        specificationLookup.loadSpecification(domainType);
+        specificationLoader.loadSpecification(domainType);
     }
 
     // //////////////////////////////////////
@@ -104,10 +99,9 @@ public class MetaModelServiceDefault implements MetaModelService {
 
 
     @Override
-    @Programmatic
     public DomainModel getDomainModel() {
 
-        final Collection<ObjectSpecification> specifications = specificationLookup.allSpecifications();
+        final Collection<ObjectSpecification> specifications = specificationLoader.allSpecifications();
 
         final List<DomainMember> rows = _Lists.newArrayList();
         for (final ObjectSpecification spec : specifications) {
@@ -183,7 +177,7 @@ public class MetaModelServiceDefault implements MetaModelService {
         if(domainType == null) {
             return null;
         }
-        final ObjectSpecification objectSpec = specificationLookup.loadSpecification(domainType);
+        final ObjectSpecification objectSpec = specificationLoader.loadSpecification(domainType);
         if(objectSpec.isService()) {
             return Sort.DOMAIN_SERVICE;
         }
@@ -248,7 +242,7 @@ public class MetaModelServiceDefault implements MetaModelService {
             return null;
         }
 
-        final ObjectSpecification spec = specificationLookup.lookupBySpecId(objectSpecId);
+        final ObjectSpecification spec = specificationLoader.lookupBySpecId(objectSpecId);
         if(spec == null) {
             return null;
         }
@@ -279,7 +273,7 @@ public class MetaModelServiceDefault implements MetaModelService {
         return metaModelExporter.exportMetaModel(config);
     }
     
-    @Inject SpecificationLoader specificationLookup;
+    @Inject SpecificationLoader specificationLoader;
     //@Inject GridService gridService; // to break circular dependency
 
 

@@ -66,10 +66,10 @@ class MetaModelExporter {
     @SuppressWarnings("unused")
     private final static Logger LOG = LoggerFactory.getLogger(MetaModelExporter.class);
 
-    SpecificationLoader specificationLookup;
+    SpecificationLoader specificationLoader;
 
-    public MetaModelExporter(final SpecificationLoader specificationLookup) {
-        this.specificationLookup = specificationLookup;
+    public MetaModelExporter(final SpecificationLoader specificationLoader) {
+        this.specificationLoader = specificationLoader;
     }
 
     /**
@@ -87,7 +87,7 @@ class MetaModelExporter {
         // phase 1: create a domainClassType for each ObjectSpecification
         // these are added into a map for lookups in phase 2
         final Map<ObjectSpecification, DomainClassDto> domainClassByObjectSpec = _Maps.newHashMap();
-        for (final ObjectSpecification specification : specificationLookup.allSpecifications()) {
+        for (final ObjectSpecification specification : specificationLoader.allSpecifications()) {
             DomainClassDto domainClassType = asXsdType(specification, config);
             domainClassByObjectSpec.put(specification, domainClassType);
         }
@@ -466,9 +466,9 @@ class MetaModelExporter {
         } else if(attributeObj instanceof String) {
             str = asStr((String) attributeObj);
         } else if(attributeObj instanceof Enum) {
-            str = asStr((Enum) attributeObj);
+            str = asStr((Enum<?>) attributeObj);
         } else if(attributeObj instanceof Class) {
-            str = asStr((Class) attributeObj);
+            str = asStr((Class<?>) attributeObj);
         } else if(attributeObj instanceof Specification) {
             str = asStr((Specification) attributeObj);
         } else if(attributeObj instanceof Facet) {
@@ -525,11 +525,11 @@ class MetaModelExporter {
         return attributeObj.getId();
     }
 
-    private String asStr(final Class attributeObj) {
+    private String asStr(final Class<?> attributeObj) {
         return attributeObj.getCanonicalName();
     }
 
-    private String asStr(final Enum attributeObj) {
+    private String asStr(final Enum<?> attributeObj) {
         return attributeObj.name();
     }
 

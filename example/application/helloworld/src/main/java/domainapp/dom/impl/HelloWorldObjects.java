@@ -21,6 +21,7 @@ package domainapp.dom.impl;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.jdo.JDOQLTypedQuery;
 
 import org.apache.isis.applib.annotation.Action;
@@ -39,6 +40,7 @@ import domainapp.dom.types.Name;
         nature = NatureOfService.VIEW_MENU_ONLY,
         objectType = "helloworld.HelloWorldObjects"
 )
+@Singleton
 public class HelloWorldObjects {
 
     @Action(semantics = SemanticsOf.NON_IDEMPOTENT)

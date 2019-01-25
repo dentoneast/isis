@@ -78,6 +78,8 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
                 .map(Instance::get);
     }
     
+   
+    
     @Override
     public Stream<Object> streamServices() {
         
@@ -86,18 +88,10 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
             registeredServiceBeans.stream()
             .forEach(bean->{
                 
+            	//FIXME [2033] properly filter those services we want the service registry to know about, 
+            	// or categorize them ?
             	val scope = bean.getScope().getSimpleName();
-            	
-            	if(!"Singleton".equals(scope)) {
-            		return;
-            	}
-            	
                 val type = bean.getBeanClass();
-                val logScope = type.getName().startsWith("org.apache.isis.");
-                
-                if(logScope) {
-                    log.info("processing bean {}", bean);
-                } 
                 
                 Optional<?> managedObject = 
                         _CDI.getManagedBean(type, bean.getQualifiers());
@@ -105,21 +99,20 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
                 if(managedObject.isPresent()) {
                     registeredServiceInstances.add(managedObject.get());
                     
-                    if(logScope) {
-                        log.info("registering as a {} service {}", scope, managedObject.get());
-                    }
+                    log.info("registering as a {}-scoped service {}", scope, managedObject.get());
                     
                 } else {
                     
-                    if(logScope) {
-                        log.warn("failed to register bean as a service {}", bean);
-                    }
+                    log.warn("failed to register bean {}-scoped as a service {}", scope, bean);
+                    
                 }
             });
         }
         
         return registeredServiceInstances.stream();
     }
+    
+    // --
 
     @Override
     public <T> Stream<T> streamServices(final Class<T> serviceClass) {
@@ -159,37 +152,40 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
         validate(streamServiceBeans());
     }
 
-    // -- HELPER ...
+    
+    // -- HELPER - FILTER
+    
+    private boolean isBeanToBeAcceptedForRegistration(Bean<?> bean) {
+    	val scope = bean.getScope().getSimpleName();
+    	if("Singleton".equals(scope)) { //this is to also accept producer methods, that produce singletons
+    		return true;
+    	}
+    	val type = bean.getBeanClass();
+		if(isServiceType(type)) {
+			return true;
+		}
+    	
+    	log.warn("not a singleton: {} {}", scope, bean);
+    	
+    	return false;
+    }
     
     private Stream<Bean<?>> streamServiceBeans() {
         
     	if(registeredServiceBeans.isEmpty()) {
 
-    		_CDI.streamAllBeans().forEach(bean->{
-
-    			val type = bean.getBeanClass();
-    			val logScope = type.getName().startsWith("org.apache.isis.");
-
-    			//                if(logScope) {
-    			//                    log.info("processing bean {}", bean);
-    			//                } 
-
-    			if(!isServiceType(type)) {
-    				return;
-    			}
-
-    			if(logScope) {
-    				log.info("registering as a service {}", bean);
-    				registeredServiceBeans.add(bean);
-    			}
-
+    		_CDI.streamAllBeans()
+    		.filter(this::isBeanToBeAcceptedForRegistration)
+    		.forEach(bean->{
+    			registeredServiceBeans.add(bean);
     		});
             
         }
         
         return registeredServiceBeans.stream();
     }        
-    // -- VALIDATE
+    
+    // -- HELPER - VALIDATE
         
     private static void validate(final Stream<Bean<?>> serviceBeans) {
 
@@ -222,7 +218,7 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
     }
 
         
-    // -- LOOKUP SERVICE(S)
+    // -- HELPER - LOOKUP SERVICE(S)
 
     private <T> Set<Object> locateMatchingServices(final Class<T> serviceClass) {
         final Set<Object> matchingServices = streamServices()
