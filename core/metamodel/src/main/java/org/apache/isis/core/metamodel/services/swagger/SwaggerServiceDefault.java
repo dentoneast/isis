@@ -23,41 +23,39 @@ import static org.apache.isis.commons.internal.base._With.ifPresentElse;
 import static org.apache.isis.commons.internal.resources._Resources.getRestfulPathIfAny;
 import static org.apache.isis.commons.internal.resources._Resources.prependContextPathIfPresent;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.swagger.SwaggerService;
+import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.core.metamodel.services.swagger.internal.SwaggerSpecGenerator;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 
 @Singleton
 public class SwaggerServiceDefault implements SwaggerService {
 
-    // private final static Logger LOG = LoggerFactory.getLogger(SwaggerServiceDefault.class);
+	@Inject SpecificationLoader specificationLoader;
 
-    private String basePath;
-
-    @PostConstruct
-    public void init() {
-
-        final String restfulPath = ifPresentElse(getRestfulPathIfAny(), "undefined");
-        
-        this.basePath = prefix(prependContextPathIfPresent(restfulPath), "/");
-    }
-
-    @Programmatic
     @Override
     public String generateSwaggerSpec(
             final Visibility visibility,
             final Format format) {
 
         final SwaggerSpecGenerator swaggerSpecGenerator = new SwaggerSpecGenerator(specificationLoader);
-        final String swaggerSpec = swaggerSpecGenerator.generate(basePath, visibility, format);
+        final String swaggerSpec = swaggerSpecGenerator.generate(basePath.get(), visibility, format);
         return swaggerSpec;
     }
 
-    @Inject SpecificationLoader specificationLoader;
+    // -- HELPER
+	
+    private _Lazy<String> basePath = _Lazy.threadSafe(this::lookupBasePath);
+
+    private String lookupBasePath() {
+        final String restfulPath = ifPresentElse(getRestfulPathIfAny(), "undefined");
+        return prefix(prependContextPathIfPresent(restfulPath), "/");
+    }
+
+
+    
 
 }
