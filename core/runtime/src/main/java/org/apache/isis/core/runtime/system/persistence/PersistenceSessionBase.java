@@ -23,9 +23,6 @@ import java.util.stream.Collectors;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.services.command.CommandContext;
 import org.apache.isis.applib.services.command.spi.CommandService;
@@ -40,11 +37,14 @@ import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.commons.util.ToString;
 import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
+import org.apache.isis.core.plugins.ioc.RequestContextService;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledFlag;
 import org.apache.isis.core.runtime.services.changes.ChangedObjectsServiceInternal;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.PersistenceQueryProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 abstract class PersistenceSessionBase implements PersistenceSession {
 
@@ -72,6 +72,8 @@ abstract class PersistenceSessionBase implements PersistenceSession {
     protected final MetricsService metricsService;
     protected final ClockService clockService;
     protected final UserService userService;
+    protected final RequestContextService requestContextService;
+    
     
     /**
      * Set to System.nanoTime() when session opens.
@@ -130,6 +132,7 @@ abstract class PersistenceSessionBase implements PersistenceSession {
         this.factoryService = lookupService(FactoryService.class);
         this.clockService = lookupService(ClockService.class);
         this.userService = lookupService(UserService.class);
+        this.requestContextService = lookupService(RequestContextService.class);
 
         // sub-components
         this.persistenceQueryFactory = new PersistenceQueryFactory(

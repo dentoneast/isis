@@ -21,6 +21,8 @@ package org.apache.isis.applib.services.bookmark;
 import java.io.Serializable;
 import java.util.Iterator;
 
+import javax.enterprise.inject.Vetoed;
+
 import org.apache.isis.applib.annotation.Value;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
@@ -206,7 +208,7 @@ public class Bookmark implements Serializable {
         return state.getCode() + objectType + SEPARATOR + identifier;
     }
 
-
+    @Vetoed
     public static class AsStringType {
 
         private AsStringType() {}

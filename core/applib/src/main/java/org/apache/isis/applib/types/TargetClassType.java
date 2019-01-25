@@ -19,12 +19,15 @@ package org.apache.isis.applib.types;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+import javax.enterprise.inject.Vetoed;
+
 import org.apache.isis.applib.services.bookmark.Bookmark;
 import org.apache.isis.applib.services.command.Command;
 
 /**
  * A user-friendly name of a class, as per {@link Command#getTargetClass()}, {@link org.apache.isis.applib.services.audit.AuditerService#audit(UUID, int, String, Bookmark, String, String, String, String, String, Timestamp)}.
  */
+@Vetoed
 public class TargetClassType {
 
     private TargetClassType() {}

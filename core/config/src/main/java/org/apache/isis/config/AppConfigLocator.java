@@ -54,8 +54,11 @@ public final class AppConfigLocator {
     		"org.apache.isis.applib.services.registry.ServiceRegistry", 
     		"org.apache.isis.config.IsisConfiguration", 
     		"org.apache.isis.core.runtime.system.session.IsisSessionFactory", 
+    		
     		"org.apache.isis.core.security.authentication.manager.AuthenticationManager", 
     		"org.apache.isis.core.security.authorization.manager.AuthorizationManager",
+    		"org.apache.isis.core.security.authentication.AuthenticationSessionProvider",
+    		
     		"org.apache.isis.core.metamodel.specloader.SpecificationLoader",
     		"org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory",
     		
@@ -71,6 +74,9 @@ public final class AppConfigLocator {
     		"org.apache.isis.applib.services.title.TitleService",
     		"org.apache.isis.applib.services.user.UserService",
     		"org.apache.isis.applib.services.xactn.TransactionService",
+    		
+    		"org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal",
+    		"org.apache.isis.applib.services.wrapper.WrapperFactory",
     		
     		"org.apache.isis.applib.services.homepage.HomePageProviderService"
     		

@@ -16,6 +16,9 @@
  */
 package org.apache.isis.applib.mixins.dto;
 
+import javax.enterprise.inject.Vetoed;
+
+@Vetoed
 class Util {
 
     private Util(){}

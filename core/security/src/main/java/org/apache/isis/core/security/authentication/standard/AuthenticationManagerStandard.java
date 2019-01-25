@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.enterprise.inject.Vetoed;
+
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.util.ToString;
 import org.apache.isis.commons.internal.collections._Lists;
@@ -39,6 +41,7 @@ import org.apache.isis.core.security.authentication.manager.RegistrationDetails;
 
 import static org.apache.isis.commons.internal.base._NullSafe.stream;
 
+@Vetoed
 public class AuthenticationManagerStandard implements AuthenticationManager {
 
     private final Map<String, String> userByValidationCode = _Maps.newHashMap();

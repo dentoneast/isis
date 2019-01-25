@@ -58,7 +58,7 @@ public class BackgroundServiceDefault implements BackgroundService {
     static final Logger LOG = LoggerFactory.getLogger(BackgroundServiceDefault.class);
 
     // only used if there is no BackgroundCommandService
-    private static class BuiltinExecutor {
+    static class BuiltinExecutor {
         /*
          * For the fixed thread-pool let there be 1-4 concurrent threads,
          * limited by the number of available (logical) processor cores.

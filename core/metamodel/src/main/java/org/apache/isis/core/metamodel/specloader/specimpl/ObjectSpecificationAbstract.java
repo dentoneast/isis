@@ -30,6 +30,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.enterprise.inject.Vetoed;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -491,6 +493,7 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
         .orElse(notANoopFacetFilter.noopFacet);
     }
 
+    @Vetoed
     private static class NotANoopFacetFilter<Q extends Facet> implements Predicate<Q> {
         Q noopFacet;
 

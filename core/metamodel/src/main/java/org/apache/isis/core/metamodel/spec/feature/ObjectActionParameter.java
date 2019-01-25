@@ -23,6 +23,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
+import javax.enterprise.inject.Vetoed;
 
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
@@ -128,7 +129,7 @@ public interface ObjectActionParameter extends ObjectFeature, CurrentHolder {
             final Object proposedValue,
             final InteractionInitiatedBy interactionInitiatedBy);
 
-
+    @Vetoed
     public static class Functions {
         public static final Function<ObjectActionParameter, String> GET_NAME =
                 ObjectActionParameter::getName;
@@ -141,6 +142,7 @@ public interface ObjectActionParameter extends ObjectFeature, CurrentHolder {
 
     }
 
+    @Vetoed
     public static class Predicates {
         private Predicates(){}
 

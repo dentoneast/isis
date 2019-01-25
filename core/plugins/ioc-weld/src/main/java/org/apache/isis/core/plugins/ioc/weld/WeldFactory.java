@@ -51,8 +51,11 @@ public class WeldFactory {
 	    //final Class<?> beanScanInterceptor = classForName("org.apache.isis.core.webapp.jee.IsisCDIBeanScanInterceptor");
 	    final Class<?>[] additionalPackages = 
 	            classesForClassNames(
+	            		
+	            		"org.apache.isis.core.plugins.ioc.weld.services.request.RequestContextServiceWeld",
 	                    
-	                    "domainapp.application.HelloWorldAppManifest",
+	                    "domainapp.application.HelloWorldAppManifest", // specific to the app
+	                    
 	                    "org.apache.isis.config.AppConfig",
 	                    "org.apache.isis.applib.AppManifest",
 	                    "org.apache.isis.core.runtime.RuntimeModule",
@@ -79,7 +82,12 @@ public class WeldFactory {
 	            .addPackages(scanRecursively, classes)
 	            .addPackages(scanRecursively, additionalPackages)
 	            //.interceptors(beanScanInterceptor)
-	            .property("org.jboss.weld.construction.relaxed", true);
+//	            .property("org.jboss.weld.construction.relaxed", true)
+//	            .property("org.jboss.weld.development", true)
+//	            .property("org.jboss.weld.probe.jmxSupport", true)
+//	            .property("org.jboss.weld.probe.exportDataAfterDeployment", "d:/tmp/")
+	            ;
+        
         
         if(!_Strings.isNullOrEmpty(containerId)) {
             builder = builder.containerId(containerId);

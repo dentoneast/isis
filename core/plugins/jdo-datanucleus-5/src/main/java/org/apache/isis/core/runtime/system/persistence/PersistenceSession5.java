@@ -18,6 +18,9 @@
  */
 package org.apache.isis.core.runtime.system.persistence;
 
+import static java.util.Objects.requireNonNull;
+import static org.apache.isis.commons.internal.base._Casts.uncheckedCast;
+
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -34,12 +37,6 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.identity.SingleFieldIdentity;
 import javax.jdo.listener.InstanceLifecycleListener;
-
-import org.datanucleus.enhancement.Persistable;
-import org.datanucleus.exceptions.NucleusObjectNotFoundException;
-import org.datanucleus.identity.DatastoreIdImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.isis.applib.query.Query;
 import org.apache.isis.applib.services.command.Command;
@@ -70,6 +67,7 @@ import org.apache.isis.core.metamodel.services.container.query.QueryCardinality;
 import org.apache.isis.core.metamodel.spec.FreeStandingList;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
+import org.apache.isis.core.plugins.ioc.RequestContextHandle;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledFlag;
 import org.apache.isis.core.runtime.persistence.NotPersistableException;
 import org.apache.isis.core.runtime.persistence.ObjectNotFoundException;
@@ -92,9 +90,11 @@ import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.Persisten
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.PersistenceQueryFindUsingApplibQueryProcessor;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.PersistenceQueryProcessor;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.spi.JdoObjectIdSerializer;
-
-import static java.util.Objects.requireNonNull;
-import static org.apache.isis.commons.internal.base._Casts.uncheckedCast;
+import org.datanucleus.enhancement.Persistable;
+import org.datanucleus.exceptions.NucleusObjectNotFoundException;
+import org.datanucleus.identity.DatastoreIdImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A wrapper around the JDO {@link PersistenceManager}, which also manages concurrency
@@ -106,6 +106,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
 
     private static final Logger LOG = LoggerFactory.getLogger(PersistenceSession5.class);
     private ObjectAdapterContext objectAdapterContext;
+	private RequestContextHandle requestContextHandle;
 
     /**
      * Initialize the object store so that calls to this object store access
@@ -135,6 +136,9 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
         if (LOG.isDebugEnabled()) {
             LOG.debug("opening {}", this);
         }
+        
+        // this handle needs to be closed when the request-scope's life-cycle ends 
+        requestContextHandle = requestContextService.startRequest(); 
 
         persistenceManager = jdoPersistenceManagerFactory.getPersistenceManager();
 
@@ -259,6 +263,8 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
         }
 
         objectAdapterContext.close();
+        
+        requestContextHandle.close();
 
         this.state = State.CLOSED;
     }

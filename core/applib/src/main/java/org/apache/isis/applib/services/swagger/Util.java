@@ -16,6 +16,9 @@
  */
 package org.apache.isis.applib.services.swagger;
 
+import javax.enterprise.inject.Vetoed;
+
+@Vetoed
 class Util {
 
     private Util(){}

@@ -18,12 +18,25 @@
  */
 package domainapp.modules.simple;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Singleton;
+
 import org.apache.isis.applib.AppManifestAbstract2;
+import org.apache.isis.config.AppConfig;
+import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.core.runtime.authorization.standard.AuthorizationManagerStandard;
+import org.apache.isis.core.security.authentication.bypass.AuthenticatorBypass;
+import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
+import org.apache.isis.core.security.authentication.standard.AuthenticationManagerStandard;
+import org.apache.isis.core.security.authorization.bypass.AuthorizorBypass;
+import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
 
 /**
  * Used by <code>isis-maven-plugin</code> (build-time validation of the module) and also by module-level integration tests.
  */
-public class SimpleModuleManifest extends AppManifestAbstract2 {
+@Singleton
+public class SimpleModuleManifest extends AppManifestAbstract2 implements AppConfig {
 
     public static final Builder BUILDER = Builder.forModule(new SimpleModule())
             .withConfigurationProperty("isis.persistor.datanucleus.impl.datanucleus.schema.autoCreateAll","true")
@@ -34,5 +47,33 @@ public class SimpleModuleManifest extends AppManifestAbstract2 {
         super(BUILDER);
     }
 
+	// Implementing AppConfig, to tell the framework how to bootstrap the configuration.
+    @Override @Produces @Singleton
+    public IsisConfiguration isisConfiguration() {
+        return IsisConfiguration.buildFromAppManifest(this);
+    }
+    
+	 /**
+     * The standard authentication manager, configured with the 'bypass' authenticator 
+     * (allows all requests through).
+     * <p>
+     * integration tests ignore appManifest for authentication and authorization.
+     */
+    @Produces @Singleton
+    public AuthenticationManager authenticationManagerWithBypass() {
+        final AuthenticationManagerStandard authenticationManager = new AuthenticationManagerStandard();
+        authenticationManager.addAuthenticator(new AuthenticatorBypass());
+        return authenticationManager;
+    }
+    
+    @Produces @Singleton
+    public AuthorizationManager authorizationManagerWithBypass() {
+        final AuthorizationManagerStandard authorizationManager = new AuthorizationManagerStandard() {
+            {
+                authorizor = new AuthorizorBypass();
+            }  
+        };
+        return authorizationManager;
+    }
 
 }

@@ -25,7 +25,10 @@ import java.util.stream.Collectors;
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.fixtures.FixtureClock;
 import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.commons.internal.base._Blackhole;
 import org.apache.isis.commons.internal.base._NullSafe;
+import org.apache.isis.commons.internal.cdi._CDI;
+import org.apache.isis.config.AppConfigLocator;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidException;
 import org.apache.isis.core.runtime.headless.auth.AuthenticationRequestNameOnly;
@@ -117,8 +120,13 @@ public final class IsisSystem {
 
             // ensures that a FixtureClock is installed as the singleton underpinning the ClockService
             FixtureClock.initialize();
+            
+            // finalize the config (build and regard immutable)
+            // as a side-effect bootstrap CDI, if the environment we are running on does not already have its own 
+            _Blackhole.consume(AppConfigLocator.getAppConfig());
+            
 
-            isisSessionFactory = new IsisSessionProducerBean().produceIsisSessionFactory();
+            isisSessionFactory = _CDI.getSingleton(IsisSessionFactory.class);
             // REVIEW: does no harm, but is this required?
             closeSession();
 

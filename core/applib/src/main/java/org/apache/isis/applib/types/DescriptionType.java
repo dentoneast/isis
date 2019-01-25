@@ -18,6 +18,9 @@
  */
 package org.apache.isis.applib.types;
 
+import javax.enterprise.inject.Vetoed;
+
+@Vetoed
 public class DescriptionType {
 
     private DescriptionType() {}
