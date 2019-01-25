@@ -172,20 +172,21 @@ class IsisSessionFactoryBuilder {
 
             isisSessionFactory.constructServices();
 
-            isisSessionFactory.doInSession(
-                    () -> {
+//FIXME [2033] skipping mm validation for now ...            
+//            isisSessionFactory.doInSession(
+//                    () -> {
                     	
-                    	val mmDeficiency = specificationLoader.validateThenGetDeficienciesIfAny(); 
-                    	if(mmDeficiency!=null) {
-                            // no need to use a higher level, such as error(...); the calling code will expose any metamodel
-                            // validation errors in their own particular way.
-                            if(log.isDebugEnabled()) {
-                                log.debug("Meta model invalid", mmDeficiency.getValidationErrorsAsString());
-                            }
-                            _Context.putSingleton(MetaModelDeficiencies.class, mmDeficiency);
-                        }
-                    }
-                    );
+//                    	val mmDeficiencies = specificationLoader.validateThenGetDeficienciesIfAny(); 
+//                    	if(mmDeficiencies!=null) {
+//                            // no need to use a higher level, such as error(...); the calling code will expose any metamodel
+//                            // validation errors in their own particular way.
+//                            if(log.isDebugEnabled()) {
+//                                log.debug("Meta model invalid", mmDeficiencies.getValidationErrorsAsString());
+//                            }
+//                            _Context.putSingleton(MetaModelDeficiencies.class, mmDeficiencies);
+//                        }
+//                    }
+//                    );
 
 
         } catch (final IsisSystemException ex) {
