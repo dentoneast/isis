@@ -34,10 +34,11 @@ import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidExcep
 import org.apache.isis.core.runtime.headless.auth.AuthenticationRequestNameOnly;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-import org.apache.isis.core.runtime.system.session.IsisSessionProducerBean;
 import org.apache.isis.core.security.authentication.AuthenticationRequest;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
+
+import lombok.val;
 
 
 /**
@@ -107,13 +108,16 @@ public final class IsisSystem {
     protected void initIfRequiredThenOpenSession() throws Exception {
 
         // exit as quickly as possible for this case...
-        final MetaModelInvalidException mmie = IsisContext.getMetaModelInvalidExceptionIfAny();
-        if(mmie != null) {
-            final Set<String> validationErrors = mmie.getValidationErrors();
-            final String validationMsg = _NullSafe.stream(validationErrors)
-                    .collect(Collectors.joining("\n")); 
-            throw new AssertionError(validationMsg);
-        }
+    	{
+	    	val metaModelDeficiencies = IsisContext.getMetaModelDeficienciesIfAny();
+	    	
+	        if(metaModelDeficiencies != null) {
+	            final Set<String> validationErrors = metaModelDeficiencies.getValidationErrors();
+	            final String validationMsg = _NullSafe.stream(validationErrors)
+	                    .collect(Collectors.joining("\n")); 
+	            throw new AssertionError(validationMsg);
+	        }
+    	}
 
         boolean firstTime = isisSessionFactory == null;
         if(firstTime) {
@@ -132,14 +136,15 @@ public final class IsisSystem {
 
             // if the IsisSystem does not initialize properly, then - as a side effect - the resulting
             // MetaModelInvalidException will be pushed onto the IsisContext (as a static field).
-            final MetaModelInvalidException ex = IsisContext.getMetaModelInvalidExceptionIfAny();
-            if (ex != null) {
+            val metaModelDeficiencies = IsisContext.getMetaModelDeficienciesIfAny();
+            
+            if (metaModelDeficiencies != null) {
 
                 // for subsequent tests; the attempt to bootstrap the framework will leave
                 // the IsisContext singleton as set.
                 IsisContext.clear();
 
-                final Set<String> validationErrors = ex.getValidationErrors();
+                final Set<String> validationErrors = metaModelDeficiencies.getValidationErrors();
                 final StringBuilder buf = new StringBuilder();
                 for (String validationError : validationErrors) {
                     buf.append(validationError).append("\n");

@@ -24,7 +24,6 @@ import java.util.Set;
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.commons.factory.InstanceUtil;
-import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidException;
 import org.apache.isis.core.plugins.environment.IsisSystemEnvironment;
 import org.apache.isis.core.runtime.logging.IsisLoggingConfigurer;
 import org.apache.isis.core.runtime.system.context.IsisContext;
@@ -40,6 +39,8 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+
+import lombok.val;
 
 public abstract class IsisMojoAbstract extends AbstractMojo {
 
@@ -71,10 +72,9 @@ public abstract class IsisMojoAbstract extends AbstractMojo {
         try {
             isisSessionFactory = new IsisSessionProducerBean().produceIsisSessionFactory();
             		
-            final MetaModelInvalidException metaModelInvalidException = 
-            		IsisContext.getMetaModelInvalidExceptionIfAny();
-            if(metaModelInvalidException!=null) {
-                Set<String> validationErrors = metaModelInvalidException.getValidationErrors();
+            val metaModelDeficiencies = IsisContext.getMetaModelDeficienciesIfAny();
+            if(metaModelDeficiencies!=null) {
+                Set<String> validationErrors = metaModelDeficiencies.getValidationErrors();
                 context.throwFailureException(validationErrors.size() + " meta-model problems found.", validationErrors);
                 return;
             }

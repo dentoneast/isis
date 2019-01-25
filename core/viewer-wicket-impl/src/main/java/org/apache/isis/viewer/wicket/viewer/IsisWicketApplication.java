@@ -114,6 +114,7 @@ import de.agilecoders.wicket.core.settings.IBootstrapSettings;
 import de.agilecoders.wicket.webjars.WicketWebjars;
 import de.agilecoders.wicket.webjars.settings.IWebjarsSettings;
 import de.agilecoders.wicket.webjars.settings.WebjarsSettings;
+import lombok.val;
 import net.ftlines.wicketsource.WicketSource;
 
 /**
@@ -293,9 +294,9 @@ implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor, WicketVi
             @SuppressWarnings("unused")
             SharedResources sharedResources = getSharedResources();
 
-            final MetaModelInvalidException mmie = IsisContext.getMetaModelInvalidExceptionIfAny();
-            if(mmie != null) {
-                log(mmie.getValidationErrors());
+            val metaModelDeficiencies = IsisContext.getMetaModelDeficienciesIfAny();
+            if(metaModelDeficiencies != null) {
+                log(metaModelDeficiencies.getValidationErrors());
             }
 
             if(_Context.isPrototyping()) {

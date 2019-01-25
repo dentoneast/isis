@@ -25,6 +25,8 @@ import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import lombok.val;
+
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.collections._Sets;
@@ -51,7 +53,8 @@ class PoWriter extends PoAbstract {
 
     @Override
     void shutdown() {
-        if(IsisContext.getMetaModelInvalidExceptionIfAny() != null) {
+    	val metaModelDeficiencies = IsisContext.getMetaModelDeficienciesIfAny();
+        if(metaModelDeficiencies != null) {
             // suppress logging translations
             return;
         }

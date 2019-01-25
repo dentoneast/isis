@@ -157,10 +157,10 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
 
         // tell the proxy of all request-scoped services to instantiate the underlying
         // services, store onto the thread-local and inject into them...
-        startRequestOnRequestScopedServices();
+        //FIXME [2033] CDI takes over ... startRequestOnRequestScopedServices();
 
         // ... and invoke all @PostConstruct
-        postConstructOnRequestScopedServices();
+        //FIXME [2033] CDI takes over ... postConstructOnRequestScopedServices();
 
         if(metricsService instanceof InstanceLifecycleListener) {
             final InstanceLifecycleListener metricsService = (InstanceLifecycleListener) this.metricsService;
@@ -249,10 +249,10 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
 
         // tell the proxy of all request-scoped services to invoke @PreDestroy
         // (if any) on all underlying services stored on their thread-locals...
-        preDestroyOnRequestScopedServices();
+      //FIXME [2033] CDI takes over ... preDestroyOnRequestScopedServices();
 
         // ... and then remove those underlying services from the thread-local
-        endRequestOnRequestScopeServices();
+      //FIXME [2033] CDI takes over ... endRequestOnRequestScopeServices();
 
         try {
             persistenceManager.close();

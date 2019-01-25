@@ -51,6 +51,8 @@ import org.apache.isis.core.webapp.auth.AuthenticationSessionStrategy;
 import org.apache.isis.core.webapp.auth.AuthenticationSessionStrategyDefault;
 import org.apache.isis.core.webapp.content.ResourceCachingFilter;
 
+import lombok.val;
+
 /**
  * Filter for RestfulObjects.
  * 
@@ -387,9 +389,10 @@ public class IsisSessionFilter implements Filter {
 
 
     private static void ensureMetamodelIsValid() {
-        final MetaModelInvalidException ex = IsisContext.getMetaModelInvalidExceptionIfAny();
-        if(ex != null) {
-            final Set<String> validationErrors = ex.getValidationErrors();
+    	val metaModelDeficiencies = IsisContext.getMetaModelDeficienciesIfAny();
+        
+        if(metaModelDeficiencies != null) {
+            final Set<String> validationErrors = metaModelDeficiencies.getValidationErrors();
             final StringBuilder buf = new StringBuilder();
             for (String validationError : validationErrors) {
                 buf.append(validationError).append("\n");

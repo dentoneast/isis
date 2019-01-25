@@ -28,6 +28,8 @@ import java.util.stream.Stream;
 
 import com.google.common.base.Throwables;
 
+import lombok.val;
+
 import org.apache.wicket.Application;
 import org.apache.wicket.IPageFactory;
 import org.apache.wicket.Page;
@@ -101,22 +103,21 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
     }
 
     @Override
-    public void onRequestHandlerResolved(final RequestCycle cycle, final IRequestHandler handler)
-    {
+    public void onRequestHandlerResolved(final RequestCycle cycle, final IRequestHandler handler) {
 
         if(handler instanceof RenderPageRequestHandler) {
             ConcurrencyChecking.disable();
 
-            final MetaModelInvalidException mmie = IsisContext.getMetaModelInvalidExceptionIfAny();
+            val metaModelDeficiencies = IsisContext.getMetaModelDeficienciesIfAny();
 
-            if(mmie != null) {
+            if(metaModelDeficiencies != null) {
                 RenderPageRequestHandler requestHandler = (RenderPageRequestHandler) handler;
                 final IRequestablePage nextPage = requestHandler.getPage();
                 if(nextPage instanceof ErrorPage || nextPage instanceof MmvErrorPage) {
                     // do nothing
                     return;
                 }
-                throw mmie;
+                throw new MetaModelInvalidException(metaModelDeficiencies);
             }
         }
 
@@ -180,9 +181,9 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
     @Override
     public IRequestHandler onException(RequestCycle cycle, Exception ex) {
 
-        final MetaModelInvalidException mmie = IsisContext.getMetaModelInvalidExceptionIfAny();
-        if(mmie != null) {
-            final Set<String> validationErrors = mmie.getValidationErrors();
+    	val metaModelDeficiencies = IsisContext.getMetaModelDeficienciesIfAny();
+        if(metaModelDeficiencies != null) {
+            final Set<String> validationErrors = metaModelDeficiencies.getValidationErrors();
             final MmvErrorPage mmvErrorPage = new MmvErrorPage(validationErrors);
             return new RenderPageRequestHandler(new PageProvider(mmvErrorPage), RedirectPolicy.ALWAYS_REDIRECT);
         }
@@ -287,9 +288,9 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
             getServicesInjector().streamServices(ExceptionRecognizer.class)
             .forEach(exceptionRecognizers::add);
         } else {
-            final MetaModelInvalidException mmie = IsisContext.getMetaModelInvalidExceptionIfAny();
-            if(mmie != null) {
-                Set<String> validationErrors = mmie.getValidationErrors();
+            val metaModelDeficiencies = IsisContext.getMetaModelDeficienciesIfAny();
+            if(metaModelDeficiencies != null) {
+                Set<String> validationErrors = metaModelDeficiencies.getValidationErrors();
                 return new MmvErrorPage(validationErrors);
             }
             // not sure whether this can ever happen now...

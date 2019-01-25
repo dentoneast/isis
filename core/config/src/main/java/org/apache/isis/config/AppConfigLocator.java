@@ -109,7 +109,7 @@ public final class AppConfigLocator {
 				val type = _Context.loadClassAndInitialize(serviceClassName);
 				
 				if(!_CDI.getManagedBean(type).isPresent()) {
-					throw new NoSuchElementException(serviceClassName);
+					throw new NoSuchElementException(String.format("No such bean known to CDI."));
 				};
 				
 				probeSanity.println("%s ... managed by CDI", type.getSimpleName());
@@ -120,6 +120,10 @@ public final class AppConfigLocator {
 						serviceClassName.substring(1+serviceClassName.lastIndexOf(".")),
 						serviceClassName, 
 						e.getMessage());
+				
+				_Exceptions.streamStacktraceLines(_Exceptions.getRootCause(e), 12)
+				.forEach(line->probeSanity.println(1, line));
+				
 			}
 		}
 		

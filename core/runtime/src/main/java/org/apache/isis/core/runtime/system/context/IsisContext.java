@@ -37,6 +37,7 @@ import org.apache.isis.config.ConfigurationConstants;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
+import org.apache.isis.core.metamodel.specloader.validator.MetaModelDeficiencies;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidException;
 import org.apache.isis.core.plugins.environment.IsisSystemEnvironment;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
@@ -56,8 +57,8 @@ public interface IsisContext {
      * Populated only if the meta-model was found to be invalid.
      * @return null, if there is none
      */
-    public static MetaModelInvalidException getMetaModelInvalidExceptionIfAny() {
-        return _Context.getIfAny(MetaModelInvalidException.class);
+    public static MetaModelDeficiencies getMetaModelDeficienciesIfAny() {
+        return _Context.getIfAny(MetaModelDeficiencies.class);
     }
 
 //    /**
