@@ -29,10 +29,11 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Priority;
+import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.email.EmailService;
 import org.apache.isis.applib.services.userreg.EmailNotificationService;
 import org.apache.isis.applib.services.userreg.events.EmailEventAbstract;
@@ -43,11 +44,13 @@ import org.apache.isis.commons.internal.resources._Resources;
 /**
  * A service that sends email notifications when specific events occur
  */
-@Singleton
+@Singleton @Alternative @Priority(0)
 public class EmailNotificationServiceDefault implements EmailNotificationService {
     
     private static final long serialVersionUID = 1L;
-    //private static final Logger LOG = LoggerFactory.getLogger(EmailNotificationServiceDefault.class);
+    
+    @Inject private transient EmailService emailService;
+
 
     // -- constants
 
@@ -66,9 +69,7 @@ public class EmailNotificationServiceDefault implements EmailNotificationService
     /**
      * Loads responsive email templates borrowed from http://zurb.com/ink/templates.php (Basic)
      */
-    @Override
     @PostConstruct
-    @Programmatic
     public void init() {
 
         if(initialized) {
@@ -92,18 +93,13 @@ public class EmailNotificationServiceDefault implements EmailNotificationService
 
     // -- isConfigured
 
-    @Programmatic
     @Override
     public boolean isConfigured() {
         return emailService != null && emailService.isConfigured();
     }
 
-
-
     // -- send
 
-
-    @Programmatic
     @Override
     public boolean send(final EmailRegistrationEvent emailRegistrationEvent) {
         ensureConfigured();
@@ -111,15 +107,12 @@ public class EmailNotificationServiceDefault implements EmailNotificationService
         return sendEmail(emailRegistrationEvent, body);
     }
 
-    @Programmatic
     @Override
     public boolean send(final PasswordResetEvent passwordResetEvent) {
         ensureConfigured();
         final String body = replace(passwordResetTemplate, passwordResetEvent);
         return sendEmail(passwordResetEvent, body);
     }
-
-
 
     // -- helper methods for send(...)
 
@@ -162,12 +155,6 @@ public class EmailNotificationServiceDefault implements EmailNotificationService
         message = APPLICATION_NAME_PATTERN.matcher(message).replaceAll(emailEvent.getApplicationName());
         return message;
     }
-
-
-
-    // -- dependencies
-
-    @Inject private EmailService emailService;
-
+    
 
 }

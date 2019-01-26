@@ -24,4 +24,10 @@ public class Constants {
     private Constants(){}
 
     public static final String MENU_ORDER_DEFAULT = "" + (Integer.MAX_VALUE - 100);
+    
+    /**
+     * use for @Priority(value=...) as wicket default, when required
+     */
+    public static final int WICKET_SERVICE_PRIORITY = 20;
+    
 }

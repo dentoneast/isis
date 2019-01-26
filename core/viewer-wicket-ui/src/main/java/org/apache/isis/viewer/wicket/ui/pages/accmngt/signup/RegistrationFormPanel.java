@@ -52,6 +52,12 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.common.NotificationPanel
 public class RegistrationFormPanel extends Panel {
 
     private static final long serialVersionUID = 1L;
+    
+    @Inject private transient EmailNotificationService emailNotificationService;
+    @Inject private transient EmailService emailService;
+    @Inject private transient EmailVerificationUrlService emailVerificationUrlService;
+    @Inject private transient PageNavigationService pageNavigationService;
+    @Inject private transient WebAppConfigBean webAppConfigBean;
 
     /**
      * Constructor
@@ -87,14 +93,15 @@ public class RegistrationFormPanel extends Panel {
                 String email = emailField.getModelObject();
                 String confirmationUrl = emailVerificationUrlService.createVerificationUrl(PageType.SIGN_UP_VERIFY, email);
 
-                /**
-                 * We have to init() the services here because the Isis runtime is not available to us
-                 * (guice will have instantiated a new instance of the service).
-                 *
-                 * We do it this way just so that the programming model for the EmailService is similar to regular Isis-managed services.
-                 */
-                emailNotificationService.init();
-                emailService.init();
+//TODO [2033] remove ...                
+//                /**
+//                 * We have to init() the services here because the Isis runtime is not available to us
+//                 * (guice will have instantiated a new instance of the service).
+//                 *
+//                 * We do it this way just so that the programming model for the EmailService is similar to regular Isis-managed services.
+//                 */
+//                emailNotificationService.init();
+//                emailService.init();
 
                 final EmailRegistrationEvent emailRegistrationEvent = new EmailRegistrationEvent(
                         email, 
@@ -117,11 +124,7 @@ public class RegistrationFormPanel extends Panel {
         form.add(signUpButton);
     }
 
-    @Inject private EmailNotificationService emailNotificationService;
-    @Inject private EmailService emailService;
-    @Inject private EmailVerificationUrlService emailVerificationUrlService;
-    @Inject private PageNavigationService pageNavigationService;
-    @Inject private WebAppConfigBean webAppConfigBean;
+
 
 
 }

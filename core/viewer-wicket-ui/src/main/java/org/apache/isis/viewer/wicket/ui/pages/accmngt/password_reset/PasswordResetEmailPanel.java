@@ -52,6 +52,12 @@ public class PasswordResetEmailPanel extends Panel {
 
     private static final long serialVersionUID = 1L;
     
+    @Inject private transient EmailNotificationService emailNotificationService;
+    @Inject private transient EmailService emailService;
+    @Inject private transient EmailVerificationUrlService emailVerificationUrlService;
+    @Inject private transient PageNavigationService pageNavigationService;
+    @Inject private transient WebAppConfigBean webAppConfigBean;
+    
     /**
      * Constructor
      *
@@ -85,14 +91,15 @@ public class PasswordResetEmailPanel extends Panel {
 
                 String confirmationUrl = emailVerificationUrlService.createVerificationUrl(PageType.PASSWORD_RESET, email);
 
-                /**
-                 * We have to init() the services here because the Isis runtime is not available to us
-                 * (guice will have instantiated a new instance of the service).
-                 *
-                 * We do it this way just so that the programming model for the EmailService is similar to regular Isis-managed services.
-                 */
-                emailNotificationService.init();
-                emailService.init();
+//TODO [2033] remove ...                
+//                /**
+//                 * We have to init() the services here because the Isis runtime is not available to us
+//                 * (guice will have instantiated a new instance of the service).
+//                 *
+//                 * We do it this way just so that the programming model for the EmailService is similar to regular Isis-managed services.
+//                 */
+//                emailNotificationService.init();
+//                emailService.init();
 
                 final PasswordResetEvent passwordResetEvent = new PasswordResetEvent(
                         email, 
@@ -116,10 +123,6 @@ public class PasswordResetEmailPanel extends Panel {
         form.add(signUpButton);
     }
 
-    @Inject private EmailNotificationService emailNotificationService;
-    @Inject private EmailService emailService;
-    @Inject private EmailVerificationUrlService emailVerificationUrlService;
-    @Inject private PageNavigationService pageNavigationService;
-    @Inject private WebAppConfigBean webAppConfigBean;
+
 
 }

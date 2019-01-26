@@ -19,6 +19,9 @@
 
 package org.apache.isis.viewer.wicket.ui.pages.login;
 
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
@@ -43,6 +46,12 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.common.NotificationPanel
 public class IsisSignInPanel extends SignInPanel {
 
     private static final long serialVersionUID = 1L;
+    
+    @Inject transient IsisSessionFactory isisSessionFactory;
+    @Inject transient ServiceInjector servicesInjector;
+    @Inject transient private PageClassRegistry pageClassRegistry;
+    @Inject transient Instance<UserRegistrationService> anyUserRegistrationService;
+    @Inject transient Instance<EmailNotificationService> anyEmailNotificationService;
     
     private final boolean signUpLink;
     private final boolean passwordResetLink;
@@ -117,11 +126,12 @@ public class IsisSignInPanel extends SignInPanel {
     }
 
     private void setVisibilityAllowedBasedOnAvailableServices(final Component... components) {
-        final UserRegistrationService userRegistrationService =
-                servicesInjector.lookupService(UserRegistrationService.class).orElse(null);
-        final EmailNotificationService emailNotificationService1 =
-                servicesInjector.lookupService(EmailNotificationService.class).orElse(null);
-        final boolean visibilityAllowed = userRegistrationService != null && emailNotificationService1.isConfigured();
+        final UserRegistrationService userRegistrationService = 
+                anyUserRegistrationService.stream().findFirst().orElse(null);
+        final EmailNotificationService emailNotificationService = 
+                anyEmailNotificationService.stream().findFirst().orElse(null);
+        
+        final boolean visibilityAllowed = userRegistrationService != null && emailNotificationService.isConfigured();
         for (final Component component: components) {
             if(component.isVisibilityAllowed()) {
                 component.setVisibilityAllowed(visibilityAllowed);
@@ -149,24 +159,6 @@ public class IsisSignInPanel extends SignInPanel {
         }
         super.onSignInRemembered();
     }
-
-
-    // //////////////////////////////////////
-
-    @javax.inject.Inject // strangely, this isn't a @com.google.inject.Inject
-    IsisSessionFactory isisSessionFactory;
-
-    @javax.inject.Inject // strangely, this isn't a @com.google.inject.Inject
-    ServiceInjector servicesInjector;
-
-    @javax.inject.Inject // strangely, this isn't a @com.google.inject.Inject
-    private PageClassRegistry pageClassRegistry;
     
-//not used
-//    @javax.inject.Inject // strangely, this isn't a @com.google.inject.Inject
-//    private EmailNotificationService emailNotificationService;
-//
-//    @javax.inject.Inject // strangely, this isn't a @com.google.inject.Inject
-//    private EmailService emailService;
 
 }

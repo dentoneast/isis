@@ -18,12 +18,13 @@
  */
 package domainapp.application;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
+import javax.inject.Singleton;
 
 import org.apache.isis.applib.AppManifestAbstract2;
 import org.apache.isis.config.AppConfig;
 import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.config.beans.WebAppConfigBean;
 import org.apache.isis.core.runtime.authorization.standard.AuthorizationManagerStandard;
 import org.apache.isis.core.runtime.threadpool.ThreadPoolExecutionMode;
 import org.apache.isis.core.runtime.threadpool.ThreadPoolSupport;
@@ -38,7 +39,7 @@ import domainapp.dom.HelloWorldModule;
 /**
  * Bootstrap the application.
  */
-@ApplicationScoped // only if you want AppConfig to be managed by CDI (if available), otherwise not required
+@Singleton // only if you want AppConfig to be managed by CDI (if available), otherwise not required
 public class HelloWorldAppManifest extends AppManifestAbstract2 implements AppConfig {
 
     public static final Builder BUILDER = Builder
@@ -57,7 +58,7 @@ public class HelloWorldAppManifest extends AppManifestAbstract2 implements AppCo
     }
 
     // Implementing AppConfig, to tell the framework how to bootstrap the configuration.
-    @Override @Produces @ApplicationScoped
+    @Override @Produces @Singleton
     public IsisConfiguration isisConfiguration() {
         return IsisConfiguration.buildFromAppManifest(this);
     }
@@ -68,14 +69,14 @@ public class HelloWorldAppManifest extends AppManifestAbstract2 implements AppCo
      * <p>
      * integration tests ignore appManifest for authentication and authorization.
      */
-    @Produces @ApplicationScoped
+    @Produces @Singleton
     public AuthenticationManager authenticationManagerWithBypass() {
         final AuthenticationManagerStandard authenticationManager = new AuthenticationManagerStandard();
         authenticationManager.addAuthenticator(new AuthenticatorBypass());
         return authenticationManager;
     }
     
-    @Produces @ApplicationScoped
+    @Produces @Singleton
     public AuthorizationManager authorizationManagerWithBypass() {
         final AuthorizationManagerStandard authorizationManager = new AuthorizationManagerStandard() {
             {
@@ -84,6 +85,14 @@ public class HelloWorldAppManifest extends AppManifestAbstract2 implements AppCo
         };
         return authorizationManager;
     }
+    
+    @Produces @Singleton
+    public WebAppConfigBean webAppConfigBean() {
+        return WebAppConfigBean.builder()
+                .build();
+    }
 
+    
+    
     
 }

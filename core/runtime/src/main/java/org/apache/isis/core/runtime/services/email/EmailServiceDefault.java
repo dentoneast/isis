@@ -31,22 +31,23 @@ import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.ImageHtmlEmail;
 import org.apache.commons.mail.resolver.DataSourceClassPathResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.email.EmailService;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.config.IsisConfiguration;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * A service that sends email notifications when specific events occur
  */
-@Singleton
+@Slf4j @Singleton
 public class EmailServiceDefault implements EmailService {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger LOG = LoggerFactory.getLogger(EmailServiceDefault.class);
+    
+    @Inject transient IsisConfiguration configuration;
+    
 
     public static class EmailServiceException extends RuntimeException {
         static final long serialVersionUID = 1L;
@@ -90,9 +91,7 @@ public class EmailServiceDefault implements EmailService {
     /**
      * Loads responsive email templates borrowed from http://zurb.com/ink/templates.php (Basic)
      */
-    @Override
     @PostConstruct
-    @Programmatic
     public void init() {
 
         if (initialized) {
@@ -102,9 +101,9 @@ public class EmailServiceDefault implements EmailService {
         initialized = true;
 
         if (!isConfigured()) {
-            LOG.warn("NOT configured");
+            log.warn("NOT configured");
         } else {
-            LOG.debug("configured");
+            log.debug("configured");
         }
     }
 
@@ -241,7 +240,7 @@ public class EmailServiceDefault implements EmailService {
             email.send();
 
         } catch (EmailException ex) {
-            LOG.error("An error occurred while trying to send an email", ex);
+            log.error("An error occurred while trying to send an email", ex);
             final Boolean throwExceptionOnFail = isThrowExceptionOnFail();
             if (throwExceptionOnFail) {
                 throw new EmailServiceException(ex);
@@ -270,6 +269,6 @@ public class EmailServiceDefault implements EmailService {
     }
     // endregion
 
-    @Inject IsisConfiguration configuration;
+    
 
 }

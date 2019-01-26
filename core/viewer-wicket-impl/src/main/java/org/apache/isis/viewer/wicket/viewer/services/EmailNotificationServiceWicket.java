@@ -16,25 +16,18 @@
  */
 package org.apache.isis.viewer.wicket.viewer.services;
 
-import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
-
 import org.apache.isis.applib.services.userreg.EmailNotificationService;
 import org.apache.isis.applib.services.userreg.events.EmailRegistrationEvent;
 import org.apache.isis.applib.services.userreg.events.PasswordResetEvent;
 import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 
-@Singleton
-public class EmailNotificationServiceWicket implements EmailNotificationService {
+//@Singleton @Alternative @Priority(Constants.WICKET_SERVICE_PRIORITY)
+@Deprecated //TODO  [2033] adds no value
+class EmailNotificationServiceWicket implements EmailNotificationService {
 
     private static final long serialVersionUID = 1L;
     
-    @Override
-    public void init() {
-        // delegate is a managed object, hence the framework takes care of initializing it
-    }
-
     @Override
     public boolean send(EmailRegistrationEvent ev) {
         return delegate.get().send(ev);
