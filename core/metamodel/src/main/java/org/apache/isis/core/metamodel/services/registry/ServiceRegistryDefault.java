@@ -80,7 +80,10 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
     
    
     
-    @Override
+    /**
+     * @deprecated TODO [2033] don't register concrete instances, registering Beans should be sufficient!
+     */
+    @Override 
     public Stream<Object> streamServices() {
         
         if(registeredServiceInstances.isEmpty()) {
@@ -92,6 +95,10 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
             	// or categorize them ?
             	val scope = bean.getScope().getSimpleName();
                 val type = bean.getBeanClass();
+                if("RequestScoped".equals(scope)) {
+                    log.info("skipping registering {}-scoped service {}", scope, type);
+                    return;
+                }
                 
                 Optional<?> managedObject = 
                         _CDI.getManagedBean(type, bean.getQualifiers());
