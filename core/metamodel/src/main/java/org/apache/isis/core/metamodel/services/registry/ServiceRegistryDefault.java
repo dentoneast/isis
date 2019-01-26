@@ -172,7 +172,7 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
 			return true;
 		}
     	
-    	log.warn("not a singleton: {} {}", scope, bean);
+    	//debug log.warn("not a singleton: {} {}", scope, bean);
     	
     	return false;
     }

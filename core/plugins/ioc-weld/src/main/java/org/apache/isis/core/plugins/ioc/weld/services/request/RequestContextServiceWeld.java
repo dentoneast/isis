@@ -20,6 +20,10 @@ public class RequestContextServiceWeld implements RequestContextService {
 	/* Start the request, providing a data store which will last the lifetime of the request */
 	@Override
 	public RequestContextHandle startRequest() {
+	    
+	    if(isActive()) {
+	        return null; // if already active, don't return a handle
+	    }
 		
 		final Map<String, Object> requestDataStore = new HashMap<>();
 
@@ -30,7 +34,11 @@ public class RequestContextServiceWeld implements RequestContextService {
 		return RequestContextHandleDefault.of(()->endRequest(requestDataStore));
 	}
 
-
+	@Override
+    public boolean isActive() {
+        return requestContext.isActive();
+    }
+	
 	/* End the request, providing the same data store as was used to start the request */
 	private void endRequest(Map<String, Object> requestDataStore) {
 
@@ -46,5 +54,8 @@ public class RequestContextServiceWeld implements RequestContextService {
 		}
 
 	}
+
+
+    
 
 }

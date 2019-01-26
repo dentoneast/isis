@@ -38,6 +38,12 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.identity.SingleFieldIdentity;
 import javax.jdo.listener.InstanceLifecycleListener;
 
+import org.datanucleus.enhancement.Persistable;
+import org.datanucleus.exceptions.NucleusObjectNotFoundException;
+import org.datanucleus.identity.DatastoreIdImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.isis.applib.query.Query;
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
@@ -68,6 +74,7 @@ import org.apache.isis.core.metamodel.spec.FreeStandingList;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.plugins.ioc.RequestContextHandle;
+import org.apache.isis.core.plugins.ioc.RequestContextService;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledFlag;
 import org.apache.isis.core.runtime.persistence.NotPersistableException;
 import org.apache.isis.core.runtime.persistence.ObjectNotFoundException;
@@ -90,11 +97,6 @@ import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.Persisten
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.PersistenceQueryFindUsingApplibQueryProcessor;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.PersistenceQueryProcessor;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.spi.JdoObjectIdSerializer;
-import org.datanucleus.enhancement.Persistable;
-import org.datanucleus.exceptions.NucleusObjectNotFoundException;
-import org.datanucleus.identity.DatastoreIdImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A wrapper around the JDO {@link PersistenceManager}, which also manages concurrency
@@ -137,7 +139,8 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
             LOG.debug("opening {}", this);
         }
         
-        // this handle needs to be closed when the request-scope's life-cycle ends 
+        // this handle needs to be closed when the request-scope's life-cycle ends
+        // if null, some other mechanism is already taking care of it, then lets not interfere
         requestContextHandle = requestContextService.startRequest(); 
 
         persistenceManager = jdoPersistenceManagerFactory.getPersistenceManager();
@@ -264,7 +267,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
 
         objectAdapterContext.close();
         
-        requestContextHandle.close();
+        RequestContextService.closeHandle(requestContextHandle);
 
         this.state = State.CLOSED;
     }

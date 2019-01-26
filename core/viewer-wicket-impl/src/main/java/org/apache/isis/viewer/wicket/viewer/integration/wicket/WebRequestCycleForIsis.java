@@ -28,10 +28,9 @@ import java.util.stream.Stream;
 
 import com.google.common.base.Throwables;
 
-import lombok.val;
-
 import org.apache.wicket.Application;
 import org.apache.wicket.IPageFactory;
+import org.apache.wicket.MetaDataKey;
 import org.apache.wicket.Page;
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.Session;
@@ -48,18 +47,21 @@ import org.apache.wicket.request.cycle.IRequestCycleListener;
 import org.apache.wicket.request.cycle.PageRequestHandlerTracker;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizerComposite;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizerForType;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.commons.internal.base._Lazy;
+import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.collections._Lists;
+import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.spec.feature.ObjectMember;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidException;
+import org.apache.isis.core.plugins.ioc.RequestContextHandle;
+import org.apache.isis.core.plugins.ioc.RequestContextService;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
@@ -74,37 +76,67 @@ import org.apache.isis.viewer.wicket.ui.pages.login.WicketSignInPage;
 import org.apache.isis.viewer.wicket.ui.pages.mmverror.MmvErrorPage;
 import org.apache.isis.viewer.wicket.ui.panels.PromptFormAbstract;
 
+import lombok.val;
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Isis-specific implementation of the Wicket's {@link RequestCycle},
  * automatically opening a {@link IsisSession} at the beginning of the request
  * and committing the transaction and closing the session at the end.
  */
+@Slf4j
 public class WebRequestCycleForIsis implements IRequestCycleListener {
-
-    private static final Logger LOG = LoggerFactory.getLogger(WebRequestCycleForIsis.class);
 
     private PageClassRegistry pageClassRegistry;
     
+    private final static _Probe probe = _Probe.unlimited().label("WebRequestCycleForIsis");
+    private _Lazy<RequestContextService> lazyRequestContextService = _Lazy.of(()->
+            _CDI.getSingleton(RequestContextService.class));
+    
+    public final static MetaDataKey<RequestContextHandle> REQUEST_CONTEXT_HANDLE_KEY 
+        = new MetaDataKey<RequestContextHandle>() {
+            private static final long serialVersionUID = 1L; };
+
+    
+    
     @Override
     public synchronized void onBeginRequest(RequestCycle requestCycle) {
+        
+        probe.println("onBeginRequest in");
+        
+        val requestContextService = lazyRequestContextService.get();
+        // this handle needs to be closed when the request-scope's life-cycle ends
+        // so we store it onto the requestCycle as meta-data entry, to be 
+        // retrieved later at 'onEndRequest'
+        val requestContextHandle = requestContextService.startRequest();
+        if(requestContextHandle!=null) {
+            requestCycle.setMetaData(REQUEST_CONTEXT_HANDLE_KEY, requestContextHandle);    
+        }
 
         if (!Session.exists()) {
+            
+            probe.println("onBeginRequest out - session was not opened (because no Session)");
             return;
         }
 
         final AuthenticatedWebSessionForIsis wicketSession = AuthenticatedWebSessionForIsis.get();
         final AuthenticationSession authenticationSession = wicketSession.getAuthenticationSession();
         if (authenticationSession == null) {
+            probe.println("onBeginRequest out - session was not opened (because no authenticationSession)");
             return;
         }
 
         getIsisSessionFactory().openSession(authenticationSession);
         getTransactionManager().startTransaction();
+        
+        probe.println("onBeginRequest out - session was opened");
     }
 
     @Override
     public void onRequestHandlerResolved(final RequestCycle cycle, final IRequestHandler handler) {
 
+        probe.println("onRequestHandlerResolved in");
+        
         if(handler instanceof RenderPageRequestHandler) {
             ConcurrencyChecking.disable();
 
@@ -120,6 +152,8 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
                 throw new MetaModelInvalidException(metaModelDeficiencies);
             }
         }
+        
+        probe.println("onRequestHandlerResolved out");
 
     }
 
@@ -130,7 +164,9 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
      */
     @Override
     public void onRequestHandlerExecuted(RequestCycle cycle, IRequestHandler handler) {
-        LOG.debug("onRequestHandlerExecuted: handler: {}", handler);
+        log.debug("onRequestHandlerExecuted: handler: {}", handler);
+        
+        probe.println("onRequestHandlerExecuted");
 
         if(handler instanceof RenderPageRequestHandler) {
             ConcurrencyChecking.reset(ConcurrencyChecking.CHECK);
@@ -166,7 +202,10 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
      * It is not possible to throw exceptions here, hence use of {@link #onRequestHandlerExecuted(RequestCycle, IRequestHandler)}.
      */
     @Override
-    public synchronized void onEndRequest(RequestCycle cycle) {
+    public synchronized void onEndRequest(RequestCycle requestCycle) {
+        
+        probe.println("onEndRequest");
+        
         if (getIsisSessionFactory().isInSession()) {
             try {
                 // belt and braces
@@ -175,11 +214,17 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
                 getIsisSessionFactory().closeSession();
             }
         }
+
+        // detach the current @RequestScope, if any
+        RequestContextService.closeHandle(requestCycle.getMetaData(REQUEST_CONTEXT_HANDLE_KEY));
+        
     }
 
 
     @Override
     public IRequestHandler onException(RequestCycle cycle, Exception ex) {
+        
+        probe.println("onException");
 
     	val metaModelDeficiencies = IsisContext.getMetaModelDeficienciesIfAny();
         if(metaModelDeficiencies != null) {
@@ -294,7 +339,8 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
                 return new MmvErrorPage(validationErrors);
             }
             // not sure whether this can ever happen now...
-            LOG.warn("Unable to obtain exceptionRecognizers (no session), will be treated as unrecognized exception", ex);
+            log.warn("Unable to obtain exceptionRecognizers (no session), "
+                    + "will be treated as unrecognized exception", ex);
         }
         String recognizedMessageIfAny = new ExceptionRecognizerComposite(exceptionRecognizers).recognize(ex);
         ExceptionModel exceptionModel = ExceptionModel.create(recognizedMessageIfAny, ex);
