@@ -14,21 +14,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.isis.core.plugins.ioc.weld.services.request;
+package org.apache.isis.core.plugins.ioc;
 
-import org.apache.isis.core.plugins.ioc.RequestContextHandle;
+public interface ConversationContextHandle extends AutoCloseable {
 
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor(staticName="of")
-class RequestContextHandleDefault implements RequestContextHandle {
-
-	private final Runnable onClose;
+	/**
+	 * Refined to not throw a catched exception
+	 */
+	@Override void close();
 	
-	@Override
-	public void close() {
-		onClose.run();
-	}
-	
-
 }

@@ -50,7 +50,7 @@ public class RequestContextServiceWeld implements RequestContextService {
 		requestContext.associate(requestDataStore);
 		requestContext.activate();
 		
-		return RequestContextHandleDefault.of(()->endRequest(requestDataStore));
+		return RequestContextHandleWeld.of(()->endRequest(requestDataStore));
 	}
 
 	private boolean isActive() {
