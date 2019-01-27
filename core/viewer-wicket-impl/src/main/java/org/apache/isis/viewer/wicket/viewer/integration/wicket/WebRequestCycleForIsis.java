@@ -16,7 +16,6 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-
 package org.apache.isis.viewer.wicket.viewer.integration.wicket;
 
 import java.lang.reflect.Constructor;
@@ -90,7 +89,7 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
     private PageClassRegistry pageClassRegistry;
     
     private final static _Probe probe = _Probe.unlimited().label("WebRequestCycleForIsis");
-    private _Lazy<RequestContextService> lazyRequestContextService = _Lazy.of(()->
+    private _Lazy<RequestContextService> requestContextService = _Lazy.of(()->
             _CDI.getSingleton(RequestContextService.class));
     
     public final static MetaDataKey<RequestContextHandle> REQUEST_CONTEXT_HANDLE_KEY 
@@ -104,11 +103,10 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
         
         probe.println("onBeginRequest in");
         
-        val requestContextService = lazyRequestContextService.get();
         // this handle needs to be closed when the request-scope's life-cycle ends
         // so we store it onto the requestCycle as meta-data entry, to be 
         // retrieved later at 'onEndRequest'
-        val requestContextHandle = requestContextService.startRequest();
+        val requestContextHandle = requestContextService.get().startRequest();
         if(requestContextHandle!=null) {
             requestCycle.setMetaData(REQUEST_CONTEXT_HANDLE_KEY, requestContextHandle);    
         }
