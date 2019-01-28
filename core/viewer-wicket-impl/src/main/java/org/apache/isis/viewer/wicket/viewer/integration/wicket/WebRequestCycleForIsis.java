@@ -59,6 +59,8 @@ import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.spec.feature.ObjectMember;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidException;
+import org.apache.isis.core.plugins.ioc.ConversationContextHandle;
+import org.apache.isis.core.plugins.ioc.ConversationContextService;
 import org.apache.isis.core.plugins.ioc.RequestContextHandle;
 import org.apache.isis.core.plugins.ioc.RequestContextService;
 import org.apache.isis.core.runtime.system.context.IsisContext;
@@ -89,11 +91,19 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
     private PageClassRegistry pageClassRegistry;
     
     private final static _Probe probe = _Probe.unlimited().label("WebRequestCycleForIsis");
+    
     private _Lazy<RequestContextService> requestContextService = _Lazy.of(()->
-            _CDI.getSingleton(RequestContextService.class));
+        _CDI.getSingleton(RequestContextService.class));
+    
+    private _Lazy<ConversationContextService> conversationContextService = _Lazy.of(()->
+    	_CDI.getSingleton(ConversationContextService.class));
     
     public final static MetaDataKey<RequestContextHandle> REQUEST_CONTEXT_HANDLE_KEY 
         = new MetaDataKey<RequestContextHandle>() {
+            private static final long serialVersionUID = 1L; };
+            
+    public final static MetaDataKey<ConversationContextHandle> CONVERSATION_CONTEXT_HANDLE_KEY 
+        = new MetaDataKey<ConversationContextHandle>() {
             private static final long serialVersionUID = 1L; };
 
     
@@ -109,6 +119,11 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
         val requestContextHandle = requestContextService.get().startRequest();
         if(requestContextHandle!=null) {
             requestCycle.setMetaData(REQUEST_CONTEXT_HANDLE_KEY, requestContextHandle);    
+        }
+        
+        val conversationContextService = conversationContextService.get().startTransientConversation();
+        if(conversationContextService!=null) {
+            requestCycle.setMetaData(CONVERSATION_CONTEXT_HANDLE_KEY, conversationContextService);    
         }
 
         if (!Session.exists()) {
@@ -215,6 +230,9 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
 
         // detach the current @RequestScope, if any
         RequestContextService.closeHandle(requestCycle.getMetaData(REQUEST_CONTEXT_HANDLE_KEY));
+        
+        // detach the current @ConversationScope, if any
+        ConversationContextService.closeHandle(requestCycle.getMetaData(CONVERSATION_CONTEXT_HANDLE_KEY));
         
     }
 

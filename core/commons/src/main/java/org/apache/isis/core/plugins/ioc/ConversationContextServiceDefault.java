@@ -16,13 +16,23 @@
  */
 package org.apache.isis.core.plugins.ioc;
 
-public interface ConversationContextHandle extends AutoCloseable {
+import javax.annotation.Priority;
+import javax.enterprise.inject.Alternative;
+import javax.inject.Singleton;
 
-	void resume(String cid);
-	
-	/**
-	 * Refined to not throw a catched exception
-	 */
-	@Override void close();
-	
+/**
+ * Acts as a no-op implementation, that is used as lowest priority default, whenever
+ * service-provisioning can not find any alternative with higher priority.  
+ * 
+ * @since 2.0.0-M3
+ *
+ */
+@Singleton @Alternative @Priority(0)
+public class ConversationContextServiceDefault implements ConversationContextService {
+
+	@Override
+	public ConversationContextHandle startTransientConversation() {
+		return null; // don't return a handle
+	}
+
 }

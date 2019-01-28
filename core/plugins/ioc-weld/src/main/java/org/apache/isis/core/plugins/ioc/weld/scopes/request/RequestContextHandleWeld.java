@@ -14,20 +14,26 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.isis.core.plugins.ioc.weld.services.request;
+package org.apache.isis.core.plugins.ioc.weld.scopes.request;
 
 import org.apache.isis.core.plugins.ioc.RequestContextHandle;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 
-@RequiredArgsConstructor(staticName="of")
+@AllArgsConstructor(staticName="of")
 class RequestContextHandleWeld implements RequestContextHandle {
 
-	private final Runnable onClose;
+	private Runnable onClose;
 	
 	@Override
 	public void close() {
-		onClose.run();
+		
+		if(onClose!=null) {
+			onClose.run();
+		}
+		
+		// release runnable
+		onClose = null;
 	}
 	
 

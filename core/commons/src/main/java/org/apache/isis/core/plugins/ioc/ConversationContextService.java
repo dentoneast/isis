@@ -18,12 +18,13 @@ package org.apache.isis.core.plugins.ioc;
 
 public interface ConversationContextService {
 
-    //TBD ... ConversationContextHandle startRequest();
+	ConversationContextHandle startTransientConversation();
 	
     static void closeHandle(ConversationContextHandle conversationContextHandle) {
         if(conversationContextHandle!=null) {
             conversationContextHandle.close();
         }
     }
+	
 
 }

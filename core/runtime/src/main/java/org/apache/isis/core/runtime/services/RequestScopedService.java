@@ -30,6 +30,7 @@ import org.apache.isis.applib.services.inject.ServiceInjector;
  *     Do NOT implement directly (will cause the javassist generation to fail).  Instead the request-scoped service
  *     can provide a (conventional) <code>@PostConstruct</code> and <code>@PreDestroy</code> method.
  * </p>
+ * @deprecated FIXME [2033] let IoC container handle scoped-contexts
  */
 public interface RequestScopedService {
 

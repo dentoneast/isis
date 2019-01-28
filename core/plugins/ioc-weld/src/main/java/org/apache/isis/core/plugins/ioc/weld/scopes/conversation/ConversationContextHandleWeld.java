@@ -14,15 +14,42 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.isis.core.plugins.ioc;
+package org.apache.isis.core.plugins.ioc.weld.scopes.conversation;
 
-public interface ConversationContextHandle extends AutoCloseable {
+import java.util.function.Consumer;
 
-	void resume(String cid);
+import org.apache.isis.core.plugins.ioc.ConversationContextHandle;
+
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor(staticName="of")
+class ConversationContextHandleWeld implements ConversationContextHandle {
+
+	private Consumer<String> onResume;
+	private Runnable onClose;
 	
-	/**
-	 * Refined to not throw a catched exception
-	 */
-	@Override void close();
+	@Override
+	public void resume(final String cid) {
+		
+		if(onResume!=null) {
+			onResume.accept(cid);
+		}
+		
+		// release consumer
+		onResume = null;
+	}
 	
+	@Override
+	public void close() {
+		
+		if(onClose!=null) {
+			onClose.run();
+		}
+		
+		// release runnable
+		onClose = null;
+	}
+	
+	
+
 }

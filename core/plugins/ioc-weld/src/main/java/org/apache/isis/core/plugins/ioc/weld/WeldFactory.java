@@ -54,7 +54,7 @@ public class WeldFactory {
 	            		
 	                    //FIXME [2033] this is just for PoC, don't hardcode this here !? ...
 	                    
-	            		"org.apache.isis.core.plugins.ioc.weld.services.request.RequestContextServiceWeld",
+	            		"org.apache.isis.core.plugins.ioc.weld.WeldFactory",
 	                    
 	                    "domainapp.application.HelloWorldAppManifest", // specific to the app
 	                    
