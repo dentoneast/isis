@@ -95,19 +95,10 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
     private _Lazy<RequestContextService> requestContextService = _Lazy.of(()->
         _CDI.getSingleton(RequestContextService.class));
     
-    private _Lazy<ConversationContextService> conversationContextService = _Lazy.of(()->
-    	_CDI.getSingleton(ConversationContextService.class));
-    
     public final static MetaDataKey<RequestContextHandle> REQUEST_CONTEXT_HANDLE_KEY 
         = new MetaDataKey<RequestContextHandle>() {
             private static final long serialVersionUID = 1L; };
             
-    public final static MetaDataKey<ConversationContextHandle> CONVERSATION_CONTEXT_HANDLE_KEY 
-        = new MetaDataKey<ConversationContextHandle>() {
-            private static final long serialVersionUID = 1L; };
-
-    
-    
     @Override
     public synchronized void onBeginRequest(RequestCycle requestCycle) {
         
@@ -118,13 +109,11 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
         // retrieved later at 'onEndRequest'
         val requestContextHandle = requestContextService.get().startRequest();
         if(requestContextHandle!=null) {
-            requestCycle.setMetaData(REQUEST_CONTEXT_HANDLE_KEY, requestContextHandle);    
-        }
-        
-        val conversationContextService = conversationContextService.get().startTransientConversation();
-        if(conversationContextService!=null) {
-            requestCycle.setMetaData(CONVERSATION_CONTEXT_HANDLE_KEY, conversationContextService);    
-        }
+            requestCycle.setMetaData(REQUEST_CONTEXT_HANDLE_KEY, requestContextHandle);
+            probe.println("request context created");
+        } else {
+        	probe.println("no request context created");
+		}
 
         if (!Session.exists()) {
             
@@ -229,10 +218,10 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
         }
 
         // detach the current @RequestScope, if any
-        RequestContextService.closeHandle(requestCycle.getMetaData(REQUEST_CONTEXT_HANDLE_KEY));
+        val handle = requestCycle.getMetaData(REQUEST_CONTEXT_HANDLE_KEY);
+        requestCycle.setMetaData(REQUEST_CONTEXT_HANDLE_KEY, null);
+        //RequestContextService.closeHandle(handle); //FIXME [2033] too early, as of commented out ... memory leak
         
-        // detach the current @ConversationScope, if any
-        ConversationContextService.closeHandle(requestCycle.getMetaData(CONVERSATION_CONTEXT_HANDLE_KEY));
         
     }
 

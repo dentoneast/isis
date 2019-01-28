@@ -83,7 +83,8 @@ public interface IsisSessionFactory {
      * @param authenticationSession
      */
     public default void doInSession(final Runnable runnable, final AuthenticationSession authenticationSession) {
-        doInSession(runnable, authenticationSession);
+    	final Callable<Void> callable = ()->{runnable.run(); return null;};
+        doInSession(callable, authenticationSession);
     }
 
     /**

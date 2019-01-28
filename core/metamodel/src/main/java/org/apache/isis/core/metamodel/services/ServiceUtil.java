@@ -70,12 +70,27 @@ public final class ServiceUtil {
     		return normalize(implementedTypes.iterator().next());	
     	}
     	
+    	// try to get a name from injection points
+    	final Set<Class<?>> requiredTypes = serviceBean.getInjectionPoints().stream()
+    	.map(ip->ip.getType())
+    	.filter(type->!type.getTypeName().equals(Object.class.getTypeName()))
+		.filter(type->!type.getTypeName().equals(Serializable.class.getTypeName()))
+		.filter(type->type instanceof Class)
+		.map(type->(Class<?>) type)
+		.collect(Collectors.toSet());
+    	
+    	if(requiredTypes.size()==1) {
+    		// we found a unique required type as defined by injection points for this bean
+    		return normalize(requiredTypes.iterator().next());	
+    	}
+    	
     	
     	throw _Exceptions.unrecoverable(
-    			String.format("could not extract a service id from the given bean '%s', "
-    					+ "it should be one of '%s' from types %s", 
+    			String.format("Could not extract a service id from the given bean '%s', "
+    					+ "implementedTypes='%s' requiredTypes='%s' from types %s.", 
     					serviceBean, 
     					implementedTypes,
+    					requiredTypes,
     					serviceBean.getTypes()));
     	
 

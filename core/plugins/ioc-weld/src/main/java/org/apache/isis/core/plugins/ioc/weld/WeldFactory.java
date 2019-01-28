@@ -55,6 +55,9 @@ public class WeldFactory {
 	                    //FIXME [2033] this is just for PoC, don't hardcode this here !? ...
 	                    
 	            		"org.apache.isis.core.plugins.ioc.weld.WeldFactory",
+	            		"org.jboss.seam.conversation.spi.SeamConversationContext",
+	            		
+	            		"org.jboss.weld.module.web.WeldWebModule",
 	                    
 	                    "domainapp.application.HelloWorldAppManifest", // specific to the app
 	                    
@@ -76,6 +79,8 @@ public class WeldFactory {
 	    .forEach(c->probe.println("scanning class %s", c));
 	    stream(additionalPackages)
 	    .forEach(p->probe.println("scanning additionalPackage %s", p));
+	    
+	    System.setProperty("seam.conversation.disable.noop", Boolean.TRUE.toString());
 	    
         boolean scanRecursively = true;
         

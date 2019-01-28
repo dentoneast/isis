@@ -59,7 +59,7 @@
 	</build>
 
 	<dependencies>
-	
+
 		<!-- compile dependencies -->
 
 		<dependency>
@@ -67,11 +67,29 @@
 			<artifactId>isis-core-commons</artifactId>
 			<scope>compile</scope>
 		</dependency>
-        
-        <dependency>
-        	<groupId>org.jboss.weld.se</groupId>
-        	<artifactId>weld-se-shaded</artifactId>
-        </dependency>
+
+		<dependency>
+			<groupId>org.jboss.weld.se</groupId>
+			<artifactId>weld-se-shaded</artifactId>
+		</dependency>
+
+		<!-- in order to provide a ConversationContext for Wicket -->
+		<dependency>
+			<groupId>org.jboss.seam.conversation</groupId>
+			<artifactId>seam-conversation-spi</artifactId>
+			<version>3.0.0.Final</version>
+		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.jboss.seam.conversation</groupId> -->
+<!-- 			<artifactId>seam-conversation-weld</artifactId> -->
+<!-- 			<version>3.0.0.Final</version> -->
+<!-- 		</dependency> -->
+		<dependency>
+		    <groupId>org.jboss.weld.module</groupId>
+		    <artifactId>weld-web</artifactId>
+		    <version>3.0.5.Final</version>
+		</dependency>
+				
 
 	</dependencies>
 

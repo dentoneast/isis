@@ -80,6 +80,8 @@ public final class AppConfigLocator {
     		
     		"org.apache.isis.applib.services.homepage.HomePageProviderService"
     		
+    		//"org.jboss.seam.conversation.spi.SeamConversationContext"
+    		
     		
     		));
     }
