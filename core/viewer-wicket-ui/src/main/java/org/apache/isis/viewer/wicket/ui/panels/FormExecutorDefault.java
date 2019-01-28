@@ -21,29 +21,15 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
-import com.google.common.base.Throwables;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.Page;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.util.visit.IVisit;
-import org.apache.wicket.util.visit.IVisitor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.applib.RecoverableException;
 import org.apache.isis.applib.services.bookmark.Bookmark;
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.command.CommandContext;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizerComposite;
-import org.apache.isis.applib.services.guice.GuiceBeanProvider;
 import org.apache.isis.applib.services.hint.HintStore;
-import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.message.MessageService;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
@@ -69,6 +55,18 @@ import org.apache.isis.viewer.wicket.model.models.ScalarModel;
 import org.apache.isis.viewer.wicket.ui.components.scalars.isisapplib.IsisBlobOrClobPanelAbstract;
 import org.apache.isis.viewer.wicket.ui.errors.JGrowlUtil;
 import org.apache.isis.viewer.wicket.ui.pages.entity.EntityPage;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.Page;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Throwables;
 
 public final class FormExecutorDefault<M extends BookmarkableModel<ObjectAdapter> & ParentEntityModelProvider>
 implements FormExecutor {
@@ -85,11 +83,6 @@ implements FormExecutor {
         this.model = formExecutorStrategy.getModel();
         this.settings = getSettings();
         this.formExecutorStrategy = formExecutorStrategy;
-    }
-
-    protected WicketViewerSettings getSettings() {
-        final GuiceBeanProvider guiceBeanProvider = getServicesInjector().lookupServiceElseFail(GuiceBeanProvider.class);
-        return guiceBeanProvider.lookup(WicketViewerSettings.class);
     }
 
     /**
@@ -128,7 +121,7 @@ implements FormExecutor {
                 return false;
             }
 
-            final CommandContext commandContext = getServicesInjector().lookupService(CommandContext.class).orElse(null);
+            final CommandContext commandContext = getCommandContext();
             if (commandContext != null) {
                 command = commandContext.getCommand();
                 command.internal().setExecutor(Command.Executor.USER);
@@ -210,8 +203,7 @@ implements FormExecutor {
 
             forwardOnConcurrencyException(targetAdapter, ex);
 
-            final MessageService messageService = getServicesInjector().lookupServiceElseFail(MessageService.class);
-            messageService.warnUser(ex.getMessage());
+            getMessageService().warnUser(ex.getMessage());
 
             return false;
 
@@ -324,15 +316,15 @@ implements FormExecutor {
         // this is a bit of a hack... currently the blob/clob panel doesn't correctly redraw itself.
         // we therefore force a re-forward (unless is declared as unchanging).
         final Object hasBlobsOrClobs = page.visitChildren(IsisBlobOrClobPanelAbstract.class,
-                new IVisitor<IsisBlobOrClobPanelAbstract, Object>() {
+                new IVisitor<IsisBlobOrClobPanelAbstract<?>, Object>() {
             @Override
-            public void component(final IsisBlobOrClobPanelAbstract object, final IVisit<Object> visit) {
+            public void component(final IsisBlobOrClobPanelAbstract<?> object, final IVisit<Object> visit) {
                 if (!isUnchanging(object)) {
                     visit.stop(true);
                 }
             }
 
-            private boolean isUnchanging(final IsisBlobOrClobPanelAbstract object) {
+            private boolean isUnchanging(final IsisBlobOrClobPanelAbstract<?> object) {
                 final ScalarModel scalarModel = (ScalarModel) object.getModel();
                 final UnchangingFacet unchangingFacet = scalarModel.getFacet(UnchangingFacet.class);
                 return unchangingFacet != null && unchangingFacet.value();
@@ -475,7 +467,7 @@ implements FormExecutor {
 
         // see if the exception is recognized as being a non-serious error
         // (nb: similar code in WebRequestCycleForIsis, as a fallback)
-        final Stream<ExceptionRecognizer> exceptionRecognizers = getServicesInjector()
+        final Stream<ExceptionRecognizer> exceptionRecognizers = getServiceRegistry()
                 .streamServices(ExceptionRecognizer.class);
         String recognizedErrorIfAny = new ExceptionRecognizerComposite(exceptionRecognizers).recognize(ex);
         if (recognizedErrorIfAny != null) {
@@ -500,7 +492,7 @@ implements FormExecutor {
             targetIfAny.add(feedbackFormIfAny);
             feedbackFormIfAny.error(error);
         } else {
-            final MessageService messageService = getServicesInjector().lookupServiceElseFail(MessageService.class);
+            final MessageService messageService = getServiceRegistry().lookupServiceElseFail(MessageService.class);
             messageService.warnUser(error);
         }
     }
@@ -519,12 +511,12 @@ implements FormExecutor {
         return getCurrentSession().getPersistenceSession();
     }
 
-    protected ServiceInjector getServicesInjector() {
-        return getIsisSessionFactory().getServiceInjector();
+    protected ServiceRegistry getServiceRegistry() {
+        return IsisContext.getServiceRegistry();
     }
 
     protected SpecificationLoader getSpecificationLoader() {
-        return getIsisSessionFactory().getSpecificationLoader();
+        return IsisContext.getSpecificationLoader();
     }
 
     private IsisTransactionManager getTransactionManager() {
@@ -538,7 +530,19 @@ implements FormExecutor {
     protected AuthenticationSession getAuthenticationSession() {
         return getCurrentSession().getAuthenticationSession();
     }
+    
+    private MessageService getMessageService() {
+    	return getServiceRegistry().lookupServiceElseFail(MessageService.class);
+    }
+    
+    protected WicketViewerSettings getSettings() {
+    	return getServiceRegistry().lookupServiceElseFail(WicketViewerSettings.class);
+    }
 
+    private CommandContext getCommandContext() {
+    	return getServiceRegistry().lookupService(CommandContext.class).orElse(null);
+    }
+    
 
     ///////////////////////////////////////////////////////////////////////////////
 

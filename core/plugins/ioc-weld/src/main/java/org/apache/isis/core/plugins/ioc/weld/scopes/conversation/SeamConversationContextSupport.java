@@ -62,8 +62,10 @@ public class SeamConversationContextSupport implements SeamConversationContext<H
 		return this;
 	}
 	
-	// -- STUPID HACK
+	// -- HACK
 	
+	// the existence of this method allows for Wicket to identify this bean as appropriate 
+	// for store type 'HttpServletRequest'
 	protected void doAssociate(HttpServletRequest nop) {
 		
 	}

@@ -29,7 +29,7 @@ import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizerComposite;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizerForType;
 import org.apache.isis.applib.services.i18n.TranslationService;
-import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.collections._Lists;
@@ -253,9 +253,9 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
             }
 
 
-            // handle recognised exceptions gracefully also
+            // handle recognized exceptions gracefully also
             final Stream<ExceptionRecognizer> exceptionRecognizers =
-                    getServicesInjector().streamServices(ExceptionRecognizer.class);
+            		getServiceRegistry().streamServices(ExceptionRecognizer.class);
             String recognizedMessageIfAny = new ExceptionRecognizerComposite(exceptionRecognizers).recognize(ex);
             if(recognizedMessageIfAny != null) {
                 return respondGracefully(cycle);
@@ -334,7 +334,7 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
         exceptionRecognizers.add(pageExpiredExceptionRecognizer);
 
         if(inIsisSession()) {
-            getServicesInjector().streamServices(ExceptionRecognizer.class)
+            getServiceRegistry().streamServices(ExceptionRecognizer.class)
             .forEach(exceptionRecognizers::add);
         } else {
             val metaModelDeficiencies = IsisContext.getMetaModelDeficienciesIfAny();
@@ -405,12 +405,6 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
 
     // -- Dependencies (from isis' context)
     
-    
-    
-    protected ServiceInjector getServicesInjector() {
-        return getIsisSessionFactory().getServiceInjector();
-    }
-
     protected IsisTransactionManager getTransactionManager() {
         return getIsisSessionFactory().getCurrentSession().getPersistenceSession().getTransactionManager();
     }
@@ -427,13 +421,16 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
         return getAuthenticationSession().getMessageBroker();
     }
 
+    protected ServiceRegistry getServiceRegistry() {
+        return IsisContext.getServiceRegistry();
+    }
+        
     IsisSessionFactory getIsisSessionFactory() {
         return IsisContext.getSessionFactory();
     }
 
-
     TranslationService getTranslationService() {
-        return getServicesInjector().lookupService(TranslationService.class).orElse(null);
+        return getServiceRegistry().lookupServiceElseFail(TranslationService.class);
     }
 
     // -- Dependencies (from wicket)
