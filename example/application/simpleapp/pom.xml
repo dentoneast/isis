@@ -177,6 +177,7 @@
         <module>module-simple</module>
         <module>application</module>
         <module>webapp</module>
+        <module>module-spring</module>
     </modules>
 
     <profiles>

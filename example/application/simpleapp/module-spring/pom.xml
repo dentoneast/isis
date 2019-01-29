@@ -26,8 +26,8 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>simpleapp-module-simple</artifactId>
-    <name>Apache Isis App - SimpleApp Simple Module</name>
+    <artifactId>simpleapp-module-spring</artifactId>
+    <name>Apache Isis App - SimpleApp Spring (Data) Module</name>
 
     <properties>
         <isis-maven-plugin.validate.appManifest>
