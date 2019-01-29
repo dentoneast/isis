@@ -22,7 +22,6 @@ package org.apache.isis.viewer.wicket.viewer;
 import static java.util.Objects.requireNonNull;
 import static org.apache.isis.commons.internal.base._With.acceptIfPresent;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -425,7 +424,7 @@ implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor, WicketVi
             return _Resources.loadAsString(contextClass, resourceName, StandardCharsets.UTF_8)
                     .replace("\r", "");
             
-        } catch (IOException | IllegalArgumentException e) {
+        } catch (Exception e) {
             return fallback;
         }
     }
