@@ -73,6 +73,7 @@ class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvide
         this.oidFactory = OidFactory.builder(pojo->specificationLoader.loadSpecification(pojo.getClass()))
                 .add(new ObjectAdapterContext_OidProviders.GuardAgainstRootOid())
                 .add(new ObjectAdapterContext_OidProviders.OidForServices())
+                .add(new ObjectAdapterContext_OidProviders.OidForManagedBeans())
                 .add(new ObjectAdapterContext_OidProviders.OidForValues())
                 .add(new ObjectAdapterContext_OidProviders.OidForViewModels())
                 .add(new ObjectAdapterContext_OidProviders.OidForPersistent())
@@ -86,6 +87,8 @@ class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvide
         if(pojo == null) {
             return null;
         }
+        
+        //FIXME [2033] the pojo might be a managed object (eg. by Spring or CDI), this is new 
         
         final RootOid rootOid = oidFactory.oidFor(pojo);
         final ObjectAdapter newAdapter = objectAdapterContext.getFactories().createRootAdapter(pojo, rootOid);

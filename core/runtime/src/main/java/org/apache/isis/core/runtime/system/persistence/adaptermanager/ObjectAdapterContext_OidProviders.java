@@ -18,8 +18,13 @@
  */
 package org.apache.isis.core.runtime.system.persistence.adaptermanager;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
+import javax.persistence.Entity;
+
+import org.apache.isis.commons.internal._Constants;
+import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.core.metamodel.IsisJdoMetamodelPlugin;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
@@ -29,6 +34,8 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.persistence.adaptermanager.factories.OidFactory.OidProvider;
+
+import lombok.val;
 
 class ObjectAdapterContext_OidProviders {
 
@@ -84,6 +91,42 @@ class ObjectAdapterContext_OidProviders {
                 final String identifier = persistenceSession.identifierFor(pojo);
                 return Oid.Factory.persistentOf(spec.getSpecId(), identifier);
             } else {
+                final String identifier = UUID.randomUUID().toString();
+                return Oid.Factory.transientOf(spec.getSpecId(), identifier);    
+            }
+        }
+        
+    }
+
+    static class OidForManagedBeans implements OidProvider {
+
+        //FIXME [2033] this is just a PoC for 'Customer'
+    	
+        @Override
+        public boolean isHandling(Object pojo, ObjectSpecification spec) {
+        	return pojo.getClass().isAnnotationPresent(Entity.class);
+        }
+
+        @Override
+        public RootOid oidFor(Object pojo, ObjectSpecification spec) {
+        	try {
+				return oidForCustomer(pojo, spec);
+			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
+				throw _Exceptions.unrecoverable(e);
+			}
+        }
+        
+        private RootOid oidForCustomer(Object pojo, ObjectSpecification spec) 
+        		throws NoSuchMethodException, SecurityException, IllegalAccessException, 
+        		IllegalArgumentException, InvocationTargetException {
+        	
+        	val idGetter = pojo.getClass().getMethod("getId", _Constants.emptyClasses);
+        	Long id = (Long)idGetter.invoke(pojo, _Constants.emptyObjects);
+        	if(id!=null && id>0) {
+        		final String identifier = "" + id;
+        		return Oid.Factory.persistentOf(spec.getSpecId(), identifier);	
+        	} else {
                 final String identifier = UUID.randomUUID().toString();
                 return Oid.Factory.transientOf(spec.getSpecId(), identifier);    
             }

@@ -144,10 +144,10 @@ implements ImperativeFacet {
             final ObjectAdapter[] argumentAdapters,
             final InteractionInitiatedBy interactionInitiatedBy) {
 
-        final ObjectAdapter holder = 
+        final ObjectAdapter executionResult = 
                 getPersistenceSessionServiceInternal().executeWithinTransaction(()->
                     doInvoke(owningAction, targetAdapter, mixedInAdapter, argumentAdapters, interactionInitiatedBy));
-        return holder;
+        return executionResult;
     }
 
     ObjectAdapter doInvoke(
