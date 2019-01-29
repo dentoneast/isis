@@ -59,7 +59,7 @@ public class WeldFactory {
 	            		
 	            		"org.jboss.weld.module.web.WeldWebModule",
 	                    
-	                    "domainapp.application.HelloWorldAppManifest", // specific to the app
+	                    //"domainapp.application.HelloWorldAppManifest", // specific to the app
 	                    
 	                    "org.apache.isis.config.AppConfig",
 	                    "org.apache.isis.applib.AppManifest",

@@ -103,6 +103,12 @@
             <artifactId>simpleapp-module-simple</artifactId>
         </dependency>
 
+		<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>simpleapp-module-spring</artifactId>
+        </dependency>
+
+
         <!-- TESTS -->
         <dependency>
             <groupId>${project.groupId}</groupId>

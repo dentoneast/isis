@@ -30,12 +30,14 @@
     <name>Apache Isis App - SimpleApp Spring (Data) Module</name>
 
     <properties>
-        <isis-maven-plugin.validate.appManifest>
-            domainapp.modules.simple.SimpleModuleManifest
-        </isis-maven-plugin.validate.appManifest>
+    	<spring-boot.version>2.1.2.RELEASE</spring-boot.version>
+    
+<!--         <isis-maven-plugin.validate.appManifest> -->
+<!--             domainapp.modules.simple.SimpleModuleManifest -->
+<!--         </isis-maven-plugin.validate.appManifest> -->
 
-        <maven-checkstyle-plugin.configLocation>${project.parent.basedir}/_checks/checkstyle.xml</maven-checkstyle-plugin.configLocation>
-        <maven-pmd-plugin.ruleset>${project.parent.basedir}/_checks/pmd.xml</maven-pmd-plugin.ruleset>
+<!--         <maven-checkstyle-plugin.configLocation>${project.parent.basedir}/_checks/checkstyle.xml</maven-checkstyle-plugin.configLocation> -->
+<!--         <maven-pmd-plugin.ruleset>${project.parent.basedir}/_checks/pmd.xml</maven-pmd-plugin.ruleset> -->
     </properties>
 
     <build>
@@ -145,11 +147,25 @@
             <artifactId>isis-core-plugins-jdo-datanucleus-5</artifactId>
         </dependency>
         
-
     	<dependency>
             <groupId>org.apache.isis.core</groupId>
             <artifactId>isis-core-plugins-jaxrs-resteasy-4</artifactId>
         </dependency>
+
+        <!-- OTHER DEPENDENCIES -->
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+
+        <!-- SPRING -->
+        
+   		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<version>${spring-boot.version}</version>
+		</dependency>
 
         <!-- TESTS -->
 
@@ -165,6 +181,14 @@
             <artifactId>hsqldb</artifactId>
             <scope>test</scope>
         </dependency>
+        
+        <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<version>${spring-boot.version}</version>
+			<scope>test</scope>
+		</dependency>
+		
     </dependencies>
 
 

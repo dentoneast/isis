@@ -21,7 +21,9 @@ package org.apache.isis.config;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.collections._Lists;
@@ -158,10 +160,18 @@ public final class AppConfigLocator {
         
         appConfig = lookupAppConfig_UsingServiceLoader();
         if(appConfig!=null) {
-            LOG.info(String.format("Located AppConfig '%s' via ServiceLoader.", appConfig.getClass().getName()));
+        	
+        	val appConfigImpl = appConfig;
+        	val appConfigClass = appConfig.getClass();
+        	
+            LOG.info(String.format("Located AppConfig '%s' via ServiceLoader.", appConfigClass.getName()));
+            
+            Supplier<Stream<Class<?>>> onDiscover = () -> Stream.concat(
+            		Stream.of(appConfigClass), 
+            		appConfigImpl.isisConfiguration().streamClassesToDiscover());
             
             // as we are in a non-managed environment, we need to bootstrap CDI ourself
-            _CDI.init(appConfig.isisConfiguration()::streamClassesToDiscover);
+            _CDI.init(onDiscover);
             
             return appConfig;
         }

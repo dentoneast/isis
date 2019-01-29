@@ -39,7 +39,6 @@ import domainapp.dom.HelloWorldModule;
 /**
  * Bootstrap the application.
  */
-@Singleton // only if you want AppConfig to be managed by CDI (if available), otherwise not required
 public class HelloWorldAppManifest extends AppManifestAbstract2 implements AppConfig {
 
     public static final Builder BUILDER = Builder
