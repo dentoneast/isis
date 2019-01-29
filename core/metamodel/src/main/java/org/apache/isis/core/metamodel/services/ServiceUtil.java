@@ -38,6 +38,7 @@ public final class ServiceUtil {
     private ServiceUtil() {
     }
 
+    //FIXME [2033] I found no standardized way yet to do this, maybe create a list during bean-scan?
     public static String idOfBean(final Bean<?> serviceBean) {
     	
     	// serviceBean might also be a producer method
@@ -84,14 +85,15 @@ public final class ServiceUtil {
     		return normalize(requiredTypes.iterator().next());	
     	}
     	
+    	return serviceBean.toString();
     	
-    	throw _Exceptions.unrecoverable(
-    			String.format("Could not extract a service id from the given bean '%s', "
-    					+ "implementedTypes='%s' requiredTypes='%s' from types %s.", 
-    					serviceBean, 
-    					implementedTypes,
-    					requiredTypes,
-    					serviceBean.getTypes()));
+//    	throw _Exceptions.unrecoverable(
+//    			String.format("Could not extract a service id from the given bean '%s', "
+//    					+ "implementedTypes='%s' requiredTypes='%s' from types %s.", 
+//    					serviceBean, 
+//    					implementedTypes,
+//    					requiredTypes,
+//    					serviceBean.getTypes()));
     	
 
     }

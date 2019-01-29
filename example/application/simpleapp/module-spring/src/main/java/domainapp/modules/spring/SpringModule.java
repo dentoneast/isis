@@ -18,6 +18,15 @@
  */
 package domainapp.modules.spring;
 
+import javax.enterprise.inject.Vetoed;
+
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Configuration;
+
+@Vetoed // must not be managed by CDI
+@Configuration
+//@ComponentScan(basePackages= {"domainapp.modules.spring"})
+@EnableAutoConfiguration
 public class SpringModule {
 
 }

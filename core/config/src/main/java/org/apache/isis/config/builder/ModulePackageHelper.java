@@ -187,6 +187,11 @@ class ModulePackageHelper {
         registry.setViewModelTypes(withinPackageAndNotAnonymous(packagesWithDotSuffix, viewModelTypes));
         registry.setXmlElementTypes(withinPackageAndNotAnonymous(packagesWithDotSuffix, xmlElementTypes));
         
+        typesForScanning.addAll(domainServiceTypes);
+        typesForScanning.addAll(viewModelTypes);
+        typesForScanning.addAll(domainObjectTypes);
+        typesForScanning.addAll(persistenceCapableTypes);
+        
         return typesForScanning;
     }
     
