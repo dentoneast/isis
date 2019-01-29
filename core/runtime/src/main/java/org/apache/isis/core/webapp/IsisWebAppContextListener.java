@@ -81,9 +81,6 @@ public class IsisWebAppContextListener implements ServletContextListener {
         
         LOG.info("=== PHASE 2 === Preparing the ServletContext");
         
-        //[2039] environment priming no longer supported
-        //_Config.acceptBuilder(IsisContext.EnvironmentPrimer::primeEnvironment);
-        
         final WebModuleContext webModuleContext = new WebModuleContext(servletContext);
         
         final List<WebModule> webModules =
