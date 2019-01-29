@@ -55,6 +55,13 @@ public class DomainAppAppManifest extends AppManifestAbstract2 implements AppCon
         
         ThreadPoolSupport.HIGHEST_CONCURRENCY_EXECUTION_MODE_ALLOWED = 
         		ThreadPoolExecutionMode.SEQUENTIAL_WITHIN_CALLING_THREAD;
+        
+        //FIXME [2033] since introducing spring, debug logging seems enabled by default, we overrule here
+        ch.qos.logback.classic.Level level = ch.qos.logback.classic.Level.WARN;
+        ch.qos.logback.classic.Logger root = 
+        		(ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+        root.setLevel(level);
+        
     }
 
 	// Implementing AppConfig, to tell the framework how to bootstrap the configuration.

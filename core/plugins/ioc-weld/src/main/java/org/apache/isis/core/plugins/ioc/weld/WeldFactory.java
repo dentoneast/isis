@@ -59,12 +59,6 @@ public class WeldFactory {
 	            		
 	            		"org.jboss.weld.module.web.WeldWebModule",
 	                    
-	                    //"domainapp.application.HelloWorldAppManifest", // specific to the app
-	                    
-	                    "org.apache.isis.config.AppConfig",
-	                    "org.apache.isis.applib.AppManifest",
-	                    "org.apache.isis.core.runtime.RuntimeModule",
-	                    "org.apache.isis.core.metamodel.JdoMetamodelUtil",
 	                    "org.apache.isis.core.wrapper.WrapperFactoryDefault",
 	                    "org.apache.isis.viewer.wicket.viewer.IsisWicketModule",
 	                    "org.apache.isis.applib.services.jdosupport.IsisJdoSupportDN5",

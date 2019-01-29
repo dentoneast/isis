@@ -19,7 +19,7 @@
 
 package org.apache.isis.core.plugins.classdiscovery;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.apache.isis.commons.internal.context._Plugin;
 
@@ -29,7 +29,7 @@ public interface ClassDiscoveryPlugin {
     public ClassDiscovery discover(String packageNamePrefix);
 
     //TODO missing java-doc
-    public ClassDiscovery discover(List<String> packageNamePrefixes);
+    public ClassDiscovery discover(Collection<String> packageNamePrefixes);
 
     //TODO missing java-doc
     //TODO [ahuber] REVIEW how is this different from discover(String)

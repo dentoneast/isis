@@ -52,6 +52,9 @@ public final class AppConfigLocator {
     
     // for sanity check
     private final static Set<String> criticalServices() {
+    	
+    	//TODO [2033] use classes from AppManifest.Registry instead
+    	
     	return _Sets.newLinkedHashSet(_Lists.of(
     		"org.apache.isis.applib.services.registry.ServiceRegistry", 
     		"org.apache.isis.config.IsisConfiguration", 
@@ -81,8 +84,6 @@ public final class AppConfigLocator {
     		"org.apache.isis.applib.services.wrapper.WrapperFactory",
     		
     		"org.apache.isis.applib.services.homepage.HomePageProviderService"
-    		
-    		//"org.jboss.seam.conversation.spi.SeamConversationContext"
     		
     		
     		));
@@ -166,9 +167,10 @@ public final class AppConfigLocator {
         	
             LOG.info(String.format("Located AppConfig '%s' via ServiceLoader.", appConfigClass.getName()));
             
-            Supplier<Stream<Class<?>>> onDiscover = () -> Stream.concat(
-            		Stream.of(appConfigClass), 
-            		appConfigImpl.isisConfiguration().streamClassesToDiscover());
+            Supplier<Stream<Class<?>>> onDiscover = appConfigImpl.isisConfiguration()::streamClassesToDiscover;
+            
+            onDiscover.get()
+            .forEach(type->probe.println("on discover include '%s'", type));
             
             // as we are in a non-managed environment, we need to bootstrap CDI ourself
             _CDI.init(onDiscover);

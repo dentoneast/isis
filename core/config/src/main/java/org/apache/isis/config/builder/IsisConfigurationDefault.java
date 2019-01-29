@@ -19,6 +19,8 @@
 
 package org.apache.isis.config.builder;
 
+import static org.apache.isis.commons.internal.base._With.requires;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.util.Enumeration;
@@ -26,13 +28,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.stream.Stream;
 
 import javax.enterprise.inject.Vetoed;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.commons.internal.base._Lazy;
@@ -44,8 +44,8 @@ import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.IsisConfigurationException;
 import org.apache.isis.config.resource.ResourceStreamSource;
 import org.apache.isis.core.commons.exceptions.IsisException;
-
-import static org.apache.isis.commons.internal.base._With.requires;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -98,7 +98,8 @@ class IsisConfigurationDefault implements IsisConfiguration {
     // Type Discovery
     // ////////////////////////////////////////////////
     
-    _Lazy<Integer> typeDiscovery = _Lazy.threadSafe(()->ModulePackageHelper.runTypeDiscovery(this.getAppManifest()));
+    _Lazy<Set<Class<?>>> typeDiscovery = _Lazy.threadSafe(()->
+    	ModulePackageHelper.runTypeDiscovery(this.getAppManifest()));
     
     public void triggerTypeDiscovery() {
         typeDiscovery.get();
@@ -106,8 +107,7 @@ class IsisConfigurationDefault implements IsisConfiguration {
     
     @Override
     public Stream<Class<?>> streamClassesToDiscover() {
-        triggerTypeDiscovery();
-        return AppManifest.Registry.instance().streamAllTypes();
+        return typeDiscovery.get().stream();
     }
     
     

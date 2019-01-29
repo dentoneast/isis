@@ -19,9 +19,7 @@
 
 package org.apache.isis.applib;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -160,7 +158,7 @@ public interface AppManifest {
      */
     public final static class Registry {
 
-        public final static List<String> FRAMEWORK_PROVIDED_SERVICE_PACKAGES = Collections.unmodifiableList(Arrays.asList(
+        public final static List<String> FRAMEWORK_PROVIDED_SERVICE_PACKAGES = _Lists.of(
                 "org.apache.isis.applib",
                 "org.apache.isis.core.wrapper" ,
                 "org.apache.isis.core.metamodel.services" ,
@@ -171,7 +169,24 @@ public interface AppManifest {
                 "org.apache.isis.objectstore.jdo.datanucleus.service.support" ,
                 "org.apache.isis.objectstore.jdo.datanucleus.service.eventbus" ,
                 "org.apache.isis.viewer.wicket.viewer.services", 
-                "org.apache.isis.core.integtestsupport.components"));
+                "org.apache.isis.core.integtestsupport.components");
+
+        public final static List<String> FRAMEWORK_PROVIDED_TYPES_FOR_SCANNING = _Lists.of(
+        		"org.apache.isis.config.AppConfig",
+                "org.apache.isis.applib.IsisApplibModule",
+                "org.apache.isis.core.wrapper.WrapperFactoryDefault",
+                "org.apache.isis.core.metamodel.JdoMetamodelUtil",
+                "org.apache.isis.core.runtime.RuntimeModule",
+                "org.apache.isis.viewer.restfulobjects.rendering.RendererContext"
+                
+//                "org.apache.isis.objectstore.jdo.applib.service" ,
+//                "org.apache.isis.objectstore.jdo.datanucleus.service.support" ,
+//                "org.apache.isis.objectstore.jdo.datanucleus.service.eventbus" ,
+//                "org.apache.isis.viewer.wicket.viewer.services", 
+//                "org.apache.isis.core.integtestsupport.components"
+                
+        		
+        		);
 
         private static Registry instance = new Registry();
         public static Registry instance() {

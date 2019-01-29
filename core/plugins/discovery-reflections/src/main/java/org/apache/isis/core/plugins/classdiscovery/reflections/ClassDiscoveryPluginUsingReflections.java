@@ -16,14 +16,13 @@
  */
 package org.apache.isis.core.plugins.classdiscovery.reflections;
 
-import java.util.List;
-
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.util.ClasspathHelper;
+import java.util.Collection;
 
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.core.plugins.classdiscovery.ClassDiscovery;
 import org.apache.isis.core.plugins.classdiscovery.ClassDiscoveryPlugin;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ClasspathHelper;
 
 public class ClassDiscoveryPluginUsingReflections implements ClassDiscoveryPlugin {
 
@@ -34,7 +33,7 @@ public class ClassDiscoveryPluginUsingReflections implements ClassDiscoveryPlugi
     }
 
     @Override
-    public ClassDiscovery discover(List<String> packageNamePrefixes) {
+    public ClassDiscovery discover(Collection<String> packageNamePrefixes) {
         ReflectManifest.prepareDiscovery();	//TODO [ahuber] REVIEW why is this required?
         return ReflectDiscovery.of(packageNamePrefixes);
     }

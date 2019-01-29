@@ -19,16 +19,16 @@
 
 package org.apache.isis.config.builder;
 
+import static org.apache.isis.commons.internal.base._With.requires;
+
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.bind.annotation.XmlElement;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.annotation.DomainObject;
@@ -42,33 +42,34 @@ import org.apache.isis.applib.annotation.ViewModel;
 import org.apache.isis.applib.annotation.ViewModelLayout;
 import org.apache.isis.applib.fixturescripts.DiscoverableFixtureScript;
 import org.apache.isis.applib.fixturescripts.FixtureScript;
-import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Sets;
+import org.apache.isis.commons.internal.context._Context;
+import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.commons.internal.reflection._Reflect;
 import org.apache.isis.core.plugins.classdiscovery.ClassDiscovery;
 import org.apache.isis.core.plugins.classdiscovery.ClassDiscoveryPlugin;
 
-import static org.apache.isis.commons.internal.base._With.requires;
+import lombok.val;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @since 2.0.0-M2
  */
+@Slf4j
 class ModulePackageHelper {
     
-    private static final Logger LOG = LoggerFactory.getLogger(ModulePackageHelper.class);
-
-    public static int runTypeDiscovery(final AppManifest appManifest) {
+    public static Set<Class<?>> runTypeDiscovery(final AppManifest appManifest) {
         
-        final List<String> moduleAndFrameworkPackages = 
+        final Set<Class<?>> moduleAndFrameworkTypesForScanning = 
                 findAndRegisterTypes(appManifest);
         
-        return moduleAndFrameworkPackages.size();
+        return moduleAndFrameworkTypesForScanning;
         
     }
     
     // -- HELPER
-    
-    private static Stream<String> modulePackageNamesFrom(final AppManifest appManifest) {
+
+    private static Stream<Class<?>> modulesFrom(final AppManifest appManifest) {
         
         final List<Class<?>> modules = appManifest.getModules();
         
@@ -77,27 +78,51 @@ class ModulePackageHelper {
                     "If an appManifest is provided then it must return a non-empty set of modules");
         }
 
-        return modules.stream()
+        return modules.stream();
+    }
+    
+    private static Stream<String> modulePackageNamesFrom(final AppManifest appManifest) {
+        return modulesFrom(appManifest)
                 .map(Class::getPackage)
                 .map(Package::getName);
     }
     
-    private static List<String> findAndRegisterTypes(final AppManifest appManifest) {
+    private static Set<Class<?>> findAndRegisterTypes(final AppManifest appManifest) {
         
         requires(appManifest, "appManifest");
         
-        LOG.info(String.format(
+        log.info(String.format(
                 "Discover the application's domain and register all types using manifest '%s' ...",
                 appManifest.getClass().getName()) );
         
+        
+        val typesForScanning = new HashSet<Class<?>>();
+        AppManifest.Registry.FRAMEWORK_PROVIDED_TYPES_FOR_SCANNING.stream()
+        .map(name -> {
+			try {
+				return _Context.loadClass(name);
+			} catch (ClassNotFoundException e) {
+				throw _Exceptions.unrecoverable(e);
+			}
+		})
+        .forEach(typesForScanning::add);
+        
+        modulesFrom(appManifest)
+        .forEach(typesForScanning::add);
+        
+        typesForScanning.add(appManifest.getClass());
+        
+        //FIXME [2033] at this point we should have all we need, let CDI take over
+        // and let then CDI Bean intercepter make entries into the registry 
+        
         final AppManifest.Registry registry = AppManifest.Registry.instance();
 
-        final List<String> moduleAndFrameworkPackages = _Lists.newArrayList();
+        final Set<String> moduleAndFrameworkPackages = new HashSet<>();
         moduleAndFrameworkPackages.addAll(AppManifest.Registry.FRAMEWORK_PROVIDED_SERVICE_PACKAGES);
-        
         modulePackageNamesFrom(appManifest)
             .forEach(moduleAndFrameworkPackages::add);
-
+        moduleAndFrameworkPackages.add(appManifest.getClass().getPackage().getName());
+        
         final ClassDiscovery discovery = ClassDiscoveryPlugin.get().discover(moduleAndFrameworkPackages);
 
         final Set<Class<?>> domainServiceTypes = _Sets.newLinkedHashSet();
@@ -162,7 +187,7 @@ class ModulePackageHelper {
         registry.setViewModelTypes(withinPackageAndNotAnonymous(packagesWithDotSuffix, viewModelTypes));
         registry.setXmlElementTypes(withinPackageAndNotAnonymous(packagesWithDotSuffix, xmlElementTypes));
         
-        return moduleAndFrameworkPackages;
+        return typesForScanning;
     }
     
     static <T> Set<Class<? extends T>> withinPackageAndNotAnonymous(
@@ -186,7 +211,7 @@ class ModulePackageHelper {
             }
         }
         //TODO [2039] we may need to re-think this policy, there should not be surprising use-cases
-        LOG.warn("Skipping a service for registration because due to not being part of the packagess to include: " + className);
+        log.warn("Skipping a service for registration because due to not being part of the packagess to include: " + className);
         return false;
     }
 
