@@ -45,7 +45,7 @@ public interface ServiceInjector {
     @Deprecated // use ServiceRegistry instead
     <T> T lookupServiceElseFail(final Class<T> serviceClass);
     
-//FIXME [2033]
+//FIXME [2033] remove comments ...
 //    /**
 //     * This is mutable internally, but only ever exposed (in {@link #streamRegisteredServices()}).
 //     */

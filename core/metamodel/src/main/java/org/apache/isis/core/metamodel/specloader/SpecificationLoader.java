@@ -66,7 +66,6 @@ import org.apache.isis.core.metamodel.specloader.validator.ValidationFailures;
 import org.apache.isis.core.runtime.threadpool.ThreadPoolExecutionMode;
 import org.apache.isis.core.runtime.threadpool.ThreadPoolSupport;
 import org.apache.isis.progmodels.dflt.ProgrammingModelFacetsJava5;
-import org.apache.isis.schema.metamodel.v1.MetamodelDto;
 import org.apache.isis.schema.utils.CommonDtoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -216,7 +215,7 @@ public class SpecificationLoader {
 
         LOG.info("init() - done");
         
-        //FIXME [2033] remove
+        //FIXME [2033] remove debug code ...
         {
         	streamServiceClasses()
         	.forEach(service->probe.println("using service %s", service));

@@ -488,7 +488,7 @@ UiHintContainer {
 
 
     public void toggleSelectionOn(ObjectAdapter selectedAdapter) {
-        ObjectAdapterMemento selectedAsMemento = ObjectAdapterMemento.createOrNull(selectedAdapter);
+        ObjectAdapterMemento selectedAsMemento = ObjectAdapterMemento.mementoOf(selectedAdapter);
 
         // try to remove; if couldn't, then mustn't have been in there, in which case add.
         boolean removed = toggledMementosList.remove(selectedAsMemento);

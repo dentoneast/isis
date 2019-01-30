@@ -22,6 +22,7 @@ package org.apache.isis.core.runtime.system.persistence.adaptermanager.factories
 import java.util.function.Function;
 
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
+import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 
 /**
@@ -32,8 +33,8 @@ public interface OidFactory {
     RootOid oidFor(Object pojo);
     
     public interface OidProvider {
-        boolean isHandling(Object pojo, ObjectSpecification spec);
-        RootOid oidFor(Object pojo, ObjectSpecification spec);
+        boolean isHandling(ManagedObject managedObject);
+        RootOid oidFor(ManagedObject managedObject);
     }
     
     public interface OidFactoryBuilder {

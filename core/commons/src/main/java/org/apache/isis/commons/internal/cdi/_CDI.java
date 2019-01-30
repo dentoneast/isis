@@ -18,6 +18,10 @@
  */
 package org.apache.isis.commons.internal.cdi;
 
+import static org.apache.isis.commons.internal.base._NullSafe.isEmpty;
+import static org.apache.isis.commons.internal.base._NullSafe.stream;
+import static org.apache.isis.commons.internal.base._With.requires;
+
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
@@ -28,6 +32,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.Nullable;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.Bean;
@@ -37,14 +42,13 @@ import javax.enterprise.inject.spi.CDIProvider;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Qualifier;
 
+import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.commons.internal.functions._Functions.CheckedRunnable;
 import org.apache.isis.core.plugins.ioc.IocPlugin;
 
-import static org.apache.isis.commons.internal.base._NullSafe.isEmpty;
-import static org.apache.isis.commons.internal.base._NullSafe.stream;
-import static org.apache.isis.commons.internal.base._With.requires;
+import lombok.val;
 
 /**
  * <h1>- internal use only -</h1>
@@ -221,6 +225,38 @@ public final class _CDI {
         Set<Bean<?>> beans = beanManager.getBeans(Object.class, _CDI.QUALIFIER_ANY);
         return beans.stream();
 	}
+    
+    // -- FACTORIES
+    
+	public static class InstanceFactory {
+
+		public static <T> Instance<T> empty() {
+			return new _CDI_EmptyInstance<>();
+		}
+		
+		public static <T> Instance<T> singleton(@Nullable T pojo) {
+			if(pojo==null) {
+				return empty();
+			}
+			return _CDI_SingletonInstance.of(pojo);
+		}
+
+		public static <T> Instance<T> ambiguous(@Nullable Collection<T> collection) {
+			val size = _NullSafe.size(collection);
+			if(size==0) {
+				return empty();
+			} 
+			if(size==1) {
+				if(collection instanceof List) {
+					// just to reduce heap pollution when collection is a list
+					return singleton(((List<T>)collection).get(0));
+				} 
+				return singleton(collection.iterator().next());
+			}
+			return _CDI_AmbiguousInstance.of(collection);
+		}
+		
+	}
         
     // -- HELPER
     
@@ -246,7 +282,6 @@ public final class _CDI {
             return null;
         }
     }
-
 	
 
 

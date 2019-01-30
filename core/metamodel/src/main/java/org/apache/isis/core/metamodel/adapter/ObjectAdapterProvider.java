@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
@@ -44,7 +43,6 @@ public interface ObjectAdapterProvider {
      * @param pojo
      * @return oid for the given domain object 
      */
-    @Programmatic
     default @Nullable Oid oidFor(@Nullable Object domainObject) {
         return mapIfPresentElse(adapterFor(domainObject), ObjectAdapter::getOid, null);
     }
@@ -109,15 +107,12 @@ public interface ObjectAdapterProvider {
     
     public static interface Delegating extends ObjectAdapterProvider {
         
-        @Programmatic
         ObjectAdapterProvider getObjectAdapterProvider();
         
-        @Programmatic
         default ObjectAdapter adapterFor(Object domainObject) {
             return getObjectAdapterProvider().adapterFor(domainObject);
         }
 
-        @Programmatic
         default ObjectAdapter adapterFor(
                 final Object pojo,
                 final RootOid parentOid,
@@ -125,45 +120,35 @@ public interface ObjectAdapterProvider {
             return getObjectAdapterProvider().adapterFor(pojo, parentOid, collection);
         }
 
-        @Programmatic
         default ManagedObject disposableAdapterForViewModel(final Object viewModelPojo) {
             return getObjectAdapterProvider().disposableAdapterForViewModel(viewModelPojo);
         }
         
-        @Programmatic
         default ObjectSpecification specificationForViewModel(Object viewModelPojo) {
             return getObjectAdapterProvider().specificationForViewModel(viewModelPojo);
         }
 
-        @Programmatic
         default ObjectAdapter adapterForViewModel(final Object viewModelPojo, final String mementoString) {
             return getObjectAdapterProvider().adapterForViewModel(viewModelPojo, mementoString);
         }
         
-        @Programmatic
         default ObjectAdapter newTransientInstance(ObjectSpecification objectSpec) {
             return getObjectAdapterProvider().newTransientInstance(objectSpec);
         }
         
-        @Programmatic
         default ObjectAdapter recreateViewModelInstance(ObjectSpecification objectSpec, final String memento) {
             return getObjectAdapterProvider().recreateViewModelInstance(objectSpec, memento);
         }
         
-        @Programmatic
         default Stream<ObjectAdapter> streamServices() {
             return getObjectAdapterProvider().streamServices();
         }
         
-        @Programmatic
         default ObjectAdapter lookupService(String serviceId) {
             return getObjectAdapterProvider().lookupService(serviceId);
         }
         
     }
-
-
-    
     
 
 }

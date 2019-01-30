@@ -40,7 +40,9 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
+import org.apache.isis.core.runtime.contextmanger.ContextManager;
 import org.apache.isis.core.runtime.memento.Data;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 
@@ -76,6 +78,7 @@ final public class ObjectAdapterContext {
     final ObjectAdapterContext_ObjectCreation objectCreationMixin;
     private final ObjectAdapterContext_LifecycleEventSupport lifecycleEventMixin;
     private final ServiceInjector servicesInjector;
+    final ContextManager contextManager;
 
     private ObjectAdapterContext(
             ServiceInjector servicesInjector, 
@@ -89,7 +92,10 @@ final public class ObjectAdapterContext {
         this.mementoSupportMixin = new ObjectAdapterContext_MementoSupport(this, persistenceSession);
         this.serviceLookupMixin = new ObjectAdapterContext_ServiceLookup(this, servicesInjector);
         this.newIdentifierMixin = new ObjectAdapterContext_NewIdentifier(this, metaModelContext, persistenceSession);
-        this.objectAdapterByIdProviderMixin = new ObjectAdapterContext_ObjectAdapterByIdProvider(this, metaModelContext, persistenceSession, authenticationSession);
+        
+        this.contextManager = IsisContext.getServiceRegistry().lookupServiceElseFail(ContextManager.class);
+        
+        this.objectAdapterByIdProviderMixin = new ObjectAdapterContext_ObjectAdapterByIdProvider(this, contextManager, metaModelContext, persistenceSession, authenticationSession);
         this.dependencyInjectionMixin = new ObjectAdapterContext_DependencyInjection(this, persistenceSession);
         this.objectCreationMixin = new ObjectAdapterContext_ObjectCreation(this, metaModelContext, persistenceSession);
         this.lifecycleEventMixin = new ObjectAdapterContext_LifecycleEventSupport(this, metaModelContext, persistenceSession);
@@ -102,6 +108,8 @@ final public class ObjectAdapterContext {
                 authenticationSession, 
                 specificationLoader, 
                 persistenceSession);
+        
+        
     }
 
     // -- DEBUG

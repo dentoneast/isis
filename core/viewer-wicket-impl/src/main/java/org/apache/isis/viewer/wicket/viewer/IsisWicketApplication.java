@@ -253,7 +253,7 @@ implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor, WicketVi
             new CdiConfiguration(beanManager).configure(this);
 
 
-//            // FIXME [2033]
+//            // FIXME [2033] remove comments ...
 //            // create IsisSessionFactory
 //            //
 //            final Injector injector = Guice.createInjector(

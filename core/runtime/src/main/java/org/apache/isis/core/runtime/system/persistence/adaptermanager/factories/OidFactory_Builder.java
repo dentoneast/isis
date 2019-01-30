@@ -19,15 +19,19 @@
 
 package org.apache.isis.core.runtime.system.persistence.adaptermanager.factories;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
+import org.apache.isis.core.metamodel.spec.ManagedObject.SimpleManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.runtime.system.persistence.adaptermanager.factories.OidFactory.OidFactoryBuilder;
 import org.apache.isis.core.runtime.system.persistence.adaptermanager.factories.OidFactory.OidProvider;
+
+import lombok.val;
 
 class OidFactory_Builder implements OidFactoryBuilder {
     
@@ -49,14 +53,15 @@ class OidFactory_Builder implements OidFactoryBuilder {
         return pojo -> {
 
             final ObjectSpecification spec = specProvider.apply(pojo);
-
+            val managedObject = SimpleManagedObject.of(spec, pojo);
+            
             final RootOid rootOid = handler.stream()
-            .filter(h->h.isHandling(pojo, spec))
+            .filter(h->h.isHandling(managedObject))
             .findFirst()
-            .map(h->h.oidFor(pojo, spec))
+            .map(h->h.oidFor(managedObject))
             .orElse(null);
 
-            Objects.requireNonNull(rootOid, () -> "Could not create an Oid for pojo: "+pojo);
+            requireNonNull(rootOid, () -> "Could not create an Oid for pojo: "+pojo);
 
             return rootOid;
         };

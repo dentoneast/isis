@@ -77,7 +77,7 @@ public interface ObjectAdapter extends ManagedObject {
     Oid getOid();
 
     /**
-     * Returns either itself (if this is a root) or the parented collections, the
+     * Returns either itself (if this is a root) or for parented collections, the
      * adapter corresponding to their {@link ParentedOid#getParentOid() root oid}.
      */
     ObjectAdapter getAggregateRoot();

@@ -18,19 +18,19 @@
  */
 package org.apache.isis.core.runtime.system.persistence.adaptermanager;
 
-import java.lang.reflect.InvocationTargetException;
+import java.util.Objects;
 import java.util.UUID;
 
-import javax.persistence.Entity;
-
-import org.apache.isis.commons.internal._Constants;
-import org.apache.isis.commons.internal.exceptions._Exceptions;
+import org.apache.isis.commons.internal.base._Lazy;
+import org.apache.isis.commons.internal.base._Tuples;
 import org.apache.isis.core.metamodel.IsisJdoMetamodelPlugin;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.facets.object.value.ValueFacet;
 import org.apache.isis.core.metamodel.facets.object.viewmodel.ViewModelFacet;
-import org.apache.isis.core.metamodel.spec.ObjectSpecification;
+import org.apache.isis.core.metamodel.spec.ManagedObject;
+import org.apache.isis.core.runtime.contextmanger.ContextManager;
+import org.apache.isis.core.runtime.contextmanger.ManagedObjectResolver;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.persistence.adaptermanager.factories.OidFactory.OidProvider;
@@ -43,31 +43,30 @@ class ObjectAdapterContext_OidProviders {
     static class GuardAgainstRootOid implements OidProvider {
 
         @Override
-        public boolean isHandling(Object pojo, ObjectSpecification spec) {
-            return pojo instanceof RootOid;
+        public boolean isHandling(ManagedObject managedObject) {
+            return managedObject.getPojo() instanceof RootOid;
         }
 
         @Override
-        public RootOid oidFor(Object pojo, ObjectSpecification spec) {
+        public RootOid oidFor(ManagedObject managedObject) {
             throw new IllegalArgumentException("Cannot create a RootOid for pojo, "
                     + "when pojo is instance of RootOid. You might want to ask "
                     + "ObjectAdapterByIdProvider for an ObjectAdapter instead.");
         }
-
     }
     
     
     static class OidForServices implements OidProvider {
 
         @Override
-        public boolean isHandling(Object pojo, ObjectSpecification spec) {
-            return spec.isService();
+        public boolean isHandling(ManagedObject managedObject) {
+            return managedObject.getSpecification().isService();
         }
 
         @Override
-        public RootOid oidFor(Object pojo, ObjectSpecification spec) {
+        public RootOid oidFor(ManagedObject managedObject) {
             final String identifier = PersistenceSession.SERVICE_IDENTIFIER;
-            return Oid.Factory.persistentOf(spec.getSpecId(), identifier);
+            return Oid.Factory.persistentOf(managedObject.getSpecification().getSpecId(), identifier);
         }
 
     }
@@ -77,14 +76,18 @@ class ObjectAdapterContext_OidProviders {
         private final IsisJdoMetamodelPlugin isisJdoMetamodelPlugin = IsisJdoMetamodelPlugin.get();
 
         @Override
-        public boolean isHandling(Object pojo, ObjectSpecification spec) {
+        public boolean isHandling(ManagedObject managedObject) {
             // equivalent to 'isInstanceOfPersistable = pojo instanceof Persistable'
-            final boolean isInstanceOfPersistable = isisJdoMetamodelPlugin.isPersistenceEnhanced(pojo.getClass());
+            final boolean isInstanceOfPersistable = isisJdoMetamodelPlugin
+            		.isPersistenceEnhanced(managedObject.getPojo().getClass());
             return isInstanceOfPersistable;
         }
 
         @Override
-        public RootOid oidFor(Object pojo, ObjectSpecification spec) {
+        public RootOid oidFor(ManagedObject managedObject) {
+        	val pojo = managedObject.getPojo();
+        	val spec = managedObject.getSpecification();
+        	
             final PersistenceSession persistenceSession = IsisContext.getPersistenceSession().get();
             final boolean isRecognized = persistenceSession.isRecognized(pojo);
             if(isRecognized) {
@@ -98,38 +101,40 @@ class ObjectAdapterContext_OidProviders {
         
     }
 
-    static class OidForManagedBeans implements OidProvider {
+    static class OidForManagedContexts implements OidProvider {
 
-        //FIXME [2033] this is just a PoC for 'Customer'
+    	final _Lazy<ContextManager> contextManager = _Lazy.of(()->
+    		IsisContext.getServiceRegistry().lookupServiceElseFail(ContextManager.class));
+    	
+    	private _Tuples.Tuple2<Object, ManagedObjectResolver> latestLookup; // acts as a cache
     	
         @Override
-        public boolean isHandling(Object pojo, ObjectSpecification spec) {
-        	return pojo.getClass().isAnnotationPresent(Entity.class);
+        public boolean isHandling(ManagedObject managedObject) {
+        	val pojo = managedObject.getPojo();
+        	val spec = managedObject.getSpecification();
+        	
+        	val managedObjectResolver = contextManager.get().resolverFor(spec);
+        	
+        	if(managedObjectResolver!=null) {
+        		// likely to be reused below, just an optimization
+        		latestLookup = _Tuples.pair(pojo, managedObjectResolver);
+        		return true;
+        	}
+        	return false;
         }
 
         @Override
-        public RootOid oidFor(Object pojo, ObjectSpecification spec) {
-        	try {
-				return oidForCustomer(pojo, spec);
-			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException e) {
-				throw _Exceptions.unrecoverable(e);
-			}
-        }
-        
-        private RootOid oidForCustomer(Object pojo, ObjectSpecification spec) 
-        		throws NoSuchMethodException, SecurityException, IllegalAccessException, 
-        		IllegalArgumentException, InvocationTargetException {
-        	
-        	val idGetter = pojo.getClass().getMethod("getId", _Constants.emptyClasses);
-        	Long id = (Long)idGetter.invoke(pojo, _Constants.emptyObjects);
-        	if(id!=null && id>0) {
-        		final String identifier = "" + id;
-        		return Oid.Factory.persistentOf(spec.getSpecId(), identifier);	
-        	} else {
-                final String identifier = UUID.randomUUID().toString();
-                return Oid.Factory.transientOf(spec.getSpecId(), identifier);    
-            }
+        public RootOid oidFor(ManagedObject managedObject) {
+        	val pojo = managedObject.getPojo();
+        	val spec = managedObject.getSpecification();
+
+        	val managedObjectResolver =	(latestLookup!=null && 
+        			Objects.equals(pojo, latestLookup.get_1()))
+        			? latestLookup.get_2() // use cache
+        					: contextManager.get().resolverFor(spec);
+        			
+    		val objectIdUri = managedObjectResolver.identifierOf(managedObject);
+    		return Oid.Factory.universal(objectIdUri);
         }
         
     }
@@ -137,12 +142,13 @@ class ObjectAdapterContext_OidProviders {
     static class OidForValues implements OidProvider {
 
         @Override
-        public boolean isHandling(Object pojo, ObjectSpecification spec) {
+        public boolean isHandling(ManagedObject managedObject) {
+        	val spec = managedObject.getSpecification();
             return spec.containsFacet(ValueFacet.class);
         }
 
         @Override
-        public RootOid oidFor(Object pojo, ObjectSpecification spec) {
+        public RootOid oidFor(ManagedObject managedObject) {
             return Oid.Factory.value();
         }
 
@@ -151,12 +157,16 @@ class ObjectAdapterContext_OidProviders {
     static class OidForViewModels implements OidProvider {
 
         @Override
-        public boolean isHandling(Object pojo, ObjectSpecification spec) {
+        public boolean isHandling(ManagedObject managedObject) {
+        	val spec = managedObject.getSpecification();
             return spec.containsFacet(ViewModelFacet.class);
         }
 
         @Override
-        public RootOid oidFor(Object pojo, ObjectSpecification spec) {
+        public RootOid oidFor(ManagedObject managedObject) {
+        	val pojo = managedObject.getPojo();
+        	val spec = managedObject.getSpecification();
+        	
             final ViewModelFacet recreatableObjectFacet = spec.getFacet(ViewModelFacet.class);
             final String identifier = recreatableObjectFacet.memento(pojo);
             return Oid.Factory.viewmodelOf(spec.getSpecId(), identifier);
@@ -167,12 +177,13 @@ class ObjectAdapterContext_OidProviders {
     static class OidForOthers implements OidProvider {
 
         @Override
-        public boolean isHandling(Object pojo, ObjectSpecification spec) {
+        public boolean isHandling(ManagedObject managedObject) {
             return true; // try to handle anything
         }
 
         @Override
-        public RootOid oidFor(Object pojo, ObjectSpecification spec) {
+        public RootOid oidFor(ManagedObject managedObject) {
+        	val spec = managedObject.getSpecification();
             final String identifier = UUID.randomUUID().toString();
             return Oid.Factory.transientOf(spec.getSpecId(), identifier);
         }

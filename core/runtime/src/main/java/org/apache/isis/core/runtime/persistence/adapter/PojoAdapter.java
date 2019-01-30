@@ -21,10 +21,8 @@ package org.apache.isis.core.runtime.persistence.adapter;
 
 import static org.apache.isis.commons.internal.base._With.requires;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.commons.internal.base._Lazy;
+import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.commons.util.ToString;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
@@ -32,12 +30,15 @@ import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.ParentedOid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
+import org.apache.isis.core.metamodel.adapter.oid.UniversalOid;
 import org.apache.isis.core.metamodel.adapter.version.ConcurrencyException;
 import org.apache.isis.core.metamodel.adapter.version.Version;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class PojoAdapter implements ObjectAdapter {
 
@@ -113,6 +114,11 @@ public final class PojoAdapter implements ObjectAdapter {
     
     @Override
     public boolean isTransient() {
+    	
+    	if(oid instanceof UniversalOid) {
+    		return oid.isTransient(); //FIXME [2033] this is a quick-hack
+    	}
+    	
         if(getSpecification().isService() || getSpecification().isViewModel()) {
             // services and view models are treated as persistent objects
             return false;
@@ -122,6 +128,11 @@ public final class PojoAdapter implements ObjectAdapter {
 
     @Override
     public boolean representsPersistent() {
+    	
+    	if(oid instanceof UniversalOid) {
+    		return oid.isPersistent(); //FIXME [2033] this is a quick-hack
+    	}
+    	
         if(getSpecification().isService() || getSpecification().isViewModel()) {
             // services and view models are treated as persistent objects
             return true;
@@ -131,6 +142,11 @@ public final class PojoAdapter implements ObjectAdapter {
 
     @Override
     public boolean isDestroyed() {
+    	
+    	if(oid instanceof UniversalOid) {
+    		return false; //FIXME [2033] this is a quick-hack
+    	}
+    	
         if(getSpecification().isService() || getSpecification().isViewModel()) {
             // services and view models are treated as persistent objects
             return false;

@@ -20,13 +20,12 @@ package org.apache.isis.core.runtime.system.persistence.adaptermanager;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
+import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.core.commons.ensure.Ensure;
 import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
@@ -34,15 +33,21 @@ import org.apache.isis.core.metamodel.adapter.ObjectAdapterByIdProvider;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
+import org.apache.isis.core.metamodel.adapter.oid.UniversalOid;
 import org.apache.isis.core.metamodel.adapter.version.ConcurrencyException;
 import org.apache.isis.core.metamodel.adapter.version.Version;
 import org.apache.isis.core.metamodel.facets.object.viewmodel.ViewModelFacet;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
+import org.apache.isis.core.runtime.contextmanger.ContextManager;
 import org.apache.isis.core.runtime.persistence.ObjectNotFoundException;
 import org.apache.isis.core.runtime.persistence.PojoRecreationException;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import lombok.val;
 
 /**
  * package private mixin for ObjectAdapterContext
@@ -59,18 +64,23 @@ class ObjectAdapterContext_ObjectAdapterByIdProvider implements ObjectAdapterByI
     private final PersistenceSession persistenceSession;
     private final SpecificationLoader specificationLoader;
     private final AuthenticationSession authenticationSession;
+    private final ContextManager contextManager;
     private final boolean concurrencyCheckingGloballyEnabled;
     
     ObjectAdapterContext_ObjectAdapterByIdProvider(
             ObjectAdapterContext objectAdapterContext,
+            ContextManager contextManager,
             MetaModelContext metaModelContext,
             PersistenceSession persistenceSession,
             AuthenticationSession authenticationSession) {
         
+    	Objects.requireNonNull(contextManager);
+    	
         this.objectAdapterContext = objectAdapterContext;
         this.persistenceSession = persistenceSession;
         this.specificationLoader = metaModelContext.getSpecificationLoader();
         this.authenticationSession = authenticationSession;
+        this.contextManager = contextManager;
         
         this.concurrencyCheckingGloballyEnabled = 
                 !ConcurrencyChecking.isGloballyDisabled(persistenceSession.getConfiguration());
@@ -108,7 +118,7 @@ class ObjectAdapterContext_ObjectAdapterByIdProvider implements ObjectAdapterByI
             final RootOid rootOid,
             final ConcurrencyChecking concurrencyChecking) {
                 
-        /* FIXME[ISIS-1976] SPI for adapterFor(RootOid)
+        /* FIXME [ISIS-1976] SPI for adapterFor(RootOid)
          * https://github.com/apache/isis/pull/121#discussion_r215889748
          * 
          * Eventually I'm hoping that this code will simplify and then become pluggable.
@@ -125,8 +135,33 @@ class ObjectAdapterContext_ObjectAdapterByIdProvider implements ObjectAdapterByI
          * into some other datastore. So really my "PersistenceProvider" is a
          * generalization of that concept).
          */
-        
-        //FIXME[ISIS-1976] remove guard
+    	
+    	if(rootOid instanceof UniversalOid) {
+    		
+    		Objects.requireNonNull(rootOid);
+    		
+    		val universalOid = (UniversalOid) rootOid;
+    		val spec = universalOid.getObjectSpecId();
+    		val instance = contextManager.resolve(spec, universalOid.universalId());
+    		
+    		if(instance.isResolvable()) {
+    			val managedObject = instance.get();
+    			return objectAdapterContext.getFactories().createRootAdapter(managedObject.getPojo(), rootOid);	
+    		} else if(instance.isAmbiguous()) {
+    			
+    			//FIXME [2033] handle ambiguity
+    			throw _Exceptions.notImplemented();
+    			
+    		} else {
+    			
+    			//FIXME [2033] handle no such element
+    			throw _Exceptions.notImplemented();
+    		}
+    		
+    		
+    	}
+    	
+        //FIXME [ISIS-1976] remove guard
         final ObjectAdapter serviceAdapter = objectAdapterContext.lookupServiceAdapterFor(rootOid);
         if (serviceAdapter != null) {
             //throw _Exceptions.unexpectedCodeReach();

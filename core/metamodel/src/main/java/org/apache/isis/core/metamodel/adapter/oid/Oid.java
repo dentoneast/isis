@@ -19,6 +19,8 @@
 
 package org.apache.isis.core.metamodel.adapter.oid;
 
+import java.net.URI;
+
 import org.apache.isis.applib.annotation.Value;
 import org.apache.isis.applib.services.bookmark.Bookmark;
 import org.apache.isis.core.commons.encoding.Encodable;
@@ -109,6 +111,12 @@ public interface Oid extends Encodable {
         public static RootOid value() {
             return Oid_Value.INSTANCE;
         }
+        
+        public static UniversalOid universal(URI uri) {
+            return Oid_Universal.of(uri);
+        }
+        
+        // -- LEGACY
         
         public static RootOid ofBookmark(final Bookmark bookmark) {
             return Oid_Root.of(ObjectSpecId.of(bookmark.getObjectType()), 

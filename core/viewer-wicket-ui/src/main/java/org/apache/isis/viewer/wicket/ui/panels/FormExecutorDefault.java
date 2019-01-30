@@ -19,6 +19,7 @@ package org.apache.isis.viewer.wicket.ui.panels;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
+import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 import org.apache.isis.applib.RecoverableException;
@@ -30,9 +31,12 @@ import org.apache.isis.applib.services.exceprecog.ExceptionRecognizerComposite;
 import org.apache.isis.applib.services.hint.HintStore;
 import org.apache.isis.applib.services.message.MessageService;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
+import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
+import org.apache.isis.core.metamodel.adapter.oid.Oid;
+import org.apache.isis.core.metamodel.adapter.oid.UniversalOid;
 import org.apache.isis.core.metamodel.adapter.version.ConcurrencyException;
 import org.apache.isis.core.metamodel.facets.actions.redirect.RedirectFacet;
 import org.apache.isis.core.metamodel.facets.properties.renderunchanged.UnchangingFacet;
@@ -67,6 +71,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Throwables;
+
+import lombok.val;
 
 public final class FormExecutorDefault<M extends BookmarkableModel<ObjectAdapter> & ParentEntityModelProvider>
 implements FormExecutor {
@@ -279,10 +285,24 @@ implements FormExecutor {
             final ObjectAdapter targetAdapter,
             final ObjectAdapter resultAdapter) {
 
-        final ObjectAdapterMemento targetOam = ObjectAdapterMemento.createOrNull(targetAdapter);
-        final ObjectAdapterMemento resultOam = ObjectAdapterMemento.createOrNull(resultAdapter);
-
-        return differs(targetOam, resultOam);
+    	val left = targetAdapter.getOid();
+    	val right = resultAdapter.getOid();
+    	
+    	val differs = _Casts.castThenApply(left, right, UniversalOid.class,
+    			(l, r)-> !Objects.equals(l, r), // onBothCast
+    			(l, r) -> true, // onLeftCast
+    			(l, r) -> true, // onRightCast
+    			(l, r) -> { // onNonCast
+    				
+    				// legacy behavior, for non UniversalOid
+    				
+    		        final ObjectAdapterMemento targetOam = ObjectAdapterMemento.mementoOf(targetAdapter);
+    		        final ObjectAdapterMemento resultOam = ObjectAdapterMemento.mementoOf(resultAdapter);
+    		
+    		        return differs(targetOam, resultOam);			
+    			});
+		
+		return differs;
     }
 
     private static boolean differs(

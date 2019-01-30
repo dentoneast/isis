@@ -20,14 +20,18 @@
 package org.apache.isis.viewer.wicket.model.mementos;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
+
 import org.apache.isis.applib.services.bookmark.Bookmark;
 import org.apache.isis.applib.services.hint.HintStore;
 import org.apache.isis.commons.internal.collections._Lists;
+import org.apache.isis.commons.internal.uri._URI;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
@@ -44,6 +48,8 @@ import org.apache.isis.core.runtime.memento.Memento;
 import org.apache.isis.core.runtime.persistence.ObjectNotFoundException;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 
+import lombok.val;
+
 public class ObjectAdapterMemento implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,7 +57,7 @@ public class ObjectAdapterMemento implements Serializable {
     /**
      * Factory method
      */
-    public static ObjectAdapterMemento createOrNull(final ObjectAdapter adapter) {
+    public static ObjectAdapterMemento mementoOf(@Nullable final ObjectAdapter adapter) {
         if (adapter == null) {
             return null;
         }
@@ -226,6 +232,14 @@ public class ObjectAdapterMemento implements Serializable {
                     final ObjectAdapterMemento oam,
                     ConcurrencyChecking concurrencyChecking,
                     final PersistenceSession persistenceSession, final SpecificationLoader specificationLoader) {
+            	
+            	if(_URI.isUoid(oam.persistentOidStr)) {
+            		val uri = URI.create(oam.persistentOidStr);
+            		val oid = Oid.Factory.universal(uri);
+            		val objAdapter = persistenceSession.adapterFor(oid, concurrencyChecking);
+            		return objAdapter;
+            	}
+            	
                 RootOid oid = Oid.unmarshaller().unmarshal(oam.persistentOidStr, RootOid.class);
                 try {
                     final ObjectAdapter adapter = persistenceSession.adapterFor(oid, concurrencyChecking);
@@ -573,11 +587,11 @@ public class ObjectAdapterMemento implements Serializable {
         }
 
         public static Function<Object, ObjectAdapterMemento> fromPojo(final ObjectAdapterProvider adapterProvider) {
-            return pojo->ObjectAdapterMemento.createOrNull( adapterProvider.adapterFor(pojo) );
+            return pojo->ObjectAdapterMemento.mementoOf( adapterProvider.adapterFor(pojo) );
                 }
 
         public static Function<ObjectAdapter, ObjectAdapterMemento> fromAdapter() {
-            return ObjectAdapterMemento::createOrNull;
+            return ObjectAdapterMemento::mementoOf;
         }
 
         public static Function<ObjectAdapterMemento, ObjectAdapter> fromMemento(
@@ -596,7 +610,7 @@ public class ObjectAdapterMemento implements Serializable {
         }
 
         public static Function<ObjectAdapter, ObjectAdapterMemento> toMemento() {
-            return ObjectAdapterMemento::createOrNull;
+            return ObjectAdapterMemento::mementoOf;
         }
 
 

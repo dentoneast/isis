@@ -29,14 +29,15 @@ import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory;
 
 /**
- * @deprecated TODO [2033] 
+ * @deprecated TODO [2033] convert ...
  * Currently `IsisSessionFactory` and those singletons that depend on it 
  * (`SpecificationLoader` and `PersistenceSessionFactory`) are not life-cycle 
  * managed by CDI, instead we provide Producer Methods for these.
  * 
  * Consequently the framework is responsible for their life-cycles. 
  * 
- * We want to have CDI also manage these, which can be achieved by finally removing the `IsisSessionProducerBean` singleton.
+ * We want to have CDI also manage these, which can be achieved by finally 
+ * removing the `IsisSessionProducerBean` singleton.
  *
  */
 @Singleton
