@@ -1,5 +1,7 @@
 package domainapp.modules.spring.dom.customer;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -27,6 +29,12 @@ public class CustomerMenu {
 			String lastName) {
 		
 		return customerRepository.findByLastName(lastName);
+	}
+	
+	@Action
+	@ActionLayout(cssClassFa="fa-leaf")
+	public List<Customer> listAll() {
+		return new ArrayList<Customer>((Collection<? extends Customer>) customerRepository.findAll());
 	}
 	
 	@Action
