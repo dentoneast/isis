@@ -39,15 +39,15 @@
 			<mb3:section>
 				<mb3:serviceAction objectType="simple.CustomerMenu"
 					id="createCustomer">
-					<cpt:named>Create Customer</cpt:named>
 				</mb3:serviceAction>
 				<mb3:serviceAction objectType="simple.CustomerMenu"
 					id="findByLastName">
-					<cpt:named>Find By Last Name</cpt:named>
 				</mb3:serviceAction>
 				<mb3:serviceAction objectType="simple.CustomerMenu"
 					id="listAll">
-					<cpt:named>List All</cpt:named>
+				</mb3:serviceAction>
+				<mb3:serviceAction objectType="simple.CustomerMenu"
+					id="createSomeCustomers">
 				</mb3:serviceAction>
 			</mb3:section>
 		</mb3:menu>
