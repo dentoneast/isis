@@ -136,6 +136,7 @@ class ObjectAdapterContext_ObjectAdapterByIdProvider implements ObjectAdapterByI
          * generalization of that concept).
          */
     	
+    	
     	if(rootOid instanceof UniversalOid) {
     		
     		Objects.requireNonNull(rootOid);
@@ -194,11 +195,11 @@ class ObjectAdapterContext_ObjectAdapterByIdProvider implements ObjectAdapterByI
     }
     
     @Override
-    public Map<RootOid,ObjectAdapter> adaptersFor(
+    public List<ObjectAdapter> adaptersFor(
             final Stream<RootOid> rootOids,
             final ConcurrencyChecking concurrencyChecking) {
 
-        final Map<RootOid, ObjectAdapter> adapterByOid = _Maps.newLinkedHashMap();
+        final List<ObjectAdapter> adapterList = _Lists.newArrayList();
 
         List<RootOid> notYetLoadedOids = _Lists.newArrayList();
         
@@ -212,7 +213,7 @@ class ObjectAdapterContext_ObjectAdapterByIdProvider implements ObjectAdapterByI
                 syncVersion(concurrencyChecking, adapter, rootOid);
             }
             if (adapter != null) {
-                adapterByOid.put(rootOid, adapter);
+                adapterList.add(adapter);
             } else {
                 // persistent oid, to load in bulk
                 notYetLoadedOids.add(rootOid);
@@ -228,7 +229,9 @@ class ObjectAdapterContext_ObjectAdapterByIdProvider implements ObjectAdapterByI
                 ObjectAdapter adapter;
                 try {
                     adapter = objectAdapterContext.recreatePojo(rootOid, pojo);
-                    adapterByOid.put(rootOid, adapter);
+                    if (adapter != null) {
+                        adapterList.add(adapter);
+                    }
                 } catch(ObjectNotFoundException ex) {
                     throw ex; // just rethrow
                 } catch(RuntimeException ex) {
@@ -241,7 +244,7 @@ class ObjectAdapterContext_ObjectAdapterByIdProvider implements ObjectAdapterByI
             }
         }
 
-        return adapterByOid;
+        return adapterList;
     }
     
     // -- HELPER

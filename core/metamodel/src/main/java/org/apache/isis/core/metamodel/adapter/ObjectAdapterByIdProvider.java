@@ -18,10 +18,9 @@
  */
 package org.apache.isis.core.metamodel.adapter;
 
-import java.util.Map;
+import java.util.List;
 import java.util.stream.Stream;
 
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 
@@ -35,7 +34,7 @@ public interface ObjectAdapterByIdProvider {
     // -- INTERFACE
 
     ObjectAdapter adapterFor(RootOid rootOid, ConcurrencyChecking concurrencyChecking);
-    Map<RootOid, ObjectAdapter> adaptersFor(Stream<RootOid> rootOids, ConcurrencyChecking concurrencyChecking);
+    List<ObjectAdapter> adaptersFor(Stream<RootOid> rootOids, ConcurrencyChecking concurrencyChecking);
     
     /**
      * As per {@link #adapterFor(RootOid, ConcurrencyChecking)}, with
@@ -50,7 +49,7 @@ public interface ObjectAdapterByIdProvider {
         return adapterFor(rootOid, ConcurrencyChecking.NO_CHECK);
     }
     
-    default Map<RootOid, ObjectAdapter> adaptersFor(Stream<RootOid> rootOids) {
+    default List<ObjectAdapter> adaptersFor(Stream<RootOid> rootOids) {
         return adaptersFor(rootOids, ConcurrencyChecking.NO_CHECK);
     }
     
@@ -59,17 +58,13 @@ public interface ObjectAdapterByIdProvider {
     
     public static interface Delegating extends ObjectAdapterByIdProvider {
         
-        @Programmatic
         ObjectAdapterByIdProvider getObjectAdapterByIdProvider();
         
-        @Programmatic
         default ObjectAdapter adapterFor(RootOid rootOid, ConcurrencyChecking concurrencyChecking) {
             return getObjectAdapterByIdProvider().adapterFor(rootOid, concurrencyChecking);
         }
         
-        
-        @Programmatic
-        default Map<RootOid, ObjectAdapter> adaptersFor(Stream<RootOid> rootOids, ConcurrencyChecking concurrencyChecking) {
+        default List<ObjectAdapter> adaptersFor(Stream<RootOid> rootOids, ConcurrencyChecking concurrencyChecking) {
             return getObjectAdapterByIdProvider().adaptersFor(rootOids, concurrencyChecking);
         }
 

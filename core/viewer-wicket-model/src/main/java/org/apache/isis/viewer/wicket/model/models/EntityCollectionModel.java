@@ -22,15 +22,11 @@ package org.apache.isis.viewer.wicket.model.models;
 import static org.apache.isis.commons.internal.base._NullSafe.stream;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.apache.wicket.Component;
 
 import org.apache.isis.applib.layout.component.CollectionLayoutData;
 import org.apache.isis.commons.internal.base._Casts;
@@ -57,6 +53,9 @@ import org.apache.isis.viewer.wicket.model.links.LinksProvider;
 import org.apache.isis.viewer.wicket.model.mementos.CollectionMemento;
 import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
 import org.apache.isis.viewer.wicket.model.models.Util.LowestCommonSuperclassFinder;
+import org.apache.wicket.Component;
+
+import lombok.val;
 
 /**
  * Model representing a collection of entities, either {@link Type#STANDALONE
@@ -103,11 +102,8 @@ UiHintContainer {
                 final Stream<RootOid> rootOids = stream(model.mementoList)
                         .map(ObjectAdapterMemento.Functions.toOid());
                 
-                final Map<RootOid, ObjectAdapter> adaptersByOid = persistenceSession.adaptersFor(rootOids);
-                final Collection<ObjectAdapter> adapterList = adaptersByOid.values();
-                return stream(adapterList)
-                        .filter(_NullSafe::isPresent)
-                        .collect(Collectors.toList());
+                val adapters = persistenceSession.adaptersFor(rootOids);
+                return adapters;
             }
 
             private Iterable<ObjectAdapter> loadOneByOne(final EntityCollectionModel model) {
