@@ -20,17 +20,11 @@ package org.apache.isis.core.runtime.headless;
 
 import java.util.List;
 
-import javax.jdo.PersistenceManagerFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.AppManifest2;
 import org.apache.isis.applib.fixtures.TickingFixtureClock;
 import org.apache.isis.applib.fixturescripts.FixtureScript;
 import org.apache.isis.applib.fixturescripts.FixtureScripts;
-import org.apache.isis.applib.services.jdosupport.IsisJdoSupport;
 import org.apache.isis.applib.services.metamodel.MetaModelService;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.commons.ensure.Ensure;
@@ -39,6 +33,10 @@ import org.apache.isis.core.runtime.headless.logging.LeveledLogger;
 import org.apache.isis.core.runtime.headless.logging.LogConfig;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import lombok.val;
 
 public class IsisSystemBootstrapper {
 
@@ -160,13 +158,13 @@ public class IsisSystemBootstrapper {
     }
 
     private static void teardownSystem() {
-        final IsisSessionFactory isisSessionFactory = lookupService(IsisSessionFactory.class);
+        val isisSessionFactory = lookupService(IsisSessionFactory.class);
 
-        final IsisJdoSupport isisJdoSupport = lookupService(IsisJdoSupport.class);
-        final PersistenceManagerFactory pmf =
-                isisJdoSupport.getJdoPersistenceManager().getPersistenceManagerFactory();
+//FIXME [2033] should not be required to do explicitly, instead properly implement @PreDestroy where required        
+//        val isisJdoSupport = lookupService(IsisJdoSupport.class);
+//        val pmf = isisJdoSupport.getJdoPersistenceManager().getPersistenceManagerFactory();
         isisSessionFactory.destroyServicesAndShutdown();
-        pmf.close();
+//        pmf.close();
 
         IsisContext.clear();
     }

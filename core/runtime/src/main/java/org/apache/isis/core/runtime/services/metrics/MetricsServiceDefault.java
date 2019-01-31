@@ -18,26 +18,27 @@
  */
 package org.apache.isis.core.runtime.services.metrics;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.jdo.listener.InstanceLifecycleEvent;
 import javax.jdo.listener.InstanceLifecycleListener;
 import javax.jdo.listener.LoadLifecycleListener;
 
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.WithTransactionScope;
 import org.apache.isis.applib.services.metrics.MetricsService;
 import org.apache.isis.core.runtime.services.changes.ChangedObjectsServiceInternal;
 
 @RequestScoped
-public class MetricsServiceDefault implements MetricsService, InstanceLifecycleListener, LoadLifecycleListener, WithTransactionScope {
+public class MetricsServiceDefault implements MetricsService, 
+InstanceLifecycleListener, LoadLifecycleListener, WithTransactionScope {
 
-    private AtomicInteger numberLoaded = new AtomicInteger(0);
+    private LongAdder numberLoaded = new LongAdder();
 
     @Override
     public int numberObjectsLoaded() {
-        return numberLoaded.get();
+        return numberLoaded.intValue();
     }
 
     @Override
@@ -45,23 +46,20 @@ public class MetricsServiceDefault implements MetricsService, InstanceLifecycleL
         return changedObjectsServiceInternal.numberObjectsDirtied();
     }
 
-    @Programmatic
     @Override
     public void postLoad(final InstanceLifecycleEvent event) {
-        numberLoaded.incrementAndGet();
+        numberLoaded.increment();
     }
 
     /**
      * Intended to be called at the end of a transaction.  (This service really ought to be considered
      * a transaction-scoped service; since that isn't yet supported by the framework, we have to manually reset).
      */
-    @Programmatic
     @Override
     public void resetForNextTransaction() {
-        numberLoaded.set(0);
+        numberLoaded.reset();
     }
 
-    @javax.inject.Inject
-    ChangedObjectsServiceInternal changedObjectsServiceInternal;
+    @Inject ChangedObjectsServiceInternal changedObjectsServiceInternal;
 
 }

@@ -68,6 +68,15 @@
 	</build>
 
 	<dependencies>
+	
+		<!-- JDO API (non transient, provided by concrete JDO plugins) -->
+        <dependency>
+            <groupId>javax.jdo</groupId>
+            <artifactId>jdo-api</artifactId>
+            <version>${jdo-api.version}</version>
+            <!-- provided by plugins -->
+            <scope>provided</scope>
+        </dependency>
 
 		<!-- Core Runtime -->
 		<dependency>
