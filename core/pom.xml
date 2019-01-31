@@ -1417,6 +1417,12 @@ ${license.additional-notes}
                 <version>${isis.version}</version>
             </dependency>
 
+			<dependency>
+                <groupId>org.apache.isis.core</groupId>
+                <artifactId>isis-core-plugins-jdo-common</artifactId>
+                <version>${isis.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.apache.isis.core</groupId>
                 <artifactId>isis-core-plugins-jdo-datanucleus-4</artifactId>
@@ -2530,6 +2536,7 @@ ${license.additional-notes}
         <module>plugins/ioc-weld</module>
         <module>plugins/jaxrs-resteasy-3</module>
         <module>plugins/jaxrs-resteasy-4</module>
+        <module>plugins/jdo-common</module>
         <module>plugins/jdo-datanucleus-4</module>
         <module>plugins/jdo-datanucleus-5</module>
         <module>plugins/security-pac4j</module>

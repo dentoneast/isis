@@ -106,10 +106,10 @@
 			<version>${dn4-jodatime.version}</version>
 		</dependency>
 
-		<!-- Core Runtime -->
+		<!-- JDO COMMON -->
 		<dependency>
 			<groupId>org.apache.isis.core</groupId>
-			<artifactId>isis-core-runtime</artifactId>
+			<artifactId>isis-core-plugins-jdo-common</artifactId>
 			<scope>compile</scope>
 		</dependency>
 		
