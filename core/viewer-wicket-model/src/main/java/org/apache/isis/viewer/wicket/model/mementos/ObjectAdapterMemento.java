@@ -631,7 +631,7 @@ public class ObjectAdapterMemento implements Serializable {
         }
 
         public static Function<ObjectAdapterMemento, RootOid> toOid() {
-            return objectAdapterMemento->Factory.ofBookmark(objectAdapterMemento.asBookmark());
+            return objectAdapterMemento->Oid.Factory.ofBookmark(objectAdapterMemento.asBookmark());
         }
 
     }

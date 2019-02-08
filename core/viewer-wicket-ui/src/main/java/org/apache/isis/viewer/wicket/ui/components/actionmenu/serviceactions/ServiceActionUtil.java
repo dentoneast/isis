@@ -96,7 +96,7 @@ public final class ServiceActionUtil {
                 if (menuItem.requiresImmediateConfirmation()) {
                     addConfirmationDialog(
                             subMenuItemLink,
-                            menuItem.getPersistenceSession().getServicesInjector());
+                            menuItem.getPersistenceSession().getServiceInjector());
                 }
 
             }

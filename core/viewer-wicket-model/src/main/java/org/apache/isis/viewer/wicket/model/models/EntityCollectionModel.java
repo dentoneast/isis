@@ -45,6 +45,7 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.viewer.wicket.model.hints.UiHintContainer;
@@ -87,15 +88,14 @@ UiHintContainer {
             @Override
             List<ObjectAdapter> load(final EntityCollectionModel entityCollectionModel) {
 
-                final boolean bulkLoad = entityCollectionModel.getPersistenceSession().getConfiguration()
-                        .getBoolean(KEY_BULK_LOAD, false);
-                final Iterable<ObjectAdapter> values = bulkLoad
+                val isBulkLoad = IsisContext.getConfiguration().getBoolean(KEY_BULK_LOAD, false);
+                final List<ObjectAdapter> adapters = isBulkLoad
                         ? loadInBulk(entityCollectionModel)
                                 : loadOneByOne(entityCollectionModel);
-                        return _Lists.newArrayList(values);
+                return adapters;
             }
 
-            private Iterable<ObjectAdapter> loadInBulk(final EntityCollectionModel model) {
+            private List<ObjectAdapter> loadInBulk(final EntityCollectionModel model) {
 
                 final PersistenceSession persistenceSession = model.getPersistenceSession();
 
@@ -106,7 +106,7 @@ UiHintContainer {
                 return adapters;
             }
 
-            private Iterable<ObjectAdapter> loadOneByOne(final EntityCollectionModel model) {
+            private List<ObjectAdapter> loadOneByOne(final EntityCollectionModel model) {
                 return stream(model.mementoList)
                         .map(ObjectAdapterMemento.Functions.fromMemento(
                                 ConcurrencyChecking.NO_CHECK,
@@ -154,9 +154,11 @@ UiHintContainer {
             @Override
             List<ObjectAdapter> load(final EntityCollectionModel entityCollectionModel) {
 
-                final ObjectAdapter adapter = entityCollectionModel.getParentObjectAdapterMemento().getObjectAdapter(
-                        ConcurrencyChecking.NO_CHECK, entityCollectionModel.getPersistenceSession(),
-                        entityCollectionModel.getSpecificationLoader());
+                final ObjectAdapter adapter = entityCollectionModel.getParentObjectAdapterMemento()
+                		.getObjectAdapter(
+                				ConcurrencyChecking.NO_CHECK, 
+                				entityCollectionModel.getPersistenceSession(),
+                				entityCollectionModel.getSpecificationLoader());
 
                 final OneToManyAssociation collection = entityCollectionModel.collectionMemento.getCollection(
                         entityCollectionModel.getSpecificationLoader());

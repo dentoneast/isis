@@ -116,7 +116,7 @@ public class SwaggerSpecResource {
         SwaggerService swaggerService;
 
         ServiceInjector getServicesInjector() {
-            return getPersistenceSession().getServicesInjector();
+            return getPersistenceSession().getServiceInjector();
         }
 
         PersistenceSession getPersistenceSession() {

@@ -55,7 +55,7 @@ class ObjectAdapterContext_NewIdentifier {
         
         this.objectAdapterContext = objectAdapterContext;
         this.persistenceSession = persistenceSession;
-        this.servicesInjector = persistenceSession.getServicesInjector();
+        this.servicesInjector = persistenceSession.getServiceInjector();
         this.specificationLoader = metaModelContext.getSpecificationLoader();
     }
     

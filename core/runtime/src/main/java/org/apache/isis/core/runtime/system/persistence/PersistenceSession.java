@@ -47,7 +47,7 @@ extends
     
     IsisConfiguration getConfiguration();
     IsisTransactionManager getTransactionManager();
-    ServiceInjector getServicesInjector();
+    ServiceInjector getServiceInjector();
     
     void open();
     void close();

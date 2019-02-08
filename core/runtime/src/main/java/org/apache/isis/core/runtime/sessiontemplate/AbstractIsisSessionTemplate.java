@@ -33,7 +33,7 @@ public abstract class AbstractIsisSessionTemplate {
         try {
             getIsisSessionFactory().openSession(authSession);
             PersistenceSession persistenceSession = getPersistenceSession();
-            persistenceSession.getServicesInjector().injectServicesInto(this);
+            persistenceSession.getServiceInjector().injectServicesInto(this);
             doExecute(context);
         } finally {
             getIsisSessionFactory().closeSession();

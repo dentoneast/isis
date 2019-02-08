@@ -156,7 +156,7 @@ abstract class PersistenceSessionBase implements PersistenceSession {
      * The configured {@link ServiceInjector}.
      */
     @Override
-    public ServiceInjector getServicesInjector() {
+    public ServiceInjector getServiceInjector() {
         return servicesInjector;
     }
 

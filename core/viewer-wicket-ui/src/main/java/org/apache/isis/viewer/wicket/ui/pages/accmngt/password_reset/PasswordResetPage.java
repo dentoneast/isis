@@ -78,7 +78,7 @@ public class PasswordResetPage extends AccountManagementPageAbstract {
                     @Override
                     public Boolean call() throws Exception {
                         UserRegistrationService userRegistrationService = getIsisSessionFactory()
-                                .getCurrentSession().getPersistenceSession().getServicesInjector()
+                                .getCurrentSession().getPersistenceSession().getServiceInjector()
                                 .lookupServiceElseFail(UserRegistrationService.class);
                         return userRegistrationService.emailExists(email);
                     }
