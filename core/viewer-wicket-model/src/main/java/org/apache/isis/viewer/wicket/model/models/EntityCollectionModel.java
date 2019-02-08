@@ -37,17 +37,23 @@ import org.apache.isis.core.commons.lang.ClassUtil;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
+import org.apache.isis.core.metamodel.adapter.oid.UniversalOid;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.facets.collections.sortedby.SortedByFacet;
 import org.apache.isis.core.metamodel.facets.object.paged.PagedFacet;
 import org.apache.isis.core.metamodel.facets.object.plural.PluralFacet;
+import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
+import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
+import org.apache.isis.core.runtime.persistence.adapter.PojoAdapter;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
+import org.apache.isis.core.runtime.system.persistence.UniversalObjectManager;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.viewer.wicket.model.hints.UiHintContainer;
 import org.apache.isis.viewer.wicket.model.links.LinkAndLabel;
 import org.apache.isis.viewer.wicket.model.links.LinksProvider;
@@ -89,35 +95,50 @@ UiHintContainer {
             List<ObjectAdapter> load(final EntityCollectionModel entityCollectionModel) {
 
                 val isBulkLoad = IsisContext.getConfiguration().getBoolean(KEY_BULK_LOAD, false);
-                final List<ObjectAdapter> adapters = isBulkLoad
+                final Stream<UniversalObjectManager.ResolveResult> resolveResults = isBulkLoad
                         ? loadInBulk(entityCollectionModel)
-                                : loadOneByOne(entityCollectionModel);
-                return adapters;
+                                : loadInBulk(entityCollectionModel); //FIXME [2033] should be 'loadOneByOne'
+
+                val persistenceSession = entityCollectionModel.getPersistenceSession();
+                      
+                // create ObjectAdapter on the fly
+                val authenticationSession = IsisContext.getAuthenticationSession().get();
+				val specificationLoader = IsisContext.getSpecificationLoader();
+				
+                return resolveResults
+                		.map(resolveResult->
+                			PojoAdapter.of(resolveResult.getManagedObject().getPojo(), resolveResult.getUoid(), 
+                					authenticationSession, specificationLoader, persistenceSession)			
+                		)
+                		.collect(Collectors.toList());
             }
 
-            private List<ObjectAdapter> loadInBulk(final EntityCollectionModel model) {
+            private Stream<UniversalObjectManager.ResolveResult> loadInBulk(final EntityCollectionModel model) {
 
-                final Stream<RootOid> rootOids = stream(model.mementoList)
-                        .map(ObjectAdapterMemento.Functions.toOid());
+                final Stream<UniversalOid> uoids = stream(model.mementoList)
+                        .map(ObjectAdapterMemento.Functions.toUoid());
                 
-                val persistenceSession = model.getPersistenceSession();
-                return persistenceSession.adaptersFor(rootOids);
+                val objectManager = UniversalObjectManager.current();
                 
+                //[2033] was ... return persistenceSession.adaptersFor(rootOids);
+                
+                return objectManager.resolve(uoids);
             }
-
-            private List<ObjectAdapter> loadOneByOne(final EntityCollectionModel model) {
-            	
-            	val persistenceSession = model.getPersistenceSession();
-            	val specLoader = model.getSpecificationLoader();
-            	
-                return stream(model.mementoList)
-                        .map(ObjectAdapterMemento.Functions.toAdapter(
-                                ConcurrencyChecking.NO_CHECK,
-                                persistenceSession,
-                                specLoader))
-                        .filter(_NullSafe::isPresent)
-                        .collect(Collectors.toList());
-            }
+            
+//FIXME [2033] not supported yet
+//            private List<ObjectAdapter> loadOneByOne(final EntityCollectionModel model) {
+//            	
+//            	val persistenceSession = model.getPersistenceSession();
+//            	val specLoader = model.getSpecificationLoader();
+//            	
+//                return stream(model.mementoList)
+//                        .map(ObjectAdapterMemento.Functions.toAdapter(
+//                                ConcurrencyChecking.NO_CHECK,
+//                                persistenceSession,
+//                                specLoader))
+//                        .filter(_NullSafe::isPresent)
+//                        .collect(Collectors.toList());
+//            }
 
             @Override
             void setObject(final EntityCollectionModel entityCollectionModel, final List<ObjectAdapter> list) {

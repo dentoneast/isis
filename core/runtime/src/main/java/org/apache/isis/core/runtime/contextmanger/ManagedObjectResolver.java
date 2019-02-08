@@ -4,8 +4,11 @@ import java.net.URI;
 
 import javax.enterprise.inject.Instance;
 
+import org.apache.isis.core.metamodel.adapter.oid.UniversalOid;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
+
+import lombok.val;
 
 /**
  * @since 2.0.0-M3
@@ -29,5 +32,17 @@ public interface ManagedObjectResolver {
 	 * @return
 	 */
 	Instance<ManagedObject> resolve(ObjectSpecId spec, URI identifier);
+	
+	
+	/**
+	 * convenient shortcut
+	 * 
+	 * @param universalOid
+	 * @return reference to the ManagedObject as identified by the universalOid
+	 */
+	default Instance<ManagedObject> resolve(UniversalOid universalOid) {
+		val spec = universalOid.getObjectSpecId();
+		return resolve(spec, universalOid.universalId());
+	}
 	
 }

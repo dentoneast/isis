@@ -24,7 +24,6 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.apache.isis.commons.internal.collections._Lists;
-import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.core.commons.ensure.Ensure;
 import org.apache.isis.core.metamodel.MetaModelContext;
@@ -142,8 +141,7 @@ class ObjectAdapterContext_ObjectAdapterByIdProvider implements ObjectAdapterByI
     		Objects.requireNonNull(rootOid);
     		
     		val universalOid = (UniversalOid) rootOid;
-    		val spec = universalOid.getObjectSpecId();
-    		val instance = contextManager.resolve(spec, universalOid.universalId());
+    		val instance = contextManager.resolve(universalOid);
     		
     		if(instance.isResolvable()) {
     			val managedObject = instance.get();

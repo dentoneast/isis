@@ -19,8 +19,6 @@ package org.apache.isis.core.runtime.system.persistence;
 import java.util.List;
 import java.util.Map;
 
-import javax.jdo.PersistenceManager;
-
 import org.apache.isis.applib.query.Query;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.config.IsisConfiguration;

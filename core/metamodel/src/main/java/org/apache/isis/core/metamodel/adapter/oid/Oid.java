@@ -23,10 +23,15 @@ import java.net.URI;
 
 import org.apache.isis.applib.annotation.Value;
 import org.apache.isis.applib.services.bookmark.Bookmark;
+import org.apache.isis.commons.internal.uri._URI;
+import org.apache.isis.commons.internal.uri._URI.ContainerType;
+import org.apache.isis.commons.internal.uri._URI.ContextType;
 import org.apache.isis.core.commons.encoding.Encodable;
 import org.apache.isis.core.metamodel.adapter.version.Version;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
+
+import lombok.val;
 
 
 /**
@@ -114,6 +119,26 @@ public interface Oid extends Encodable {
         
         public static UniversalOid universal(URI uri) {
             return Oid_Universal.of(uri);
+        }
+        
+        public static UniversalOid universal(final Bookmark bookmark) {
+        	val specId = ObjectSpecId.of(bookmark.getObjectType());
+        	val identifier = bookmark.getIdentifier();
+        	//val state = Oid_State.from(bookmark); // ignored
+        	//val version = Version.empty(); // ignored
+        	
+        	//FIXME [2033] given the specId, try to resolve 'containerType' and 'contextType'
+        	
+        	val uri = _URI.uoidBuilder()
+    				.containerType(ContainerType.spring)
+    				.contextType(ContextType.entities)
+    				.contextId(null)
+    				.path("/"+specId.asString()+"/")
+    				.query(identifier)
+    				.build()
+    				.toURI();
+        	
+        	return universal(uri);
         }
         
         // -- LEGACY

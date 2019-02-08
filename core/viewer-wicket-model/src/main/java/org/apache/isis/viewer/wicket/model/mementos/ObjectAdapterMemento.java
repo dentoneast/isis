@@ -36,8 +36,8 @@ import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
-import org.apache.isis.core.metamodel.adapter.oid.Oid.Factory;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
+import org.apache.isis.core.metamodel.adapter.oid.UniversalOid;
 import org.apache.isis.core.metamodel.facets.object.encodeable.EncodableFacet;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
@@ -634,6 +634,10 @@ public class ObjectAdapterMemento implements Serializable {
             return objectAdapterMemento->Oid.Factory.ofBookmark(objectAdapterMemento.asBookmark());
         }
 
+        public static Function<ObjectAdapterMemento, UniversalOid> toUoid() {
+            return objectAdapterMemento->Oid.Factory.universal(objectAdapterMemento.asBookmark());
+        }
+		
     }
 
     private void ensureScalar() {
