@@ -97,21 +97,24 @@ UiHintContainer {
 
             private List<ObjectAdapter> loadInBulk(final EntityCollectionModel model) {
 
-                final PersistenceSession persistenceSession = model.getPersistenceSession();
-
                 final Stream<RootOid> rootOids = stream(model.mementoList)
                         .map(ObjectAdapterMemento.Functions.toOid());
                 
-                val adapters = persistenceSession.adaptersFor(rootOids);
-                return adapters;
+                val persistenceSession = model.getPersistenceSession();
+                return persistenceSession.adaptersFor(rootOids);
+                
             }
 
             private List<ObjectAdapter> loadOneByOne(final EntityCollectionModel model) {
+            	
+            	val persistenceSession = model.getPersistenceSession();
+            	val specLoader = model.getSpecificationLoader();
+            	
                 return stream(model.mementoList)
-                        .map(ObjectAdapterMemento.Functions.fromMemento(
+                        .map(ObjectAdapterMemento.Functions.toAdapter(
                                 ConcurrencyChecking.NO_CHECK,
-                                model.getPersistenceSession(),
-                                model.getSpecificationLoader()))
+                                persistenceSession,
+                                specLoader))
                         .filter(_NullSafe::isPresent)
                         .collect(Collectors.toList());
             }

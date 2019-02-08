@@ -594,7 +594,7 @@ public class ObjectAdapterMemento implements Serializable {
             return ObjectAdapterMemento::mementoOf;
         }
 
-        public static Function<ObjectAdapterMemento, ObjectAdapter> fromMemento(
+        public static Function<ObjectAdapterMemento, ObjectAdapter> toAdapter(
                 final ConcurrencyChecking concurrencyChecking,
                 final PersistenceSession persistenceSession,
                 final SpecificationLoader specificationLoader) {

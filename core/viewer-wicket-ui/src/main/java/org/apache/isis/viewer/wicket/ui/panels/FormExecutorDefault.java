@@ -151,7 +151,7 @@ implements FormExecutor {
             final ObjectAdapter resultAdapter = obtainResultAdapter();
             // flush any queued changes; any concurrency or violation exceptions will actually be thrown here
             getPersistenceSession().getTransactionManager().flushTransaction();
-            getPersistenceSession().getPersistenceManager().flush();
+            getPersistenceSession().getJDOPersistenceManager().flush();
 
 
             // update target, since version updated (concurrency checks)

@@ -74,7 +74,7 @@ public class IsisJdoSupportDN5 implements IsisJdoSupport_v3_2 {
     @Programmatic
     @Override
     public void ensureLoaded(final Collection<?> domainObjects) {
-        getPersistenceSession().getPersistenceManager().retrieveAll(domainObjects);
+        getPersistenceSession().getJDOPersistenceManager().retrieveAll(domainObjects);
     }
 
     // //////////////////////////////////////
@@ -227,6 +227,6 @@ public class IsisJdoSupportDN5 implements IsisJdoSupport_v3_2 {
     @Programmatic
     @Override
     public PersistenceManager getJdoPersistenceManager() {
-        return getPersistenceSession().getPersistenceManager();
+        return getPersistenceSession().getJDOPersistenceManager();
     }
 }

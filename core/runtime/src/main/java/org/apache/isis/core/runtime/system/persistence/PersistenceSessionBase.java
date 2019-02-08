@@ -172,7 +172,7 @@ abstract class PersistenceSessionBase implements PersistenceSession {
      * Only populated once {@link #open()}'d
      */
     @Override
-    public PersistenceManager getPersistenceManager() {
+    public PersistenceManager getJDOPersistenceManager() {
         return persistenceManager;
     }
 

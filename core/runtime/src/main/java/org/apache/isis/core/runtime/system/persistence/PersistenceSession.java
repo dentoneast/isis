@@ -107,13 +107,13 @@ extends
     // -- JDO SPECIFIC
     // -------------------------------------------------------------------------------------------------
     
-    PersistenceManager getPersistenceManager();
+    javax.jdo.PersistenceManager getJDOPersistenceManager();
     /**
      * Convenient equivalent to {@code getPersistenceManager()}.
      * @return
      */
-    default PersistenceManager pm() {
-        return getPersistenceManager();
+    default javax.jdo.PersistenceManager pm() {
+        return getJDOPersistenceManager();
     }
     
     /**
