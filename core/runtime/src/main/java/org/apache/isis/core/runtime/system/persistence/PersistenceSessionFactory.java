@@ -26,7 +26,7 @@ public interface PersistenceSessionFactory {
     public boolean isInitialized();
     
     public PersistenceSession createPersistenceSession(
-            ServiceInjector servicesInjector,
+            ServiceInjector serviceInjector,
             AuthenticationSession authenticationSession);
     
     public void catalogNamedQueries(final SpecificationLoader specificationLoader);

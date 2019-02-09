@@ -203,7 +203,7 @@ public abstract class ReprRendererAbstract<R extends ReprRendererAbstract<R, T>,
     }
 
     protected Stream<ObjectAdapter> streamServiceAdapters() {
-        return rendererContext.getPersistenceSession().streamServices();
+        return rendererContext.streamServices();
     }
 
 }

@@ -49,7 +49,6 @@ import org.apache.isis.viewer.restfulobjects.rendering.RestfulObjectsApplication
 import org.apache.isis.viewer.restfulobjects.rendering.service.RepresentationService;
 import org.apache.isis.viewer.restfulobjects.rendering.util.Util;
 import org.apache.isis.viewer.restfulobjects.server.ResourceContext;
-import org.apache.isis.viewer.restfulobjects.server.util.OidUtils;
 
 public abstract class ResourceAbstract {
 
@@ -139,14 +138,14 @@ public abstract class ResourceAbstract {
         ObjectAdapter objectAdapter = getObjectAdapterElseNull(domainType, instanceId);
 
         if (objectAdapter == null) {
-            final String instanceIdUnencoded = org.apache.isis.viewer.restfulobjects.server.util.UrlDecoderUtils.urlDecode(instanceId);
+            final String instanceIdUnencoded = org.apache.isis.viewer.restfulobjects.rendering.UrlDecoderUtils.urlDecode(instanceId);
             throw RestfulObjectsApplicationException.createWithMessage(HttpStatusCode.NOT_FOUND, "could not determine adapter for OID: '%s:%s'", domainType, instanceIdUnencoded);
         }
         return objectAdapter;
     }
 
     protected ObjectAdapter getObjectAdapterElseNull(String domainType, final String instanceId) {
-        return OidUtils.getObjectAdapterElseNull(resourceContext, domainType, instanceId);
+        return resourceContext.getObjectAdapterElseNull(domainType, instanceId);
     }
 
     protected ObjectAdapter getServiceAdapter(final String serviceId) {

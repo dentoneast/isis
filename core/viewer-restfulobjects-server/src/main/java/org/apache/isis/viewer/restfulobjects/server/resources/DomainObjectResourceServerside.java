@@ -106,7 +106,7 @@ public class DomainObjectResourceServerside extends ResourceAbstract implements 
             throw RestfulObjectsApplicationException.createWithMessage(HttpStatusCode.BAD_REQUEST, "Could not determine type of domain object to persist (no class with domainType Id of '%s')", domainType);
         }
 
-        final ObjectAdapter objectAdapter = getResourceContext().getPersistenceSession().newTransientInstance(domainTypeSpec);
+        final ObjectAdapter objectAdapter = getResourceContext().newTransientInstance(domainTypeSpec);
 
         final ObjectAdapterUpdateHelper updateHelper = new ObjectAdapterUpdateHelper(getResourceContext(), objectAdapter);
 
@@ -123,7 +123,7 @@ public class DomainObjectResourceServerside extends ResourceAbstract implements 
         if (validity.isVetoed()) {
             throw RestfulObjectsApplicationException.createWithBody(HttpStatusCode.BAD_REQUEST, objectRepr, validity.getReason());
         }
-        getResourceContext().getPersistenceSession().makePersistentInTransaction(objectAdapter);
+        getResourceContext().makePersistentInTransaction(objectAdapter);
 
         return newDomainResourceHelper(objectAdapter).objectRepresentation(RepresentationService.Intent.JUST_CREATED);
     }

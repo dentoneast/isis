@@ -225,7 +225,7 @@ public class ContentNegotiationServiceForRestfulObjectsV1_0 implements ContentNe
                 final String actionArguments = actionArgumentsFrom(objectAndActionInvocation);
                 final DomainObjectList list = domainObjectListFrom(collectionAdapters, elementSpec, actionOwningType, actionId, actionArguments);
 
-                adapter = rendererContext.getPersistenceSession().adapterFor(list);
+                adapter = rendererContext.adapterFor(list);
 
             } else {
                 adapter = objectAndActionInvocation.getReturnedAdapter();

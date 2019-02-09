@@ -16,7 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.apache.isis.viewer.restfulobjects.server.util;
+package org.apache.isis.viewer.restfulobjects.rendering;
 
 import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
@@ -33,7 +33,7 @@ import org.apache.isis.viewer.restfulobjects.rendering.RendererContext;
 
 import static org.apache.isis.commons.internal.base._With.mapIfPresentElse;
 
-public final class OidUtils {
+final class OidUtils {
 
     private OidUtils() {
     }
@@ -43,7 +43,9 @@ public final class OidUtils {
      */
     public static ObjectAdapter getObjectAdapterElseNull(
             final RendererContext rendererContext,
-            final String domainType, final String instanceIdEncoded) {
+            final String domainType, 
+            final String instanceIdEncoded) {
+    	
         final String instanceIdUnencoded = UrlDecoderUtils.urlDecode(instanceIdEncoded);
         String oidStrUnencoded = Oid.marshaller().joinAsOid(domainType, instanceIdUnencoded);
         return getObjectAdapter(rendererContext, oidStrUnencoded);
@@ -55,6 +57,7 @@ public final class OidUtils {
     public static ObjectAdapter getObjectAdapterElseNull(
             final RendererContext rendererContext,
             final String oidStrEncoded) {
+    	
         String oidStrUnencoded = UrlDecoderUtils.urlDecode(oidStrEncoded);
         return getObjectAdapter(rendererContext, oidStrUnencoded);
     }

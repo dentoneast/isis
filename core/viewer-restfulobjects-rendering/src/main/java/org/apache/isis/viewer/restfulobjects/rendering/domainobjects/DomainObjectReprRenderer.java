@@ -41,7 +41,6 @@ import org.apache.isis.viewer.restfulobjects.rendering.LinkFollowSpecs;
 import org.apache.isis.viewer.restfulobjects.rendering.RendererContext;
 import org.apache.isis.viewer.restfulobjects.rendering.ReprRendererAbstract;
 import org.apache.isis.viewer.restfulobjects.rendering.domaintypes.DomainTypeReprRenderer;
-import org.apache.isis.viewer.restfulobjects.rendering.util.OidUtils;
 
 public class DomainObjectReprRenderer extends ReprRendererAbstract<DomainObjectReprRenderer, ObjectAdapter> {
 
@@ -260,15 +259,15 @@ public class DomainObjectReprRenderer extends ReprRendererAbstract<DomainObjectR
     }
 
     private String getDomainType() {
-        return org.apache.isis.viewer.restfulobjects.rendering.util.OidUtils.getDomainType(objectAdapter);
+        return org.apache.isis.viewer.restfulobjects.rendering.domainobjects.OidUtils.getDomainType(objectAdapter);
     }
 
     private String getInstanceId() {
-        return org.apache.isis.viewer.restfulobjects.rendering.util.OidUtils.getInstanceId(objectAdapter);
+        return org.apache.isis.viewer.restfulobjects.rendering.domainobjects.OidUtils.getInstanceId(objectAdapter);
     }
 
     private String getOidStr() {
-        return org.apache.isis.viewer.restfulobjects.rendering.util.OidUtils.getOidStr(objectAdapter);
+        return org.apache.isis.viewer.restfulobjects.rendering.domainobjects.OidUtils.getOidStr(objectAdapter);
     }
 
     private DomainObjectReprRenderer withMembers(final ObjectAdapter objectAdapter) {
