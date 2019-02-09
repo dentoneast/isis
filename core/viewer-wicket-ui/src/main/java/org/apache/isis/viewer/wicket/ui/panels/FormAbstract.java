@@ -19,21 +19,18 @@
 
 package org.apache.isis.viewer.wicket.ui.panels;
 
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.IFormSubmitter;
-import org.apache.wicket.model.IModel;
-
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.viewer.wicket.ui.app.registry.ComponentFactoryRegistry;
 import org.apache.isis.viewer.wicket.ui.app.registry.ComponentFactoryRegistryAccessor;
 import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistry;
 import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistryAccessor;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IFormSubmitter;
+import org.apache.wicket.model.IModel;
 
 public abstract class FormAbstract<T> extends Form<T>
 implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor {
@@ -100,24 +97,18 @@ implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor {
     // Dependencies (from IsisContext)
     // ///////////////////////////////////////////////////////////////////
 
-    protected  PersistenceSession getPersistenceSession() {
-        return getIsisSessionFactory().getCurrentSession().getPersistenceSession();
-    }
-
     protected  AuthenticationSession getAuthenticationSession() {
-        return getIsisSessionFactory().getCurrentSession().getAuthenticationSession();
+        return IsisContext.getAuthenticationSession().orElse(null);
     }
 
     public SpecificationLoader getSpecificationLoader() {
-        return getIsisSessionFactory().getSpecificationLoader();
+        return IsisContext.getSpecificationLoader();
     }
 
     protected ServiceInjector getServicesInjector() {
-        return getIsisSessionFactory().getServiceInjector();
+        return IsisContext.getServiceInjector();
     }
 
-    protected IsisSessionFactory getIsisSessionFactory() {
-        return IsisContext.getSessionFactory();
-    }
+    
 
 }

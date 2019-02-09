@@ -36,6 +36,38 @@ import java.util.function.Function;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 
+import org.apache.isis.commons.internal.cdi._CDI;
+import org.apache.isis.commons.internal.context._Context;
+import org.apache.isis.commons.internal.resources._Resources;
+import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.config.internal._Config;
+import org.apache.isis.core.commons.ensure.Ensure;
+import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import org.apache.isis.core.runtime.threadpool.ThreadPoolSupport;
+import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
+import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettingsAccessor;
+import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
+import org.apache.isis.viewer.wicket.model.models.PageType;
+import org.apache.isis.viewer.wicket.ui.ComponentFactory;
+import org.apache.isis.viewer.wicket.ui.app.registry.ComponentFactoryRegistry;
+import org.apache.isis.viewer.wicket.ui.app.registry.ComponentFactoryRegistryAccessor;
+import org.apache.isis.viewer.wicket.ui.components.actionmenu.entityactions.AdditionalLinksPanel;
+import org.apache.isis.viewer.wicket.ui.components.scalars.string.MultiLineStringPanel;
+import org.apache.isis.viewer.wicket.ui.components.widgets.select2.Select2BootstrapCssReference;
+import org.apache.isis.viewer.wicket.ui.components.widgets.select2.Select2JsReference;
+import org.apache.isis.viewer.wicket.ui.components.widgets.themepicker.IsisWicketThemeSupport;
+import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistry;
+import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistryAccessor;
+import org.apache.isis.viewer.wicket.ui.pages.accmngt.AccountConfirmationMap;
+import org.apache.isis.viewer.wicket.ui.pages.login.WicketLogoutPage;
+import org.apache.isis.viewer.wicket.ui.panels.PanelUtil;
+import org.apache.isis.viewer.wicket.viewer.integration.wicket.AuthenticatedWebSessionForIsis;
+import org.apache.isis.viewer.wicket.viewer.integration.wicket.ConverterForObjectAdapter;
+import org.apache.isis.viewer.wicket.viewer.integration.wicket.ConverterForObjectAdapterMemento;
+import org.apache.isis.viewer.wicket.viewer.integration.wicket.WebRequestCycleForIsis;
+import org.apache.isis.viewer.wicket.viewer.settings.IsisResourceSettings;
 import org.apache.wicket.Application;
 import org.apache.wicket.ConverterLocator;
 import org.apache.wicket.IConverterLocator;
@@ -70,40 +102,6 @@ import org.apache.wicket.util.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.select2.ApplicationSettings;
-
-import org.apache.isis.commons.internal.cdi._CDI;
-import org.apache.isis.commons.internal.context._Context;
-import org.apache.isis.commons.internal.resources._Resources;
-import org.apache.isis.config.IsisConfiguration;
-import org.apache.isis.config.internal._Config;
-import org.apache.isis.core.commons.ensure.Ensure;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-import org.apache.isis.core.runtime.threadpool.ThreadPoolSupport;
-import org.apache.isis.core.security.authentication.AuthenticationSession;
-import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
-import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettingsAccessor;
-import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
-import org.apache.isis.viewer.wicket.model.models.PageType;
-import org.apache.isis.viewer.wicket.ui.ComponentFactory;
-import org.apache.isis.viewer.wicket.ui.app.registry.ComponentFactoryRegistry;
-import org.apache.isis.viewer.wicket.ui.app.registry.ComponentFactoryRegistryAccessor;
-import org.apache.isis.viewer.wicket.ui.components.actionmenu.entityactions.AdditionalLinksPanel;
-import org.apache.isis.viewer.wicket.ui.components.scalars.string.MultiLineStringPanel;
-import org.apache.isis.viewer.wicket.ui.components.widgets.select2.Select2BootstrapCssReference;
-import org.apache.isis.viewer.wicket.ui.components.widgets.select2.Select2JsReference;
-import org.apache.isis.viewer.wicket.ui.components.widgets.themepicker.IsisWicketThemeSupport;
-import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistry;
-import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistryAccessor;
-import org.apache.isis.viewer.wicket.ui.pages.accmngt.AccountConfirmationMap;
-import org.apache.isis.viewer.wicket.ui.pages.login.WicketLogoutPage;
-import org.apache.isis.viewer.wicket.ui.panels.PanelUtil;
-import org.apache.isis.viewer.wicket.viewer.integration.wicket.AuthenticatedWebSessionForIsis;
-import org.apache.isis.viewer.wicket.viewer.integration.wicket.ConverterForObjectAdapter;
-import org.apache.isis.viewer.wicket.viewer.integration.wicket.ConverterForObjectAdapterMemento;
-import org.apache.isis.viewer.wicket.viewer.integration.wicket.WebRequestCycleForIsis;
-import org.apache.isis.viewer.wicket.viewer.settings.IsisResourceSettings;
 
 import de.agilecoders.wicket.core.Bootstrap;
 import de.agilecoders.wicket.core.markup.html.bootstrap.behavior.BootstrapBaseBehavior;
@@ -743,10 +741,6 @@ implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor, WicketVi
     @SuppressWarnings("unchecked")
     public Class<? extends WebPage> getForgotPasswordPageClass() {
         return (Class<? extends WebPage>) getPageClassRegistry().getPageClass(PageType.PASSWORD_RESET);
-    }
-
-    public AuthenticationSession getAuthenticationSession() {
-        return isisSessionFactory.getCurrentSession().getAuthenticationSession();
     }
 
     @Override
