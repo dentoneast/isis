@@ -47,6 +47,10 @@ public final class SystemConstants {
 
 
     public static final String LOCALE_KEY = ConfigurationConstants.ROOT + "locale";
+    
+    // -- SERVICE ID SUPPORT
+
+    public static final String SERVICE_IDENTIFIER = "1";
 
     private SystemConstants() {
     }

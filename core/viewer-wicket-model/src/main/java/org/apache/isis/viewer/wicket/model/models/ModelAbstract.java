@@ -19,14 +19,13 @@
 
 package org.apache.isis.viewer.wicket.model.models;
 
-import org.apache.wicket.model.LoadableDetachableModel;
-
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
+import org.apache.wicket.model.LoadableDetachableModel;
 
 /**
  * Adapter for {@link LoadableDetachableModel}s, providing access to some of the
@@ -49,9 +48,10 @@ public abstract class ModelAbstract<T> extends LoadableDetachableModel<T> {
     // //////////////////////////////////////////////////////////////
 
     protected AuthenticationSession getAuthenticationSession() {
-        return getCurrentSession().getAuthenticationSession();
+        return IsisContext.getAuthenticationSession().orElse(null);
     }
 
+    @Deprecated //TODO [2033] replace with ManagedObjectContext
     public PersistenceSession getPersistenceSession() {
         return getCurrentSession().getPersistenceSession();
     }
@@ -65,7 +65,7 @@ public abstract class ModelAbstract<T> extends LoadableDetachableModel<T> {
     }
 
     public SpecificationLoader getSpecificationLoader() {
-        return getIsisSessionFactory().getSpecificationLoader();
+        return IsisContext.getSpecificationLoader();
     }
 
 

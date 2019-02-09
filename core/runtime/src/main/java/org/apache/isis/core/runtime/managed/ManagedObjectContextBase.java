@@ -14,23 +14,33 @@ import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * 
  * @since 2.0.0-M3
  *
  */
+@RequiredArgsConstructor
 public abstract class ManagedObjectContextBase implements ManagedObjectContext {
 
 	// -- FINAL FIELDS
 	
-    @Getter protected final IsisConfiguration configuration = IsisContext.getConfiguration();
-    @Getter protected final ServiceInjector serviceInjector = IsisContext.getServiceInjector();
-    @Getter protected final ServiceRegistry serviceRegistry = IsisContext.getServiceRegistry();
-    @Getter protected final SpecificationLoader specificationLoader = IsisContext.getSpecificationLoader();
-    @Getter protected final AuthenticationSession authenticationSession = 
-    		IsisContext.getAuthenticationSession()
-    		.orElse(null);
+    @Getter protected final IsisConfiguration configuration;
+    @Getter protected final ServiceInjector serviceInjector;
+    @Getter protected final ServiceRegistry serviceRegistry;
+    @Getter protected final SpecificationLoader specificationLoader;
+    @Getter protected final AuthenticationSession authenticationSession;
+    
+    // -- NO ARG CONSTRUCTOR
+    
+    protected ManagedObjectContextBase() {
+    	configuration = IsisContext.getConfiguration();
+        serviceInjector = IsisContext.getServiceInjector();
+        serviceRegistry = IsisContext.getServiceRegistry();
+        specificationLoader = IsisContext.getSpecificationLoader();
+        authenticationSession = IsisContext.getAuthenticationSession().orElse(null);
+    }
     
     // -- OBJECT ADAPTER SUPPORT
     

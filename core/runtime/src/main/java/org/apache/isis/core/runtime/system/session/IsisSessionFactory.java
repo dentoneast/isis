@@ -53,7 +53,10 @@ public interface IsisSessionFactory {
     public IsisSession openSession(final AuthenticationSession authenticationSession);
     public void closeSession();
 
-    public IsisSession getCurrentSession();
+    @Deprecated //TODO [2033] replace with IsisSession.current()
+    default public IsisSession getCurrentSession() {
+    	return IsisSession.current();
+    }
 
 
     /**

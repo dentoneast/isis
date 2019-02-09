@@ -32,6 +32,7 @@ import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.commons.internal.base._Blackhole;
+import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.ServiceInitializer;
@@ -40,13 +41,14 @@ import org.apache.isis.core.runtime.fixtures.FixturesInstallerFromConfiguration;
 import org.apache.isis.core.runtime.system.MessageRegistry;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.internal.InitialisationSession;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManagerException;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
 import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
+
+import lombok.val;
 
 /**
  * Is the factory of {@link IsisSession}s, also holding a reference to the current session using
@@ -217,40 +219,26 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
         specificationLoader.shutdown();
     }
 
-    // -- openSession, closeSession, currentSession, inSession
+    // -- 
     
-    /**
-     * Inheritable... allows to have concurrent computations utilizing the ForkJoinPool.
-     * see {@link IsisContext#compute(java.util.function.Supplier)}
-     */ 
-    private final InheritableThreadLocal<IsisSession> currentSession = new InheritableThreadLocal<>();
-
     @Override
     public IsisSession openSession(final AuthenticationSession authenticationSession) {
 
         closeSession();
 
-        final PersistenceSession persistenceSession =
-                persistenceSessionFactory.createPersistenceSession(authenticationSession);
-        IsisSession session = new IsisSession(authenticationSession, persistenceSession);
-        currentSession.set(session);
-        session.open();
-        return session;
+        val isisSession = new IsisSession(authenticationSession, persistenceSessionFactory);
+        isisSession.open();
+        return isisSession;
     }
 
     @Override
     public void closeSession() {
         final IsisSession existingSessionIfAny = getCurrentSession();
         if (existingSessionIfAny == null) {
+        	_Context.cleanupThread(); // just in case, to have a well defined post condition here
             return;
         }
         existingSessionIfAny.close();
-        currentSession.set(null);
-    }
-
-    @Override
-    public IsisSession getCurrentSession() {
-        return currentSession.get();
     }
 
     private IsisTransactionManager getCurrentSessionTransactionManager() {

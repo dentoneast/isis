@@ -19,12 +19,17 @@
 
 package org.apache.isis.core.runtime.system.session;
 
-import org.apache.isis.core.commons.components.SessionScopedComponent;
+import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.core.commons.util.ToString;
+import org.apache.isis.core.runtime.managed.ManagedObjectContextBase;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
+import org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory;
 import org.apache.isis.core.runtime.system.transaction.IsisTransaction;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
+
+import lombok.Getter;
 
 /**
  * Analogous to (and in essence a wrapper for) a JDO <code>PersistenceManager</code>;
@@ -35,29 +40,43 @@ import org.apache.isis.core.security.authentication.AuthenticationSession;
  *
  * @see IsisSessionFactory
  */
-public class IsisSession implements SessionScopedComponent {
+public class IsisSession extends ManagedObjectContextBase {
 
-    // private static final Logger LOG = LoggerFactory.getLogger(IsisSession.class);
-
-    // -- constructor, fields
-
-    private final AuthenticationSession authenticationSession;
-    private PersistenceSession persistenceSession; // only non-final so can be replaced in tests.
-
-    public IsisSession(
-            final AuthenticationSession authenticationSession,
-            final PersistenceSession persistenceSession) {
-
-        this.authenticationSession = authenticationSession;
-        this.persistenceSession = persistenceSession;
-    }
-
-
-    // -- open, close
+    @Deprecated //TODO [2033] avoid extensions to ManagedObjectContext 
+    @Getter private final PersistenceSession persistenceSession;
+    
+	public IsisSession(
+			final AuthenticationSession authenticationSession,
+			final PersistenceSessionFactory persistenceSessionFactory) {
+		
+		super(IsisContext.getConfiguration(),
+				IsisContext.getServiceInjector(),
+				IsisContext.getServiceRegistry(),
+				IsisContext.getSpecificationLoader(),
+				authenticationSession);
+		
+		this.persistenceSession =
+                persistenceSessionFactory.createPersistenceSession(authenticationSession);
+        
+        
+	}
+	
+	// -- CURRENT
+	
+	public static IsisSession current() {
+		return _Context.threadLocalGetIfAny(IsisSession.class);
+	}
+	
+	// -- OPEN
+    
+    
     void open() {
+    	_Context.threadLocalPut(IsisSession.class, this);
         persistenceSession.open();
     }
 
+    // -- CLOSE
+    
     /**
      * Closes session.
      */
@@ -65,30 +84,8 @@ public class IsisSession implements SessionScopedComponent {
         if(persistenceSession != null) {
             persistenceSession.close();
         }
+        _Context.cleanupThread();
     }
-
-
-
-
-    // -- AuthenticationSession
-    /**
-     * Returns the {@link AuthenticationSession} representing this user for this
-     * {@link IsisSession}.
-     */
-    public AuthenticationSession getAuthenticationSession() {
-        return authenticationSession;
-    }
-
-
-    // -- Persistence Session
-    /**
-     * The {@link PersistenceSession} within this {@link IsisSession}.
-     */
-    public PersistenceSession getPersistenceSession() {
-        return persistenceSession;
-    }
-
-
 
     // -- transaction
 

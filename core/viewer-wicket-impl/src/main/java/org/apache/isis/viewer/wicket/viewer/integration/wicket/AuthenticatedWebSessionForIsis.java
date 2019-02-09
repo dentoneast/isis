@@ -19,14 +19,6 @@
 
 package org.apache.isis.viewer.wicket.viewer.integration.wicket;
 
-import javax.validation.constraints.NotNull;
-
-import org.apache.wicket.Session;
-import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
-import org.apache.wicket.authroles.authorization.strategies.role.Roles;
-import org.apache.wicket.request.Request;
-import org.apache.wicket.request.cycle.RequestCycle;
-
 import org.apache.isis.applib.clock.Clock;
 import org.apache.isis.applib.services.session.SessionLoggingService;
 import org.apache.isis.core.runtime.system.context.IsisContext;
@@ -39,6 +31,11 @@ import org.apache.isis.viewer.wicket.model.models.BookmarkedPagesModel;
 import org.apache.isis.viewer.wicket.ui.components.widgets.breadcrumbs.BreadcrumbModel;
 import org.apache.isis.viewer.wicket.ui.components.widgets.breadcrumbs.BreadcrumbModelProvider;
 import org.apache.isis.viewer.wicket.ui.pages.BookmarkedPagesModelProvider;
+import org.apache.wicket.Session;
+import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
+import org.apache.wicket.authroles.authorization.strategies.role.Roles;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.cycle.RequestCycle;
 
 /**
  * Viewer-specific implementation of {@link AuthenticatedWebSession}, which
@@ -46,7 +43,8 @@ import org.apache.isis.viewer.wicket.ui.pages.BookmarkedPagesModelProvider;
  * also tracks thread usage (so that multiple concurrent requests are all
  * associated with the same session).
  */
-public class AuthenticatedWebSessionForIsis extends AuthenticatedWebSession implements BreadcrumbModelProvider, BookmarkedPagesModelProvider {
+public class AuthenticatedWebSessionForIsis extends AuthenticatedWebSession 
+implements BreadcrumbModelProvider, BookmarkedPagesModelProvider {
 
     private static final long serialVersionUID = 1L;
 
@@ -160,7 +158,7 @@ public class AuthenticatedWebSessionForIsis extends AuthenticatedWebSession impl
     // /////////////////////////////////////////////////
 
     protected AuthenticationManager getAuthenticationManager() {
-        return getIsisSessionFactory().getAuthenticationManager();
+        return IsisContext.getAuthenticationManager();
     }
 
     // /////////////////////////////////////////////////
@@ -190,11 +188,11 @@ public class AuthenticatedWebSessionForIsis extends AuthenticatedWebSession impl
 
     }
 
-    protected @NotNull SessionLoggingService getSessionLoggingService() {
+    protected SessionLoggingService getSessionLoggingService() {
         try {
-            final SessionLoggingService service = getIsisSessionFactory().getServiceInjector()
-                    .lookupService(SessionLoggingService.class)
-                    .orElseGet(SessionLoggingService.Stderr::new);
+            final SessionLoggingService service = 
+            		IsisContext.getServiceRegistry().lookupService(SessionLoggingService.class)
+            		.orElseGet(SessionLoggingService.Stderr::new);
             return service;
         } catch (Exception e) {
             // fallback to System.err

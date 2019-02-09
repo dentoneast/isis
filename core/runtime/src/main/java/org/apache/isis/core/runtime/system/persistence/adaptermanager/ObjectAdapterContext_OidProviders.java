@@ -31,6 +31,7 @@ import org.apache.isis.core.metamodel.facets.object.viewmodel.ViewModelFacet;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.runtime.contextmanger.ContextManager;
 import org.apache.isis.core.runtime.contextmanger.ManagedObjectResolver;
+import org.apache.isis.core.runtime.system.SystemConstants;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.persistence.adaptermanager.factories.OidFactory.OidProvider;
@@ -65,7 +66,7 @@ class ObjectAdapterContext_OidProviders {
 
         @Override
         public RootOid oidFor(ManagedObject managedObject) {
-            final String identifier = PersistenceSession.SERVICE_IDENTIFIER;
+            final String identifier = SystemConstants.SERVICE_IDENTIFIER;
             return Oid.Factory.persistentOf(managedObject.getSpecification().getSpecId(), identifier);
         }
 

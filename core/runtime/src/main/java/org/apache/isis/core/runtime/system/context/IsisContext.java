@@ -179,7 +179,7 @@ public interface IsisContext {
      * @throws IllegalStateException - if IsisSessionFactory not resolvable
      */
     public static Optional<IsisSession> getCurrentIsisSession() {
-        return Optional.ofNullable(getSessionFactory().getCurrentSession());
+        return Optional.ofNullable(IsisSession.current());
     }
 
     /**
