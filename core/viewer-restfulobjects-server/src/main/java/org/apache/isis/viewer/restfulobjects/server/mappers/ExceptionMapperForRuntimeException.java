@@ -26,9 +26,6 @@ import javax.ws.rs.ext.Provider;
 
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.session.IsisSession;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.runtime.system.transaction.IsisTransaction;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 
@@ -55,23 +52,9 @@ public class ExceptionMapperForRuntimeException extends ExceptionMapperAbstract<
     // -- HELPER
     
     private Optional<IsisTransaction> getCurrentTransaction() {
-        return getCurrentSession()
-                .map(IsisSession::getPersistenceSession)
-                .map(PersistenceSession::getTransactionManager)
+        return IsisContext.getTransactionManager()
                 .map(IsisTransactionManager::getCurrentTransaction);
     }
     
-    private Optional<IsisSession> getCurrentSession() {
-        return getIsisSessionFactory()
-                .map(IsisSessionFactory::getCurrentSession);
-    }
-    
-    private Optional<IsisSessionFactory> getIsisSessionFactory() {
-        try {
-            return Optional.ofNullable(IsisContext.getSessionFactory());    
-        } catch (Throwable e) {
-            return Optional.empty();
-        }
-    }
 
 }

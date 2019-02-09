@@ -45,6 +45,7 @@ import org.apache.isis.core.runtime.managed.ManagedObjectContextBase;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
 import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
@@ -188,6 +189,15 @@ public interface IsisContext {
     public static Optional<PersistenceSession> getPersistenceSession() {
         return getCurrentIsisSession()
                 .map(IsisSession::getPersistenceSession);
+    }
+    
+    /**
+     * @return framework's current IsisTransactionManager (if any)
+     * @throws IllegalStateException - if IsisSessionFactory not resolvable
+     */
+    public static Optional<IsisTransactionManager> getTransactionManager() {
+        return getPersistenceSession()
+        	    .map(PersistenceSession::getTransactionManager);
     }
     
     /**

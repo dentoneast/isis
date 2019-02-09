@@ -40,14 +40,21 @@ public class IsisTransactionFilterForRestfulObjects implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        // no-op if no session available.
+
+    	// no-op if no session available.
         final IsisSessionFactory isisSessionFactory = IsisContext.getSessionFactory();
         if(!isisSessionFactory.isInSession()) {
             chain.doFilter(request, response);
             return;
         }
 
-        final IsisTransactionManager isisTransactionManager = transactionManagerFrom(isisSessionFactory);
+        // no-op if no transaction manager available.
+        final IsisTransactionManager isisTransactionManager = IsisContext.getTransactionManager().orElse(null);
+        if(isisTransactionManager==null) {
+        	chain.doFilter(request, response);
+            return;
+        }
+        
         isisTransactionManager.startTransaction();
         try {
             chain.doFilter(request, response);
@@ -67,10 +74,6 @@ public class IsisTransactionFilterForRestfulObjects implements Filter {
     @Override
     public void destroy() {
     }
-
-
-    protected IsisTransactionManager transactionManagerFrom(final IsisSessionFactory isisSessionFactory) {
-        return isisSessionFactory.getCurrentSession().getPersistenceSession().getTransactionManager();
-    }
+    
 
 }
