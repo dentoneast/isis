@@ -17,6 +17,7 @@
 package org.apache.isis.viewer.restfulobjects.server.resources;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -24,15 +25,17 @@ import javax.ws.rs.core.Response;
 import org.apache.isis.applib.annotation.SemanticsOf;
 import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.xactn.TransactionService;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
+import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.viewer.restfulobjects.applib.JsonRepresentation;
 import org.apache.isis.viewer.restfulobjects.applib.client.RestfulResponse;
@@ -49,13 +52,15 @@ import org.apache.isis.viewer.restfulobjects.rendering.domainobjects.ObjectAndPr
 import org.apache.isis.viewer.restfulobjects.rendering.service.RepresentationService;
 import org.apache.isis.viewer.restfulobjects.server.ResourceContext;
 
-public class DomainResourceHelper {
+import lombok.Getter;
+
+class DomainResourceHelper {
 
     static class RepresentationServiceContextAdapter implements RepresentationService.Context {
 
         private final RendererContext rendererContext;
-        private final ObjectAdapterLinkTo adapterLinkTo;
-        private RepresentationService.Intent intent;
+        @Getter private final ObjectAdapterLinkTo adapterLinkTo;
+        @Getter private RepresentationService.Intent intent;
 
         RepresentationServiceContextAdapter(
                 final RendererContext rendererContext,
@@ -63,11 +68,6 @@ public class DomainResourceHelper {
             this.rendererContext = rendererContext;
             this.adapterLinkTo = adapterLinkTo;
             this.intent = rendererContext.getIntent();
-        }
-
-        @Override
-        public ObjectAdapterLinkTo getAdapterLinkTo() {
-            return adapterLinkTo;
         }
 
         @Override
@@ -83,11 +83,6 @@ public class DomainResourceHelper {
         @Override
         public IsisConfiguration getConfiguration() {
             return rendererContext.getConfiguration();
-        }
-
-        @Override
-        public PersistenceSession getPersistenceSession() {
-            return rendererContext.getPersistenceSession();
         }
 
         @Override
@@ -166,14 +161,45 @@ public class DomainResourceHelper {
         }
 
         @Override
-        public ServiceInjector getServicesInjector() {
-            return rendererContext.getServicesInjector();
+        public ServiceInjector getServiceInjector() {
+            return rendererContext.getServiceInjector();
         }
+        
+		@Override
+		public ServiceRegistry getServiceRegistry() {
+			return rendererContext.getServiceRegistry();
+		}
 
-        @Override
-        public RepresentationService.Intent getIntent() {
-            return intent;
-        }
+		@Override
+		public Stream<ObjectAdapter> streamServiceAdapters() {
+			return rendererContext.streamServiceAdapters();
+		}
+
+		@Override
+		public ObjectAdapter adapterFor(Object pojo) {
+			return rendererContext.adapterFor(pojo);
+		}
+
+		@Override
+		public ObjectAdapter newTransientInstance(ObjectSpecification domainTypeSpec) {
+			return rendererContext.newTransientInstance(domainTypeSpec);
+		}
+
+		@Override
+		public void makePersistentInTransaction(ObjectAdapter objectAdapter) {
+			rendererContext.makePersistentInTransaction(objectAdapter);
+		}
+
+		@Override
+		public Object fetchPersistentPojoInTransaction(RootOid rootOid) {
+			return rendererContext.fetchPersistentPojoInTransaction(rootOid);
+		}
+
+		@Override
+		public boolean isTransient(Object domainObject) {
+			return rendererContext.isTransient(domainObject);
+		}
+
     }
 
     private final RepresentationServiceContextAdapter representationServiceContext;
@@ -383,12 +409,8 @@ public class DomainResourceHelper {
     // dependencies (from context)
     // //////////////////////////////////////
 
-    private ServiceInjector getServicesInjector() {
-        return resourceContext.getServicesInjector();
-    }
-
     private <T> T lookupService(Class<T> serviceType) {
-        return getServicesInjector().lookupService(serviceType).orElse(null);
+        return resourceContext.getServiceRegistry().lookupService(serviceType).orElse(null);
     }
 
 }

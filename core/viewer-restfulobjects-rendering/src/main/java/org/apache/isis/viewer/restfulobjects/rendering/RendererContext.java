@@ -19,36 +19,26 @@
 package org.apache.isis.viewer.restfulobjects.rendering;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import javax.ws.rs.core.MediaType;
 
 import org.apache.isis.applib.annotation.Where;
-import org.apache.isis.applib.services.inject.ServiceInjector;
-import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
-import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.security.authentication.AuthenticationSession;
+import org.apache.isis.core.runtime.managed.ManagedObjectContext;
 import org.apache.isis.viewer.restfulobjects.rendering.domainobjects.DomainObjectReprRenderer;
 import org.apache.isis.viewer.restfulobjects.rendering.service.RepresentationService;
 
-public interface RendererContext {
+public interface RendererContext extends ManagedObjectContext {
 
     String urlFor(final String url);
 
-    AuthenticationSession getAuthenticationSession();
-    IsisConfiguration getConfiguration();
-    
-    @Deprecated //TODO [2033]
-    PersistenceSession getPersistenceSession();
+//    @Deprecated //TODO [2033]
+//    PersistenceSessionForViewers getPersistenceSession();
     
     List<MediaType> getAcceptableMediaTypes();
-    
-    SpecificationLoader getSpecificationLoader();
-    ServiceInjector getServicesInjector();
     
     InteractionInitiatedBy getInteractionInitiatedBy();
 
@@ -85,28 +75,12 @@ public interface RendererContext {
 
     // -- TEMPORARY FOR REFACTORING
     
-	default Stream<ObjectAdapter> streamServices() {
-		return getPersistenceSession().streamServices();
-	}
-	
-	default ObjectAdapter adapterFor(Object pojo) {
-		return getPersistenceSession().adapterFor(pojo);
-	}
-
 	default ObjectAdapter getObjectAdapterElseNull(String oidFromHref) {
 		return OidUtils.getObjectAdapterElseNull(this, oidFromHref);
 	}
 	
 	default ObjectAdapter getObjectAdapterElseNull(String domainType, String instanceIdEncoded) {
 		return OidUtils.getObjectAdapterElseNull(this, domainType, instanceIdEncoded);
-	}
-	
-	default ObjectAdapter newTransientInstance(ObjectSpecification domainTypeSpec) {
-		return getPersistenceSession().newTransientInstance(domainTypeSpec);
-	}
-	
-	default void makePersistentInTransaction(ObjectAdapter objectAdapter) {
-		getPersistenceSession().makePersistentInTransaction(objectAdapter);
 	}
 
 }

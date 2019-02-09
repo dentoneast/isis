@@ -57,7 +57,7 @@ public class HomePageReprRenderer extends ReprRendererAbstract<HomePageReprRende
 
         addLinkToUser(getRendererContext().getAuthenticationSession());
         addLinkToMenuBars();
-        addLinkToServices(getRendererContext().streamServices());
+        addLinkToServices(getRendererContext().streamServiceAdapters());
         addLinkToVersion();
         addLinkToDomainTypes(((ResourceContext)getRendererContext()).getSpecificationLoader().allSpecifications());
 

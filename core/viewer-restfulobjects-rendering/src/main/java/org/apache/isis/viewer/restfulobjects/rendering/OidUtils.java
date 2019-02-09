@@ -67,20 +67,19 @@ final class OidUtils {
     private static ObjectAdapter getObjectAdapter(
             final RendererContext rendererContext,
             final String oidStrUnencoded) {
+    	
         final RootOid rootOid = RootOid.deString(oidStrUnencoded);
-        final PersistenceSession ps = rendererContext.getPersistenceSession();
-        final Object domainObject = domainObjectForAny(ps, rootOid);
+        final Object domainObject = domainObjectForAny(rendererContext, rootOid);
         
-        return ps.adapterFor(domainObject);
+        return rendererContext.adapterFor(domainObject);
     }
     
-    private static Object domainObjectForAny(PersistenceSession persistenceSession, final RootOid rootOid) {
+    private static Object domainObjectForAny(final RendererContext rendererContext, final RootOid rootOid) {
         
         final MetaModelContext context = MetaModelContext.current();
         
         final ObjectSpecId specId = rootOid.getObjectSpecId();
-        final ObjectSpecification spec = context.getSpecificationLoader()
-                .lookupBySpecId(specId);
+        final ObjectSpecification spec = context.getSpecificationLoader().lookupBySpecId(specId);
         if(spec == null) {
             // eg "NONEXISTENT:123"
             return null;
@@ -90,8 +89,7 @@ final class OidUtils {
 
             try {
                 final RootOid fixedRootOid = ensureConsistentOidState(rootOid);
-                final ObjectAdapter adapter = persistenceSession
-                        .adapterFor(fixedRootOid, ConcurrencyChecking.NO_CHECK);
+                final ObjectAdapter adapter = rendererContext.adapterFor(fixedRootOid);
                 
                 final Object pojo = mapIfPresentElse(adapter, ObjectAdapter::getPojo, null);
                 return pojo;
@@ -101,9 +99,9 @@ final class OidUtils {
             }
         } else {
             try {
-                final Object domainObject = persistenceSession.fetchPersistentPojoInTransaction(rootOid);
+                final Object domainObject = rendererContext.fetchPersistentPojoInTransaction(rootOid);
                 //TODO[ISIS-1976] changed behavior: predicate was objectAdapter.isTransient();
-                return persistenceSession.isTransient(domainObject) ? null : domainObject;
+                return rendererContext.isTransient(domainObject) ? null : domainObject;
             } catch(final ObjectNotFoundException ex) {
                 return null;
             }
