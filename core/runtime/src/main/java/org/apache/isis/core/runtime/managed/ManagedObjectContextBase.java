@@ -82,13 +82,13 @@ public abstract class ManagedObjectContextBase implements ManagedObjectContext {
 		return ps().isTransient(domainObject);	
 	}
     
-    // -- PERSISTENCE SESSION FOR VIEWERS (rename?)
+    // -- PERSISTENCE SUPPORT FOR MANAGED OBJECTS
     
     private ManagedObjectPersistence ps() {
-    	return persistenceSessionForViewers.get();
+    	return managedObjectPersistence.get();
     }
 
-    private final _Lazy<ManagedObjectPersistence> persistenceSessionForViewers = 
+    private final _Lazy<ManagedObjectPersistence> managedObjectPersistence = 
     		_Lazy.of(this::createPersistenceSessionForViewers);
     
     private ManagedObjectPersistence createPersistenceSessionForViewers() {
