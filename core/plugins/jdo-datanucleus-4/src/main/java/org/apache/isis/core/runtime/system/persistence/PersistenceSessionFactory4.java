@@ -186,7 +186,6 @@ PersistenceSessionFactory, FixturesInstalledFlag {
     @Programmatic
     @Override
     public PersistenceSession4 createPersistenceSession(
-            final ServiceInjector servicesInjector,
             final AuthenticationSession authenticationSession) {
 
         Objects.requireNonNull(applicationComponents,
@@ -201,7 +200,6 @@ PersistenceSessionFactory, FixturesInstalledFlag {
                 applicationComponents.get().getPersistenceManagerFactory();
 
         return new PersistenceSession4(
-                servicesInjector,
                 authenticationSession, persistenceManagerFactory,
                 fixturesInstalledFlag);
     }

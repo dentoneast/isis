@@ -41,7 +41,7 @@ public class IsisTransactionFilterForRestfulObjects implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         // no-op if no session available.
-        final IsisSessionFactory isisSessionFactory = isisSessionFactoryFrom(request);
+        final IsisSessionFactory isisSessionFactory = IsisContext.getSessionFactory();
         if(!isisSessionFactory.isInSession()) {
             chain.doFilter(request, response);
             return;
@@ -68,9 +68,6 @@ public class IsisTransactionFilterForRestfulObjects implements Filter {
     public void destroy() {
     }
 
-    protected IsisSessionFactory isisSessionFactoryFrom(final ServletRequest request) {
-        return IsisContext.getSessionFactory();
-    }
 
     protected IsisTransactionManager transactionManagerFrom(final IsisSessionFactory isisSessionFactory) {
         return isisSessionFactory.getCurrentSession().getPersistenceSession().getTransactionManager();

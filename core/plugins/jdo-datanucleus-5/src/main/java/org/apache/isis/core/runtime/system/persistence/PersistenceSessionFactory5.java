@@ -26,11 +26,6 @@ import java.util.Set;
 import javax.enterprise.inject.Vetoed;
 import javax.jdo.PersistenceManagerFactory;
 
-import org.datanucleus.PropertyNames;
-import org.datanucleus.api.jdo.JDOPersistenceManagerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.base._Lazy;
@@ -41,6 +36,10 @@ import org.apache.isis.core.runtime.persistence.FixturesInstalledFlag;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.objectstore.jdo.datanucleus.JDOStateManagerForIsis;
 import org.apache.isis.objectstore.jdo.service.RegisterEntities;
+import org.datanucleus.PropertyNames;
+import org.datanucleus.api.jdo.JDOPersistenceManagerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -186,7 +185,6 @@ implements PersistenceSessionFactory, FixturesInstalledFlag {
     @Programmatic
     @Override
     public PersistenceSession5 createPersistenceSession(
-            final ServiceInjector servicesInjector,
             final AuthenticationSession authenticationSession) {
 
         Objects.requireNonNull(applicationComponents.get(),
@@ -201,7 +199,6 @@ implements PersistenceSessionFactory, FixturesInstalledFlag {
                 applicationComponents.get().getPersistenceManagerFactory();
 
         return new PersistenceSession5(
-                servicesInjector,
                 authenticationSession, persistenceManagerFactory,
                 fixturesInstalledFlag);
     }

@@ -16,7 +16,6 @@
  */
 package org.apache.isis.core.runtime.system.persistence;
 
-import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 
@@ -25,9 +24,7 @@ public interface PersistenceSessionFactory {
     public void init();
     public boolean isInitialized();
     
-    public PersistenceSession createPersistenceSession(
-            ServiceInjector serviceInjector,
-            AuthenticationSession authenticationSession);
+    public PersistenceSession createPersistenceSession(AuthenticationSession authenticationSession);
     
     public void catalogNamedQueries(final SpecificationLoader specificationLoader);
 

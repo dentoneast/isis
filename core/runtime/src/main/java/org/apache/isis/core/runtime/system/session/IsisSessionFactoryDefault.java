@@ -231,7 +231,7 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
         closeSession();
 
         final PersistenceSession persistenceSession =
-                persistenceSessionFactory.createPersistenceSession(serviceInjector, authenticationSession);
+                persistenceSessionFactory.createPersistenceSession(authenticationSession);
         IsisSession session = new IsisSession(authenticationSession, persistenceSession);
         currentSession.set(session);
         session.open();

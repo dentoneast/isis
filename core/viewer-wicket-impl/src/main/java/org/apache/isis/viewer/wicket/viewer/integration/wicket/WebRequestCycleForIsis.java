@@ -81,6 +81,8 @@ import lombok.extern.slf4j.Slf4j;
  * Isis-specific implementation of the Wicket's {@link RequestCycle},
  * automatically opening a {@link IsisSession} at the beginning of the request
  * and committing the transaction and closing the session at the end.
+ * 
+ * @since 2.0.0-M3
  */
 @Slf4j
 public class WebRequestCycleForIsis implements IRequestCycleListener {

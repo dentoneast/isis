@@ -115,12 +115,11 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
      * persisted objects and persist changes to the object that are saved.
      */
     public PersistenceSession5(
-            final ServiceInjector servicesInjector,
             final AuthenticationSession authenticationSession,
             final PersistenceManagerFactory jdoPersistenceManagerFactory,
             final FixturesInstalledFlag fixturesInstalledFlag) {
 
-        super(servicesInjector, authenticationSession, jdoPersistenceManagerFactory, fixturesInstalledFlag);
+        super(authenticationSession, jdoPersistenceManagerFactory, fixturesInstalledFlag);
     }
 
     // -- open
@@ -156,7 +155,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
                 PersistenceQueryFindUsingApplibQueryDefault.class,
                 new PersistenceQueryFindUsingApplibQueryProcessor(this));
 
-        objectAdapterContext = ObjectAdapterContext.openContext(servicesInjector, authenticationSession, specificationLoader, this);
+        objectAdapterContext = ObjectAdapterContext.openContext(serviceInjector, authenticationSession, specificationLoader, this);
 
         // tell the proxy of all request-scoped services to instantiate the underlying
         // services, store onto the thread-local and inject into them...
@@ -188,7 +187,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
     }
 
     private void postConstructOnRequestScopedServices() {
-        servicesInjector.streamServices()
+        serviceInjector.streamServices()
         .forEach(service->{
             if(service instanceof RequestScopedService) {
                 ((RequestScopedService)service).__isis_postConstruct();
@@ -197,10 +196,10 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
     }
 
     private void startRequestOnRequestScopedServices() {
-        servicesInjector.streamServices()
+        serviceInjector.streamServices()
         .forEach(service->{
             if(service instanceof RequestScopedService) {
-                ((RequestScopedService)service).__isis_startRequest(servicesInjector);
+                ((RequestScopedService)service).__isis_startRequest(serviceInjector);
             }
         });
     }
@@ -208,7 +207,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
     private Command createCommand() {
         final Command command = commandService.create();
 
-        servicesInjector.injectServicesInto(command);
+        serviceInjector.injectServicesInto(command);
         return command;
     }
 
@@ -273,7 +272,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
     }
 
     private void endRequestOnRequestScopeServices() {
-        servicesInjector.streamServices()
+        serviceInjector.streamServices()
         .forEach(service->{
             if(service instanceof RequestScopedService) {
                 ((RequestScopedService)service).__isis_endRequest();
@@ -282,7 +281,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
     }
 
     private void preDestroyOnRequestScopedServices() {
-        servicesInjector.streamServices()
+        serviceInjector.streamServices()
         .forEach(service->{
             if(service instanceof RequestScopedService) {
                 ((RequestScopedService)service).__isis_preDestroy();
@@ -757,7 +756,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
 
         // need to do eagerly, because (if a viewModel then) a
         // viewModel's #viewModelMemento might need to use services
-        servicesInjector.injectServicesInto(pojo);
+        serviceInjector.injectServicesInto(pojo);
 
         final Version datastoreVersion = getVersionIfAny(pc);
         final RootOid originalOid = objectAdapterContext.createPersistentOrViewModelOid(pojo);
