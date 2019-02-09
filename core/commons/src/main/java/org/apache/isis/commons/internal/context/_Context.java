@@ -19,6 +19,11 @@
 
 package org.apache.isis.commons.internal.context;
 
+import static org.apache.isis.commons.internal.base._NullSafe.stream;
+import static org.apache.isis.commons.internal.base._With.ifPresentElseGet;
+import static org.apache.isis.commons.internal.base._With.ifPresentElseThrow;
+import static org.apache.isis.commons.internal.base._With.requires;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,11 +34,6 @@ import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.plugins.environment.IsisSystemEnvironment;
 import org.apache.isis.core.plugins.environment.IsisSystemEnvironmentPlugin;
-
-import static org.apache.isis.commons.internal.base._NullSafe.stream;
-import static org.apache.isis.commons.internal.base._With.ifPresentElseGet;
-import static org.apache.isis.commons.internal.base._With.ifPresentElseThrow;
-import static org.apache.isis.commons.internal.base._With.requires;
 
 /**
  * <h1>- internal use only -</h1>
@@ -59,6 +59,8 @@ public final class _Context {
      * If synchronization is required it should happen elsewhere, not here!<br/>
      */
     private final static Map<String, Object> singletonMap = new HashMap<>();
+    
+    
 
     /**
      * Puts a singleton instance onto the current context.
@@ -217,6 +219,34 @@ public final class _Context {
         stream(objects)
         .forEach(_Context::tryClose);
     }
+    
+    // -- THREAD LOCAL SUPPORT
+
+    /**
+     * Puts {@code payload} onto the current thread's map.
+     * @param type
+     * @param payload
+     */
+	public static <T> void threadLocalPut(Class<? super T> type, T payload) {
+		_Context_ThreadLocal.put(toKey(type), payload);
+	}
+    
+    /**
+     * Looks up current thread's value as previously stored with {@link _Context#threadLocalPut(Class, Object)}.
+     * @param type
+     * @return
+     */
+    public static <T> T threadLocalGetIfAny(Class<? super T> type) {
+		return _Casts.uncheckedCast(_Context_ThreadLocal.get(toKey(type)));
+	}
+
+	/**
+	 * Removes any of current thread's values as stored with {@link _Context#threadLocalPut(Class, Object)}.
+	 */
+	public static <T> void cleanupThread() {
+		_Context_ThreadLocal.cleanupThread();
+	}
+    
 
     // -- DEFAULT CLASSLOADER
 
@@ -306,6 +336,8 @@ public final class _Context {
             }
         }
     }
+
+	
 
 
 }
