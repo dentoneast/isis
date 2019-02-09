@@ -44,6 +44,22 @@ public abstract class ManagedObjectContextBase implements ManagedObjectContext {
 		return ps().adapterFor(pojo);
 	}
     
+    @Override
+	public ObjectAdapter lookupService(String serviceId) {
+		return ps().lookupService(serviceId);
+	}
+    
+    // -- AUTH
+    
+    @Override
+    public void logoutAuthenticationSession() {
+    	// we do the logout (removes this session from those valid)
+        // similar code in wicket viewer (AuthenticatedWebSessionForIsis#onInvalidate())
+        final AuthenticationSession authenticationSession = getAuthenticationSession();
+        IsisContext.getAuthenticationManager().closeSession(authenticationSession);
+        IsisContext.getSessionFactory().closeSession();	
+    }
+    
     // -- ENTITY SUPPORT
     
     @Override

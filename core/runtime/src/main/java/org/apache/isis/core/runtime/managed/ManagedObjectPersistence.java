@@ -17,6 +17,7 @@ public interface ManagedObjectPersistence {
 	// -- METHODS NEEDED BY RO-VIEWER ...
 	
 	Stream<ObjectAdapter> streamServices(); //TODO [2033] use ServiceRegistry instead
+	ObjectAdapter lookupService(final String serviceId); //TODO [2033] use ServiceRegistry instead
 	
 	//
 	
@@ -64,6 +65,11 @@ public interface ManagedObjectPersistence {
 			@Override
 			public ObjectAdapter adapterFor(Object pojo) {
 				return persistenceSession.adapterFor(pojo);
+			}
+
+			@Override
+			public ObjectAdapter lookupService(String serviceId) {
+				return persistenceSession.lookupService(serviceId);
 			}
 		};
 	}

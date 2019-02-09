@@ -200,6 +200,16 @@ class DomainResourceHelper {
 			return rendererContext.isTransient(domainObject);
 		}
 
+		@Override
+		public void logoutAuthenticationSession() {
+			rendererContext.logoutAuthenticationSession();
+		}
+
+		@Override
+		public ObjectAdapter lookupService(String serviceId) {
+			return rendererContext.lookupService(serviceId);
+		}
+
     }
 
     private final RepresentationServiceContextAdapter representationServiceContext;

@@ -25,10 +25,13 @@ public interface ManagedObjectContext {
     ServiceRegistry getServiceRegistry();
     
 	Stream<ObjectAdapter> streamServiceAdapters();
+	ObjectAdapter lookupService(String serviceId);
 	ObjectAdapter adapterFor(Object pojo);
 	ObjectAdapter newTransientInstance(ObjectSpecification domainTypeSpec);
 	void makePersistentInTransaction(ObjectAdapter objectAdapter);
 	Object fetchPersistentPojoInTransaction(RootOid rootOid);
 	boolean isTransient(Object domainObject);
+	
+	void logoutAuthenticationSession();
 	
 }

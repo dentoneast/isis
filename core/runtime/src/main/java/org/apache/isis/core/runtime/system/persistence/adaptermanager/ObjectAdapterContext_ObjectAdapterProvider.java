@@ -57,7 +57,7 @@ class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvide
     private static final Logger LOG = LoggerFactory.getLogger(ObjectAdapterContext_ObjectAdapterProvider.class);
     private final ObjectAdapterContext objectAdapterContext;
 //    private final PersistenceSession persistenceSession;
-    private final ServiceInjector servicesInjector;
+    private final ServiceInjector serviceInjector;
     private final SpecificationLoader specificationLoader; 
     private final OidFactory oidFactory; 
     
@@ -68,7 +68,7 @@ class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvide
         
         this.objectAdapterContext = objectAdapterContext;
 //        this.persistenceSession = persistenceSession;
-        this.servicesInjector = persistenceSession.getServiceInjector();
+        this.serviceInjector = persistenceSession.getServiceInjector();
         this.specificationLoader = metaModelContext.getSpecificationLoader();
         
         this.oidFactory = OidFactory.builder(pojo->specificationLoader.loadSpecification(pojo.getClass()))
@@ -161,7 +161,7 @@ class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvide
     
     private Map<String, ObjectAdapter> initServiceAdapters() {
         
-        return servicesInjector.streamServices()
+        return serviceInjector.streamServices()
         .map(this::adapterFor) 
         .peek(serviceAdapter->{
             Assert.assertFalse("expected to not be 'transient'", serviceAdapter.getOid().isTransient());
