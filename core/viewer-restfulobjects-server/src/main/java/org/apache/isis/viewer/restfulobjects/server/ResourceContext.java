@@ -56,18 +56,21 @@ public class ResourceContext extends ManagedObjectContextBase implements Rendere
     @Getter private final HttpHeaders httpHeaders;
     @Getter private final UriInfo uriInfo;
     @Getter private final Request request;
-    //not used ... private final Providers providers;
     @Getter private final HttpServletRequest httpServletRequest;
     @Getter private final HttpServletResponse httpServletResponse;
     @Getter private final SecurityContext securityContext;
 
-    @Getter private List<List<String>> followLinks;
-    @Getter private boolean validateOnly;
-
-    private final Where where;
-    private final RepresentationService.Intent intent;
-    @Getter private final InteractionInitiatedBy interactionInitiatedBy;
-    private final String urlUnencodedQueryString;
+    @Getter(onMethod=@__({@Override})) private List<List<String>> followLinks;
+    @Getter(onMethod=@__({@Override})) private boolean validateOnly;
+    @Getter(onMethod=@__({@Override})) private final Where where;
+    @Getter(onMethod=@__({@Override})) private final RepresentationService.Intent intent;
+    @Getter(onMethod=@__({@Override})) private final InteractionInitiatedBy interactionInitiatedBy;
+    
+    /**
+     * Note that this can return non-null for all HTTP methods; will be either the
+     * query string (GET, DELETE) or read out of the input stream (PUT, POST).
+     */
+    @Getter private final String urlUnencodedQueryString;
 
     private JsonRepresentation readQueryStringAsMap;
 
@@ -76,7 +79,7 @@ public class ResourceContext extends ManagedObjectContextBase implements Rendere
     public ResourceContext(
             final RepresentationType representationType,
             final HttpHeaders httpHeaders,
-            final Providers providers,
+            final Providers providers, //not used
             final UriInfo uriInfo,
             final Request request,
             final Where where,
@@ -90,7 +93,6 @@ public class ResourceContext extends ManagedObjectContextBase implements Rendere
     	super();
 
         this.httpHeaders = httpHeaders;
-        //not used ... this.providers = providers;
         this.uriInfo = uriInfo;
         this.request = request;
         this.where = where;
@@ -122,14 +124,6 @@ public class ResourceContext extends ManagedObjectContextBase implements Rendere
             throw RestfulObjectsApplicationException.createWithMessage(HttpStatusCode.BAD_REQUEST,
                     "x-ro-domain-model of '%s' is not supported", domainModel);
         }
-    }
-
-    /**
-     * Note that this can return non-null for all HTTP methods; will be either the
-     * query string (GET, DELETE) or read out of the input stream (PUT, POST).
-     */
-    public String getUrlUnencodedQueryString() {
-        return urlUnencodedQueryString;
     }
 
     public JsonRepresentation getQueryStringAsJsonRepr() {
@@ -191,20 +185,6 @@ public class ResourceContext extends ManagedObjectContextBase implements Rendere
     public <Q> Q getArg(final RequestParameter<Q> requestParameter) {
         final JsonRepresentation queryStringJsonRepr = getQueryStringAsJsonRepr();
         return requestParameter.valueOf(queryStringJsonRepr);
-    }
-
-    @Override
-    public Where getWhere() {
-        return where;
-    }
-
-    /**
-     * Only applies to rendering of objects
-     * @return
-     */
-    @Override
-    public RepresentationService.Intent getIntent() {
-        return intent;
     }
 
     // -- canEagerlyRender

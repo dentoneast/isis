@@ -24,9 +24,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
-import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.runtime.managed.ManagedObjectContext;
 import org.apache.isis.viewer.restfulobjects.rendering.domainobjects.DomainObjectReprRenderer;
 import org.apache.isis.viewer.restfulobjects.rendering.service.RepresentationService;
@@ -35,9 +33,6 @@ public interface RendererContext extends ManagedObjectContext {
 
     String urlFor(final String url);
 
-//    @Deprecated //TODO [2033]
-//    PersistenceSessionForViewers getPersistenceSession();
-    
     List<MediaType> getAcceptableMediaTypes();
     
     InteractionInitiatedBy getInteractionInitiatedBy();
