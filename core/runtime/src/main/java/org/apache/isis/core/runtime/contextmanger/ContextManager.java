@@ -1,5 +1,7 @@
 package org.apache.isis.core.runtime.contextmanger;
 
+import java.util.Optional;
+
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 
 /**
@@ -7,6 +9,10 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
  */
 public interface ContextManager extends ManagedObjectResolver {
 
-	ManagedObjectResolver resolverFor(ObjectSpecification spec);
+	Optional<ManagedObjectResolver> resolverFor(ObjectSpecification spec);
+	
+	default ManagedObjectResolver resolverForIfAny(ObjectSpecification spec) {
+		return resolverFor(spec).orElse(null);
+	}
 	
 }

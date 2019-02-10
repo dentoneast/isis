@@ -21,6 +21,8 @@ package org.apache.isis.core.runtime.persistence.adapter;
 
 import static org.apache.isis.commons.internal.base._With.requires;
 
+import java.util.Objects;
+
 import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.commons.util.ToString;
@@ -80,6 +82,8 @@ public final class PojoAdapter implements ObjectAdapter {
             final AuthenticationSession authenticationSession,
             final SpecificationLoader specificationLoader,
             final PersistenceSession persistenceSession) {
+    	
+    	Objects.requireNonNull(pojo);
 
         this.persistenceSession = persistenceSession;
         this.specificationLoader = specificationLoader;

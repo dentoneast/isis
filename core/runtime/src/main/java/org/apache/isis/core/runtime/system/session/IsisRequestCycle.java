@@ -62,9 +62,9 @@ public class IsisRequestCycle implements AutoCloseable {
 	public static void onBeginRequest(AuthenticationSession authenticationSession) {
 		
 		val isisSessionFactory = IsisContext.getSessionFactory();
-		val isisTransactionManager = IsisContext.getTransactionManager().orElse(null);
-		
 		isisSessionFactory.openSession(authenticationSession);
+		
+		val isisTransactionManager = IsisContext.getTransactionManager().orElse(null);
 		isisTransactionManager.startTransaction();
 	}
 

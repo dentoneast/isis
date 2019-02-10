@@ -3,6 +3,7 @@ package org.apache.isis.core.runtime.contextmanger;
 import static org.apache.isis.commons.internal.base._With.requires;
 
 import java.net.URI;
+import java.util.Optional;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -25,7 +26,7 @@ public class UniversalContextManager implements ContextManager {
 		
 		requires(managedObject, "managedObject");
 		
-		val resolver = resolverFor(managedObject.getSpecification());
+		val resolver = resolverForIfAny(managedObject.getSpecification());
 		if(resolver==null) {
 			val msg = String.format(
 					"Could not find a ContextHandler that recognizes managedObject of type %s.", managedObject);
@@ -39,14 +40,14 @@ public class UniversalContextManager implements ContextManager {
 	}
 
 	@Override
-	public Instance<ManagedObject> resolve(ObjectSpecId spec, URI identifier) {
+	public Instance<ManagedObject> resolve(ObjectSpecId specId, URI identifier) {
 		
 		requires(identifier, "identifier");
 		
 		val instance = contextHandlers.stream()
 		.filter(handler->handler.recognizes(identifier))
 		.findFirst()
-		.map(handler->handler.resolve(spec, identifier))
+		.map(handler->handler.resolve(specId, identifier))
 		.orElseThrow(()->{
 			val msg = String.format(
 					"Could not find a ContextHandler that recognizes identifier URI %s.", identifier);
@@ -57,14 +58,19 @@ public class UniversalContextManager implements ContextManager {
 	}
 
 	@Override
-	public ManagedObjectResolver resolverFor(ObjectSpecification objSpec) {
-		
-		requires(objSpec, "objSpec");
-		
+	public Optional<ManagedObjectResolver> resolverFor(ObjectSpecification spec) {
+		requires(spec, "spec");
 		return contextHandlers.stream()
-		.filter(handler->handler.recognizes(objSpec))
-		.findFirst()
-		.orElse(null);
+		.filter(handler->handler.recognizes(spec))
+		.map(handler->(ManagedObjectResolver)handler)
+		.findFirst();
+	}
+
+	@Override
+	public Optional<AuthorityDescriptor> authorityFor(ObjectSpecification spec) {
+		requires(spec, "spec");
+		return resolverFor(spec)
+				.flatMap(resolver->resolver.authorityFor(spec));
 	}
 
 

@@ -1,12 +1,14 @@
 package org.apache.isis.core.runtime.contextmanger;
 
 import java.net.URI;
+import java.util.Optional;
 
 import javax.enterprise.inject.Instance;
 
 import org.apache.isis.core.metamodel.adapter.oid.UniversalOid;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
+import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 
 import lombok.val;
 
@@ -27,11 +29,11 @@ public interface ManagedObjectResolver {
 	
 	/**
 	 * Retrieve a reference to the ManagedObject as identified by the identifier. 
-	 * @param spec 
+	 * @param specId 
 	 * @param identifier
 	 * @return
 	 */
-	Instance<ManagedObject> resolve(ObjectSpecId spec, URI identifier);
+	Instance<ManagedObject> resolve(ObjectSpecId specId, URI identifier);
 	
 	
 	/**
@@ -44,5 +46,14 @@ public interface ManagedObjectResolver {
 		val spec = universalOid.getObjectSpecId();
 		return resolve(spec, universalOid.universalId());
 	}
+
+
+	/**
+	 * Returns the authority parts required to make an object identifier (URI)  
+	 * 
+	 * @param spec
+	 * @return
+	 */
+	Optional<AuthorityDescriptor> authorityFor(ObjectSpecification spec);
 	
 }

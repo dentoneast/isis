@@ -9,12 +9,15 @@ import javax.annotation.Nullable;
 
 import org.apache.isis.commons.internal.base._Either;
 import org.apache.isis.commons.internal.base._Lazy;
+import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.UniversalOid;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
+import org.apache.isis.core.metamodel.spec.ObjectSpecId;
+import org.apache.isis.core.runtime.contextmanger.AuthorityDescriptor;
 import org.apache.isis.core.runtime.contextmanger.ContextManager;
 import org.apache.isis.core.runtime.persistence.adapter.PojoAdapter;
 import org.apache.isis.core.runtime.system.context.IsisContext;
@@ -30,6 +33,7 @@ import lombok.val;
 public interface UniversalObjectManager {
 
 	static UniversalObjectManager current() {
+		//TODO [2033] properly register with _Context ?
 		return UniversalObjectManagerSample.INSTANCE;
 	}
 
@@ -37,6 +41,8 @@ public interface UniversalObjectManager {
 	
 	OidEncoder getOidEncoder();
 	OidDecoder getOidDecoder();
+	
+	AuthorityDescriptor authorityForElseFail(ObjectSpecId specId);
 	
 	Stream<ObjectAdapter> resolve(Stream<UniversalOid> uoids);
 	ObjectAdapter resolve(UniversalOid uoid);
@@ -49,7 +55,10 @@ public interface UniversalObjectManager {
 		@Getter private final ManagedObject managedObject;
 		
 		public ObjectAdapter toObjectAdapter(IsisSession isisSession) {
-			return PojoAdapter.of(managedObject.getPojo(), uoid, isisSession);
+			val pojo = managedObject.getPojo();
+			return pojo!=null 
+					? PojoAdapter.of(pojo, uoid, isisSession)
+							: null;
 		}
 		
 	}
@@ -125,18 +134,26 @@ public interface UniversalObjectManager {
 		final _Lazy<ContextManager> contextManager = _Lazy.of(()->
 			IsisContext.getServiceRegistry().lookupServiceElseFail(ContextManager.class));
 		
+		final _Probe probe = _Probe.unlimited().label("UniversalObjectManagerSample");
+		
 			
 		@Override
 		public Stream<ObjectAdapter> resolve(Stream<UniversalOid> uoids) {
 			val contextManager = this.contextManager.get();
 			val isisSession = IsisSession.currentIfAny();
 			
+			probe.println("resolve multiple ...");
+			
 			return stream(uoids)
 					.flatMap(uoid->{
+						
+						probe.println(1, "resolving %s", uoid.enString());
+						
 						val instance = contextManager.resolve(uoid);
 						return instance.stream()
 						.map(managedObject->ResolveResult.of(uoid, managedObject)
-								.toObjectAdapter(isisSession));
+								.toObjectAdapter(isisSession))
+						.filter(_NullSafe::isPresent);
 					})
 					;
 		}
@@ -174,13 +191,27 @@ public interface UniversalObjectManager {
 		public OidDecoder getOidDecoder() {
 			return new Codecs.UniversalOidDecoder();
 		}
+
+		@Override
+		public AuthorityDescriptor authorityForElseFail(ObjectSpecId specId) {
+			
+			// given the specId, try to resolve 'containerType', 'contextType' and 'contextId'
+			val contextManager = this.contextManager.get();
+			val isisSession = IsisSession.currentIfAny();
+			val spec = isisSession.getSpecificationLoader().lookupBySpecId(specId);
+			
+			val authority = contextManager.authorityFor(spec).orElseThrow(()->{
+				val errMsg = String.format(
+						"UniversalObjectManager cannot find the authority that handles specId '%s'.", 
+						specId.asString());
+				
+				return _Exceptions.unrecoverable(errMsg);
+			});
+			
+			return authority;
+		}
 		
 	}
-
-	
-
-
-
 	
 
 }

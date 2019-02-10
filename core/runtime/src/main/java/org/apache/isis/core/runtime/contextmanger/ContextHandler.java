@@ -11,10 +11,10 @@ public interface ContextHandler extends ManagedObjectResolver {
 
 	/**
 	 * To support chain-of-responsibility pattern.
-	 * @param objectSpec
-	 * @return whether this manager sees itself responsible to manage objects represented by given objectSpec
+	 * @param spec
+	 * @return whether this manager sees itself responsible to manage objects represented by given spec
 	 */
-	boolean recognizes(ObjectSpecification objectSpec);
+	boolean recognizes(ObjectSpecification spec);
 	
 	/**
 	 * To support chain-of-responsibility pattern.

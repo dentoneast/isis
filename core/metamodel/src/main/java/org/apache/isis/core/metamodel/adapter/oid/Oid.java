@@ -121,26 +121,6 @@ public interface Oid extends Encodable {
             return Oid_Universal.of(uri);
         }
         
-        public static UniversalOid universal(final Bookmark bookmark) {
-        	val specId = ObjectSpecId.of(bookmark.getObjectType());
-        	val identifier = bookmark.getIdentifier();
-        	//val state = Oid_State.from(bookmark); // ignored
-        	//val version = Version.empty(); // ignored
-        	
-        	//FIXME [2033] given the specId, try to resolve 'containerType' and 'contextType'
-        	
-        	val uri = _URI.uoidBuilder()
-    				.containerType(ContainerType.spring)
-    				.contextType(ContextType.entities)
-    				.contextId(null)
-    				.path("/"+specId.asString()+"/")
-    				.query(identifier)
-    				.build()
-    				.toURI();
-        	
-        	return universal(uri);
-        }
-        
         // -- LEGACY
         
         public static RootOid ofBookmark(final Bookmark bookmark) {

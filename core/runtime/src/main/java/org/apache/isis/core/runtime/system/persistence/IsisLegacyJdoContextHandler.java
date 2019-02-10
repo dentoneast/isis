@@ -1,22 +1,22 @@
-package domainapp.modules.spring;
+package org.apache.isis.core.runtime.system.persistence;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 
-import org.apache.isis.commons.internal._Constants;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.commons.internal.uri._URI.ContainerType;
 import org.apache.isis.commons.internal.uri._URI.ContextType;
+import org.apache.isis.core.metamodel.IsisJdoMetamodelPlugin;
+import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ManagedObject.SimpleManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
@@ -24,23 +24,34 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.contextmanger.AuthorityDescriptor;
 import org.apache.isis.core.runtime.contextmanger.ContextHandler;
-import org.springframework.context.ApplicationContext;
+import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.session.IsisSession;
 
-import domainapp.modules.spring.dom.customer.Customer;
 import lombok.val;
 
+/**
+ * 
+ * @since 2.0.0-M3
+ *
+ */
 @Singleton
-public class SpringDataJPADemoHandler implements ContextHandler {
+public class IsisLegacyJdoContextHandler implements ContextHandler {
+
+	private final static _Probe probe = _Probe.unlimited().label("IsisLegacyJdoContextHandler");
 	
-	private final static _Probe probe = _Probe.unlimited().label("SpringDataJPADemoHandler");
-	
-	@Inject ApplicationContext springContext;
 	@Inject SpecificationLoader specLoader;
+	
+	private IsisJdoMetamodelPlugin isisJdoMetamodelPlugin;
+	
+	@PostConstruct
+	public void init() {
+		isisJdoMetamodelPlugin = IsisJdoMetamodelPlugin.get();
+	}
 
 	@Override
 	public URI identifierOf(ManagedObject managedObject) {
     	try {
-			return identifierForCustomer(managedObject.getPojo(), managedObject.getSpecification());
+			return identifierForPersistable(managedObject.getPojo(), managedObject.getSpecification());
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
 			throw _Exceptions.unrecoverable(e);
@@ -50,31 +61,29 @@ public class SpringDataJPADemoHandler implements ContextHandler {
 	@Override
 	public Instance<ManagedObject> resolve(ObjectSpecId specId, URI identifier) {
 		
-		// FIXME [2033] this is just a PoC
-		
-		long id = Long.parseLong(identifier.getQuery());
-		
-		val em = springContext.getBean(EntityManager.class);
-		
-		val customer = em.find(Customer.class, id);
 		val spec = specLoader.lookupBySpecId(specId);
+		val id = identifier.getQuery();
 		
-		val managedObject = SimpleManagedObject.of(spec, customer);
+		val legacyOid = Oid.Factory.persistentOf(specId, id);
+		val persistenceSession = IsisSession.currentIfAny().getPersistenceSession();
+		
+		val objectAdapter = persistenceSession.adapterFor(legacyOid);
+		
+		val managedObject = SimpleManagedObject.of(spec, objectAdapter.getPojo());
 		
 		return _CDI.InstanceFactory.singleton(managedObject);
 	}
 
 	@Override
-	public boolean recognizes(URI uri) {
-		return uri.toString().startsWith("uoid://entities@spring");
+	public boolean recognizes(ObjectSpecification spec) {
+		return isisJdoMetamodelPlugin.isPersistenceEnhanced(spec.getCorrespondingClass());
 	}
 
 	@Override
-	public boolean recognizes(ObjectSpecification spec) {
-		// FIXME [2033] this is just a PoC
-		return spec.getCorrespondingClass().isAnnotationPresent(Entity.class);
+	public boolean recognizes(URI uri) {
+		return uri.toString().startsWith("uoid://entities@jdo");
 	}
-	
+
 	@Override
 	public Optional<AuthorityDescriptor> authorityFor(ObjectSpecification spec) {
 		if(!recognizes(spec)) {
@@ -86,18 +95,23 @@ public class SpringDataJPADemoHandler implements ContextHandler {
 	// -- HELPER
 	
 	private final static AuthorityDescriptor DEFAULT_AUTHORITY =
-			AuthorityDescriptor.of(ContainerType.spring, ContextType.entities, null);
+			AuthorityDescriptor.of(ContainerType.jdo, ContextType.entities, null);
 			
 	
-	private URI identifierForCustomer(Object pojo, ObjectSpecification spec) 
+	private URI identifierForPersistable(Object persistable, ObjectSpecification spec) 
     		throws NoSuchMethodException, SecurityException, IllegalAccessException, 
     		IllegalArgumentException, InvocationTargetException {
-    	
-    	val idGetter = pojo.getClass().getMethod("getId", _Constants.emptyClasses);
-    	final Long id = (Long)idGetter.invoke(pojo, _Constants.emptyObjects);
-    	final String identifier = (id!=null && id>0) 
-    			? "" + id
-    					: UUID.randomUUID().toString();
+		
+		val persistenceSession = IsisSession.currentIfAny().getPersistenceSession();
+		
+        val isRecognized = persistenceSession.isRecognized(persistable);
+        
+        val identifier = isRecognized
+        		? persistenceSession.identifierFor(persistable)
+        				: "1";
+        		
+        probe.println("identifierForPersistable spec='%s' pojo='%s' recogniced='%b'", 
+        		spec.getSpecId().asString(), persistable, isRecognized);
     		
 		return DEFAULT_AUTHORITY.toUoidDtoBuilder(spec.getSpecId())
 				.query(identifier)
@@ -105,5 +119,6 @@ public class SpringDataJPADemoHandler implements ContextHandler {
 				.toURI();
     }
 	
-
+	
 }
+

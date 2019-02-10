@@ -114,7 +114,7 @@ class ObjectAdapterContext_OidProviders {
         	val pojo = managedObject.getPojo();
         	val spec = managedObject.getSpecification();
         	
-        	val managedObjectResolver = contextManager.get().resolverFor(spec);
+        	val managedObjectResolver = contextManager.get().resolverForIfAny(spec);
         	
         	if(managedObjectResolver!=null) {
         		// likely to be reused below, just an optimization
@@ -132,7 +132,7 @@ class ObjectAdapterContext_OidProviders {
         	val managedObjectResolver =	(latestLookup!=null && 
         			Objects.equals(pojo, latestLookup.get_1()))
         			? latestLookup.get_2() // use cache
-        					: contextManager.get().resolverFor(spec);
+        					: contextManager.get().resolverForIfAny(spec);
         			
     		val objectIdUri = managedObjectResolver.identifierOf(managedObject);
     		return Oid.Factory.universal(objectIdUri);
