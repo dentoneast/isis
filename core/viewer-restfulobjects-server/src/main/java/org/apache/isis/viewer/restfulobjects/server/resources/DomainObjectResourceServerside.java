@@ -125,7 +125,7 @@ public class DomainObjectResourceServerside extends ResourceAbstract implements 
         }
         getResourceContext().makePersistentInTransaction(objectAdapter);
 
-        return newDomainResourceHelper(objectAdapter).objectRepresentation(RepresentationService.Intent.JUST_CREATED);
+        return newDomainResourceHelper(objectAdapter).objectRepresentation();
     }
 
 

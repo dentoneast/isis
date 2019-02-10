@@ -19,7 +19,6 @@ package org.apache.isis.viewer.wicket.ui.panels;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
-import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 import org.apache.isis.applib.RecoverableException;
@@ -35,7 +34,6 @@ import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
-import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.UniversalOid;
 import org.apache.isis.core.metamodel.adapter.version.ConcurrencyException;
 import org.apache.isis.core.metamodel.facets.actions.redirect.RedirectFacet;
@@ -43,9 +41,9 @@ import org.apache.isis.core.metamodel.facets.properties.renderunchanged.Unchangi
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
+import org.apache.isis.core.runtime.system.session.IsisRequestCycle;
 import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.MessageBroker;
 import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
@@ -150,9 +148,7 @@ implements FormExecutor {
             //
             final ObjectAdapter resultAdapter = obtainResultAdapter();
             // flush any queued changes; any concurrency or violation exceptions will actually be thrown here
-            getPersistenceSession().getTransactionManager().flushTransaction();
-            getPersistenceSession().getJDOPersistenceManager().flush();
-
+            IsisRequestCycle.onResultAdapterObtained();
 
             // update target, since version updated (concurrency checks)
             targetEntityModel.resetVersion();
@@ -524,7 +520,7 @@ implements FormExecutor {
 
 
     protected IsisSession getCurrentSession() {
-        return getIsisSessionFactory().getCurrentSession();
+        return IsisSession.current();
     }
 
     protected PersistenceSession getPersistenceSession() {
@@ -537,10 +533,6 @@ implements FormExecutor {
 
     protected SpecificationLoader getSpecificationLoader() {
         return IsisContext.getSpecificationLoader();
-    }
-
-    private IsisTransactionManager getTransactionManager() {
-        return getPersistenceSession().getTransactionManager();
     }
 
     protected IsisSessionFactory getIsisSessionFactory() {

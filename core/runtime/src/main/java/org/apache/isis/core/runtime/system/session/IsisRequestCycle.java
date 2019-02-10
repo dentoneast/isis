@@ -1,42 +1,51 @@
 package org.apache.isis.core.runtime.system.session;
 
 import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 
 import lombok.val;
 
 /**
+ * TODO [2033] indent is to remove direct dependencies upon Persistence/Transaction for the viewer-modules.   
+ * 
  * @since 2.0.0-M3
  */
 public class IsisRequestCycle implements AutoCloseable {
 
-	private final IsisSessionFactory isisSessionFactory = IsisContext.getSessionFactory();
-	private final IsisTransactionManager isisTransactionManager = IsisContext.getTransactionManager().orElse(null);
+	// -- SUPPORTING ISIS TRANSACTION FILTER FOR RESTFUL OBJECTS ...
 	
-	public static IsisRequestCycle open() {
+	public static IsisRequestCycle next() {
 		return new IsisRequestCycle();
 	}
 	
 	private IsisRequestCycle() {
-		
-    	// no-op if no session available.
-        if(!isisSessionFactory.isInSession()) {
-            return;
-        }
-
-        // no-op if no transaction manager available.
+    	
+	}
+	
+	public void beforeServletFilter() {
+		val isisTransactionManager = IsisContext.getTransactionManager().orElse(null);
+        // no-op if no session or transaction manager available.
         if(isisTransactionManager==null) {
             return;
         }
-        
         isisTransactionManager.startTransaction();
+		
+	}
+
+	public void afterServletFilter() {
+		// relying on the caller to close this cycle in a finally block
 	}
 	
 	@Override
 	public void close() {
 		
-		final boolean inTransaction = isisSessionFactory.isInTransaction();
+		val isisSessionFactory = IsisContext.getSessionFactory();
+		val isisTransactionManager = IsisContext.getTransactionManager().orElse(null);
+		val inTransaction =
+				isisSessionFactory !=null && 
+				isisTransactionManager!=null &&
+				isisSessionFactory.isInTransaction(); 
+		
         if(inTransaction) {
             // user/logout will have invalidated the current transaction and also persistence session.
             try {
@@ -55,7 +64,6 @@ public class IsisRequestCycle implements AutoCloseable {
 		val isisSessionFactory = IsisContext.getSessionFactory();
 		val isisTransactionManager = IsisContext.getTransactionManager().orElse(null);
 		
-		// TODO Auto-generated method stub
 		isisSessionFactory.openSession(authenticationSession);
 		isisTransactionManager.startTransaction();
 	}
@@ -101,5 +109,20 @@ public class IsisRequestCycle implements AutoCloseable {
         
 	}
 	
+	// -- SUPPORTING FORM EXECUTOR DEFAULT ...
+
+	public static void onResultAdapterObtained() {
+		val isisSession = IsisSession.current();
+		if (isisSession==null) {
+			return;
+		}
+		val ps = isisSession.getPersistenceSession();
+		ps.getTransactionManager().flushTransaction();
+        ps.getJDOPersistenceManager().flush();
+	}
+
+
+	
+	// -- 
 
 }

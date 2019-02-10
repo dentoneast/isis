@@ -19,11 +19,10 @@ package org.apache.isis.viewer.restfulobjects.rendering.service;
 import java.util.function.Function;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
@@ -63,20 +62,6 @@ public class RepresentationServiceContentNegotiator implements RepresentationSer
         assertContentNegotiationServiceHandled(responseBuilder);
         return buildResponse(responseBuilder);
     }
-
-    /**
-     * @deprecated - use {@link #objectRepresentation(Context, ObjectAdapter, Intent)}
-     */
-    @Deprecated
-    @Override
-    @Programmatic
-    public Response objectRepresentation(
-            final Context renderContext,
-            final ObjectAdapter objectAdapter,
-            final Intent unused) {
-        return objectRepresentation(renderContext, objectAdapter);
-    }
-
 
     @Override
     @Programmatic
