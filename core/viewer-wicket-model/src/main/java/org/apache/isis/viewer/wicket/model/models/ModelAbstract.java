@@ -48,18 +48,19 @@ public abstract class ModelAbstract<T> extends LoadableDetachableModel<T> {
     // //////////////////////////////////////////////////////////////
 
     protected AuthenticationSession getAuthenticationSession() {
-        return IsisContext.getAuthenticationSession().orElse(null);
+        return getCurrentSession().getAuthenticationSession();
     }
 
-    @Deprecated //TODO [2033] replace with ManagedObjectContext
+    @Deprecated //TODO [2033] should not be needed in viewer, improve API!
     public PersistenceSession getPersistenceSession() {
         return getCurrentSession().getPersistenceSession();
     }
 
     protected IsisSession getCurrentSession() {
-        return getIsisSessionFactory().getCurrentSession();
+        return IsisSession.currentIfAny();
     }
 
+    @Deprecated //TODO [2033] should not be needed in viewer, improve API!
     public IsisSessionFactory getIsisSessionFactory() {
         return IsisContext.getSessionFactory();
     }

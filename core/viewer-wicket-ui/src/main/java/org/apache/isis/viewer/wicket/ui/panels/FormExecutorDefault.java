@@ -520,7 +520,7 @@ implements FormExecutor {
 
 
     protected IsisSession getCurrentSession() {
-        return IsisSession.current();
+        return IsisSession.currentIfAny();
     }
 
     protected PersistenceSession getPersistenceSession() {

@@ -19,6 +19,9 @@
 
 package org.apache.isis.core.runtime.system.session;
 
+import java.util.Optional;
+import java.util.concurrent.Callable;
+
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.core.commons.util.ToString;
 import org.apache.isis.core.runtime.managed.ManagedObjectContextBase;
@@ -63,8 +66,12 @@ public class IsisSession extends ManagedObjectContextBase {
 	
 	// -- CURRENT
 	
-	public static IsisSession current() {
+	public static IsisSession currentIfAny() {
 		return _Context.threadLocalGetIfAny(IsisSession.class);
+	}
+	
+	public static Optional<IsisSession> current() {
+		return Optional.ofNullable(currentIfAny());
 	}
 	
 	// -- OPEN

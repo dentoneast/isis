@@ -55,7 +55,7 @@ public interface IsisSessionFactory {
 
     @Deprecated //TODO [2033] replace with IsisSession.current()
     default public IsisSession getCurrentSession() {
-    	return IsisSession.current();
+    	return IsisSession.currentIfAny();
     }
 
 

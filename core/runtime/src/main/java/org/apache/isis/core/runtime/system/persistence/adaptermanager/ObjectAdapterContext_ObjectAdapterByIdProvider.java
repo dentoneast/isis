@@ -42,6 +42,7 @@ import org.apache.isis.core.runtime.contextmanger.ContextManager;
 import org.apache.isis.core.runtime.persistence.ObjectNotFoundException;
 import org.apache.isis.core.runtime.persistence.PojoRecreationException;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
+import org.apache.isis.core.runtime.system.persistence.UniversalObjectManager;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,23 +142,9 @@ class ObjectAdapterContext_ObjectAdapterByIdProvider implements ObjectAdapterByI
     		Objects.requireNonNull(rootOid);
     		
     		val universalOid = (UniversalOid) rootOid;
-    		val instance = contextManager.resolve(universalOid);
+    		val objectManager = UniversalObjectManager.current();
     		
-    		if(instance.isResolvable()) {
-    			val managedObject = instance.get();
-    			return objectAdapterContext.getFactories().createRootAdapter(managedObject.getPojo(), rootOid);	
-    		} else if(instance.isAmbiguous()) {
-    			
-    			//FIXME [2033] handle ambiguity
-    			throw _Exceptions.notImplemented();
-    			
-    		} else {
-    			
-    			//FIXME [2033] handle no such element
-    			throw _Exceptions.notImplemented();
-    		}
-    		
-    		
+    		return objectManager.resolve(universalOid);
     	}
     	
         //FIXME [ISIS-1976] remove guard

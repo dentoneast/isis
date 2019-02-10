@@ -33,6 +33,7 @@ import org.apache.isis.core.runtime.persistence.adapter.PojoAdapter;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession5;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 
+@Deprecated //TODO [2033] only used by tests, move to test scope
 public class PojoAdapterBuilder {
 
     private PersistenceSession5 persistenceSession;
@@ -192,7 +193,7 @@ public class PojoAdapterBuilder {
     public PojoAdapter build() {
         final RootOid rootOid = persistence.createOid(objectSpecId, identifier);
         final Oid oid = type.oidFor(rootOid, objectSpecId, aggregatedId);
-        final PojoAdapter pojoAdapter = PojoAdapter.of(pojo, oid, authenticationSession,
+        final PojoAdapter pojoAdapter = PojoAdapter.forTest(pojo, oid, authenticationSession,
                 specificationLoader, persistenceSession);
         if(persistence == Persistence.PERSISTENT && version != null) {
             pojoAdapter.setVersion(version);

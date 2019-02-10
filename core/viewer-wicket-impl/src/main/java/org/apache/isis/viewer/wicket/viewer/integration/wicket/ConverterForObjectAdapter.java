@@ -21,14 +21,12 @@ package org.apache.isis.viewer.wicket.viewer.integration.wicket;
 
 import java.util.Locale;
 
-import org.apache.wicket.util.convert.IConverter;
-
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
-import org.apache.isis.core.metamodel.adapter.oid.RootOid;
-import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import org.apache.isis.core.runtime.system.persistence.UniversalObjectManager;
+import org.apache.wicket.util.convert.IConverter;
+
+import lombok.val;
 
 /**
  * Implementation of a Wicket {@link IConverter} for {@link ObjectAdapter}s,
@@ -44,8 +42,12 @@ public class ConverterForObjectAdapter implements IConverter<ObjectAdapter> {
      */
     @Override
     public ObjectAdapter convertToObject(final String value, final Locale locale) {
-        final RootOid rootOid = RootOid.deStringEncoded(value);
-        return getPersistenceSession().adapterFor(rootOid);
+    	
+    	val objectManager = UniversalObjectManager.current();
+    	val decoder = objectManager.getOidDecoder();
+    	val uoid = decoder.decodeFromStringElseFail(value);
+    	
+    	return objectManager.resolve(uoid);
     }
 
     /**
@@ -53,27 +55,12 @@ public class ConverterForObjectAdapter implements IConverter<ObjectAdapter> {
      */
     @Override
     public String convertToString(final ObjectAdapter adapter, final Locale locale) {
-        final Oid oid = adapter.getOid();
-        if (oid == null) {
-            // values don't have an Oid
-            return null;
-        }
-
-        return oid.enString();
-    }
-
-
-
-    // //////////////////////////////////////////////////////////
-    // Dependencies (from context)
-    // //////////////////////////////////////////////////////////
-
-    PersistenceSession getPersistenceSession() {
-        return getIsisSessionFactory().getCurrentSession().getPersistenceSession();
-    }
-
-    IsisSessionFactory getIsisSessionFactory() {
-        return IsisContext.getSessionFactory();
+    	
+    	val oid = adapter.getOid();
+    	val objectManager = UniversalObjectManager.current();
+    	val encoder = objectManager.getOidEncoder();
+    	
+    	return encoder.encodeToStringWithLegacySupport(oid);
     }
 
 }

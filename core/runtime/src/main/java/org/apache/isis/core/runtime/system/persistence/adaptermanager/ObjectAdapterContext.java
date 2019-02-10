@@ -44,6 +44,7 @@ import org.apache.isis.core.runtime.contextmanger.ContextManager;
 import org.apache.isis.core.runtime.memento.Data;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
+import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 
 /**
@@ -104,10 +105,7 @@ final public class ObjectAdapterContext {
         this.specificationLoader = specificationLoader;
         this.servicesInjector = servicesInjector;
 
-        this.objectAdapterFactories = new ObjectAdapterContext_Factories(
-                authenticationSession, 
-                specificationLoader, 
-                persistenceSession);
+        this.objectAdapterFactories = new ObjectAdapterContext_Factories(IsisSession.currentIfAny());
         
         
     }

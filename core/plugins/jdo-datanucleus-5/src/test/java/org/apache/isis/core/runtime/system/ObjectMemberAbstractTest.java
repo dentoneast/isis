@@ -122,7 +122,7 @@ public class ObjectMemberAbstractTest {
 //                .withPojo(mockPersistable)
 //                .build();
 
-        persistentAdapter = PojoAdapter.of(
+        persistentAdapter = PojoAdapter.forTest(
                 mockPersistable,
                 Factory.persistentOf(ObjectSpecId.of("CUS"), "1"),
                 mockAuthenticationSession,

@@ -24,6 +24,8 @@ import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 
+import lombok.val;
+
 /**
  * <h1>- internal use only -</h1>
  * <p>
@@ -160,6 +162,14 @@ public class _Probe {
     public static void errOut(String format, Object... args) {
         System.err.println(String.format(format, args));
     }
+    
+    public static void warnNotImplementedYet(String format, Object... args) {
+    	val warnMsg = String.format(format, args);
+    	errOut("WARN NotImplementedYet %s", warnMsg);
+    	errOut("-------------------------------------");
+    	_Exceptions.dumpStackTrace(System.err, 1, 12);
+    	errOut("-------------------------------------");
+	}
 
     // -- HELPER
     
@@ -171,6 +181,8 @@ public class _Probe {
         final String message = "["+label+" "+counterValue+"] "+chars; 
         out.println(String.format(emphasisFormat, message));
     }
+
+	
 
 
 }

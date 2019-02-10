@@ -66,7 +66,7 @@ public class PojoAdapterTest {
     public void setUp() throws Exception {
         domainObject = new RuntimeTestPojo();
         
-        adapter = PojoAdapter.of(
+        adapter = PojoAdapter.forTest(
                 domainObject, 
                 Factory.persistentOf(ObjectSpecId.of("CUS"), "1"),
                 mockAuthenticationSession,

@@ -47,7 +47,7 @@ public class DeepLinkServiceWicket implements DeepLinkService {
     @Override
     public URI deepLinkFor(final Object domainObject) {
 
-        final ObjectAdapter objectAdapter = IsisSession.current().adapterForPojo(domainObject);
+        final ObjectAdapter objectAdapter = IsisSession.currentIfAny().adapterForPojo(domainObject);
         final PageParameters pageParameters = EntityModel.createPageParameters(objectAdapter);
 
         //PageClassRegistry pageClassRegistry = guiceBeanProvider.lookup(PageClassRegistry.class);

@@ -393,7 +393,7 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
     // -- DEPENDENCIES
 
     private boolean inIsisSession() {
-        return IsisSession.current()!=null;
+        return IsisSession.currentIfAny()!=null;
     }
 
     private AuthenticationSession getAuthenticationSession() {

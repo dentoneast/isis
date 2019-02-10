@@ -167,7 +167,7 @@ public interface IsisContext {
     }
     
     /**
-     * @return framework's IsisSessionFactory
+     * @return framework's IsisSessionFactory 
      * @throws NoSuchElementException - if IsisSessionFactory not resolvable
      */
     public static IsisSessionFactory getSessionFactory() {
@@ -179,7 +179,7 @@ public interface IsisContext {
      * @throws IllegalStateException - if IsisSessionFactory not resolvable
      */
     public static Optional<IsisSession> getCurrentIsisSession() {
-        return Optional.ofNullable(IsisSession.current());
+        return Optional.ofNullable(IsisSession.currentIfAny());
     }
 
     /**

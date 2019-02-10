@@ -26,11 +26,11 @@ import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.ParentedOid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
-import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.persistence.adapter.PojoAdapter;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.persistence.adaptermanager.ObjectAdapterContext.ObjectAdapterFactories;
-import org.apache.isis.core.security.authentication.AuthenticationSession;
+import org.apache.isis.core.runtime.system.session.IsisSession;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * package private mixin for ObjectAdapterContext
@@ -39,18 +39,10 @@ import org.apache.isis.core.security.authentication.AuthenticationSession;
  * </p>
  * @since 2.0.0-M2
  */
+@RequiredArgsConstructor
 class ObjectAdapterContext_Factories implements ObjectAdapterFactories {
 
-    private final AuthenticationSession authenticationSession;
-    private final SpecificationLoader specificationLoader;
-    private final PersistenceSession session;
-
-    ObjectAdapterContext_Factories(AuthenticationSession authenticationSession,
-            SpecificationLoader specificationLoader, PersistenceSession session) {
-        this.authenticationSession = authenticationSession;
-        this.specificationLoader = specificationLoader;
-        this.session = session;
-    }
+    private final IsisSession isisSession;
 
     @Override
     public ObjectAdapter createRootAdapter(final Object pojo, RootOid rootOid) {
@@ -83,9 +75,6 @@ class ObjectAdapterContext_Factories implements ObjectAdapterFactories {
     private ObjectAdapter createAdapter(
             final Object pojo,
             final Oid oid) {
-        return PojoAdapter.of(
-                pojo, oid,
-                authenticationSession,
-                specificationLoader, session);
+        return PojoAdapter.of(pojo, oid, isisSession);
     }
 }

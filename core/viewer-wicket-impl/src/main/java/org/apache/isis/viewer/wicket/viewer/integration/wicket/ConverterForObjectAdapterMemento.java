@@ -83,7 +83,7 @@ public class ConverterForObjectAdapterMemento implements IConverter<ObjectAdapte
     // //////////////////////////////////////////////////////////
 
     SpecificationLoader getSpecificationLoader() {
-        return getIsisSessionFactory().getSpecificationLoader();
+        return IsisContext.getSpecificationLoader();
     }
 
     PersistenceSession getPersistenceSession() {

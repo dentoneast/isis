@@ -22,7 +22,6 @@ package org.apache.isis.core.runtime.persistence.adapter;
 import static org.apache.isis.commons.internal.base._With.requires;
 
 import org.apache.isis.commons.internal.base._Lazy;
-import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.commons.util.ToString;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
@@ -36,9 +35,12 @@ import org.apache.isis.core.metamodel.adapter.version.Version;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
+import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import lombok.val;
 
 public final class PojoAdapter implements ObjectAdapter {
 
@@ -55,10 +57,20 @@ public final class PojoAdapter implements ObjectAdapter {
     
     public static PojoAdapter of(
             final Object pojo,
+            final Oid oid) {
+    	
+        return of(pojo, oid, IsisSession.currentIfAny());
+    }
+    
+    public static PojoAdapter of(
+            final Object pojo,
             final Oid oid,
-            final AuthenticationSession authenticationSession,
-            final SpecificationLoader specificationLoader,
-            final PersistenceSession persistenceSession) {
+            final IsisSession isisSession) {
+    	
+    	val authenticationSession = isisSession.getAuthenticationSession(); 
+    	val specificationLoader = isisSession.getSpecificationLoader();
+    	val persistenceSession = isisSession.getPersistenceSession();
+    	
         return new PojoAdapter(pojo, oid, authenticationSession, specificationLoader, persistenceSession);
     }
 
@@ -267,5 +279,18 @@ public final class PojoAdapter implements ObjectAdapter {
         }
         return "S"; // standalone adapter (value)
     }
+
+    // -- JUNIT TESTING
+    
+	public static PojoAdapter forTest(final Object pojo,
+            final Oid oid,
+            final AuthenticationSession authenticationSession,
+            final SpecificationLoader specificationLoader,
+            final PersistenceSession persistenceSession) {
+		
+		return new PojoAdapter(pojo, oid, authenticationSession, specificationLoader, persistenceSession);
+	}
+
+
 
 }
