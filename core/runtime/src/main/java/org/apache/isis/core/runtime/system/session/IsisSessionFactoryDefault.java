@@ -235,7 +235,7 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
     public void closeSession() {
         final IsisSession existingSessionIfAny = getCurrentSession();
         if (existingSessionIfAny == null) {
-        	_Context.cleanupThread(); // just in case, to have a well defined post condition here
+        	_Context.threadLocalCleanup(); // just in case, to have a well defined post condition here
             return;
         }
         existingSessionIfAny.close();

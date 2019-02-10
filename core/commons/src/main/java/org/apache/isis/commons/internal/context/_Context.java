@@ -230,6 +230,17 @@ public final class _Context {
 	public static <T> void threadLocalPut(Class<? super T> type, T payload) {
 		_Context_ThreadLocal.put(toKey(type), payload);
 	}
+	
+	/**
+	 * Puts {@code payload} onto the current thread's map. The provided {@code onCleanup} is called whenever
+	 * {@code threadLocalCleanup()} is called.  
+	 * @param type
+	 * @param payload
+	 * @param onCleanup
+	 */
+	public static <T> void threadLocalPut(Class<? super T> type, T payload, Runnable onCleanup) {
+		_Context_ThreadLocal.put(toKey(type), payload, onCleanup);
+	}
     
     /**
      * Looks up current thread's value as previously stored with {@link _Context#threadLocalPut(Class, Object)}.
@@ -243,7 +254,7 @@ public final class _Context {
 	/**
 	 * Removes any of current thread's values as stored with {@link _Context#threadLocalPut(Class, Object)}.
 	 */
-	public static <T> void cleanupThread() {
+	public static <T> void threadLocalCleanup() {
 		_Context_ThreadLocal.cleanupThread();
 	}
     

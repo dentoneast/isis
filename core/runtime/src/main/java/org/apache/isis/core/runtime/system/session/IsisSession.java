@@ -84,7 +84,7 @@ public class IsisSession extends ManagedObjectContextBase {
         if(persistenceSession != null) {
             persistenceSession.close();
         }
-        _Context.cleanupThread();
+        _Context.threadLocalCleanup();
     }
 
     // -- transaction
