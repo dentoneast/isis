@@ -27,6 +27,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import lombok.val;
+
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.WithTransactionScope;
 import org.apache.isis.applib.services.inject.ServiceInjector;
@@ -466,27 +468,30 @@ public class IsisTransaction implements TransactionScopedComponent, Transaction 
         this.abortCause = abortCause;
     }
 
-    public IsisException getAbortCause() {
-        return abortCause;
+    public IsisException getThenClearAbortCause() {
+    	val result = abortCause;
+    	abortCause = null;
+        return result;
     }
 
-    /**
-     * If the cause has been rendered higher up in the stack, then clear the cause so that
-     * it won't be picked up and rendered elsewhere.
-     *
-     * <p>
-     *     for framework internal use only.
-     * </p>
-     *
-     */
-    public void clearAbortCause() {
-        abortCause = null;
-    }
-
-    public void clearAbortCauseAndContinue() {
-        setState(State.IN_PROGRESS);
-        clearAbortCause();
-    }
+//TODO [2033] do not expose implementation details ...    
+//    /**
+//     * If the cause has been rendered higher up in the stack, then clear the cause so that
+//     * it won't be picked up and rendered elsewhere.
+//     *
+//     * <p>
+//     *     for framework internal use only.
+//     * </p>
+//     *
+//     */
+//    public void clearAbortCause() {
+//        abortCause = null;
+//    }
+//
+//    public void clearAbortCauseAndContinue() {
+//        setState(State.IN_PROGRESS);
+//        clearAbortCause();
+//    }
 
     // -- toString
 

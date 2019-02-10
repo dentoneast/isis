@@ -40,9 +40,8 @@ import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidExcep
 import org.apache.isis.core.plugins.ioc.RequestContextHandle;
 import org.apache.isis.core.plugins.ioc.RequestContextService;
 import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.session.IsisRequestCycle;
 import org.apache.isis.core.runtime.system.session.IsisSession;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.MessageBroker;
 import org.apache.isis.viewer.wicket.model.models.PageType;
@@ -127,8 +126,7 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
             return;
         }
 
-        getIsisSessionFactory().openSession(authenticationSession);
-        getTransactionManager().startTransaction();
+        IsisRequestCycle.onBeginRequest(authenticationSession);
         
         probe.println("onBeginRequest out - session was opened");
     }
@@ -172,30 +170,24 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
         if(handler instanceof RenderPageRequestHandler) {
             ConcurrencyChecking.reset(ConcurrencyChecking.CHECK);
         }
-
-        if (getIsisSessionFactory().isInSession()) {
-            try {
-                // will commit (or abort) the transaction;
-                // an abort will cause the exception to be thrown.
-                getTransactionManager().endTransaction();
-            } catch(Exception ex) {
-                // will redirect to error page after this,
-                // so make sure there is a new transaction ready to go.
-                if(getTransactionManager().getCurrentTransaction().getState().isComplete()) {
-                    getTransactionManager().startTransaction();
+        
+        try {
+        	
+        	IsisRequestCycle.onRequestHandlerExecuted();
+        	
+        } catch(Exception ex) {
+        	
+            if(handler instanceof RenderPageRequestHandler) {
+                RenderPageRequestHandler requestHandler = (RenderPageRequestHandler) handler;
+                if(requestHandler.getPage() instanceof ErrorPage) {
+                    // do nothing
+                    return;
                 }
-                if(handler instanceof RenderPageRequestHandler) {
-                    RenderPageRequestHandler requestHandler = (RenderPageRequestHandler) handler;
-                    if(requestHandler.getPage() instanceof ErrorPage) {
-                        // do nothing
-                        return;
-                    }
-                }
-
-                // shouldn't return null given that we're in a session ...
-                PageProvider errorPageProvider = errorPageProviderFor(ex);
-                throw new RestartResponseException(errorPageProvider, RedirectPolicy.ALWAYS_REDIRECT);
             }
+
+            // shouldn't return null given that we're in a session ...
+            PageProvider errorPageProvider = errorPageProviderFor(ex);
+            throw new RestartResponseException(errorPageProvider, RedirectPolicy.ALWAYS_REDIRECT);
         }
     }
 
@@ -207,14 +199,7 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
         
         probe.println("onEndRequest");
         
-        if (getIsisSessionFactory().isInSession()) {
-            try {
-                // belt and braces
-                getTransactionManager().endTransaction();
-            } finally {
-                getIsisSessionFactory().closeSession();
-            }
-        }
+        IsisRequestCycle.onEndRequest();
 
     }
     
@@ -405,39 +390,29 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
         this.pageClassRegistry = pageClassRegistry;
     }
 
-    // -- Dependencies (from isis' context)
-    
-    protected IsisTransactionManager getTransactionManager() {
-        return getIsisSessionFactory().getCurrentSession().getPersistenceSession().getTransactionManager();
+    // -- DEPENDENCIES
+
+    private boolean inIsisSession() {
+        return IsisSession.current()!=null;
     }
 
-    protected boolean inIsisSession() {
-        return getIsisSessionFactory().isInSession();
+    private AuthenticationSession getAuthenticationSession() {
+        return IsisContext.getAuthenticationSession().orElse(null);
     }
 
-    protected AuthenticationSession getAuthenticationSession() {
-        return getIsisSessionFactory().getCurrentSession().getAuthenticationSession();
-    }
-
-    protected MessageBroker getMessageBroker() {
+    private MessageBroker getMessageBroker() {
         return getAuthenticationSession().getMessageBroker();
     }
 
-    protected ServiceRegistry getServiceRegistry() {
+    private ServiceRegistry getServiceRegistry() {
         return IsisContext.getServiceRegistry();
     }
         
-    IsisSessionFactory getIsisSessionFactory() {
-        return IsisContext.getSessionFactory();
-    }
-
-    TranslationService getTranslationService() {
+    private TranslationService getTranslationService() {
         return getServiceRegistry().lookupServiceElseFail(TranslationService.class);
     }
 
-    // -- Dependencies (from wicket)
-
-    protected AuthenticatedWebSession getWicketAuthenticationSession() {
+    private AuthenticatedWebSession getWicketAuthenticationSession() {
         return AuthenticatedWebSession.get();
     }
 

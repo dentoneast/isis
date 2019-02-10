@@ -25,9 +25,9 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
+import org.apache.isis.core.runtime.system.session.IsisRequestCycle;
+
+import lombok.val;
 
 //@WebFilter(servletNames= {"RestfulObjectsRestEasyDispatcher"}) //[ahuber] to support 
 //Servlet 3.0 annotations @WebFilter, @WebListener or others 
@@ -41,34 +41,10 @@ public class IsisTransactionFilterForRestfulObjects implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-    	// no-op if no session available.
-        final IsisSessionFactory isisSessionFactory = IsisContext.getSessionFactory();
-        if(!isisSessionFactory.isInSession()) {
-            chain.doFilter(request, response);
-            return;
-        }
-
-        // no-op if no transaction manager available.
-        final IsisTransactionManager isisTransactionManager = IsisContext.getTransactionManager().orElse(null);
-        if(isisTransactionManager==null) {
-        	chain.doFilter(request, response);
-            return;
-        }
-        
-        isisTransactionManager.startTransaction();
-        try {
-            chain.doFilter(request, response);
-        } finally {
-            final boolean inTransaction = isisSessionFactory.isInTransaction();
-            if(inTransaction) {
-                // user/logout will have invalidated the current transaction and also persistence session.
-                try {
-                    isisTransactionManager.endTransaction();
-                } catch (Exception ex) {
-                    // ignore.  Any exceptions will have been mapped into a suitable response already.
-                }
-            }
-        }
+		try(val cycle = IsisRequestCycle.open()) {
+			chain.doFilter(request, response);
+		}
+		
     }
 
     @Override

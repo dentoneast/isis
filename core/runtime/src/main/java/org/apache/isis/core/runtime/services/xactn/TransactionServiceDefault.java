@@ -73,7 +73,7 @@ public class TransactionServiceDefault implements TransactionService {
                 persistenceSessionServiceInternal.abortTransaction();
                 final Transaction currentTransaction = currentTransaction();
                 if(currentTransaction instanceof IsisTransaction) {
-                    ((IsisTransaction)currentTransaction).clearAbortCause();
+                    ((IsisTransaction)currentTransaction).getThenClearAbortCause();
                 }
                 break;
             }

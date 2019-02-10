@@ -34,6 +34,8 @@ import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import lombok.val;
+
 public class IsisTransactionManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(IsisTransactionManager.class);
@@ -323,7 +325,7 @@ public class IsisTransactionManager {
         final IsisTransaction transaction = getCurrentTransaction();
 
         // terminate the transaction early if an abort cause was already set.
-        RuntimeException abortCause = this.getCurrentTransaction().getAbortCause();
+        RuntimeException abortCause = this.getCurrentTransaction().getThenClearAbortCause();
         if(transaction.getState().mustAbort()) {
 
             if (LOG.isDebugEnabled()) {
@@ -332,8 +334,12 @@ public class IsisTransactionManager {
             try {
                 abortTransaction();
 
+                val tx = this.getCurrentTransaction();
+                
                 // just in case any different exception was raised...
-                abortCause = this.getCurrentTransaction().getAbortCause();
+                if(tx!=null) {
+                    abortCause = tx.getThenClearAbortCause();
+                }
 
             } catch(RuntimeException ex) {
 

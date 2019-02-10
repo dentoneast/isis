@@ -494,8 +494,8 @@ implements FormExecutor {
 
             // recognized
             raiseWarning(target, feedbackForm, recognizedErrorIfAny);
-
-            getTransactionManager().getCurrentTransaction().clearAbortCause();
+            
+//TODO [2033] removed           getTransactionManager().getCurrentTransaction().clearAbortCause();
 
             // there's no need to abort the transaction, it will have already been done
             // (in IsisTransactionManager#executeWithinTransaction(...)).
