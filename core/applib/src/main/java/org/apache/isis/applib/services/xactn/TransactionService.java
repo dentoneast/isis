@@ -21,7 +21,6 @@ package org.apache.isis.applib.services.xactn;
 
 import java.util.concurrent.CountDownLatch;
 
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.command.CommandContext;
 
@@ -39,34 +38,28 @@ public interface TransactionService {
      *     Equivalent to {@link Transaction#flush()} (with {@link Transaction} obtained using {@link #currentTransaction()}).
      * </p>
      */
-    @Programmatic
     void flushTransaction();
 
     /**
      * See also {@link TransactionService#nextTransaction(TransactionService.Policy)} with a {@link TransactionService.Policy} of {@link TransactionService.Policy#UNLESS_MARKED_FOR_ABORT}.
      */
-    @Programmatic
     void nextTransaction();
 
     /**
      * Returns a representation of the current transaction.
      */
-    @Programmatic
     Transaction currentTransaction();
 
     /**
      * Generally this is equivalent to using {@link #currentTransaction()} and {@link Transaction#getTransactionState()}.
      * However, if there is no current transaction, then this will return {@link TransactionState#NONE}.
      */
-    @Programmatic
     TransactionState getTransactionState();
 
     /**
      * Return a latch, that allows threads to wait on the current transaction to complete.
      */
-    @Programmatic
     CountDownLatch currentTransactionLatch();
-
 
     /**
      * Intended only for use by fixture scripts and integration tests.
@@ -102,7 +95,6 @@ public interface TransactionService {
      *     also to allow the caller to have more control on how to continue.
      * </p>
      */
-    @Programmatic
     void nextTransaction(Policy policy);
 
 
@@ -123,7 +115,5 @@ public interface TransactionService {
         UNLESS_MARKED_FOR_ABORT,
         ALWAYS
     }
-
-
 
 }

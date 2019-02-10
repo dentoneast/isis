@@ -176,8 +176,8 @@ class DomainResourceHelper {
 		}
 
 		@Override
-		public ObjectAdapter adapterFor(Object pojo) {
-			return rendererContext.adapterFor(pojo);
+		public ObjectAdapter adapterForPojo(Object pojo) {
+			return rendererContext.adapterForPojo(pojo);
 		}
 
 		@Override

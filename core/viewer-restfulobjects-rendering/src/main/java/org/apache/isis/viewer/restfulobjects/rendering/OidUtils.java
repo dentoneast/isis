@@ -71,7 +71,7 @@ final class OidUtils {
         final RootOid rootOid = RootOid.deString(oidStrUnencoded);
         final Object domainObject = domainObjectForAny(rendererContext, rootOid);
         
-        return rendererContext.adapterFor(domainObject);
+        return rendererContext.adapterForPojo(domainObject);
     }
     
     private static Object domainObjectForAny(final RendererContext rendererContext, final RootOid rootOid) {
@@ -89,7 +89,7 @@ final class OidUtils {
 
             try {
                 final RootOid fixedRootOid = ensureConsistentOidState(rootOid);
-                final ObjectAdapter adapter = rendererContext.adapterFor(fixedRootOid);
+                final ObjectAdapter adapter = rendererContext.adapterForPojo(fixedRootOid);
                 
                 final Object pojo = mapIfPresentElse(adapter, ObjectAdapter::getPojo, null);
                 return pojo;

@@ -26,7 +26,7 @@ public interface ManagedObjectContext {
     
 	Stream<ObjectAdapter> streamServiceAdapters();
 	ObjectAdapter lookupService(String serviceId);
-	ObjectAdapter adapterFor(Object pojo);
+	ObjectAdapter adapterForPojo(Object pojo);
 	ObjectAdapter newTransientInstance(ObjectSpecification domainTypeSpec);
 	void makePersistentInTransaction(ObjectAdapter objectAdapter);
 	Object fetchPersistentPojoInTransaction(RootOid rootOid);

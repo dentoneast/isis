@@ -27,6 +27,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.isis.applib.PersistFailedException;
@@ -214,17 +215,10 @@ public class RepositoryServiceInternalDefault implements RepositoryService {
         return persistenceSessionServiceInternal;
     }
 
-    @javax.inject.Inject
-    FactoryService factoryService;
-
-    @javax.inject.Inject
-    WrapperFactory wrapperFactory;
-
-    @javax.inject.Inject
-    TransactionService transactionService;
-
-    @javax.inject.Inject
-    PersistenceSessionServiceInternal persistenceSessionServiceInternal;
+    @Inject FactoryService factoryService;
+    @Inject WrapperFactory wrapperFactory;
+    @Inject TransactionService transactionService;
+    @Inject PersistenceSessionServiceInternal persistenceSessionServiceInternal;
 
 
 

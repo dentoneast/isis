@@ -844,7 +844,7 @@ public final class JsonValueEncoder {
     private static Function<Object, ObjectAdapter> pojoToAdapterFunction() {
         return testPojoToAdapterFunction != null
         		? testPojoToAdapterFunction
-        				: IsisContext.newManagedObjectContext()::adapterFor;
+        				: IsisContext.newManagedObjectContext()::adapterForPojo;
     }
     
 

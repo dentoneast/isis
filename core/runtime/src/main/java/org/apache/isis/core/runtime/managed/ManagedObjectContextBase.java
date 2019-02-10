@@ -50,7 +50,7 @@ public abstract class ManagedObjectContextBase implements ManagedObjectContext {
 	}
     
     @Override
-    public ObjectAdapter adapterFor(Object pojo) {
+    public ObjectAdapter adapterForPojo(Object pojo) {
 		return ps().adapterFor(pojo);
 	}
     
