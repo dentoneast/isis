@@ -27,7 +27,6 @@ import java.util.stream.Stream;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.spec.ActionType;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.Contributed;
@@ -69,10 +68,7 @@ public class AssociatedWithActionsHelper implements Serializable {
 
     private ObjectSpecification getObjectSpecification(final IsisSessionFactory isisSessionFactory) {
         final ObjectAdapterMemento parentOam = collectionModel.getParentObjectAdapterMemento();
-        final ObjectAdapter parentAdapter = parentOam.getObjectAdapter(
-                ConcurrencyChecking.NO_CHECK,
-                isisSessionFactory.getCurrentSession().getPersistenceSession(),
-                isisSessionFactory.getSpecificationLoader());
+        final ObjectAdapter parentAdapter = parentOam.getObjectAdapter();
         return parentAdapter.getSpecification();
     }
 

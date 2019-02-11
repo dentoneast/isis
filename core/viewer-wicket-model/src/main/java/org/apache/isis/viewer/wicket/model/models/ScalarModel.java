@@ -708,8 +708,7 @@ public class ScalarModel extends EntityModel implements LinksProvider, FormExecu
     private void getAndStore(final EntityModel parentEntityModel) {
         final ObjectAdapterMemento parentAdapterMemento = parentEntityModel.getObjectAdapterMemento();
         final OneToOneAssociation property = propertyMemento.getProperty(getSpecificationLoader());
-        final ObjectAdapter parentAdapter = parentAdapterMemento.getObjectAdapter(ConcurrencyChecking.CHECK,
-                getPersistenceSession(), getSpecificationLoader());
+        final ObjectAdapter parentAdapter = parentAdapterMemento.getObjectAdapter();
 
         setObjectFromPropertyIfVisible(ScalarModel.this, property, parentAdapter);
     }

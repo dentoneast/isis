@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 
@@ -85,7 +86,7 @@ public class EntityModel extends BookmarkableModel<ObjectAdapter> implements Obj
         return pageParameters;
     }
 
-    @Deprecated
+    @Deprecated //TODO [2033] remove
     public void resetVersion() {
         if(getObjectAdapterMemento() == null) {
             return;
@@ -328,16 +329,10 @@ public class EntityModel extends BookmarkableModel<ObjectAdapter> implements Obj
      * when rendering after post-and-redirect.
      * @return
      */
+    @Deprecated //TODO [2033] remove
     public ObjectAdapter load(ConcurrencyChecking concurrencyChecking) {
-        if (adapterMemento == null) {
-            return null;
-        }
-
-        final ObjectAdapter objectAdapter =
-                adapterMemento.getObjectAdapter(concurrencyChecking, getPersistenceSession(), getSpecificationLoader());
-        return objectAdapter;
+        return load();
     }
-
 
     /**
      * Callback from {@link #getObject()}, defaults to loading the object
@@ -349,7 +344,10 @@ public class EntityModel extends BookmarkableModel<ObjectAdapter> implements Obj
      */
     @Override
     public ObjectAdapter load() {
-        final ObjectAdapter objectAdapter = load(ConcurrencyChecking.CHECK);
+        if (adapterMemento == null) {
+            return null;
+        }
+        final ObjectAdapter objectAdapter = adapterMemento.getObjectAdapter();
         return objectAdapter;
     }
 
@@ -366,7 +364,7 @@ public class EntityModel extends BookmarkableModel<ObjectAdapter> implements Obj
             final SpecificationLoader specificationLoader) {
         super.setObject(
                 memento != null
-                ? memento.getObjectAdapter(ConcurrencyChecking.CHECK, persistenceSession, specificationLoader)
+                ? memento.getObjectAdapter()
                         : null);
         adapterMemento = memento;
     }
@@ -550,8 +548,7 @@ public class EntityModel extends BookmarkableModel<ObjectAdapter> implements Obj
         private ObjectAdapter getPendingAdapter() {
             final ObjectAdapterMemento memento = getObject();
             return memento != null
-                    ? memento.getObjectAdapter(ConcurrencyChecking.NO_CHECK,
-                            entityModel.getPersistenceSession(), entityModel.getSpecificationLoader())
+                    ? memento.getObjectAdapter()
                             : null;
         }
 

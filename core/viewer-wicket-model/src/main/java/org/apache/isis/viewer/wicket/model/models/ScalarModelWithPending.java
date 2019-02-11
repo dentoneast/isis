@@ -18,13 +18,11 @@ package org.apache.isis.viewer.wicket.model.models;
 
 import java.io.Serializable;
 
+import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
-import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
 
 /**
  * For widgets that use a <tt>org.wicketstuff.select2.Select2Choice</tt>;
@@ -78,9 +76,7 @@ public interface ScalarModelWithPending extends Serializable {
                             if (ownerPending != null) {
                                 LOG.debug("setting to pending: {}", ownerPending.toString());
                                 ownerScalarModel.setObject(
-                                        ownerPending.getObjectAdapter(
-                                                ConcurrencyChecking.NO_CHECK,
-                                                ownerScalarModel.getPersistenceSession(), ownerScalarModel.getSpecificationLoader()));
+                                        ownerPending.getObjectAdapter());
                             }
                         }
                     }

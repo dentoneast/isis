@@ -21,20 +21,9 @@ package org.apache.isis.viewer.wicket.ui.components.entity.icontitle;
 
 import javax.inject.Inject;
 
-import org.apache.wicket.Page;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
-import org.apache.wicket.markup.html.link.AbstractLink;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.request.resource.ResourceReference;
-
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.facets.members.cssclassfa.CssClassFaFacet;
 import org.apache.isis.core.metamodel.facets.object.projection.ProjectionFacet;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
 import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
 import org.apache.isis.viewer.wicket.model.models.EntityModel;
@@ -48,6 +37,14 @@ import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
 import org.apache.isis.viewer.wicket.ui.util.Components;
 import org.apache.isis.viewer.wicket.ui.util.CssClassAppender;
 import org.apache.isis.viewer.wicket.ui.util.Tooltips;
+import org.apache.wicket.Page;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.link.AbstractLink;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.request.resource.ResourceReference;
 
 /**
  * {@link PanelAbstract Panel} representing the icon and title of an entity,
@@ -222,8 +219,9 @@ public class EntityIconAndTitlePanel extends PanelAbstract<ObjectAdapterModel> {
     public ObjectAdapter getContextAdapterIfAny() {
         ObjectAdapterModel model = getModel();
         ObjectAdapterMemento contextAdapterMementoIfAny = model.getContextAdapterIfAny();
-        return contextAdapterMementoIfAny != null? contextAdapterMementoIfAny.getObjectAdapter(ConcurrencyChecking.NO_CHECK,
-                isisSessionFactory.getCurrentSession().getPersistenceSession(), isisSessionFactory.getSpecificationLoader()): null;
+        return contextAdapterMementoIfAny != null
+        		? contextAdapterMementoIfAny.getObjectAdapter()
+        				: null;
     }
 
     static String abbreviated(final String str, final int maxLength) {
@@ -250,17 +248,13 @@ public class EntityIconAndTitlePanel extends PanelAbstract<ObjectAdapterModel> {
     // Dependency Injection
     // ///////////////////////////////////////////////
 
-    @Inject
-    private transient IsisSessionFactory isisSessionFactory;
 
-    @Inject
-    private ImageResourceCache imageCache;
+    @Inject private ImageResourceCache imageCache;
     protected ImageResourceCache getImageCache() {
         return imageCache;
     }
 
-    @Inject
-    private WicketViewerSettings settings;
+    @Inject private WicketViewerSettings settings;
     @Override
     protected WicketViewerSettings getSettings() {
         return settings;

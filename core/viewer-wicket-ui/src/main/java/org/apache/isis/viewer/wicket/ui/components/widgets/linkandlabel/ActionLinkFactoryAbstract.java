@@ -98,11 +98,6 @@ public abstract class ActionLinkFactoryAbstract implements ActionLinkFactory {
 
                 if(toggledMementosProviderIfAny != null) {
 
-                    final PersistenceSession persistenceSession = getIsisSessionFactory()
-                            .getCurrentSession().getPersistenceSession();
-                    final SpecificationLoader specificationLoader =
-                            getIsisSessionFactory().getSpecificationLoader();
-
                     final List<ObjectAdapterMemento> selectedMementos =
                             toggledMementosProviderIfAny.getToggles();
 
@@ -111,9 +106,7 @@ public abstract class ActionLinkFactoryAbstract implements ActionLinkFactory {
                                     if(input == null) {
                                         return null;
                                     }
-                                    final ObjectAdapter objectAdapter = input.getObjectAdapter(
-                                            ConcurrencyChecking.NO_CHECK,
-                                            persistenceSession, specificationLoader);
+                                    final ObjectAdapter objectAdapter = input.getObjectAdapter();
                                     return objectAdapter != null ? objectAdapter.getPojo() : null;
                             })
                             .filter(_NullSafe::isPresent)

@@ -80,13 +80,13 @@ public interface ObjectAdapterMemento extends Serializable {
 	
 	// -- DEPRECATIONS
 	
-	@Deprecated
-	default ObjectAdapter getObjectAdapter(
-			ConcurrencyChecking noCheck, 
-			PersistenceSession persistenceSession,
-			SpecificationLoader specificationLoader) {
-		return getObjectAdapter();
-	}
+//	@Deprecated
+//	default ObjectAdapter getObjectAdapter(
+//			ConcurrencyChecking noCheck, 
+//			PersistenceSession persistenceSession,
+//			SpecificationLoader specificationLoader) {
+//		return getObjectAdapter();
+//	}
 	
 	@Deprecated
 	default void resetVersion(PersistenceSession persistenceSession, SpecificationLoader specificationLoader) {

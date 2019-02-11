@@ -20,7 +20,6 @@
 package org.apache.isis.viewer.wicket.model.models;
 
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
 
@@ -39,8 +38,7 @@ public class ValueModel extends ModelAbstract<ObjectAdapter> {
 
     @Override
     protected ObjectAdapter load() {
-        return adapterMemento.getObjectAdapter(ConcurrencyChecking.NO_CHECK, getPersistenceSession(),
-                getSpecificationLoader());
+        return adapterMemento.getObjectAdapter();
     }
 
     // //////////////////////////////////////

@@ -59,9 +59,7 @@ public abstract class ObjectAdapterMementoProviderAbstract extends ChoiceProvide
             return NULL_DISPLAY_TEXT;
         }
 
-        final ObjectAdapter objectAdapter =
-                choice.getObjectAdapter(
-                        ConcurrencyChecking.NO_CHECK, getPersistenceSession(), getSpecificationLoader());
+        final ObjectAdapter objectAdapter = choice.getObjectAdapter();
         final IConverter<Object> converter = findConverter(objectAdapter);
         return converter != null
                 ? converter.convertToString(objectAdapter.getPojo(), getLocale())
@@ -108,8 +106,7 @@ public abstract class ObjectAdapterMementoProviderAbstract extends ChoiceProvide
             matches.addAll(choicesMementos);
         } else {
             for (ObjectAdapterMemento candidate : choicesMementos) {
-                ObjectAdapter objectAdapter = candidate.getObjectAdapter(ConcurrencyChecking.NO_CHECK,
-                        getPersistenceSession(), getSpecificationLoader());
+                ObjectAdapter objectAdapter = candidate.getObjectAdapter();
                 String title = objectAdapter.titleString(objectAdapter);
                 if (title.toLowerCase().contains(term.toLowerCase())) {
                     matches.add(candidate);

@@ -212,9 +212,7 @@ public abstract class ScalarPanelSelect2Abstract extends ScalarPanelAbstract2 {
                 proposedValue = (ObjectAdapterMemento) proposedValueObj;
             }
 
-            final ObjectAdapter proposedAdapter = proposedValue.getObjectAdapter(
-                    ConcurrencyChecking.NO_CHECK,
-                    getPersistenceSession(), getSpecificationLoader());
+            final ObjectAdapter proposedAdapter = proposedValue.getObjectAdapter();
 
             final String reasonIfAny = scalarModel.validate(proposedAdapter);
             if (reasonIfAny != null) {
@@ -222,18 +220,6 @@ public abstract class ScalarPanelSelect2Abstract extends ScalarPanelAbstract2 {
                 error.setMessage(reasonIfAny);
                 validatable.error(error);
             }
-        }
-
-        PersistenceSession getPersistenceSession() {
-            return getIsisSessionFactory().getCurrentSession().getPersistenceSession();
-        }
-
-        SpecificationLoader getSpecificationLoader() {
-            return getIsisSessionFactory().getSpecificationLoader();
-        }
-
-        IsisSessionFactory getIsisSessionFactory() {
-            return IsisContext.getSessionFactory();
         }
 
     }

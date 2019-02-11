@@ -37,7 +37,6 @@ import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.core.commons.factory.InstanceUtil;
 import org.apache.isis.core.commons.lang.ClassUtil;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.facets.collections.sortedby.SortedByFacet;
 import org.apache.isis.core.metamodel.facets.object.paged.PagedFacet;
@@ -164,10 +163,7 @@ UiHintContainer {
             List<ObjectAdapter> load(final EntityCollectionModel entityCollectionModel) {
 
                 final ObjectAdapter adapter = entityCollectionModel.getParentObjectAdapterMemento()
-                		.getObjectAdapter(
-                				ConcurrencyChecking.NO_CHECK, 
-                				entityCollectionModel.getPersistenceSession(),
-                				entityCollectionModel.getSpecificationLoader());
+                		.getObjectAdapter();
 
                 final OneToManyAssociation collection = entityCollectionModel.collectionMemento.getCollection(
                         entityCollectionModel.getSpecificationLoader());

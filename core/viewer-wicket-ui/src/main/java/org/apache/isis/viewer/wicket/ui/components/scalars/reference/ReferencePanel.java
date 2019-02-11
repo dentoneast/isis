@@ -23,20 +23,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.wicketstuff.select2.ChoiceProvider;
-import org.wicketstuff.select2.Settings;
-
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.facets.object.autocomplete.AutoCompleteFacet;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
@@ -58,6 +46,16 @@ import org.apache.isis.viewer.wicket.ui.components.widgets.select2.providers.Obj
 import org.apache.isis.viewer.wicket.ui.util.Components;
 import org.apache.isis.viewer.wicket.ui.util.CssClassAppender;
 import org.apache.isis.viewer.wicket.ui.util.Tooltips;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.wicketstuff.select2.ChoiceProvider;
+import org.wicketstuff.select2.Settings;
 
 /**
  * Panel for rendering scalars which of are of reference type (as opposed to
@@ -171,9 +169,7 @@ public class ReferencePanel extends ScalarPanelSelect2Abstract implements PanelW
                 if(oam == null) {
                     return null;
                 }
-                ObjectAdapter objectAdapter = oam
-                        .getObjectAdapter(ConcurrencyChecking.NO_CHECK, getPersistenceSession(),
-                                getSpecificationLoader());
+                ObjectAdapter objectAdapter = oam.getObjectAdapter();
                 return objectAdapter != null ? objectAdapter.titleString(null) : null;
             }
 
@@ -394,8 +390,9 @@ public class ReferencePanel extends ScalarPanelSelect2Abstract implements PanelW
                 select2.getModel().setObject(convertedInput);
             }
 
-            final ObjectAdapter adapter = convertedInput!=null?convertedInput.getObjectAdapter(ConcurrencyChecking.NO_CHECK,
-                    getPersistenceSession(), getSpecificationLoader()):null;
+            final ObjectAdapter adapter = convertedInput!=null
+            		? convertedInput.getObjectAdapter()
+            				:null;
             getModel().setObject(adapter);
         }
 
@@ -452,8 +449,7 @@ public class ReferencePanel extends ScalarPanelSelect2Abstract implements PanelW
 
     // //////////////////////////////////////
 
-    @Inject
-    WicketViewerSettings wicketViewerSettings;
+    @Inject WicketViewerSettings wicketViewerSettings;
 
 }
 

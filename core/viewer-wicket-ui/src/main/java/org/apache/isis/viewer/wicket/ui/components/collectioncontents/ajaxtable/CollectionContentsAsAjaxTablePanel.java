@@ -214,8 +214,7 @@ extends PanelAbstract<EntityCollectionModel> implements CollectionCountProvider 
 
         final ObjectSpecification parentSpecIfAny =
                 getModel().isParented()
-                ? getModel().getParentObjectAdapterMemento().getObjectAdapter(ConcurrencyChecking.NO_CHECK,
-                        getPersistenceSession(), getSpecificationLoader()).getSpecification()
+                ? getModel().getParentObjectAdapterMemento().getObjectAdapter().getSpecification()
                         : null;
 
         final Predicate<ObjectAssociation> predicate = ObjectAssociation.Predicates.PROPERTIES
@@ -274,8 +273,7 @@ extends PanelAbstract<EntityCollectionModel> implements CollectionCountProvider 
 
         final ObjectAdapterMemento parentObjectAdapterMemento = getModel().getParentObjectAdapterMemento();
         if(parentObjectAdapterMemento != null) {
-            final ObjectAdapter parentObjectAdapter = parentObjectAdapterMemento
-                    .getObjectAdapter(ConcurrencyChecking.NO_CHECK, getPersistenceSession(), getSpecificationLoader());
+            final ObjectAdapter parentObjectAdapter = parentObjectAdapterMemento.getObjectAdapter();
             final Object parent = parentObjectAdapter.getPojo();
             final String collectionId = getModel().getCollectionMemento().getId();
 
