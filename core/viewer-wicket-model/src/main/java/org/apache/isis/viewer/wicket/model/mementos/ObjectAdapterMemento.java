@@ -37,7 +37,6 @@ import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
-import org.apache.isis.core.metamodel.adapter.oid.UniversalOid;
 import org.apache.isis.core.metamodel.facets.object.encodeable.EncodableFacet;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
@@ -46,8 +45,9 @@ import org.apache.isis.core.metamodel.spec.feature.ObjectActionParameter;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.memento.Memento;
 import org.apache.isis.core.runtime.persistence.ObjectNotFoundException;
+import org.apache.isis.core.runtime.system.context.managers.Converters;
+import org.apache.isis.core.runtime.system.context.managers.UniversalObjectManager;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.persistence.UniversalObjectManager;
 
 import lombok.val;
 
@@ -79,12 +79,14 @@ public class ObjectAdapterMemento implements Serializable {
 	public static ObjectAdapterMemento createForList(
 			final ArrayList<ObjectAdapterMemento> list,
 			final ObjectSpecId objectSpecId) {
+		
 		return new ObjectAdapterMemento(list, objectSpecId);
 	}
 
 	public static ObjectAdapterMemento createForList(
 			final Collection<ObjectAdapterMemento> list,
 			final ObjectSpecId objectSpecId) {
+		
 		return list != null ? createForList(_Lists.newArrayList(list), objectSpecId) :  null;
 	}
 
@@ -100,6 +102,7 @@ public class ObjectAdapterMemento implements Serializable {
 					final ConcurrencyChecking concurrencyChecking,
 					final PersistenceSession persistenceSession,
 					final SpecificationLoader specificationLoader) {
+				
 				return oam.type.getAdapter(oam, concurrencyChecking, persistenceSession, specificationLoader);
 			}
 
@@ -133,8 +136,10 @@ public class ObjectAdapterMemento implements Serializable {
 			@Override
 			public ObjectAdapter asAdapter(
 					final ObjectAdapterMemento oam,
-					final ConcurrencyChecking concurrencyChecking, final PersistenceSession persistenceSession,
+					final ConcurrencyChecking concurrencyChecking, 
+					final PersistenceSession persistenceSession,
 					final SpecificationLoader specificationLoader) {
+				
 				final List<Object> listOfPojos =
 						_Lists.map(oam.list, Functions.toPojo(persistenceSession, specificationLoader));
 
@@ -173,7 +178,8 @@ public class ObjectAdapterMemento implements Serializable {
 
 		public abstract ObjectAdapter asAdapter(
 				final ObjectAdapterMemento oam,
-				final ConcurrencyChecking concurrencyChecking, final PersistenceSession persistenceSession,
+				final ConcurrencyChecking concurrencyChecking, 
+				final PersistenceSession persistenceSession,
 				final SpecificationLoader specificationLoader);
 
 		public abstract int hashCode(final ObjectAdapterMemento oam);
@@ -196,6 +202,7 @@ public class ObjectAdapterMemento implements Serializable {
 					final ConcurrencyChecking concurrencyChecking,
 					final PersistenceSession persistenceSession,
 					final SpecificationLoader specificationLoader) {
+				
 				ObjectSpecId objectSpecId = oam.objectSpecId;
 				ObjectSpecification objectSpec = SpecUtils.getSpecificationFor(objectSpecId, specificationLoader);
 				final EncodableFacet encodableFacet = objectSpec.getFacet(EncodableFacet.class);
@@ -220,7 +227,8 @@ public class ObjectAdapterMemento implements Serializable {
 			@Override
 			public void resetVersion(
 					ObjectAdapterMemento objectAdapterMemento,
-					final PersistenceSession persistenceSession, final SpecificationLoader specificationLoader) {
+					final PersistenceSession persistenceSession, 
+					final SpecificationLoader specificationLoader) {
 			}
 		},
 		/**
@@ -232,13 +240,16 @@ public class ObjectAdapterMemento implements Serializable {
 			ObjectAdapter recreateAdapter(
 					final ObjectAdapterMemento oam,
 					ConcurrencyChecking concurrencyChecking,
-					final PersistenceSession persistenceSession, final SpecificationLoader specificationLoader) {
+					final PersistenceSession persistenceSession, 
+					final SpecificationLoader specificationLoader) {
 
 				if(_URI.isUoid(oam.persistentOidStr)) {
-					val uri = URI.create(oam.persistentOidStr);
-					val oid = Oid.Factory.universal(uri);
-					val objAdapter = persistenceSession.adapterFor(oid, concurrencyChecking);
-					return objAdapter;
+					
+					val objectManager = UniversalObjectManager.current();
+					val decoder = Converters.toUriConverter();
+					val objectUri = decoder.decodeFromStringElseFail(oam.persistentOidStr);
+					
+					return objectManager.resolve(objectUri);
 				}
 
 				RootOid oid = Oid.unmarshaller().unmarshal(oam.persistentOidStr, RootOid.class);
@@ -296,7 +307,9 @@ public class ObjectAdapterMemento implements Serializable {
 			ObjectAdapter recreateAdapter(
 					final ObjectAdapterMemento oam,
 					final ConcurrencyChecking concurrencyChecking,
-					final PersistenceSession persistenceSession, final SpecificationLoader specificationLoader) {
+					final PersistenceSession persistenceSession, 
+					final SpecificationLoader specificationLoader) {
+				
 				return oam.transientMemento.recreateObject();
 			}
 
@@ -327,13 +340,15 @@ public class ObjectAdapterMemento implements Serializable {
 				final ConcurrencyChecking concurrencyChecking,
 				final PersistenceSession persistenceSession,
 				final SpecificationLoader specificationLoader) {
+			
 			return recreateAdapter(nom, concurrencyChecking, persistenceSession, specificationLoader);
 		}
 
 		abstract ObjectAdapter recreateAdapter(
 				final ObjectAdapterMemento nom,
 				final ConcurrencyChecking concurrencyChecking,
-				final PersistenceSession persistenceSession, final SpecificationLoader specificationLoader);
+				final PersistenceSession persistenceSession, 
+				final SpecificationLoader specificationLoader);
 
 		public abstract boolean equals(ObjectAdapterMemento oam, ObjectAdapterMemento other);
 		public abstract int hashCode(ObjectAdapterMemento objectAdapterMemento);
@@ -342,7 +357,8 @@ public class ObjectAdapterMemento implements Serializable {
 
 		public abstract void resetVersion(
 				ObjectAdapterMemento objectAdapterMemento,
-				final PersistenceSession persistenceSession, final SpecificationLoader specificationLoader);
+				final PersistenceSession persistenceSession, 
+				final SpecificationLoader specificationLoader);
 	}
 
 
@@ -635,7 +651,7 @@ public class ObjectAdapterMemento implements Serializable {
 			return objectAdapterMemento->Oid.Factory.ofBookmark(objectAdapterMemento.asBookmark());
 		}
 
-		public static Function<ObjectAdapterMemento, UniversalOid> toUoid() {
+		public static Function<ObjectAdapterMemento, URI> toUri() {
 
 			return objectAdapterMemento->{
 
@@ -644,16 +660,9 @@ public class ObjectAdapterMemento implements Serializable {
 				val identifier = bookmark.getIdentifier();
 				//val state = Oid_State.from(bookmark); // ignored
 				//val version = Version.empty(); // ignored
-
-				val objectManager = UniversalObjectManager.current();
-				val authority = objectManager.authorityForElseFail(specId);
 				
-				val uri = authority.toUoidDtoBuilder(specId)
-						.query(identifier)
-						.build()
-						.toURI();		
-
-				return Oid.Factory.universal(uri);
+				val decoder = Converters.toUriConverter();
+				return decoder.toURI(specId, identifier);
 
 			};
 		}

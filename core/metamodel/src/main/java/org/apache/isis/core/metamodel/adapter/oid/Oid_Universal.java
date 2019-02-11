@@ -19,37 +19,48 @@
 
 package org.apache.isis.core.metamodel.adapter.oid;
 
-import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 
 import org.apache.isis.applib.services.bookmark.Bookmark;
 import org.apache.isis.commons.internal.base._Strings;
-import org.apache.isis.commons.internal.debug._Probe;
-import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.commons.internal.uri._URI;
-import org.apache.isis.core.commons.encoding.DataOutputExtended;
 import org.apache.isis.core.metamodel.adapter.version.Version;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
-import org.apache.isis.schema.common.v1.OidDto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.val;
 
 @RequiredArgsConstructor(staticName="of")
 final class Oid_Universal implements UniversalOid {
 
-    private final static long serialVersionUID = 1L;
-	private final static _Probe probe = _Probe.unlimited().label("Oid_Universal");
+    //private final static long serialVersionUID = 1L;
+	//private final static _Probe probe = _Probe.unlimited().label("Oid_Universal");
     
-	private final URI universalId;
-	@Getter @Setter private Version version;
+	@Getter(onMethod=@__({@Override})) private final URI objectUri;
+	
+	@Getter(lazy=true, onMethod=@__({@Override}))
+	private final Version version = parseVersion();
+	
+	@Getter(lazy=true, onMethod=@__({@Override})) 
+	private final ObjectSpecId objectSpecId = parseObjectSpecId();
 	
 	@Override
-	public ObjectSpecId getObjectSpecId() {
+	public String getIdentifier() {
+		return getObjectUri().getQuery();
+	}
+	
+	@Override
+	public String toString() {
+		return enString();
+	}
+	
+	// -- HELPER
+	
+	private ObjectSpecId parseObjectSpecId() {
 		
-		val path = universalId().getPath();
+		val path = getObjectUri().getPath();
 		
 		val firstPathEntry = _Strings.splitThenStream(path, "/")
 		.filter(_Strings::isNotEmpty)
@@ -58,83 +69,78 @@ final class Oid_Universal implements UniversalOid {
 		
 		return ObjectSpecId.of(firstPathEntry);
 	}
-
-	@Override
-	public String getIdentifier() {
-		return universalId().getQuery();
+	
+	private Version parseVersion() {
+		val versionEncoded = getObjectUri().getFragment();
+		if(_Strings.isEmpty(versionEncoded)) {
+			return null;
+		}
+		
+		val parts = new ArrayList<String>(3);
+		_Strings.splitThenStream(versionEncoded, ":") // see org.apache.isis.core.metamodel.adapter.oid.Oid_Marshaller.SEPARATOR
+		.forEach(parts::add);
+		
+		final String versionSequence = parts.get(0);
+        final String versionUser = parts.get(1);
+        final String versionUtcTimestamp = parts.get(2);
+        final Version version = Version.Factory.parse(versionSequence, versionUser, versionUtcTimestamp);
+		return version;
 	}
+	
 
-	@Override
-	public Bookmark asBookmark() {
+	//@Override
+	private Bookmark asBookmark() {
 		
 		//TODO [2033] bad place to do this here, change API ?
 		//probe.println("NOT IMPLEMENTED: 'asBookmark()'");
 		
 		final String objectType = getObjectSpecId().asString(); 
 				//asBookmarkObjectState().getCode() + rootOid.getObjectSpecId().asString();
-        final String identifier = universalId().getQuery();
+        final String identifier = getObjectUri().getQuery();
         		//rootOid.getIdentifier();
         
         return new Bookmark(objectType, identifier);
 
 	}
 
-	@Override
-	public OidDto asOidDto() {
-		_Exceptions.throwNotImplemented();
-		
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String enString() {
-		if(version==null) {
+	//@Override
+	private String enString() {
+		val version = getVersion(); 
+		if(Version.isEmpty(version)) {
 			return enStringNoVersion();
 		}
-		return _URI.uriBuilder(universalId)
+		val plain = _URI.uriBuilder(objectUri)
 				.fragment(version.enString())
 				.build()
 				.toURI()
 				.toString();
+		
+		return plain;
 	}
 
-	@Override
-	public String enStringNoVersion() {
-		return universalId.toString();
+	//@Override
+	private String enStringNoVersion() {
+		return objectUri.toString();
 	}
 
-	@Override
-	public boolean isTransient() {
+	//@Override
+	private boolean isTransient() {
 		return false;
 	}
 
-	@Override
-	public boolean isViewModel() {
+	//@Override
+	private boolean isViewModel() {
 		return false;
 	}
 
-	@Override
-	public boolean isPersistent() {
+	//@Override
+	private boolean isPersistent() {
 		return true;
 	}
 
-	@Override
-	public Oid copy() {
-		return of(universalId());
-	}
-
-	@Override
-	public void encode(DataOutputExtended outputStream) throws IOException {
-		_Exceptions.throwNotImplemented();
-		
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public URI universalId() {
-		return universalId;
+	//@Override
+	private UniversalOid copy() {
+		return of(getObjectUri());
 	}
 
 

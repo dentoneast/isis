@@ -1,4 +1,4 @@
-package org.apache.isis.core.runtime.contextmanger;
+package org.apache.isis.core.runtime.system.context.managers;
 
 import java.net.URI;
 
@@ -18,10 +18,10 @@ public interface ContextHandler extends ManagedObjectResolver {
 	
 	/**
 	 * To support chain-of-responsibility pattern.
-	 * @param uri
-	 * @return whether this manager sees itself responsible to manage objects represented by given uri
+	 * @param objectUri
+	 * @return whether this manager sees itself responsible to manage objects represented by given objectUri
 	 */
-	boolean recognizes(URI uri);
+	boolean recognizes(URI objectUri);
 	
 
 	

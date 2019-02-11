@@ -1,4 +1,4 @@
-package org.apache.isis.core.runtime.contextmanger;
+package org.apache.isis.core.runtime.system.context.managers;
 
 import java.net.URI;
 import java.util.Optional;
@@ -24,16 +24,15 @@ public interface ManagedObjectResolver {
 	 * @param managedObject
 	 * @return identifier 
 	 */
-	URI identifierOf(ManagedObject managedObject);
-	
+	URI uriOf(ManagedObject managedObject);
 	
 	/**
 	 * Retrieve a reference to the ManagedObject as identified by the identifier. 
 	 * @param specId 
-	 * @param identifier
+	 * @param uri
 	 * @return
 	 */
-	Instance<ManagedObject> resolve(ObjectSpecId specId, URI identifier);
+	Instance<ManagedObject> resolve(ObjectSpecId specId, URI uri);
 	
 	
 	/**
@@ -44,7 +43,7 @@ public interface ManagedObjectResolver {
 	 */
 	default Instance<ManagedObject> resolve(UniversalOid universalOid) {
 		val spec = universalOid.getObjectSpecId();
-		return resolve(spec, universalOid.universalId());
+		return resolve(spec, universalOid.getObjectUri());
 	}
 
 

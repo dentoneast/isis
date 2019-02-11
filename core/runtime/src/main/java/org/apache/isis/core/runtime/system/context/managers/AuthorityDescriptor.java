@@ -1,4 +1,4 @@
-package org.apache.isis.core.runtime.contextmanger;
+package org.apache.isis.core.runtime.system.context.managers;
 
 import org.apache.isis.commons.internal.uri._URI;
 import org.apache.isis.commons.internal.uri._URI.ContainerType;

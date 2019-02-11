@@ -22,8 +22,8 @@ import org.apache.isis.core.metamodel.spec.ManagedObject.SimpleManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-import org.apache.isis.core.runtime.contextmanger.AuthorityDescriptor;
-import org.apache.isis.core.runtime.contextmanger.ContextHandler;
+import org.apache.isis.core.runtime.system.context.managers.AuthorityDescriptor;
+import org.apache.isis.core.runtime.system.context.managers.ContextHandler;
 import org.springframework.context.ApplicationContext;
 
 import domainapp.modules.spring.dom.customer.Customer;
@@ -38,7 +38,7 @@ public class SpringDataJPADemoHandler implements ContextHandler {
 	@Inject SpecificationLoader specLoader;
 
 	@Override
-	public URI identifierOf(ManagedObject managedObject) {
+	public URI uriOf(ManagedObject managedObject) {
     	try {
 			return identifierForCustomer(managedObject.getPojo(), managedObject.getSpecification());
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException

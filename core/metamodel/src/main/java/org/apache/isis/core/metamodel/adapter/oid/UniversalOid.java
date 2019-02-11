@@ -1,35 +1,24 @@
 package org.apache.isis.core.metamodel.adapter.oid;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
-import org.apache.isis.commons.internal.base._Either;
-import org.apache.isis.commons.internal.uri._URI;
+import org.apache.isis.core.metamodel.adapter.version.Version;
+import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 
-import lombok.val;
+public interface UniversalOid /*extends RootOid*/ {
 
-public interface UniversalOid extends RootOid {
+	URI getObjectUri();
 
-	URI universalId();
-
-	static _Either<UniversalOid, URISyntaxException> parseUri(String uriString) {
-		
-		if(!_URI.isUoid(uriString)) {
-			
-			val ex = new URISyntaxException(uriString, "Does not match _URI#isUoid.");
-			return _Either.right(ex);	
-		}
-		
-		try {
-			val uri = new URI(uriString);
-			
-			return _Either.left(Oid.Factory.universal(uri));
-			
-		} catch (URISyntaxException ex) {
-		
-			return _Either.right(ex);
-		}
-		
+	// -- FROM (ROOT) OID
+	
+	ObjectSpecId getObjectSpecId();
+	String getIdentifier();
+	Version getVersion();
+	
+	// -- FACTORIES
+	
+	static UniversalOid of(URI uri) {
+		return Oid.Factory.universal(uri);
 	}
 	
 }

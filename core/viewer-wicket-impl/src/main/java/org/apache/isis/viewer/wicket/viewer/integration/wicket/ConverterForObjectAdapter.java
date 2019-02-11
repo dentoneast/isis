@@ -23,7 +23,9 @@ import java.util.Locale;
 
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
-import org.apache.isis.core.runtime.system.persistence.UniversalObjectManager;
+import org.apache.isis.core.metamodel.adapter.oid.RootOid;
+import org.apache.isis.core.runtime.system.context.managers.Converters;
+import org.apache.isis.core.runtime.system.context.managers.UniversalObjectManager;
 import org.apache.wicket.util.convert.IConverter;
 
 import lombok.val;
@@ -44,10 +46,10 @@ public class ConverterForObjectAdapter implements IConverter<ObjectAdapter> {
     public ObjectAdapter convertToObject(final String value, final Locale locale) {
     	
     	val objectManager = UniversalObjectManager.current();
-    	val decoder = objectManager.getOidDecoder();
-    	val uoid = decoder.decodeFromStringElseFail(value);
+    	val decoder = Converters.toUriConverter();
+    	val objectUri = decoder.decodeFromStringElseFail(value);
     	
-    	return objectManager.resolve(uoid);
+    	return objectManager.resolve(objectUri);
     }
 
     /**
@@ -55,12 +57,12 @@ public class ConverterForObjectAdapter implements IConverter<ObjectAdapter> {
      */
     @Override
     public String convertToString(final ObjectAdapter adapter, final Locale locale) {
+    	val rootOid = (RootOid) adapter.getOid();
+    	val toUriConverter = Converters.toUriConverter();
+    	val encoder = Converters.fromUriConverter();
     	
-    	val oid = adapter.getOid();
-    	val objectManager = UniversalObjectManager.current();
-    	val encoder = objectManager.getOidEncoder();
-    	
-    	return encoder.encodeToStringWithLegacySupport(oid);
+    	val objectUri = toUriConverter.toURI(rootOid);
+    	return encoder.encodeToString(objectUri);
     }
 
 }

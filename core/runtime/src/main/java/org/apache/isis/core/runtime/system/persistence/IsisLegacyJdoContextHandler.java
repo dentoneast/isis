@@ -22,9 +22,9 @@ import org.apache.isis.core.metamodel.spec.ManagedObject.SimpleManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-import org.apache.isis.core.runtime.contextmanger.AuthorityDescriptor;
-import org.apache.isis.core.runtime.contextmanger.ContextHandler;
 import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.context.managers.AuthorityDescriptor;
+import org.apache.isis.core.runtime.system.context.managers.ContextHandler;
 import org.apache.isis.core.runtime.system.session.IsisSession;
 
 import lombok.val;
@@ -49,7 +49,7 @@ public class IsisLegacyJdoContextHandler implements ContextHandler {
 	}
 
 	@Override
-	public URI identifierOf(ManagedObject managedObject) {
+	public URI uriOf(ManagedObject managedObject) {
     	try {
 			return identifierForPersistable(managedObject.getPojo(), managedObject.getSpecification());
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException

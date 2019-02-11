@@ -1,4 +1,4 @@
-package org.apache.isis.core.runtime.contextmanger;
+package org.apache.isis.core.runtime.system.context.managers;
 
 import java.util.Optional;
 

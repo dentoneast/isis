@@ -38,11 +38,11 @@ import org.apache.isis.core.metamodel.adapter.version.Version;
 import org.apache.isis.core.metamodel.facets.object.viewmodel.ViewModelFacet;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-import org.apache.isis.core.runtime.contextmanger.ContextManager;
 import org.apache.isis.core.runtime.persistence.ObjectNotFoundException;
 import org.apache.isis.core.runtime.persistence.PojoRecreationException;
+import org.apache.isis.core.runtime.system.context.managers.ContextManager;
+import org.apache.isis.core.runtime.system.context.managers.UniversalObjectManager;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.persistence.UniversalObjectManager;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,7 +118,7 @@ class ObjectAdapterContext_ObjectAdapterByIdProvider implements ObjectAdapterByI
             final RootOid rootOid,
             final ConcurrencyChecking concurrencyChecking) {
                 
-        /* FIXME [ISIS-1976] SPI for adapterFor(RootOid)
+        /* FIXME [2033] SPI for adapterFor(RootOid)
          * https://github.com/apache/isis/pull/121#discussion_r215889748
          * 
          * Eventually I'm hoping that this code will simplify and then become pluggable.
@@ -136,18 +136,23 @@ class ObjectAdapterContext_ObjectAdapterByIdProvider implements ObjectAdapterByI
          * generalization of that concept).
          */
     	
-    	
-    	if(rootOid instanceof UniversalOid) {
-    		
-    		Objects.requireNonNull(rootOid);
-    		
-    		val universalOid = (UniversalOid) rootOid;
-    		val objectManager = UniversalObjectManager.current();
-    		
-    		return objectManager.resolve(universalOid);
+    	// this should never be called to resolve for other then legacy JDO
+    	//FIXME [2033] remove guard
+    	if(!rootOid.enStringNoVersion().contains("SimpleObject")) {
+    		throw _Exceptions.unexpectedCodeReach();
     	}
     	
-        //FIXME [ISIS-1976] remove guard
+//    	if(rootOid instanceof UniversalOid) {
+//    		
+//    		Objects.requireNonNull(rootOid);
+//    		
+//    		val universalOid = (UniversalOid) rootOid;
+//    		val objectManager = UniversalObjectManager.current();
+//    		
+//    		return objectManager.resolve(universalOid);
+//    	}
+    	
+        //FIXME [2033] remove guard
         final ObjectAdapter serviceAdapter = objectAdapterContext.lookupServiceAdapterFor(rootOid);
         if (serviceAdapter != null) {
             //throw _Exceptions.unexpectedCodeReach();

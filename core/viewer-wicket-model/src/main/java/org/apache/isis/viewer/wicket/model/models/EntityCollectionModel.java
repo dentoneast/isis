@@ -22,6 +22,7 @@ package org.apache.isis.viewer.wicket.model.models;
 import static org.apache.isis.commons.internal.base._NullSafe.stream;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -47,8 +48,8 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.context.managers.UniversalObjectManager;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.persistence.UniversalObjectManager;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.viewer.wicket.model.hints.UiHintContainer;
 import org.apache.isis.viewer.wicket.model.links.LinkAndLabel;
@@ -100,11 +101,13 @@ UiHintContainer {
 
             private Stream<ObjectAdapter> loadInBulk(final EntityCollectionModel model) {
 
-                final Stream<UniversalOid> uoids = stream(model.mementoList)
-                        .map(ObjectAdapterMemento.Functions.toUoid());
+            	val objectManager = UniversalObjectManager.current();
+            	
+                final Stream<URI> objectUris = stream(model.mementoList)
+                        .map(ObjectAdapterMemento.Functions.toUri());
                 
-                val objectManager = UniversalObjectManager.current();
-                return objectManager.resolve(uoids);
+                
+                return objectManager.resolve(objectUris);
             }
             
             private Stream<ObjectAdapter> loadOneByOne(final EntityCollectionModel model) {

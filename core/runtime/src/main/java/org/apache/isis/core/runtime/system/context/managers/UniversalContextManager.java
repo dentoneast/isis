@@ -1,4 +1,4 @@
-package org.apache.isis.core.runtime.contextmanger;
+package org.apache.isis.core.runtime.system.context.managers;
 
 import static org.apache.isis.commons.internal.base._With.requires;
 
@@ -22,7 +22,7 @@ public class UniversalContextManager implements ContextManager {
 	@Inject Instance<ContextHandler> contextHandlers;
 	
 	@Override
-	public URI identifierOf(ManagedObject managedObject) {
+	public URI uriOf(ManagedObject managedObject) {
 		
 		requires(managedObject, "managedObject");
 		
@@ -33,7 +33,7 @@ public class UniversalContextManager implements ContextManager {
 			throw _Exceptions.unrecoverable(msg); 
 		}
 		
-		val uri = resolver.identifierOf(managedObject);
+		val uri = resolver.uriOf(managedObject);
 		
 		return uri;
 		

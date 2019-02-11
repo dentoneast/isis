@@ -1,24 +1,18 @@
-package org.apache.isis.core.runtime.system.persistence;
+package org.apache.isis.core.runtime.system.context.managers;
 
 import static org.apache.isis.commons.internal.base._NullSafe.stream;
 
-import java.net.URISyntaxException;
+import java.net.URI;
 import java.util.stream.Stream;
 
-import javax.annotation.Nullable;
-
-import org.apache.isis.commons.internal.base._Either;
 import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.UniversalOid;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
-import org.apache.isis.core.runtime.contextmanger.AuthorityDescriptor;
-import org.apache.isis.core.runtime.contextmanger.ContextManager;
 import org.apache.isis.core.runtime.persistence.adapter.PojoAdapter;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSession;
@@ -39,91 +33,31 @@ public interface UniversalObjectManager {
 
 	// -- INTERFACE
 	
-	OidEncoder getOidEncoder();
-	OidDecoder getOidDecoder();
-	
 	AuthorityDescriptor authorityForElseFail(ObjectSpecId specId);
 	
-	Stream<ObjectAdapter> resolve(Stream<UniversalOid> uoids);
-	ObjectAdapter resolve(UniversalOid uoid);
+	Stream<ObjectAdapter> resolve(Stream<URI> objectUris);
+	ObjectAdapter resolve(URI objectUri);
 
 	// -- RESULT CONTAINER 
 	
 	@Value(staticConstructor="of")
 	static final class ResolveResult {
-		@Getter private final UniversalOid uoid; 
+		@Getter private final URI objectUri; 
 		@Getter private final ManagedObject managedObject;
 		
 		public ObjectAdapter toObjectAdapter(IsisSession isisSession) {
 			val pojo = managedObject.getPojo();
-			return pojo!=null 
-					? PojoAdapter.of(pojo, uoid, isisSession)
-							: null;
-		}
-		
-	}
-	
-	// -- OID ENCODER / DECODER
-	
-	static interface OidEncoder {
-		String encodeToString(@Nullable UniversalOid oid);
-
-		default String encodeToStringWithLegacySupport(@Nullable Oid oid) {
-			if (oid == null) {
-	            return null;
-	        }
-			if(oid instanceof UniversalOid) {
-	    		return encodeToString((UniversalOid) oid);
+			if(pojo==null) {
+				return null;
 			}
-			// legacy support ...
-			_Probe.warnNotImplementedYet("instead we should convert a concrete RootOid to a UniversalOid");
-			// FIXME [2033] instead we should convert a concrete RootOid to a UniversalOid
-	    	return oid.enString();
-		}
-	}
-	
-	static interface OidDecoder {
-		_Either<UniversalOid, URISyntaxException> decodeFromString(String encoded);
-		
-		default UniversalOid decodeFromStringElseFail(String encoded) {
-			val uoidOrError = decodeFromString(encoded);
-	    	if(uoidOrError.isRight()) {
-	    		
-	    		// TODO [2033] legacy support if required could be ...
-	    		// final RootOid rootOid = RootOid.deStringEncoded(value);
-	    		
-	    		throw _Exceptions.unrecoverable("Oid decoding failed.", uoidOrError.rightIfAny());	
-	    	}
-			return uoidOrError.leftIfAny();
-		}
-	}
-	
-	// --
-	
-	static class Codecs {
-		
-		private static class UniversalOidEncoder implements OidEncoder {
-
-			@Override
-			public String encodeToString(@Nullable UniversalOid oid) {
-				if (oid == null) {
-		            return null;
-		        }
-		        return oid.enString();
-			}
-			
-		}
-		
-		private static class UniversalOidDecoder implements OidDecoder {
-
-			@Override
-			public _Either<UniversalOid, URISyntaxException> decodeFromString(String encoded) {
-				return UniversalOid.parseUri(encoded);
-			}
-			
+			val converter = Converters.fromUriConverter();
+			val rootOid = converter.toRootOid(objectUri);
+			return PojoAdapter.of(pojo, rootOid, isisSession);
 		}
 		
 	}
+	
+	
 	
 	// -- SAMPLE - TODO [2033] just for proof of concept, needs refinement
 	
@@ -138,20 +72,20 @@ public interface UniversalObjectManager {
 		
 			
 		@Override
-		public Stream<ObjectAdapter> resolve(Stream<UniversalOid> uoids) {
+		public Stream<ObjectAdapter> resolve(Stream<URI> objectUris) {
 			val contextManager = this.contextManager.get();
 			val isisSession = IsisSession.currentIfAny();
 			
 			probe.println("resolve multiple ...");
 			
-			return stream(uoids)
-					.flatMap(uoid->{
+			return stream(objectUris)
+					.flatMap(objectUri->{
 						
-						probe.println(1, "resolving %s", uoid.enString());
+						probe.println(1, "resolving %s", objectUri);
 						
-						val instance = contextManager.resolve(uoid);
+						val instance = contextManager.resolve(UniversalOid.of(objectUri));
 						return instance.stream()
-						.map(managedObject->ResolveResult.of(uoid, managedObject)
+						.map(managedObject->ResolveResult.of(objectUri, managedObject)
 								.toObjectAdapter(isisSession))
 						.filter(_NullSafe::isPresent);
 					})
@@ -159,15 +93,15 @@ public interface UniversalObjectManager {
 		}
 
 		@Override
-		public ObjectAdapter resolve(UniversalOid uoid) {
+		public ObjectAdapter resolve(URI objectUri) {
 			val contextManager = this.contextManager.get();
-			val instance = contextManager.resolve(uoid);
+			val instance = contextManager.resolve(UniversalOid.of(objectUri));
 			
     		if(instance.isResolvable()) {
     			val managedObject = instance.get();
     			val isisSession = IsisSession.currentIfAny();
     			
-    			return ResolveResult.of(uoid, managedObject).toObjectAdapter(isisSession);
+    			return ResolveResult.of(objectUri, managedObject).toObjectAdapter(isisSession);
     			
     		} else if(instance.isAmbiguous()) {
     			
@@ -180,16 +114,6 @@ public interface UniversalObjectManager {
     			throw _Exceptions.notImplemented();
     		}
 			
-		}
-
-		@Override
-		public OidEncoder getOidEncoder() {
-			return new Codecs.UniversalOidEncoder();
-		}
-
-		@Override
-		public OidDecoder getOidDecoder() {
-			return new Codecs.UniversalOidDecoder();
 		}
 
 		@Override
