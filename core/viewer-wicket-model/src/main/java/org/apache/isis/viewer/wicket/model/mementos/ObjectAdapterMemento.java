@@ -647,23 +647,17 @@ public class ObjectAdapterMemento implements Serializable {
 			};
 		}
 
-		public static Function<ObjectAdapterMemento, RootOid> toOid() {
-			return objectAdapterMemento->Oid.Factory.ofBookmark(objectAdapterMemento.asBookmark());
-		}
+//		public static Function<ObjectAdapterMemento, RootOid> toOid() {
+//			return objectAdapterMemento->Oid.Factory.ofBookmark(objectAdapterMemento.asBookmark());
+//		}
 
 		public static Function<ObjectAdapterMemento, URI> toUri() {
-
+			
+			val decoder = Converters.toUriConverter();
+			
 			return objectAdapterMemento->{
-
 				val bookmark = objectAdapterMemento.asBookmark();
-				val specId = ObjectSpecId.of(bookmark.getObjectType());
-				val identifier = bookmark.getIdentifier();
-				//val state = Oid_State.from(bookmark); // ignored
-				//val version = Version.empty(); // ignored
-				
-				val decoder = Converters.toUriConverter();
-				return decoder.toURI(specId, identifier);
-
+				return decoder.toURI(bookmark);
 			};
 		}
 

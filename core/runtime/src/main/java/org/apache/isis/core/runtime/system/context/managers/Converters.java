@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 
 import javax.annotation.Nullable;
 
+import org.apache.isis.applib.services.bookmark.Bookmark;
 import org.apache.isis.commons.internal.base._Either;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
@@ -67,7 +68,15 @@ public final class Converters {
 		
 		URI toURI(RootOid rootOid);
 
-
+		default URI toURI(Bookmark bookmark) {
+        	
+			val specId = ObjectSpecId.of(bookmark.getObjectType());
+			val identifier = bookmark.getIdentifier();
+			//val state = Oid_State.from(bookmark); // ignored
+			//val version = Version.empty(); // ignored
+			
+			return toURI(specId, identifier);
+		}
 		
 	}
 		
