@@ -56,7 +56,7 @@ public class ConverterForObjectAdapterMemento implements IConverter<ObjectAdapte
         final RootOid oid = RootOid.deStringEncoded(value);
         
         final ObjectAdapter adapter = getPersistenceSession().adapterFor(oid);
-        return ObjectAdapterMemento.mementoOf(adapter);
+        return ObjectAdapterMemento.ofAdapter(adapter);
     }
 
     /**

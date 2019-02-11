@@ -813,10 +813,10 @@ public class ScalarModel extends EntityModel implements LinksProvider, FormExecu
 
         if(isCollection()) {
             final List<ObjectAdapterMemento> listOfMementos = _NullSafe.stream((Iterable<?>) pojo)
-                    .map(ObjectAdapterMemento.Functions.fromPojo(getPersistenceSession()))
+                    .map(ObjectAdapterMemento::ofPojo)
                     .collect(Collectors.toList());
             final ObjectAdapterMemento memento =
-                    ObjectAdapterMemento.createForList(listOfMementos, getTypeOfSpecification().getSpecId());
+                    ObjectAdapterMemento.ofMementoList(listOfMementos, getTypeOfSpecification().getSpecId());
             super.setObjectMemento(memento, getPersistenceSession(), getSpecificationLoader()); // associated value
         } else {
             super.setObject(adapter); // associated value
@@ -976,7 +976,7 @@ public class ScalarModel extends EntityModel implements LinksProvider, FormExecu
 
             @Override
             public void setMultiPending(final ArrayList<ObjectAdapterMemento> pending) {
-                final ObjectAdapterMemento adapterMemento = ObjectAdapterMemento.createForList(pending, getScalarModel().getTypeOfSpecification().getSpecId());
+                final ObjectAdapterMemento adapterMemento = ObjectAdapterMemento.ofMementoList(pending, getScalarModel().getTypeOfSpecification().getSpecId());
                 ScalarModel.this.setPending(adapterMemento);
             }
 

@@ -25,9 +25,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.core.commons.ensure.Assert;
@@ -35,7 +32,6 @@ import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
-import org.apache.isis.core.metamodel.adapter.oid.UniversalOid;
 import org.apache.isis.core.metamodel.services.ServiceUtil;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
@@ -43,6 +39,8 @@ import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.persistence.adaptermanager.factories.OidFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * package private mixin for ObjectAdapterContext
@@ -91,11 +89,6 @@ class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvide
         
         final RootOid rootOid = oidFactory.oidFor(pojo);
         final ObjectAdapter newAdapter = objectAdapterContext.getFactories().createRootAdapter(pojo, rootOid);
-        
-        // the pojo might be a managed object (eg. by Spring or CDI), this is new
-        if(rootOid instanceof UniversalOid) {
-        	return newAdapter; // skip service injection
-        }
         return objectAdapterContext.injectServices(newAdapter);
     }
     

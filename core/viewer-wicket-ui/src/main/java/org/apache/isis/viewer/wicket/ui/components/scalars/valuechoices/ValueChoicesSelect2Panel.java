@@ -76,7 +76,7 @@ public class ValueChoicesSelect2Panel extends ScalarPanelSelect2Abstract impleme
         final List<ObjectAdapter> choices =
                 scalarModel.getChoices(argumentsIfAvailable, getAuthenticationSession());
 
-        return _Lists.map(choices, ObjectAdapterMemento.Functions.fromAdapter());
+        return _Lists.map(choices, ObjectAdapterMemento::ofAdapter);
     }
 
     // ///////////////////////////////////////////////////////////////////

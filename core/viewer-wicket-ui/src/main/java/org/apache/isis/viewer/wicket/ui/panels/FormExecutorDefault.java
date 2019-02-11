@@ -292,8 +292,8 @@ implements FormExecutor {
     				
     				// legacy behavior, for non UniversalOid
     				
-    		        final ObjectAdapterMemento targetOam = ObjectAdapterMemento.mementoOf(targetAdapter);
-    		        final ObjectAdapterMemento resultOam = ObjectAdapterMemento.mementoOf(resultAdapter);
+    		        final ObjectAdapterMemento targetOam = ObjectAdapterMemento.ofAdapter(targetAdapter);
+    		        final ObjectAdapterMemento resultOam = ObjectAdapterMemento.ofAdapter(resultAdapter);
     		
     		        return differs(targetOam, resultOam);			
     			});

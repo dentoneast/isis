@@ -87,7 +87,7 @@ public interface ScalarModelWithMultiPending extends Serializable {
                             LOG.debug("setting to pending: {}", ownerPending.toString());
                             final ObjectSpecId objectSpecId = ownerScalarModel.getTypeOfSpecification().getSpecId();
                             ownerScalarModel.setObjectMemento(
-                                    ObjectAdapterMemento.createForList(adapterMemento, objectSpecId),
+                                    ObjectAdapterMemento.ofMementoList(adapterMemento, objectSpecId),
                                     persistenceSession, specificationLoader);
                         }
                     }

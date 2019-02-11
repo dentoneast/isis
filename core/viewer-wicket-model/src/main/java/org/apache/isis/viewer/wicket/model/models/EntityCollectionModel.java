@@ -103,8 +103,9 @@ UiHintContainer {
             	val objectManager = UniversalObjectManager.current();
             	
                 final Stream<URI> objectUris = stream(model.mementoList)
-                        .map(ObjectAdapterMemento.Functions.toUri());
-                
+                		.filter(_NullSafe::isPresent)
+                        .map(ObjectAdapterMemento::toObjectUri)
+                        .filter(_NullSafe::isPresent);
                 
                 return objectManager.resolve(objectUris);
             }
@@ -129,7 +130,7 @@ UiHintContainer {
             void setObject(final EntityCollectionModel entityCollectionModel, final List<ObjectAdapter> list) {
 
                 entityCollectionModel.mementoList = _NullSafe.stream(list)
-                        .map(ObjectAdapterMemento.Functions.toMemento())
+                        .map(ObjectAdapterMemento::ofAdapter)
                         .filter(_NullSafe::isPresent)
                         .collect(Collectors.toList());
             }
@@ -247,8 +248,6 @@ UiHintContainer {
             final ObjectAdapter collectionAsAdapter,
             final IsisSessionFactory sessionFactory) {
 
-        final PersistenceSession persistenceSession = sessionFactory.getCurrentSession().getPersistenceSession();
-
         // dynamically determine the spec of the elements
         // (ie so a List<Object> can be rendered according to the runtime type of its elements,
         // rather than the compile-time type
@@ -256,7 +255,7 @@ UiHintContainer {
 
         final List<ObjectAdapterMemento> mementoList = streamElementsOf(collectionAsAdapter) // pojos
                 .peek(lowestCommonSuperclassFinder::collect)
-                .map(ObjectAdapterMemento.Functions.fromPojo(persistenceSession))
+                .map(ObjectAdapterMemento::ofPojo)
                 .collect(Collectors.toList());
 
         final ObjectSpecification elementSpec = lowestCommonSuperclassFinder.getLowestCommonSuperclass()
@@ -460,7 +459,7 @@ UiHintContainer {
      */
     public void setObjectList(ObjectAdapter resultAdapter) {
         this.mementoList = streamElementsOf(resultAdapter)
-                .map(ObjectAdapterMemento.Functions.fromPojo(getPersistenceSession()))
+                .map(ObjectAdapterMemento::ofPojo)
                 .collect(Collectors.toList());
     }
 
@@ -495,7 +494,7 @@ UiHintContainer {
 
 
     public void toggleSelectionOn(ObjectAdapter selectedAdapter) {
-        ObjectAdapterMemento selectedAsMemento = ObjectAdapterMemento.mementoOf(selectedAdapter);
+        ObjectAdapterMemento selectedAsMemento = ObjectAdapterMemento.ofAdapter(selectedAdapter);
 
         // try to remove; if couldn't, then mustn't have been in there, in which case add.
         boolean removed = toggledMementosList.remove(selectedAsMemento);

@@ -32,7 +32,6 @@ import org.apache.isis.core.metamodel.adapter.ObjectAdapterByIdProvider;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
-import org.apache.isis.core.metamodel.adapter.oid.UniversalOid;
 import org.apache.isis.core.metamodel.adapter.version.ConcurrencyException;
 import org.apache.isis.core.metamodel.adapter.version.Version;
 import org.apache.isis.core.metamodel.facets.object.viewmodel.ViewModelFacet;
@@ -41,13 +40,10 @@ import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.persistence.ObjectNotFoundException;
 import org.apache.isis.core.runtime.persistence.PojoRecreationException;
 import org.apache.isis.core.runtime.system.context.managers.ContextManager;
-import org.apache.isis.core.runtime.system.context.managers.UniversalObjectManager;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import lombok.val;
 
 /**
  * package private mixin for ObjectAdapterContext
@@ -136,28 +132,19 @@ class ObjectAdapterContext_ObjectAdapterByIdProvider implements ObjectAdapterByI
          * generalization of that concept).
          */
     	
-    	// this should never be called to resolve for other then legacy JDO
-    	//FIXME [2033] remove guard
-    	if(!rootOid.enStringNoVersion().contains("SimpleObject")) {
-    		throw _Exceptions.unexpectedCodeReach();
-    	}
-    	
-//    	if(rootOid instanceof UniversalOid) {
-//    		
-//    		Objects.requireNonNull(rootOid);
-//    		
-//    		val universalOid = (UniversalOid) rootOid;
-//    		val objectManager = UniversalObjectManager.current();
-//    		
-//    		return objectManager.resolve(universalOid);
-//    	}
-    	
         //FIXME [2033] remove guard
         final ObjectAdapter serviceAdapter = objectAdapterContext.lookupServiceAdapterFor(rootOid);
         if (serviceAdapter != null) {
             //throw _Exceptions.unexpectedCodeReach();
             return serviceAdapter;
         }
+        
+    	// this should never be called to resolve for other then legacy JDO
+    	//FIXME [2033] remove guard
+    	if(!rootOid.isViewModel() && !rootOid.enStringNoVersion().contains("SimpleObject")) {
+    		System.err.println("GUARD: " + rootOid.enStringNoVersion());
+    		throw _Exceptions.unexpectedCodeReach();
+    	}
         
         final ObjectAdapter adapter;
         {

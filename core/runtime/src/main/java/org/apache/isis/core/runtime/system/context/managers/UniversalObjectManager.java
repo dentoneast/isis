@@ -85,8 +85,9 @@ public interface UniversalObjectManager {
 						
 						val instance = contextManager.resolve(UniversalOid.of(objectUri));
 						return instance.stream()
-						.map(managedObject->ResolveResult.of(objectUri, managedObject)
-								.toObjectAdapter(isisSession))
+						.map(managedObject->ResolveResult.of(objectUri, managedObject))
+						.filter(_NullSafe::isPresent)
+						.map(resolveResult->resolveResult.toObjectAdapter(isisSession))
 						.filter(_NullSafe::isPresent);
 					})
 					;

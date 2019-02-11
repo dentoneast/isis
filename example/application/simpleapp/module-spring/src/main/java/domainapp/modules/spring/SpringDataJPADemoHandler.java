@@ -48,11 +48,11 @@ public class SpringDataJPADemoHandler implements ContextHandler {
 	}
 
 	@Override
-	public Instance<ManagedObject> resolve(ObjectSpecId specId, URI identifier) {
+	public Instance<ManagedObject> resolve(ObjectSpecId specId, URI objectUri) {
 		
 		// FIXME [2033] this is just a PoC
 		
-		long id = Long.parseLong(identifier.getQuery());
+		long id = Long.parseLong(objectUri.getQuery());
 		
 		val em = springContext.getBean(EntityManager.class);
 		
@@ -66,7 +66,7 @@ public class SpringDataJPADemoHandler implements ContextHandler {
 
 	@Override
 	public boolean recognizes(URI uri) {
-		return uri.toString().startsWith("uoid://entities@spring");
+		return DEFAULT_AUTHORITY.matches(uri);
 	}
 
 	@Override

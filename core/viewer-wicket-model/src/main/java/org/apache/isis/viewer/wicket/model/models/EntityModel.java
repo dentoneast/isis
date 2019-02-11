@@ -173,11 +173,11 @@ public class EntityModel extends BookmarkableModel<ObjectAdapter> implements Obj
     }
 
     public EntityModel(final PageParameters pageParameters) {
-        this(ObjectAdapterMemento.createPersistent(rootOidFrom(pageParameters)));
+        this(ObjectAdapterMemento.ofRootOid(rootOidFrom(pageParameters)));
     }
 
     public EntityModel(final ObjectAdapter adapter) {
-        this(ObjectAdapterMemento.mementoOf(adapter));
+        this(ObjectAdapterMemento.ofAdapter(adapter));
         setObject(adapter);
     }
 
@@ -356,7 +356,7 @@ public class EntityModel extends BookmarkableModel<ObjectAdapter> implements Obj
     @Override
     public void setObject(final ObjectAdapter adapter) {
         super.setObject(adapter);
-        adapterMemento = ObjectAdapterMemento.mementoOf(adapter);
+        adapterMemento = ObjectAdapterMemento.ofAdapter(adapter);
     }
 
     public void setObjectMemento(
@@ -532,7 +532,7 @@ public class EntityModel extends BookmarkableModel<ObjectAdapter> implements Obj
                 return pending;
             }
             final ObjectAdapter adapter = entityModel.getObject();
-            return ObjectAdapterMemento.mementoOf(adapter);
+            return ObjectAdapterMemento.ofAdapter(adapter);
         }
 
         @Override

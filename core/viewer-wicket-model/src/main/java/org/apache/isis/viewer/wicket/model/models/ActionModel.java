@@ -99,7 +99,7 @@ public class ActionModel extends BookmarkableModel<ObjectAdapter> implements For
      * @return
      */
     public static ActionModel create(final EntityModel entityModel, final ObjectAction action) {
-        final ActionMemento homePageActionMemento = ObjectAdapterMemento.Functions.fromAction().apply(action);
+        final ActionMemento homePageActionMemento = new ActionMemento(action);
         return new ActionModel(entityModel, homePageActionMemento);
     }
 
@@ -282,7 +282,7 @@ public class ActionModel extends BookmarkableModel<ObjectAdapter> implements For
         if(oid.isTransient()) {
             return null;
         } else {
-            return new EntityModel(ObjectAdapterMemento.createPersistent(oid));
+            return new EntityModel(ObjectAdapterMemento.ofRootOid(oid));
         }
     }
 
@@ -651,7 +651,7 @@ public class ActionModel extends BookmarkableModel<ObjectAdapter> implements For
 
     private static List<ActionParameterMemento> buildParameterMementos(final List<ObjectActionParameter> parameters) {
         final List<ActionParameterMemento> parameterMementoList =
-                _Lists.map(parameters, ObjectAdapterMemento.Functions.fromActionParameter());
+                _Lists.map(parameters, ActionParameterMemento::new);
         // we copy into a new array list otherwise we get lazy evaluation =
         // reference to a non-serializable object
         return _Lists.newArrayList(parameterMementoList);

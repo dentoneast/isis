@@ -344,7 +344,7 @@ public class ReferencePanel extends ScalarPanelSelect2Abstract implements PanelW
         if(getModel().hasChoices()) {
             choices.addAll(getModel().getChoices(argsIfAvailable, getAuthenticationSession()));
         }
-        return _Lists.map(choices, ObjectAdapterMemento.Functions.fromAdapter());
+        return _Lists.map(choices, ObjectAdapterMemento::ofAdapter);
     }
 
     // called by setProviderAndCurrAndPending

@@ -38,15 +38,10 @@ package org.apache.isis.viewer.wicket.ui.components.widgets.select2.providers;
 
 import java.util.Collection;
 import java.util.List;
-
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.Collections2;
-
 import org.apache.isis.commons.internal.base._NullSafe;
-import org.apache.isis.commons.internal.collections._Lists;
-
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
 import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
@@ -83,7 +78,7 @@ extends ObjectAdapterMementoProviderAbstract implements ObjectAdapterMementoProv
                     return null;
                 }
                 final RootOid oid = RootOid.deString(input);
-                return ObjectAdapterMemento.createPersistent(oid);
+                return ObjectAdapterMemento.ofRootOid(oid);
         };
         return _NullSafe.stream(ids).map(function).collect(Collectors.toList());
     }

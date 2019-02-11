@@ -1,5 +1,9 @@
 package org.apache.isis.core.runtime.system.context.managers;
 
+import static org.apache.isis.commons.internal.base._Strings.isEmpty;
+
+import java.net.URI;
+
 import org.apache.isis.commons.internal.uri._URI;
 import org.apache.isis.commons.internal.uri._URI.ContainerType;
 import org.apache.isis.commons.internal.uri._URI.ContextType;
@@ -8,6 +12,7 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 
 import lombok.Getter;
 import lombok.Value;
+import lombok.val;
 
 /**
  * @since 2.0.0-M3
@@ -27,4 +32,19 @@ public final class AuthorityDescriptor {
 				.path("/"+specId.asString()+"/")
 				;
 	}
+
+	public boolean matches(URI uri) {
+		
+		val prefix = String.format("uoid://%s@%s%s/", 
+				containerType.name(),
+				contextType.name(),
+				isEmpty(contextId) 
+					? "" : 
+						":" + contextId
+				);
+		
+		return uri.toString().startsWith(prefix);
+	}
+	
 }
+

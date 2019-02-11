@@ -161,7 +161,7 @@ public class BreadcrumbModel implements Serializable {
 
     protected EntityModel toEntityModel(final Bookmark bookmark) {
         RootOid rootOid = Factory.ofBookmark(bookmark);
-        ObjectAdapterMemento oam = ObjectAdapterMemento.createPersistent(rootOid);
+        ObjectAdapterMemento oam = ObjectAdapterMemento.ofRootOid(rootOid);
         return new EntityModel(oam);
     }
 

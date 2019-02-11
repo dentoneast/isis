@@ -207,7 +207,7 @@ public abstract class ScalarPanelSelect2Abstract extends ScalarPanelAbstract2 {
                 final ObjectAdapterMemento oam = (ObjectAdapterMemento) proposedValueObjAsList.get(0);
                 final ObjectSpecId objectSpecId = oam.getObjectSpecId();
                 proposedValue = ObjectAdapterMemento
-                        .createForList(proposedValueObjAsList, objectSpecId);
+                        .ofMementoList(proposedValueObjAsList, objectSpecId);
             } else {
                 proposedValue = (ObjectAdapterMemento) proposedValueObj;
             }

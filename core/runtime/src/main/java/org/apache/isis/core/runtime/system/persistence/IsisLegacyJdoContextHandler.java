@@ -59,10 +59,10 @@ public class IsisLegacyJdoContextHandler implements ContextHandler {
 	}
 
 	@Override
-	public Instance<ManagedObject> resolve(ObjectSpecId specId, URI identifier) {
+	public Instance<ManagedObject> resolve(ObjectSpecId specId, URI objectUri) {
 		
 		val spec = specLoader.lookupBySpecId(specId);
-		val id = identifier.getQuery();
+		val id = objectUri.getQuery();
 		
 		val legacyOid = Oid.Factory.persistentOf(specId, id);
 		val persistenceSession = IsisSession.currentIfAny().getPersistenceSession();
@@ -81,7 +81,7 @@ public class IsisLegacyJdoContextHandler implements ContextHandler {
 
 	@Override
 	public boolean recognizes(URI uri) {
-		return uri.toString().startsWith("uoid://entities@jdo");
+		return DEFAULT_AUTHORITY.matches(uri);
 	}
 
 	@Override

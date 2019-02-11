@@ -34,7 +34,7 @@ public class ValueModel extends ModelAbstract<ObjectAdapter> {
     private final ObjectAdapterMemento adapterMemento;
 
     public ValueModel(final ObjectAdapter adapter) {
-        adapterMemento = ObjectAdapterMemento.mementoOf(adapter);
+        adapterMemento = ObjectAdapterMemento.ofAdapter(adapter);
     }
 
     @Override
