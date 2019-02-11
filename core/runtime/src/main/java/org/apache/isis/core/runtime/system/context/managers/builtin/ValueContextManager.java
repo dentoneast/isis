@@ -1,5 +1,6 @@
 package org.apache.isis.core.runtime.system.context.managers.builtin;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.util.Optional;
 
@@ -8,7 +9,10 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.urlencoding.UrlEncodingService;
+import org.apache.isis.applib.services.urlencoding.UrlEncodingServiceWithCompression;
+import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.memento._Mementos;
@@ -34,14 +38,16 @@ public class ValueContextManager implements ContextHandler {
 	private final static _Probe probe = _Probe.unlimited().label("ValueContextManager");
 
 	@Inject SpecificationLoader specLoader;
-	@Inject UrlEncodingService urlEncodingService;
-	@Inject SerializingAdapter serializingAdapter;
+	
+	private SerializingAdapter serializingAdapter;
+	private UrlEncodingService urlEncodingService;
 
 	@PostConstruct
 	public void init() {
-		//
+		urlEncodingService = new UrlEncodingServiceWithCompression();
+		serializingAdapter = new SimpleSerializingAdapter();
 	}
-
+	
 	@Override
 	public URI uriOf(ManagedObject managedObject) {
 
@@ -62,7 +68,7 @@ public class ValueContextManager implements ContextHandler {
 
 	@Override
 	public Instance<ManagedObject> resolve(ObjectSpecId specId, URI objectUri) {
-
+		
 		val serialized = objectUri.getQuery();
 		val spec = specLoader.lookupBySpecId(specId);
 		val expectedType = spec.getCorrespondingClass();
@@ -80,6 +86,10 @@ public class ValueContextManager implements ContextHandler {
 
 	@Override
 	public boolean recognizes(ObjectSpecification spec) {
+		
+		if(spec.isValue()) {
+			probe.println("recognizes spec='%s'", spec);	
+		}
 		return spec.isValue();
 	}
 
@@ -108,5 +118,23 @@ public class ValueContextManager implements ContextHandler {
     private _Mementos.Memento parseMemento(String input){
         return _Mementos.parse(urlEncodingService, serializingAdapter, input);
     }
+    
+    private final static class SimpleSerializingAdapter implements SerializingAdapter {
+
+		@Override
+		public Serializable write(Object value) {
+			if(value instanceof Serializable) {
+				return (Serializable) value;
+			}
+			return null;
+		}
+
+		@Override
+		public <T> T read(Class<T> cls, Serializable value) {
+			return _Casts.uncheckedCast(value);
+		}
+    	
+    }
+    
 }
 

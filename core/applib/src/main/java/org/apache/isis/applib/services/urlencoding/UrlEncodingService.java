@@ -18,7 +18,6 @@ package org.apache.isis.applib.services.urlencoding;
 
 import java.nio.charset.StandardCharsets;
 
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.memento._Mementos.EncoderDecoder;
 
@@ -26,18 +25,17 @@ public interface UrlEncodingService extends EncoderDecoder {
 
     // -- INHERITED from EncoderDecoder (make explicitly programmatic, in order to avoid meta-model validation)
     @Override
-    @Programmatic public String encode(final byte[] bytes);
+    public String encode(final byte[] bytes);
+    
     @Override
-    @Programmatic public byte[] decode(String str);
+    public byte[] decode(String str);
 
     // -- EXTENSIONS
 
-    @Programmatic
     public default String encodeString(final String str) {
         return encode(_Strings.toBytes(str, StandardCharsets.UTF_8));
     }
 
-    @Programmatic
     public default String decodeToString(final String str) {
         return _Strings.ofBytes(decode(str), StandardCharsets.UTF_8);
     }

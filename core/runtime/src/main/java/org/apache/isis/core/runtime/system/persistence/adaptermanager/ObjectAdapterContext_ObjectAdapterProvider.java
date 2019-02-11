@@ -35,12 +35,16 @@ import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.services.ServiceUtil;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
+import org.apache.isis.core.metamodel.spec.ManagedObject.SimpleManagedObject;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.persistence.adaptermanager.factories.OidFactory;
+import org.apache.isis.core.runtime.system.persistence.adaptermanager.factories.OidFactory.OidProvider2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import lombok.val;
 
 /**
  * package private mixin for ObjectAdapterContext
@@ -58,6 +62,8 @@ class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvide
     private final ServiceInjector serviceInjector;
     private final SpecificationLoader specificationLoader; 
     private final OidFactory oidFactory; 
+    private final OidProvider2 oidProviderForManagedContexts = 
+    		new ObjectAdapterContext_OidProviders.OidForManagedContexts();
     
     ObjectAdapterContext_ObjectAdapterProvider(
             ObjectAdapterContext objectAdapterContext,
@@ -71,7 +77,6 @@ class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvide
         
         this.oidFactory = OidFactory.builder(pojo->specificationLoader.loadSpecification(pojo.getClass()))
                 .add(new ObjectAdapterContext_OidProviders.GuardAgainstRootOid())
-                .add(new ObjectAdapterContext_OidProviders.OidForManagedContexts())
                 .add(new ObjectAdapterContext_OidProviders.OidForServices())
                 .add(new ObjectAdapterContext_OidProviders.OidForValues())
                 .add(new ObjectAdapterContext_OidProviders.OidForViewModels())
@@ -85,6 +90,14 @@ class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvide
 
         if(pojo == null) {
             return null;
+        }
+        
+        val spec = specificationLoader.loadSpecification(pojo.getClass());
+        val managedObject = SimpleManagedObject.of(spec, pojo);
+        
+        val resolver = oidProviderForManagedContexts.resolverFor(managedObject);
+        if(resolver!=null) {
+        	return oidProviderForManagedContexts.adapterFor(managedObject, resolver);
         }
         
         final RootOid rootOid = oidFactory.oidFor(pojo);

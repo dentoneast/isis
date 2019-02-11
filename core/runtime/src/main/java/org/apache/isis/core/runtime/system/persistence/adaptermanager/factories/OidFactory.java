@@ -21,9 +21,15 @@ package org.apache.isis.core.runtime.system.persistence.adaptermanager.factories
 
 import java.util.function.Function;
 
+import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
+import org.apache.isis.core.runtime.persistence.adapter.PojoAdapter;
+import org.apache.isis.core.runtime.system.context.managers.Converters;
+import org.apache.isis.core.runtime.system.context.managers.ManagedObjectResolver;
+
+import lombok.val;
 
 /**
  * @since 2.0.0-M2
@@ -35,6 +41,18 @@ public interface OidFactory {
     public interface OidProvider {
         boolean isHandling(ManagedObject managedObject);
         RootOid oidFor(ManagedObject managedObject);
+    }
+    
+    public interface OidProvider2 {
+        ManagedObjectResolver resolverFor(ManagedObject managedObject);
+        default RootOid oidFor(ManagedObject managedObject, ManagedObjectResolver resolver) {
+        	val objectUri = resolver.uriOf(managedObject);
+        	val converter = Converters.fromUriConverter();
+        	return converter.toRootOid(objectUri);
+        }
+		default ObjectAdapter adapterFor(ManagedObject managedObject, ManagedObjectResolver resolver) {
+			return PojoAdapter.of(managedObject.getPojo(), oidFor(managedObject, resolver));
+		}
     }
     
     public interface OidFactoryBuilder {

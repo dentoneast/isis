@@ -35,6 +35,7 @@ import org.apache.isis.core.runtime.system.context.managers.Converters;
 import org.apache.isis.core.runtime.system.context.managers.Converters.FromUriConverter;
 import org.apache.isis.core.runtime.system.context.managers.ManagedObjectResolver;
 import org.apache.isis.core.runtime.system.persistence.adaptermanager.factories.OidFactory.OidProvider;
+import org.apache.isis.core.runtime.system.persistence.adaptermanager.factories.OidFactory.OidProvider2;
 
 import lombok.val;
 
@@ -104,42 +105,18 @@ class ObjectAdapterContext_OidProviders {
 //        
 //    }
 
-    static class OidForManagedContexts implements OidProvider {
+    static class OidForManagedContexts implements OidProvider2 {
 
     	final _Lazy<ContextManager> contextManager = _Lazy.of(()->
     		IsisContext.getServiceRegistry().lookupServiceElseFail(ContextManager.class));
-    	final FromUriConverter converter = Converters.fromUriConverter();
-    	
-    	private _Tuples.Tuple2<Object, ManagedObjectResolver> latestLookup; // acts as a cache
-    	
-        @Override
-        public boolean isHandling(ManagedObject managedObject) {
-        	val pojo = managedObject.getPojo();
+
+		@Override
+		public ManagedObjectResolver resolverFor(ManagedObject managedObject) {
         	val spec = managedObject.getSpecification();
-        	
         	val managedObjectResolver = contextManager.get().resolverForIfAny(spec);
         	
-        	if(managedObjectResolver!=null) {
-        		// likely to be reused below, just an optimization
-        		latestLookup = _Tuples.pair(pojo, managedObjectResolver);
-        		return true;
-        	}
-        	return false;
-        }
-
-        @Override
-        public RootOid oidFor(ManagedObject managedObject) {
-        	val pojo = managedObject.getPojo();
-        	val spec = managedObject.getSpecification();
-
-        	val managedObjectResolver =	(latestLookup!=null && 
-        			Objects.equals(pojo, latestLookup.get_1()))
-        			? latestLookup.get_2() // use cache
-        					: contextManager.get().resolverForIfAny(spec);
-
-        	val objectUri = managedObjectResolver.uriOf(managedObject);
-        	return converter.toRootOid(objectUri);
-        }
+        	return managedObjectResolver;
+		}
         
     }
 
