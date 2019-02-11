@@ -1,4 +1,4 @@
-package org.apache.isis.core.runtime.system.context.managers.viewmodel;
+package org.apache.isis.core.runtime.system.context.managers.builtin;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Modifier;
@@ -100,7 +100,7 @@ public class ViewModelContextManager implements ContextHandler {
 	// -- HELPER
 
 	private final static AuthorityDescriptor DEFAULT_AUTHORITY =
-			AuthorityDescriptor.of(ContainerType.isis, ContextType.beans, null);
+			AuthorityDescriptor.of(ContainerType.builtin, ContextType.beans, "vm");
 
 	private Object deserializeViewModel(final ObjectSpecification spec, final String serialized) {
 		final ViewModelFacet facet = spec.getFacet(ViewModelFacet.class);

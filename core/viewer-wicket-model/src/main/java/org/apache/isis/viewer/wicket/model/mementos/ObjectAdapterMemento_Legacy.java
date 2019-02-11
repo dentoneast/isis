@@ -500,13 +500,13 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 	}
 
 
-	public Bookmark asBookmark() {
+	public Bookmark asBookmarkIfSupported() {
 		ensureScalar();
 		return bookmark;
 	}
 
-	public Bookmark asHintingBookmark() {
-		Bookmark bookmark = asBookmark();
+	public Bookmark asHintingBookmarkIfSupported() {
+		Bookmark bookmark = asBookmarkIfSupported();
 		return hintId != null && bookmark != null
 				? new HintStore.BookmarkWithHintId(bookmark, hintId)
 						: bookmark;
@@ -590,27 +590,6 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 	public String asString() {
 		return sort.asString(this);
 	}
-
-//
-//		public static Function<Object, ObjectAdapterMemento_Legacy> fromPojo(final ObjectAdapterProvider adapterProvider) {
-//			return pojo->ObjectAdapterMemento_Legacy.ofAdapter( adapterProvider.adapterFor(pojo) );
-//		}
-//
-//
-//		public static Function<ObjectAdapterMemento_Legacy, ObjectAdapter> toAdapter(
-//				final ConcurrencyChecking concurrencyChecking,
-//				final PersistenceSession persistenceSession,
-//				final SpecificationLoader specificationLoader) {
-//
-//			return memento->{
-//				try {
-//					return memento.getObjectAdapter(concurrencyChecking, persistenceSession, specificationLoader);
-//				} catch (ObjectNotFoundException e) {
-//					// this can happen if for example the object is not visible (due to the security tenanted facet)
-//					return null;
-//				}
-//			};
-//		}
 
 	private void ensureScalar() {
 		getSort().ensure(Sort.SCALAR);

@@ -305,8 +305,8 @@ implements FormExecutor {
             final ObjectAdapterMemento targetOam,
             final ObjectAdapterMemento resultOam) {
 
-        final Bookmark resultBookmark = resultOam != null ? resultOam.asHintingBookmark() : null;
-        final Bookmark targetBookmark = targetOam != null ? targetOam.asHintingBookmark() : null;
+        final Bookmark resultBookmark = resultOam != null ? resultOam.asHintingBookmarkIfSupported() : null;
+        final Bookmark targetBookmark = targetOam != null ? targetOam.asHintingBookmarkIfSupported() : null;
 
         return differs(targetBookmark, resultBookmark);
     }

@@ -46,10 +46,6 @@ public final class Converters {
 		default URI decodeFromStringElseFail(String encoded) {
 			val uriOrError = decodeFromString(encoded);
 	    	if(uriOrError.isRight()) {
-	    		
-	    		// TODO [2033] legacy support if required could be ...
-	    		// final RootOid rootOid = RootOid.deStringEncoded(value);
-	    		
 	    		throw _Exceptions.unrecoverable("Object-URI decoding failed.", uriOrError.rightIfAny());	
 	    	}
 			return uriOrError.leftIfAny();

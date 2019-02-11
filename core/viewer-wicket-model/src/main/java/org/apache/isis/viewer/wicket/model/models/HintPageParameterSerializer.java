@@ -50,7 +50,7 @@ class HintPageParameterSerializer implements Serializable {
             return;
         }
         final HintStore hintStore = getHintStore();
-        final Bookmark bookmark = objectAdapterMemento.asHintingBookmark();
+        final Bookmark bookmark = objectAdapterMemento.asHintingBookmarkIfSupported();
         Set<String> hintKeys = hintStore.findHintKeys(bookmark);
         for (String hintKey : hintKeys) {
             ComponentHintKey.create(hintKey).hintTo(bookmark, pageParameters, PREFIX);
@@ -66,7 +66,7 @@ class HintPageParameterSerializer implements Serializable {
         }
         Set<String> namedKeys = pageParameters.getNamedKeys();
         if (namedKeys.contains("no-hints")) {
-            getHintStore().removeAll(objectAdapterMemento.asHintingBookmark());
+            getHintStore().removeAll(objectAdapterMemento.asHintingBookmarkIfSupported());
             return;
         }
         List<ComponentHintKey> newComponentHintKeys = _Lists.newArrayList();
@@ -76,7 +76,7 @@ class HintPageParameterSerializer implements Serializable {
                 String key = namedKey.substring(5);
                 final ComponentHintKey componentHintKey = ComponentHintKey.create(key);
                 newComponentHintKeys.add(componentHintKey);
-                final Bookmark bookmark = objectAdapterMemento.asHintingBookmark();
+                final Bookmark bookmark = objectAdapterMemento.asHintingBookmarkIfSupported();
                 componentHintKey.set(bookmark, value);
             }
         }

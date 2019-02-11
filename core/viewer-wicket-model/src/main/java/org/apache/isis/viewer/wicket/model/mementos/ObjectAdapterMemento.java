@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.isis.applib.services.bookmark.Bookmark;
+import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
@@ -32,14 +33,28 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.managers.Converters;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
+import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento_Legacy.Sort;
+import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento_Legacy.Type;
 
 import lombok.val;
 
 public interface ObjectAdapterMemento extends Serializable {
 
 	String asString();
-	Bookmark asBookmark();
-	Bookmark asHintingBookmark();
+	
+	/**
+	 * Returns a bookmark only if {@link Type#PERSISTENT} and 
+	 * {@link #getSort() sort} is {@link Sort#SCALAR scalar}.
+	 * Returns {@code null} otherwise. 
+	 */
+	Bookmark asBookmarkIfSupported();
+	
+	/**
+	 * Returns a bookmark only if {@link Type#PERSISTENT} and 
+	 * {@link #getSort() sort} is {@link Sort#SCALAR scalar}.
+	 * Returns {@code null} otherwise. 
+	 */
+	Bookmark asHintingBookmarkIfSupported();
 	
 	ObjectSpecId getObjectSpecId();
 	ArrayList<ObjectAdapterMemento> getList();
@@ -48,8 +63,19 @@ public interface ObjectAdapterMemento extends Serializable {
 	void resetVersion();
 	
 	default URI toObjectUri() {
-		val decoder = Converters.toUriConverter();
-		return decoder.toURI(asBookmark());
+		val converter = Converters.toUriConverter();
+		val specId = getObjectSpecId();
+		
+		val bookmark = asBookmarkIfSupported();
+		if(bookmark!=null) {
+			return converter.toURI(bookmark);
+		}
+		
+		val identifier = asString();
+		
+		_Probe.warnNotImplementedYet("possibly not an identifier '%s'", identifier);
+		
+		return converter.toURI(specId, identifier);
 	}
 	
 	// -- DEPRECATIONS

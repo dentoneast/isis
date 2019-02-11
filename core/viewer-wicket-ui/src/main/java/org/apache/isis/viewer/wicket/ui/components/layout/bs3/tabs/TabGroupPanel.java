@@ -97,13 +97,13 @@ public class TabGroupPanel extends AjaxBootstrapTabbedPanel<ITab>  {
 
     @Override
     public TabbedPanel<ITab> setSelectedTab(final int index) {
-        selectedTabHintKey.set(entityModel.getObjectAdapterMemento().asHintingBookmark(), ""+index);
+        selectedTabHintKey.set(entityModel.getObjectAdapterMemento().asHintingBookmarkIfSupported(), ""+index);
         return super.setSelectedTab(index);
     }
 
     private void setSelectedTabFromSessionIfAny(
             final AjaxBootstrapTabbedPanel<ITab> ajaxBootstrapTabbedPanel) {
-        final String selectedTabStr = selectedTabHintKey.get(entityModel.getObjectAdapterMemento().asHintingBookmark());
+        final String selectedTabStr = selectedTabHintKey.get(entityModel.getObjectAdapterMemento().asHintingBookmarkIfSupported());
         final Integer tabIndex = parse(selectedTabStr);
         if (tabIndex != null) {
             final int numTabs = ajaxBootstrapTabbedPanel.getTabs().size();

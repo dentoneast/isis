@@ -250,7 +250,7 @@ public class EntityModel extends BookmarkableModel<ObjectAdapter> implements Obj
     public String getHint(final Component component, final String keyName) {
         final ComponentHintKey componentHintKey = ComponentHintKey.create(component, keyName);
         if(componentHintKey != null) {
-            return componentHintKey.get(getObjectAdapterMemento().asHintingBookmark());
+            return componentHintKey.get(getObjectAdapterMemento().asHintingBookmarkIfSupported());
         }
         return null;
     }
@@ -258,7 +258,7 @@ public class EntityModel extends BookmarkableModel<ObjectAdapter> implements Obj
     @Override
     public void setHint(Component component, String keyName, String hintValue) {
         ComponentHintKey componentHintKey = ComponentHintKey.create(component, keyName);
-        componentHintKey.set(this.getObjectAdapterMemento().asHintingBookmark(), hintValue);
+        componentHintKey.set(this.getObjectAdapterMemento().asHintingBookmarkIfSupported(), hintValue);
     }
 
     @Override
