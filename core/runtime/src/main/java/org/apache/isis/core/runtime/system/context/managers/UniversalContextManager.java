@@ -50,7 +50,7 @@ public class UniversalContextManager implements ContextManager {
 		.map(handler->handler.resolve(specId, identifier))
 		.orElseThrow(()->{
 			val msg = String.format(
-					"Could not find a ContextHandler that recognizes identifier URI %s.", identifier);
+					"Could not find a ContextHandler that recognizes object URI '%s'.", identifier);
 			return _Exceptions.unrecoverable(msg);
 		}); 
 		

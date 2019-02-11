@@ -158,6 +158,7 @@ class ObjectAdapterContext_OidProviders {
 
     }
     
+    //TODO [2033] should no longer be required
     static class OidForViewModels implements OidProvider {
 
         @Override

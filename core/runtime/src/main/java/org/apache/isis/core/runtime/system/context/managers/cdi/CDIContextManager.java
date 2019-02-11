@@ -63,11 +63,25 @@ public class CDIContextManager implements ContextHandler {
 		//TODO [2033] future extension ... to refine, convert id to array of Annotations
 		val qualifiers = _Constants.emptyAnnotations;
 		
-		val bean = serviceRegistry.getManagedBean(spec.getCorrespondingClass(), qualifiers);
+		val beanOptional = serviceRegistry.getManagedBean(spec.getCorrespondingClass(), qualifiers);
 		
-		val managedObject = SimpleManagedObject.of(spec, bean);
+		probe.println("resolve spec='%s' -> '%s'", 
+        		spec.getSpecId().asString(),
+        		beanOptional);
 		
-		return _CDI.InstanceFactory.singleton(managedObject);
+		if(beanOptional.isPresent()) {
+		
+			val beanPojo = beanOptional.get();
+			val managedObject = SimpleManagedObject.of(spec, beanPojo);
+			
+			return _CDI.InstanceFactory.singleton(managedObject);
+			
+		}
+		
+		// empty result
+		
+		return _CDI.InstanceFactory.empty();
+		
 	}
 
 	@Override

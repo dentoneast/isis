@@ -10,14 +10,15 @@ import org.apache.isis.commons.internal.uri._URI.ContextType;
 import org.apache.isis.commons.internal.uri._URI.UoidDto.UoidDtoBuilder;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Value;
-import lombok.val;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 /**
  * @since 2.0.0-M3
  */
-@Value(staticConstructor="of")
+@RequiredArgsConstructor(staticName="of") @ToString @EqualsAndHashCode
 public final class AuthorityDescriptor {
 	
 	@Getter private final ContainerType containerType;
@@ -34,16 +35,27 @@ public final class AuthorityDescriptor {
 	}
 
 	public boolean matches(URI uri) {
-		
-		val prefix = String.format("uoid://%s@%s%s/", 
-				containerType.name(),
-				contextType.name(),
-				isEmpty(contextId) 
-					? "" : 
-						":" + contextId
-				);
-		
-		return uri.toString().startsWith(prefix);
+		if(uri==null) {
+			return false;
+		}
+		return uri.toString().startsWith(matchingPrefix());
+	}
+	
+	// -- HELPER
+	
+	private String matchingPrefix;
+	
+	private String matchingPrefix() {
+		if(matchingPrefix==null) {
+			matchingPrefix = String.format("uoid://%s@%s%s/", 
+					contextType.name(),
+					containerType.name(),
+					isEmpty(contextId) 
+						? "" : 
+							":" + contextId
+					);	
+		}
+		return matchingPrefix;
 	}
 	
 }

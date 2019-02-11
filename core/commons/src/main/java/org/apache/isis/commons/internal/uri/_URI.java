@@ -90,6 +90,7 @@ public final class _URI {
 	}
 	
 	public static enum ContainerType {
+		isis,
 		jdo,
 		cdi,
 		spring,

@@ -32,7 +32,7 @@ public final class Converters {
 	
 	public static interface FromUriConverter {
 		String encodeToString(@Nullable URI objectUri);
-		String encodeToBase64(URI objectUri);
+		String encodeToBase64(@Nullable URI objectUri);
 		RootOid toRootOid(@Nullable URI objectUri);
 	}
 	
