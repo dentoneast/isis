@@ -6,15 +6,15 @@ import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Vetoed;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
-import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.urlencoding.UrlEncodingService;
 import org.apache.isis.applib.services.urlencoding.UrlEncodingServiceWithCompression;
 import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.debug._Probe;
+import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.commons.internal.memento._Mementos;
 import org.apache.isis.commons.internal.memento._Mementos.SerializingAdapter;
 import org.apache.isis.commons.internal.uri._URI.ContainerType;
@@ -32,7 +32,7 @@ import lombok.val;
 /**
  * @since 2.0.0-M3
  */
-@Singleton
+@Vetoed // TODO [2033] can be removed, not required, because ObjectAdapterMemento is handling values
 public class ValueContextManager implements ContextHandler {
 
 	private final static _Probe probe = _Probe.unlimited().label("ValueContextManager");
@@ -54,9 +54,9 @@ public class ValueContextManager implements ContextHandler {
 		val value = managedObject.getPojo();
 		val spec = managedObject.getSpecification();
 
-		val serialized = newMemento().put("value", value).asString();
+		val serialized = newMemento().put("val", value).asString();
 
-		probe.println("uriOf spec='%s', serialized='%s'", 
+		probe.println("uriOf spec='%s' -> serialized='%s'", 
 				spec.getSpecId().asString(),
 				serialized);
 
@@ -73,15 +73,32 @@ public class ValueContextManager implements ContextHandler {
 		val spec = specLoader.lookupBySpecId(specId);
 		val expectedType = spec.getCorrespondingClass();
 
-		probe.println("resolve spec='%s', serialized='%s'", 
+		probe.println("resolve spec='%s', uri='%s'", 
 				spec.getSpecId().asString(),
-				serialized);
+				objectUri);
+		
+		//FIXME [2033] we expect a base64 encoded memento container, but do get plaintext
+		_Probe.warnNotImplementedYet("we expect a base64 encoded memento container, "
+				+ "but do get plaintext here: '%s'", serialized);
+		
+//		if("String".equals(expectedType.getSimpleName())) {
+//			val value = serialized;
+//			val managedObject = SimpleManagedObject.of(spec, value);
+//			return _CDI.InstanceFactory.singleton(managedObject);
+//		}
 
-		val value = parseMemento(serialized).get("value", expectedType);
-
-		val managedObject = SimpleManagedObject.of(spec, value);
-
-		return _CDI.InstanceFactory.singleton(managedObject);
+		try {
+		
+			val value = parseMemento(serialized).get("val", expectedType);
+			val managedObject = SimpleManagedObject.of(spec, value);
+			return _CDI.InstanceFactory.singleton(managedObject);
+			
+		} catch (Exception cause) {
+			val errMsg = String.format("Failed to deserialize memento (container) holding expected type '%s' <- '%s'.",
+					expectedType.getName(),
+					serialized);
+			throw _Exceptions.unrecoverable(errMsg, cause);
+		}
 	}
 
 	@Override
@@ -126,6 +143,9 @@ public class ValueContextManager implements ContextHandler {
 			if(value instanceof Serializable) {
 				return (Serializable) value;
 			}
+			_Probe.warnNotImplementedYet("This SerializingAdapter can only handle values that are 'serializable'. Got '%s'.", ""+value);
+			
+			//throw _Exceptions.unrecoverable("This SerializingAdapter can only handle values that are 'serializable'.");
 			return null;
 		}
 

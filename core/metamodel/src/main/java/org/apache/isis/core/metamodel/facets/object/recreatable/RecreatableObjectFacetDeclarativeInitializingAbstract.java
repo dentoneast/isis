@@ -30,84 +30,109 @@ import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.PostConstructMethodCache;
 import org.apache.isis.core.metamodel.facets.properties.update.modify.PropertySetterFacet;
+import org.apache.isis.core.metamodel.services.bookmarks.BookmarkServiceInternalDefault;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.Contributed;
 import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
 
+import lombok.val;
+
 public abstract class RecreatableObjectFacetDeclarativeInitializingAbstract 
 extends RecreatableObjectFacetAbstract {
 
-    public RecreatableObjectFacetDeclarativeInitializingAbstract(
-            final FacetHolder holder,
-            final RecreationMechanism recreationMechanism,
-            final PostConstructMethodCache postConstructMethodCache) {
-        super(holder, recreationMechanism, postConstructMethodCache);
-    }
+	public RecreatableObjectFacetDeclarativeInitializingAbstract(
+			final FacetHolder holder,
+			final RecreationMechanism recreationMechanism,
+			final PostConstructMethodCache postConstructMethodCache) {
+		super(holder, recreationMechanism, postConstructMethodCache);
+	}
 
-    @Override
-    protected void doInitialize(
-            final Object viewModelPojo,
-            final String mementoStr) {
+	private UrlEncodingService codec;
+	private SerializingAdapter serializer; 
 
-        final UrlEncodingService codec = getServiceRegistry().lookupServiceElseFail(UrlEncodingService.class);
-        final SerializingAdapter serializer = getServiceRegistry().lookupServiceElseFail(SerializingAdapter.class);
+	@Override
+	protected void doInitialize(
+			final Object viewModelPojo,
+			final String mementoStr) {
 
-        final _Mementos.Memento memento = _Mementos.parse(codec, serializer, mementoStr);
+		final _Mementos.Memento memento = parseMemento(mementoStr);
 
-        final Set<String> mementoKeys = memento.keySet();
+		final Set<String> mementoKeys = memento.keySet();
 
-        final ObjectAdapter viewModelAdapter = getObjectAdapterProvider().adapterForViewModel(viewModelPojo, mementoStr);
-                    
+		final ObjectAdapter viewModelAdapter = getObjectAdapterProvider().adapterForViewModel(viewModelPojo, mementoStr);
 
-        final ObjectSpecification spec = viewModelAdapter.getSpecification();
-        final Stream<OneToOneAssociation> properties = spec.streamProperties(Contributed.EXCLUDED);
-        
-        properties.forEach(property->{
-            final String propertyId = property.getId();
 
-            Object propertyValue = null;
+		final ObjectSpecification spec = viewModelAdapter.getSpecification();
+		final Stream<OneToOneAssociation> properties = spec.streamProperties(Contributed.EXCLUDED);
 
-            if(mementoKeys.contains(propertyId)) {
-                final Class<?> propertyType = property.getSpecification().getCorrespondingClass();
-                propertyValue = memento.get(propertyId, propertyType);
-            }
+		properties.forEach(property->{
+			final String propertyId = property.getId();
 
-            if(propertyValue != null) {
-                property.set(viewModelAdapter, getObjectAdapterProvider().adapterFor(propertyValue), InteractionInitiatedBy.FRAMEWORK);
-            }
-        });
-        
-    }
+			Object propertyValue = null;
 
-    @Override
-    public String memento(Object viewModelPojo) {
+			if(mementoKeys.contains(propertyId)) {
+				final Class<?> propertyType = property.getSpecification().getCorrespondingClass();
+				propertyValue = memento.get(propertyId, propertyType);
+			}
 
-        final UrlEncodingService codec = getServiceRegistry().lookupServiceElseFail(UrlEncodingService.class);
-        final SerializingAdapter serializer = getServiceRegistry().lookupServiceElseFail(SerializingAdapter.class);
+			if(propertyValue != null) {
+				property.set(viewModelAdapter, getObjectAdapterProvider().adapterFor(propertyValue), InteractionInitiatedBy.FRAMEWORK);
+			}
+		});
 
-        final _Mementos.Memento memento = _Mementos.create(codec, serializer);
+	}
 
-        final ManagedObject ownerAdapter = getObjectAdapterProvider().disposableAdapterForViewModel(viewModelPojo);
-        final ObjectSpecification spec = ownerAdapter.getSpecification();
-        
-        final Stream<OneToOneAssociation> properties = spec.streamProperties(Contributed.EXCLUDED);
-        
-        properties
-        // ignore read-only
-        .filter(property->property.containsDoOpFacet(PropertySetterFacet.class)) 
-        // ignore those explicitly annotated as @NotPersisted
-        .filter(property->!property.isNotPersisted())
-        .forEach(property->{
-            final ManagedObject propertyValue = 
-                    property.get2(ownerAdapter, InteractionInitiatedBy.FRAMEWORK);
-            if(propertyValue != null) {
-                memento.put(property.getId(), propertyValue.getPojo());
-            }
-        });
-        
-        return memento.asString();
-    }
-    
+	@Override
+	public String memento(Object viewModelPojo) {
+
+		final _Mementos.Memento memento = newMemento();
+
+		final ManagedObject ownerAdapter = getObjectAdapterProvider().disposableAdapterForViewModel(viewModelPojo);
+		final ObjectSpecification spec = ownerAdapter.getSpecification();
+
+		final Stream<OneToOneAssociation> properties = spec.streamProperties(Contributed.EXCLUDED);
+
+		properties
+		// ignore read-only
+		.filter(property->property.containsDoOpFacet(PropertySetterFacet.class)) 
+		// ignore those explicitly annotated as @NotPersisted
+		.filter(property->!property.isNotPersisted())
+		.forEach(property->{
+			final ManagedObject propertyValue = 
+					property.get2(ownerAdapter, InteractionInitiatedBy.FRAMEWORK);
+			if(propertyValue != null) {
+				memento.put(property.getId(), propertyValue.getPojo());
+			}
+		});
+
+		return memento.asString();
+	}
+
+	// -- HELPER
+
+	private void init() {
+		val serviceRegistry = getServiceRegistry();
+		this.codec = serviceRegistry.lookupServiceElseFail(UrlEncodingService.class);
+		this.serializer = serviceRegistry.lookupService(SerializingAdapter.class)
+				.orElseGet(()->serviceRegistry.lookupServiceElseFail(BookmarkServiceInternalDefault.class));
+	}
+
+	private void ensureInit() {
+		if(codec==null) {
+			init();
+		}
+	}
+
+	private _Mementos.Memento newMemento() {
+		ensureInit();
+		return _Mementos.create(codec, serializer);
+	}
+
+	private _Mementos.Memento parseMemento(String input) {
+		ensureInit();
+		return _Mementos.parse(codec, serializer, input);
+	}
+
 
 }

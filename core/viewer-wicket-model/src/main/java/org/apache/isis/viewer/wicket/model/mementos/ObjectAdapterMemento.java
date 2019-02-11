@@ -29,10 +29,13 @@ import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
+import org.apache.isis.core.metamodel.spec.ManagedObject.SimpleManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.managers.Converters;
+import org.apache.isis.core.runtime.system.context.managers.UniversalObjectManager;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
+import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento_Legacy.Sort;
 import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento_Legacy.Type;
 
@@ -59,27 +62,24 @@ public interface ObjectAdapterMemento extends Serializable {
 	ObjectSpecId getObjectSpecId();
 	ArrayList<ObjectAdapterMemento> getList();
 	
-	ObjectAdapter getObjectAdapter();
+	ObjectAdapter getObjectAdapter(); // uses toObjectUriIfSupported()
 	void resetVersion();
 	
-	default URI toObjectUri() {
-		val converter = Converters.toUriConverter();
-		val specId = getObjectSpecId();
-		
+	/**
+	 * Returns a object URI only if {@link Type#PERSISTENT} and 
+	 * {@link #getSort() sort} is {@link Sort#SCALAR scalar}.
+	 * Returns {@code null} otherwise. 
+	 */
+	default URI toObjectUriIfSupported() {
 		val bookmark = asBookmarkIfSupported();
 		if(bookmark!=null) {
+			val converter = Converters.toUriConverter();	
 			return converter.toURI(bookmark);
 		}
-		
-		val identifier = asString();
-		
-		_Probe.warnNotImplementedYet("possibly not an identifier '%s'", identifier);
-		
-		return converter.toURI(specId, identifier);
+		return null;
 	}
 	
 	// -- DEPRECATIONS
-	
 	
 	@Deprecated
 	default ObjectAdapter getObjectAdapter(
@@ -105,7 +105,10 @@ public interface ObjectAdapterMemento extends Serializable {
 	}
 	
 	static ObjectAdapterMemento ofPojo(Object pojo) {
-		return ObjectAdapterMemento_Legacy.ofPojo(pojo);
+		val isisSession = IsisSession.currentIfAny();
+		val adapterProvider = isisSession.getPersistenceSession(); 	//FIXME [2033] use UniversalObjectManager
+		val objectAdapter = adapterProvider.adapterFor(pojo);
+		return ofAdapter(objectAdapter);
 	}
 
 	static ObjectAdapterMemento ofMementoList(Collection<ObjectAdapterMemento> modelObject, ObjectSpecId specId) {

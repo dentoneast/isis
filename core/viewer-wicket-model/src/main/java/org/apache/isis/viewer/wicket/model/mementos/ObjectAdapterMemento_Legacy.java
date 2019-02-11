@@ -19,15 +19,18 @@
 
 package org.apache.isis.viewer.wicket.model.mementos;
 
+import static org.apache.isis.commons.internal.base._With.requires;
+
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import javax.annotation.Nullable;
 
 import org.apache.isis.applib.services.bookmark.Bookmark;
 import org.apache.isis.applib.services.hint.HintStore;
 import org.apache.isis.commons.internal.collections._Lists;
+import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.commons.internal.uri._URI;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
@@ -35,6 +38,7 @@ import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.facets.object.encodeable.EncodableFacet;
+import org.apache.isis.core.metamodel.spec.ManagedObject.SimpleManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
@@ -74,14 +78,6 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 	/**
 	 * Factory method
 	 */
-	public static ObjectAdapterMemento ofPojo(Object pojo) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * Factory method
-	 */
 	public static ObjectAdapterMemento_Legacy ofMementoList(
 			final Collection<ObjectAdapterMemento> list,
 			final ObjectSpecId objectSpecId) {
@@ -105,7 +101,7 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 					final SpecificationLoader specificationLoader) {
 				
 				return ((ObjectAdapterMemento_Legacy)oam)
-						.type.getAdapter(oam, concurrencyChecking, persistenceSession, specificationLoader);
+						.type.recreateAdapter(oam, concurrencyChecking, persistenceSession, specificationLoader);
 			}
 
 			@Override
@@ -342,15 +338,6 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 			}
 		};
 
-		public ObjectAdapter getAdapter(
-				final ObjectAdapterMemento nom,
-				final ConcurrencyChecking concurrencyChecking,
-				final PersistenceSession persistenceSession,
-				final SpecificationLoader specificationLoader) {
-			
-			return recreateAdapter(nom, concurrencyChecking, persistenceSession, specificationLoader);
-		}
-
 		abstract ObjectAdapter recreateAdapter(
 				final ObjectAdapterMemento nom,
 				final ConcurrencyChecking concurrencyChecking,
@@ -426,38 +413,35 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 	 */
 	private ArrayList<ObjectAdapterMemento> list;
 
-	public ObjectAdapterMemento_Legacy(final ArrayList<ObjectAdapterMemento> list, final ObjectSpecId objectSpecId) {
+	public ObjectAdapterMemento_Legacy(
+			final ArrayList<ObjectAdapterMemento> list, 
+			final ObjectSpecId objectSpecId) {
+		
 		this.sort = Sort.VECTOR;
 		this.list = list;
 		this.objectSpecId = objectSpecId;
 	}
 
 	private ObjectAdapterMemento_Legacy(final RootOid rootOid) {
-
+		
 		assert !rootOid.isTransient();
-
+		
 		this.sort = Sort.SCALAR;
+		this.type = Type.PERSISTENT;
 
 		this.persistentOidStr = rootOid.enString();
 		this.bookmark = rootOid.asBookmark();
 		this.objectSpecId = rootOid.getObjectSpecId();
-		this.type = Type.PERSISTENT;
 	}
 
 	private ObjectAdapterMemento_Legacy(final ObjectAdapter adapter) {
-		if (adapter == null) {
-			throw new IllegalArgumentException("adapter cannot be null");
-		}
+		
+		requires(adapter, "adapter");
+		
 		this.sort = Sort.SCALAR;
 		final ObjectSpecification specification = adapter.getSpecification();
 		objectSpecId = specification.getSpecId();
-		init(adapter);
-	}
-
-	private void init(final ObjectAdapter adapter) {
-
-		final ObjectSpecification specification = adapter.getSpecification();
-
+		
 		final EncodableFacet encodableFacet = specification.getFacet(EncodableFacet.class);
 		final boolean isEncodable = encodableFacet != null;
 		if (isEncodable) {
@@ -466,15 +450,15 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 			return;
 		}
 
-		final RootOid oid = (RootOid) adapter.getOid();
-		if (oid.isTransient()) {
+		final RootOid rootOid = (RootOid) adapter.getOid();
+		if (rootOid.isTransient()) {
 			transientMemento = new Memento(adapter);
 			type = Type.TRANSIENT;
 			return;
 		}
 
-		persistentOidStr = oid.enString();
-		bookmark = oid.asBookmark();
+		persistentOidStr = rootOid.enString();
+		bookmark = rootOid.asBookmark();
 		if(adapter.getPojo() instanceof HintStore.HintIdProvider) {
 			HintStore.HintIdProvider provider = (HintStore.HintIdProvider) adapter.getPojo();
 			this.hintId = provider.hintId();
@@ -495,6 +479,7 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 	private void resetVersion_legacy(
 			final PersistenceSession persistenceSession,
 			final SpecificationLoader specificationLoader) {
+		
 		ensureScalar();
 		type.resetVersion(this, persistenceSession, specificationLoader);
 	}
@@ -512,64 +497,64 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 						: bookmark;
 	}
 
-	/**
-	 * Lazily looks up {@link ObjectAdapter} if required.
-	 *
-	 * <p>
-	 * For transient objects, be aware that calling this method more than once
-	 * will cause the underlying {@link ObjectAdapter} to be recreated,
-	 * overwriting any changes that may have been made. In general then it's
-	 * best to call once and then hold onto the value thereafter. Alternatively,
-	 * can call {@link #setAdapter(ObjectAdapter)} to keep this memento in sync.
-	 */
-	private ObjectAdapter getObjectAdapter_legacy(
-			final ConcurrencyChecking concurrencyChecking,
-			final PersistenceSession persistenceSession,
-			final SpecificationLoader specificationLoader) {
-		return sort.asAdapter(this, concurrencyChecking, persistenceSession, specificationLoader);
-	}
+//	/**
+//	 * Lazily looks up {@link ObjectAdapter} if required.
+//	 *
+//	 * <p>
+//	 * For transient objects, be aware that calling this method more than once
+//	 * will cause the underlying {@link ObjectAdapter} to be recreated,
+//	 * overwriting any changes that may have been made. In general then it's
+//	 * best to call once and then hold onto the value thereafter. Alternatively,
+//	 * can call {@link #setAdapter(ObjectAdapter)} to keep this memento in sync.
+//	 */
+//	private ObjectAdapter getObjectAdapter_legacy(
+//			final ConcurrencyChecking concurrencyChecking,
+//			final PersistenceSession persistenceSession,
+//			final SpecificationLoader specificationLoader) {
+//		return sort.asAdapter(this, concurrencyChecking, persistenceSession, specificationLoader);
+//	}
 
-	/**
-	 * Updates the memento if the adapter's state has changed.
-	 *
-	 * @param adapter
-	 */
-	public void setAdapter(final ObjectAdapter adapter) {
-		ensureScalar();
-		init(adapter);
-	}
+//	/**
+//	 * Updates the memento if the adapter's state has changed.
+//	 *
+//	 * @param adapter
+//	 */
+//	public void setAdapter(final ObjectAdapter adapter) {
+//		ensureScalar();
+//		init(adapter);
+//	}
 
 	public ObjectSpecId getObjectSpecId() {
 		return objectSpecId;
 	}
 
-	/**
-	 * Analogous to {@link List#contains(Object)}, but does not perform
-	 * {@link ConcurrencyChecking concurrency checking} of the OID.
-	 */
-	public boolean containedIn(
-			List<ObjectAdapterMemento_Legacy> list,
-			final PersistenceSession persistenceSession,
-			final SpecificationLoader specificationLoader) {
-
-		ensureScalar();
-
-		// REVIEW: heavy handed, ought to be possible to just compare the OIDs
-		// ignoring the concurrency checking
-		final ObjectAdapter currAdapter = getObjectAdapter(ConcurrencyChecking.NO_CHECK, persistenceSession,
-				specificationLoader);
-		for (ObjectAdapterMemento_Legacy each : list) {
-			if(each == null) {
-				continue;
-			}
-			final ObjectAdapter otherAdapter = each.getObjectAdapter(
-					ConcurrencyChecking.NO_CHECK, persistenceSession, specificationLoader);
-			if(currAdapter == otherAdapter) {
-				return true;
-			}
-		}
-		return false;
-	}
+//	/**
+//	 * Analogous to {@link List#contains(Object)}, but does not perform
+//	 * {@link ConcurrencyChecking concurrency checking} of the OID.
+//	 */
+//	public boolean containedIn(
+//			List<ObjectAdapterMemento_Legacy> list,
+//			final PersistenceSession persistenceSession,
+//			final SpecificationLoader specificationLoader) {
+//
+//		ensureScalar();
+//
+//		// REVIEW: heavy handed, ought to be possible to just compare the OIDs
+//		// ignoring the concurrency checking
+//		final ObjectAdapter currAdapter = getObjectAdapter(ConcurrencyChecking.NO_CHECK, persistenceSession,
+//				specificationLoader);
+//		for (ObjectAdapterMemento_Legacy each : list) {
+//			if(each == null) {
+//				continue;
+//			}
+//			final ObjectAdapter otherAdapter = each.getObjectAdapter(
+//					ConcurrencyChecking.NO_CHECK, persistenceSession, specificationLoader);
+//			if(currAdapter == otherAdapter) {
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 
 	@Override
 	public int hashCode() {
@@ -599,20 +584,17 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 		getSort().ensure(Sort.VECTOR);
 	}
 
-	private Object toPojo() {
-		val objectAdapter = getObjectAdapter();
-		if(objectAdapter == null) {
-			return null;
-		}
-		return objectAdapter.getPojo();
-	}
-
 	@Override
 	public ObjectAdapter getObjectAdapter() {
-		val objectUri = toObjectUri();
-		val objectManager = UniversalObjectManager.current();
-		val objectAdapter = objectManager.resolve(objectUri);
-		return objectAdapter;
+		val objectUri = toObjectUriIfSupported();
+		if(objectUri!=null) {
+			val objectManager = UniversalObjectManager.current();
+			val objectAdapter = objectManager.resolve(objectUri);
+			return objectAdapter; 
+		}
+		// we use de-serialization for the remaining cases
+		val isisSession = IsisSession.currentIfAny();
+		return type.recreateAdapter(this, ConcurrencyChecking.NO_CHECK, null, isisSession.getSpecificationLoader());
 	}
 
 	@Override

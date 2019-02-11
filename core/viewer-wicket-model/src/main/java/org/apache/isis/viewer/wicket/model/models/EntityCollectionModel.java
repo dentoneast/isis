@@ -48,7 +48,6 @@ import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.context.managers.UniversalObjectManager;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.viewer.wicket.model.hints.UiHintContainer;
 import org.apache.isis.viewer.wicket.model.links.LinkAndLabel;
@@ -104,7 +103,7 @@ UiHintContainer {
             	
                 final Stream<URI> objectUris = stream(model.mementoList)
                 		.filter(_NullSafe::isPresent)
-                        .map(ObjectAdapterMemento::toObjectUri)
+                        .map(ObjectAdapterMemento::toObjectUriIfSupported)
                         .filter(_NullSafe::isPresent);
                 
                 return objectManager.resolve(objectUris);
