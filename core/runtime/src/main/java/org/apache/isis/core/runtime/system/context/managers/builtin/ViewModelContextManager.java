@@ -13,6 +13,7 @@ import javax.inject.Singleton;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.debug._Probe;
+import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.commons.internal.uri._URI.ContainerType;
 import org.apache.isis.commons.internal.uri._URI.ContextType;
 import org.apache.isis.core.commons.exceptions.IsisException;
@@ -48,6 +49,10 @@ public class ViewModelContextManager implements ContextHandler {
 
 		val pojo = managedObject.getPojo();
 		val spec = managedObject.getSpecification();
+		
+		if(!recognizes(spec)) { //TODO [2033] remove guard once known to be stable
+			throw _Exceptions.unexpectedCodeReach();
+		}
 
 		val viewModelFacet = spec.getFacet(ViewModelFacet.class);
 		val serialized = viewModelFacet.memento(pojo);
@@ -67,6 +72,10 @@ public class ViewModelContextManager implements ContextHandler {
 
 		val serialized = objectUri.getQuery();
 		val spec = specLoader.lookupBySpecId(specId);
+		
+		if(!recognizes(spec)) { //TODO [2033] remove guard once known to be stable
+			throw _Exceptions.unexpectedCodeReach();
+		}
 
 		probe.println("resolve spec='%s', serialized='%s'", 
 				spec.getSpecId().asString(),
@@ -135,7 +144,11 @@ public class ViewModelContextManager implements ContextHandler {
         try {
             newInstance = cls.newInstance();
         } catch (final IllegalAccessException | InstantiationException e) {
-            throw new IsisException("Failed to create instance of type " + objectSpec.getFullIdentifier(), e);
+        	
+        	val errMsg = String.format("Failed to create instance of type '%s'", 
+        			objectSpec.getFullIdentifier()); 
+        	
+            throw new IsisException(errMsg, e);
         }
 
         serviceInjector.injectServicesInto(newInstance);

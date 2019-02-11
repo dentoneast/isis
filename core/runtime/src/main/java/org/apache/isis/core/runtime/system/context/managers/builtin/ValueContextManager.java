@@ -32,7 +32,8 @@ import lombok.val;
 /**
  * @since 2.0.0-M3
  */
-@Vetoed // TODO [2033] can be removed, not required, because ObjectAdapterMemento is handling values
+@Vetoed // TODO [2033] not required, as long as ObjectAdapterMemento is handling values, 
+// not sure whether we can remove this yet 
 public class ValueContextManager implements ContextHandler {
 
 	private final static _Probe probe = _Probe.unlimited().label("ValueContextManager");

@@ -136,6 +136,7 @@ public class OneToOneAssociationDefault extends ObjectAssociationAbstract implem
     public ObjectAdapter get(
             final ObjectAdapter ownerAdapter,
             final InteractionInitiatedBy interactionInitiatedBy) {
+    	
         final PropertyOrCollectionAccessorFacet facet = getFacet(PropertyOrCollectionAccessorFacet.class);
         final Object referencedPojo =
                 facet.getProperty(ownerAdapter, interactionInitiatedBy);
@@ -149,7 +150,9 @@ public class OneToOneAssociationDefault extends ObjectAssociationAbstract implem
     
 
     @Override
-    public ManagedObject get2(ManagedObject ownerAdapter, InteractionInitiatedBy interactionInitiatedBy) {
+    public ManagedObject get2(
+    		ManagedObject ownerAdapter, 
+    		InteractionInitiatedBy interactionInitiatedBy) {
         
         final PropertyOrCollectionAccessorFacet facet = getFacet(PropertyOrCollectionAccessorFacet.class);
         final Object referencedPojo =

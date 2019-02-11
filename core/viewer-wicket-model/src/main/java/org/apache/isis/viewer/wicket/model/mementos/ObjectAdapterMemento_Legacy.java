@@ -21,7 +21,6 @@ package org.apache.isis.viewer.wicket.model.mementos;
 
 import static org.apache.isis.commons.internal.base._With.requires;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -30,22 +29,17 @@ import javax.annotation.Nullable;
 import org.apache.isis.applib.services.bookmark.Bookmark;
 import org.apache.isis.applib.services.hint.HintStore;
 import org.apache.isis.commons.internal.collections._Lists;
-import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
-import org.apache.isis.commons.internal.uri._URI;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.facets.object.encodeable.EncodableFacet;
-import org.apache.isis.core.metamodel.spec.ManagedObject.SimpleManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.memento.Memento;
-import org.apache.isis.core.runtime.system.context.managers.Converters;
 import org.apache.isis.core.runtime.system.context.managers.UniversalObjectManager;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSession;
 
 import lombok.val;
@@ -97,11 +91,10 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 			public ObjectAdapter asAdapter(
 					final ObjectAdapterMemento oam,
 					final ConcurrencyChecking concurrencyChecking,
-					final PersistenceSession persistenceSession,
 					final SpecificationLoader specificationLoader) {
 				
 				return ((ObjectAdapterMemento_Legacy)oam)
-						.type.recreateAdapter(oam, concurrencyChecking, persistenceSession, specificationLoader);
+						.type.recreateAdapter(oam, concurrencyChecking, specificationLoader);
 			}
 
 			@Override
@@ -135,7 +128,6 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 			public ObjectAdapter asAdapter(
 					final ObjectAdapterMemento oam,
 					final ConcurrencyChecking concurrencyChecking, 
-					final PersistenceSession persistenceSession,
 					final SpecificationLoader specificationLoader) {
 
 				throw _Exceptions.notImplemented(); //TODO [2033]
@@ -180,7 +172,6 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 		public abstract ObjectAdapter asAdapter(
 				final ObjectAdapterMemento oam,
 				final ConcurrencyChecking concurrencyChecking, 
-				final PersistenceSession persistenceSession,
 				final SpecificationLoader specificationLoader);
 
 		public abstract int hashCode(final ObjectAdapterMemento_Legacy oam);
@@ -201,7 +192,6 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 			ObjectAdapter recreateAdapter(
 					final ObjectAdapterMemento oam,
 					final ConcurrencyChecking concurrencyChecking,
-					final PersistenceSession persistenceSession,
 					final SpecificationLoader specificationLoader) {
 				
 				ObjectSpecId objectSpecId = oam.getObjectSpecId();
@@ -225,12 +215,11 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 				return oam.encodableValue;
 			}
 
-			@Override
-			public void resetVersion(
-					ObjectAdapterMemento_Legacy objectAdapterMemento,
-					final PersistenceSession persistenceSession, 
-					final SpecificationLoader specificationLoader) {
-			}
+//			@Override
+//			public void resetVersion(
+//					ObjectAdapterMemento_Legacy objectAdapterMemento,
+//					final SpecificationLoader specificationLoader) {
+//			}
 		},
 		/**
 		 * The {@link ObjectAdapter} that this is for is already known by its
@@ -241,46 +230,48 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 			ObjectAdapter recreateAdapter(
 					final ObjectAdapterMemento oam,
 					ConcurrencyChecking concurrencyChecking,
-					final PersistenceSession persistenceSession, 
 					final SpecificationLoader specificationLoader) {
 				
-				val persistentOidStr = ((ObjectAdapterMemento_Legacy)oam).persistentOidStr;
-
-				if(_URI.isUoid(persistentOidStr)) {
-					
-					val objectManager = UniversalObjectManager.current();
-					val decoder = Converters.toUriConverter();
-					val objectUri = decoder.decodeFromStringElseFail(persistentOidStr);
-					
-					return objectManager.resolve(objectUri);
-				}
-
-				RootOid oid = Oid.unmarshaller().unmarshal(persistentOidStr, RootOid.class);
-				try {
-					final ObjectAdapter adapter = persistenceSession.adapterFor(oid, concurrencyChecking);
-					return adapter;
-
-				} finally {
-					// a side-effect of AdapterManager#adapterFor(...) is that it will update the oid
-					// with the correct version, even when there is a concurrency exception
-					// we copy this updated oid string into our memento so that, if we retry,
-					// we will succeed second time around
-
-					((ObjectAdapterMemento_Legacy)oam).persistentOidStr = oid.enString();
-				}
+				throw _Exceptions.unexpectedCodeReach(); 
+//TODO [2033] remove				
+//				val persistentOidStr = ((ObjectAdapterMemento_Legacy)oam).persistentOidStr;
+//
+//				if(_URI.isUoid(persistentOidStr)) {
+//					
+//					val objectManager = UniversalObjectManager.current();
+//					val decoder = Converters.toUriConverter();
+//					val objectUri = decoder.decodeFromStringElseFail(persistentOidStr);
+//					
+//					return objectManager.resolve(objectUri);
+//				}
+//
+//				val rootOid = Oid.unmarshaller().unmarshal(persistentOidStr, RootOid.class);
+//				try {
+//					val isisSession = IsisSession.currentIfAny();
+//					val persistenceSession = isisSession.getPersistenceSession();
+//					final ObjectAdapter adapter = persistenceSession.adapterFor(rootOid, concurrencyChecking);
+//					return adapter;
+//
+//				} finally {
+//					// a side-effect of AdapterManager#adapterFor(...) is that it will update the oid
+//					// with the correct version, even when there is a concurrency exception
+//					// we copy this updated oid string into our memento so that, if we retry,
+//					// we will succeed second time around
+//
+//					((ObjectAdapterMemento_Legacy)oam).persistentOidStr = rootOid.enString();
+//				}
 			}
 
-			@Override
-			public void resetVersion(
-					final ObjectAdapterMemento_Legacy oam,
-					final PersistenceSession persistenceSession,
-					final SpecificationLoader specificationLoader) {
-				// REVIEW: this may be redundant because recreateAdapter also guarantees the version will be reset.
-				final ObjectAdapter adapter = recreateAdapter(
-						oam, ConcurrencyChecking.NO_CHECK, persistenceSession, specificationLoader);
-				Oid oid = adapter.getOid();
-				oam.persistentOidStr = oid.enString();
-			}
+//			@Override
+//			public void resetVersion(
+//					final ObjectAdapterMemento_Legacy oam,
+//					final SpecificationLoader specificationLoader) {
+//				// REVIEW: this may be redundant because recreateAdapter also guarantees the version will be reset.
+//				final ObjectAdapter adapter = recreateAdapter(
+//						oam, ConcurrencyChecking.NO_CHECK, specificationLoader);
+//				Oid oid = adapter.getOid();
+//				oam.persistentOidStr = oid.enString();
+//			}
 
 			@Override
 			public boolean equals(ObjectAdapterMemento_Legacy oam, ObjectAdapterMemento_Legacy other) {
@@ -310,7 +301,6 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 			ObjectAdapter recreateAdapter(
 					final ObjectAdapterMemento oam,
 					final ConcurrencyChecking concurrencyChecking,
-					final PersistenceSession persistenceSession, 
 					final SpecificationLoader specificationLoader) {
 				
 				return ((ObjectAdapterMemento_Legacy)oam).transientMemento.recreateObject();
@@ -331,17 +321,16 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 				return oam.transientMemento.toString();
 			}
 
-			@Override
-			public void resetVersion(
-					final ObjectAdapterMemento_Legacy objectAdapterMemento,
-					final PersistenceSession persistenceSession, final SpecificationLoader specificationLoader) {
-			}
+//			@Override
+//			public void resetVersion(
+//					final ObjectAdapterMemento_Legacy objectAdapterMemento,
+//					final SpecificationLoader specificationLoader) {
+//			}
 		};
 
 		abstract ObjectAdapter recreateAdapter(
 				final ObjectAdapterMemento nom,
 				final ConcurrencyChecking concurrencyChecking,
-				final PersistenceSession persistenceSession, 
 				final SpecificationLoader specificationLoader);
 
 		public abstract boolean equals(ObjectAdapterMemento_Legacy oam, ObjectAdapterMemento_Legacy other);
@@ -349,10 +338,9 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 
 		public abstract String toString(ObjectAdapterMemento_Legacy adapterMemento);
 
-		public abstract void resetVersion(
-				ObjectAdapterMemento_Legacy objectAdapterMemento,
-				final PersistenceSession persistenceSession, 
-				final SpecificationLoader specificationLoader);
+//		public abstract void resetVersion(
+//				ObjectAdapterMemento_Legacy objectAdapterMemento,
+//				final SpecificationLoader specificationLoader);
 	}
 
 
@@ -424,7 +412,9 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 
 	private ObjectAdapterMemento_Legacy(final RootOid rootOid) {
 		
-		assert !rootOid.isTransient();
+		if (rootOid.isTransient()) {
+			throw _Exceptions.unexpectedCodeReach();
+		}
 		
 		this.sort = Sort.SCALAR;
 		this.type = Type.PERSISTENT;
@@ -476,13 +466,12 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 	}
 
 
-	private void resetVersion_legacy(
-			final PersistenceSession persistenceSession,
-			final SpecificationLoader specificationLoader) {
-		
-		ensureScalar();
-		type.resetVersion(this, persistenceSession, specificationLoader);
-	}
+//	private void resetVersion_legacy(
+//			final SpecificationLoader specificationLoader) {
+//		
+//		ensureScalar();
+//		type.resetVersion(this, specificationLoader);
+//	}
 
 
 	public Bookmark asBookmarkIfSupported() {
@@ -594,13 +583,13 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 		}
 		// we use de-serialization for the remaining cases
 		val isisSession = IsisSession.currentIfAny();
-		return type.recreateAdapter(this, ConcurrencyChecking.NO_CHECK, null, isisSession.getSpecificationLoader());
+		return type.recreateAdapter(this, ConcurrencyChecking.NO_CHECK, isisSession.getSpecificationLoader());
 	}
 
-	@Override
-	public void resetVersion() {
-		val isisSession = IsisSession.currentIfAny();
-		resetVersion_legacy(isisSession.getPersistenceSession(), isisSession.getSpecificationLoader());
-	}
+//	@Override
+//	public void resetVersion() {
+//		val isisSession = IsisSession.currentIfAny();
+//		resetVersion_legacy(isisSession.getSpecificationLoader());
+//	}
 	
 }

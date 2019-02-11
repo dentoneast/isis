@@ -63,7 +63,6 @@ public interface ObjectAdapterMemento extends Serializable {
 	ArrayList<ObjectAdapterMemento> getList();
 	
 	ObjectAdapter getObjectAdapter(); // uses toObjectUriIfSupported()
-	void resetVersion();
 	
 	/**
 	 * Returns a object URI only if {@link Type#PERSISTENT} and 
@@ -91,7 +90,7 @@ public interface ObjectAdapterMemento extends Serializable {
 	
 	@Deprecated
 	default void resetVersion(PersistenceSession persistenceSession, SpecificationLoader specificationLoader) {
-		resetVersion();
+		// no longer supported
 	}
 	
 	// -- FACTORIES

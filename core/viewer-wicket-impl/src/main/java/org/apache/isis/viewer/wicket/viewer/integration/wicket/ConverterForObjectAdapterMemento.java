@@ -22,18 +22,12 @@ package org.apache.isis.viewer.wicket.viewer.integration.wicket;
 import java.util.Locale;
 
 import org.apache.isis.commons.internal.base._Strings;
-
-import org.apache.wicket.util.convert.IConverter;
-
-import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
-import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
+import org.apache.wicket.util.convert.IConverter;
+
+import lombok.val;
 
 /**
  * Implementation of a Wicket {@link IConverter} for
@@ -53,10 +47,9 @@ public class ConverterForObjectAdapterMemento implements IConverter<ObjectAdapte
         if (_Strings.isNullOrEmpty(value)) {
             return null;
         }
-        final RootOid oid = RootOid.deStringEncoded(value);
+        val rootOid = RootOid.deStringEncoded(value);
         
-        final ObjectAdapter adapter = getPersistenceSession().adapterFor(oid);
-        return ObjectAdapterMemento.ofAdapter(adapter);
+        return ObjectAdapterMemento.ofRootOid(rootOid);
     }
 
     /**
@@ -68,30 +61,12 @@ public class ConverterForObjectAdapterMemento implements IConverter<ObjectAdapte
         if (memento == null) {
             return null;
         }
-        final Oid oid = memento.getObjectAdapter(ConcurrencyChecking.NO_CHECK, getPersistenceSession(),
-                getSpecificationLoader()).getOid();
-        if (oid == null) {
-            // values don't have an Oid...
-            // REVIEW: is this right?
+        final Oid oid = memento.getObjectAdapter().getOid();
+        if (oid == null || oid.isValue()) {
+            // values
             return memento.toString();
         }
         return oid.enString();
-    }
-
-    // //////////////////////////////////////////////////////////
-    // Dependencies (from context)
-    // //////////////////////////////////////////////////////////
-
-    SpecificationLoader getSpecificationLoader() {
-        return IsisContext.getSpecificationLoader();
-    }
-
-    PersistenceSession getPersistenceSession() {
-        return getIsisSessionFactory().getCurrentSession().getPersistenceSession();
-    }
-
-    IsisSessionFactory getIsisSessionFactory() {
-        return IsisContext.getSessionFactory();
     }
 
 }

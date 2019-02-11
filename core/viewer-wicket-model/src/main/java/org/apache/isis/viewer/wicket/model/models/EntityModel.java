@@ -85,6 +85,7 @@ public class EntityModel extends BookmarkableModel<ObjectAdapter> implements Obj
         return pageParameters;
     }
 
+    @Deprecated
     public void resetVersion() {
         if(getObjectAdapterMemento() == null) {
             return;
