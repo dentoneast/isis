@@ -185,7 +185,7 @@ public class OneToManyAssociationDefault extends ObjectAssociationAbstract imple
             throw new IllegalArgumentException("Can't use null to add an item to a collection");
         }
         if (readWrite()) {
-            if (ownerAdapter.representsPersistent() && referencedAdapter.isTransient()) {
+            if (ownerAdapter.isRepresentingPersistent() && referencedAdapter.isTransient()) {
                 throw new IsisException("can't set a reference to a transient object from a persistent one: "
                         + ownerAdapter.titleString(null)
                         + " (persistent) -> " + referencedAdapter.titleString() + " (transient)");

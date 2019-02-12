@@ -214,7 +214,7 @@ public class OneToOneAssociationDefault extends ObjectAssociationAbstract implem
             return;
         }
 
-        if (    ownerAdapter.representsPersistent() &&
+        if (    ownerAdapter.isRepresentingPersistent() &&
                 newReferencedAdapter != null &&
                 newReferencedAdapter.isTransient() &&
                 !newReferencedAdapter.getSpecification().isParented()) {

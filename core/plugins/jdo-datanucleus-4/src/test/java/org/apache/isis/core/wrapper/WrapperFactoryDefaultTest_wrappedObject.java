@@ -270,7 +270,7 @@ public class WrapperFactoryDefaultTest_wrappedObject {
                 allowing(mockEmployeeAdapter).getPojo();
                 will(returnValue(employeeDO));
 
-                allowing(mockEmployeeAdapter).representsPersistent();
+                allowing(mockEmployeeAdapter).isRepresentingPersistent();
                 will(returnValue(true));
             }
         });

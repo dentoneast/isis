@@ -18,6 +18,7 @@ import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.commons.internal.uri._URI.ContainerType;
 import org.apache.isis.commons.internal.uri._URI.ContextType;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
+import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ManagedObject.SimpleManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
@@ -36,6 +37,12 @@ public class SpringDataJPADemoHandler implements ContextHandler {
 	
 	@Inject ApplicationContext springContext;
 	@Inject SpecificationLoader specLoader;
+	
+	@Override
+	public ManagedObjectState stateOf(ManagedObject managedObject) {
+		// FIXME [2033] this is just a PoC
+		return ManagedObjectState.persistable_Attached;
+	}
 
 	@Override
 	public URI uriOf(ManagedObject managedObject) {

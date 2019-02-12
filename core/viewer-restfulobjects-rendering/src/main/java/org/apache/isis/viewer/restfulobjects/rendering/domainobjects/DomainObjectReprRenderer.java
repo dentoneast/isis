@@ -149,7 +149,7 @@ public class DomainObjectReprRenderer extends ReprRendererAbstract<DomainObjectR
         if (!(mode.isArgs())) {
 
             // self, extensions.oid
-            if (objectAdapter.representsPersistent()) {
+            if (objectAdapter.isRepresentingPersistent()) {
                 if (includesSelf) {
                     addLinkToSelf();
                 }
@@ -196,7 +196,7 @@ public class DomainObjectReprRenderer extends ReprRendererAbstract<DomainObjectR
 
             // extensions
             getExtensions().mapPut("isService", isService);
-            getExtensions().mapPut("isPersistent", objectAdapter.representsPersistent());
+            getExtensions().mapPut("isPersistent", objectAdapter.isRepresentingPersistent());
             if(isService) {
                 final ObjectSpecification objectSpec = objectAdapter.getSpecification();
                 final DomainServiceLayoutFacet layoutFacet =
@@ -386,7 +386,7 @@ public class DomainObjectReprRenderer extends ReprRendererAbstract<DomainObjectR
     }
 
     private void addPersistLinkIfTransientAndPersistable() {
-        if (objectAdapter.representsPersistent()) {
+        if (objectAdapter.isRepresentingPersistent()) {
             return;
         }
         final DomainObjectReprRenderer renderer =
@@ -419,7 +419,7 @@ public class DomainObjectReprRenderer extends ReprRendererAbstract<DomainObjectR
         if(mode.isEventSerialization()) {
             return;
         }
-        if (!objectAdapter.representsPersistent()) {
+        if (!objectAdapter.isRepresentingPersistent()) {
             return;
         }
         final boolean isService = objectAdapter.getSpecification().isService();

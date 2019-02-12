@@ -252,7 +252,7 @@ public abstract class AbstractObjectMemberReprRenderer<R extends ReprRendererAbs
     }
 
     private void addDetailsLinkIfPersistent() {
-        if (!objectAdapter.representsPersistent()) {
+        if (!objectAdapter.isRepresentingPersistent()) {
             return;
         }
         final JsonRepresentation link = linkTo.memberBuilder(Rel.DETAILS, objectMemberType, objectMember).build();

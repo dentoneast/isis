@@ -10,10 +10,11 @@ import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.adapter.oid.UniversalOid;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
+import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
-import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.runtime.persistence.adapter.PojoAdapter;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSession;
@@ -35,11 +36,23 @@ public interface UniversalObjectManager {
 	// -- INTERFACE
 	
 	AuthorityDescriptor authorityForElseFail(ObjectSpecId specId);
-	ContextHandler contextHandlerForElseFail(ObjectSpecification spec);
-	
 	
 	Stream<ObjectAdapter> resolve(Stream<URI> objectUris);
 	ObjectAdapter resolve(URI objectUri);
+
+	/**
+	 * Returns the current (runtime) state of the given managedObject.
+	 * @param managedObject
+	 * @return
+	 */
+	ManagedObjectState stateOf(ManagedObject managedObject);
+	
+	// -- SHORTCUTS (CONVENIENCE)
+	
+	default ObjectAdapter resolve(RootOid rootOid) {
+		val objectUri = Converters.toUriConverter().toURI(rootOid);
+		return resolve(objectUri);
+	}
 
 	// -- RESULT CONTAINER 
 	
@@ -138,14 +151,16 @@ public interface UniversalObjectManager {
 			
 			return authority;
 		}
-
+		
 		@Override
-		public ContextHandler contextHandlerForElseFail(ObjectSpecification spec) {
+		public ManagedObjectState stateOf(ManagedObject managedObject) {
 			val contextManager = this.contextManager.get();
-			return (ContextHandler) contextManager.resolverForIfAny(spec);
+			return contextManager.stateOf(managedObject);
 		}
 		
+		
 	}
+
 	
 
 }

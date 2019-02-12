@@ -73,7 +73,7 @@ public class EntityModel extends BookmarkableModel<ObjectAdapter> implements Obj
 
         final PageParameters pageParameters = PageParametersUtils.newPageParameters();
 
-        final Boolean persistent = adapter != null && adapter.representsPersistent();
+        final Boolean persistent = adapter != null && adapter.isRepresentingPersistent();
 
         if (persistent) {
             final String oidStr = adapter.getOid().enStringNoVersion();

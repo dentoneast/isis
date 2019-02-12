@@ -38,17 +38,10 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.identity.SingleFieldIdentity;
 import javax.jdo.listener.InstanceLifecycleListener;
 
-import org.datanucleus.enhancement.Persistable;
-import org.datanucleus.exceptions.NucleusObjectNotFoundException;
-import org.datanucleus.identity.DatastoreIdImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.applib.query.Query;
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
 import org.apache.isis.applib.services.iactn.Interaction;
-import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
@@ -72,6 +65,7 @@ import org.apache.isis.core.metamodel.facets.object.callbacks.UpdatedLifecycleEv
 import org.apache.isis.core.metamodel.services.container.query.QueryCardinality;
 import org.apache.isis.core.metamodel.spec.FreeStandingList;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
+import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.plugins.ioc.RequestContextHandle;
 import org.apache.isis.core.plugins.ioc.RequestContextService;
@@ -97,16 +91,21 @@ import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.Persisten
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.PersistenceQueryFindUsingApplibQueryProcessor;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.PersistenceQueryProcessor;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.spi.JdoObjectIdSerializer;
+import org.datanucleus.enhancement.Persistable;
+import org.datanucleus.exceptions.NucleusObjectNotFoundException;
+import org.datanucleus.identity.DatastoreIdImpl;
+
+import lombok.val;
 
 /**
  * A wrapper around the JDO {@link PersistenceManager}, which also manages concurrency
  * and maintains an identity map of {@link ObjectAdapter adapter}s and {@link Oid
  * identities} for each and every POJO that is being used by the framework.
  */
+//@Slf4j
 public class PersistenceSession5 extends PersistenceSessionBase
 implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PersistenceSession5.class);
     private ObjectAdapterContext objectAdapterContext;
 	private RequestContextHandle requestContextHandle;
 
@@ -565,7 +564,10 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
     @Override
     public void refreshRoot(final Object domainObject) {
         
-        if(!isRepresentingPersistent(domainObject)) {
+    	val state = stateOf(domainObject);
+    	val isRepresentingPersistent = state.isAttached() || state.isDestroyed();  
+    	
+        if(!isRepresentingPersistent) {
             debugLogNotPersistentIgnoring(domainObject);
             return; // only resolve object that is representing persistent
         }
@@ -605,7 +607,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
      */
     @Override
     public void makePersistentInTransaction(final ObjectAdapter adapter) {
-        if (adapter.representsPersistent()) {
+        if (adapter.isRepresentingPersistent()) {
             throw new NotPersistableException("Object already persistent: " + adapter);
         }
         final ObjectSpecification specification = adapter.getSpecification();
@@ -650,7 +652,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
 
 
     private static boolean alreadyPersistedOrNotPersistable(final ObjectAdapter adapter) {
-        return adapter.representsPersistent() || objectSpecNotPersistable(adapter);
+        return adapter.isRepresentingPersistent() || objectSpecNotPersistable(adapter);
     }
 
 
@@ -702,7 +704,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
         ensureOpened();
 
         LOG.debug("create object - creating command for: {}", adapter);
-        if (adapter.representsPersistent()) {
+        if (adapter.isRepresentingPersistent()) {
             throw new IllegalArgumentException("Adapter is persistent; adapter: " + adapter);
         }
         return new DataNucleusCreateObjectCommand(adapter, persistenceManager);
@@ -712,7 +714,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
         ensureOpened();
 
         LOG.debug("destroy object - creating command for: {}", adapter);
-        if (!adapter.representsPersistent()) {
+        if (!adapter.isRepresentingPersistent()) {
             throw new IllegalArgumentException("Adapter is not persistent; adapter: " + adapter);
         }
         return new DataNucleusDeleteObjectCommand(adapter, persistenceManager);
@@ -790,7 +792,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
      */
     @Override
     public void invokeIsisPersistingCallback(final Persistable pojo) {
-        if (isTransient(pojo)) {
+        if (stateOf(pojo).isDetached()) {
             final ManagedObject adapter = ManagedObject.of(
                     ()->getSpecificationLoader().loadSpecification(pojo.getClass()),
                     pojo);
@@ -883,40 +885,21 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
     // -- 
     
     @Override
-    public boolean isTransient(@Nullable Object pojo) {
-        if (pojo!=null && pojo instanceof Persistable) {
-            final Persistable p = (Persistable) pojo;
-            final boolean isPersistent = p.dnIsPersistent();
-            final boolean isDeleted = p.dnIsDeleted();
-            if (!isPersistent && !isDeleted) {
-                return true;
+	public ManagedObjectState stateOf(@Nullable Object pojo) {
+    	if (pojo!=null && pojo instanceof Persistable) {
+    		val persistable = (Persistable) pojo;
+            val isDeleted = persistable.dnIsDeleted();
+            if(isDeleted) {
+            	return ManagedObjectState.persistable_Destroyed;
             }
-        }
-        return false;
-    }
-
-    /**
-     * May also deleted (that is, {@link #isDestroyed(Object)} could return true).
-     * @param pojo
-     * @return
-     */
-    @Override
-    public boolean isRepresentingPersistent(@Nullable Object pojo) {
-        if (pojo instanceof Persistable) {
-            final Persistable p = (Persistable) pojo;
-            return p.dnIsPersistent();
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isDestroyed(@Nullable Object pojo) {
-        if (pojo instanceof Persistable) {
-            final Persistable p = (Persistable) pojo;
-            return p.dnIsDeleted();
-        }
-        return false;
-    }
+            val isPersistent = persistable.dnIsPersistent();
+            if(isPersistent) {
+            	return ManagedObjectState.persistable_Attached;
+            }
+            return ManagedObjectState.persistable_Detached;
+    	}
+		return ManagedObjectState.not_Persistable;
+	}
     
     @Override
     public boolean isRecognized(Object pojo) {
@@ -959,7 +942,6 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
             LOG.debug("refresh immediately; oid={}", oid.enString());
         }
     }
-
 
     
 }

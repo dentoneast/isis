@@ -126,7 +126,7 @@ public class OneToManyAssociationDefaultTest {
             	oneOf(mockPeer).containsFacet(NotPersistedFacet.class);
                 will(returnValue(false));
 
-                oneOf(mockOwnerAdapter).representsPersistent();
+                oneOf(mockOwnerAdapter).isRepresentingPersistent();
                 will(returnValue(true));
 
                 oneOf(mockAssociatedAdapter).isTransient();

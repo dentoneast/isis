@@ -270,7 +270,7 @@ public interface ObjectAdapter extends ManagedObject {
     }
 
     boolean isTransient();
-    boolean representsPersistent();
+    boolean isRepresentingPersistent();
     boolean isDestroyed();
 
 
