@@ -22,8 +22,11 @@ package org.apache.isis.core.runtime.system.session;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
+import org.apache.isis.commons.internal.base._Tuples;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.core.commons.util.ToString;
+import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.runtime.managed.ManagedObjectContextBase;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
@@ -122,6 +125,8 @@ public class IsisSession extends ManagedObjectContextBase {
     private IsisTransactionManager getTransactionManager() {
         return getPersistenceSession().getTransactionManager();
     }
+
+	
 
 
 }

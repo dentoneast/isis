@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 import org.apache.isis.applib.annotation.DomainServiceLayout;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.facets.object.domainservicelayout.DomainServiceLayoutFacet;
+import org.apache.isis.core.runtime.system.session.IsisSession;
 /**
  * Backing model for actions of application services menu bar (typically, as
  * displayed along the top or side of the page).
@@ -68,7 +69,7 @@ public class ServiceActionsModel extends ModelAbstract<List<ObjectAdapter>> {
     }
 
     protected Stream<ObjectAdapter> streamServiceAdapters() {
-        return getPersistenceSession().streamServices();
+        return IsisSession.currentIfAny().streamServiceAdapters();
     }
 
 

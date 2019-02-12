@@ -27,6 +27,7 @@ import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.xactn.TransactionService;
+import org.apache.isis.commons.internal.base._Tuples.Tuple2;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
@@ -209,6 +210,11 @@ class DomainResourceHelper {
 		@Override
 		public ObjectAdapter lookupService(String serviceId) {
 			return rendererContext.lookupService(serviceId);
+		}
+
+		@Override
+		public Tuple2<ObjectAdapter, ObjectAction> findHomePageAction() {
+			return rendererContext.findHomePageAction();
 		}
 
 		

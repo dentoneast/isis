@@ -5,17 +5,20 @@ import java.util.stream.Stream;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.base._Lazy;
+import org.apache.isis.commons.internal.base._Tuples.Tuple2;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
+import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 /**
  * 
@@ -45,20 +48,28 @@ public abstract class ManagedObjectContextBase implements ManagedObjectContext {
     
     // -- OBJECT ADAPTER SUPPORT
     
-    @Override
+    @Override //FIXME [2033] decouple from JDO
     public Stream<ObjectAdapter> streamServiceAdapters() {
 		return ps().streamServices();
 	}
     
-    @Override
+    @Override //FIXME [2033] decouple from JDO
     public ObjectAdapter adapterForPojo(Object pojo) {
 		return ps().adapterFor(pojo);
 	}
     
-    @Override
+    @Override //FIXME [2033] decouple from JDO
 	public ObjectAdapter lookupService(String serviceId) {
 		return ps().lookupService(serviceId);
 	}
+    
+    // -- HOMEPAGE LOOKUP SUPPORT
+    
+    @Override
+    public Tuple2<ObjectAdapter, ObjectAction> findHomePageAction() {
+    	val finderMixin = new ManagedObjectContextBase_findHomepage(this);
+    	return finderMixin.findHomePageAction();
+    }
     
     // -- AUTH
     

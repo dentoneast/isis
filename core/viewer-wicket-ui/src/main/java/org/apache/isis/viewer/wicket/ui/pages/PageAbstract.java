@@ -33,12 +33,11 @@ import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizerComposite;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.metamodel.MetaModelService;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.beans.WebAppConfigBean;
 import org.apache.isis.config.property.ConfigPropertyEnum;
 import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.viewer.wicket.model.common.PageParametersUtils;
 import org.apache.isis.viewer.wicket.model.hints.IsisEnvelopeEvent;
@@ -209,7 +208,7 @@ public abstract class PageAbstract extends WebPage implements ActionPromptProvid
             LOG.error("Failed to construct page, going back to sign in page", ex);
 
             // REVIEW: similar code in WebRequestCycleForIsis
-            final Stream<ExceptionRecognizer> exceptionRecognizers = getServicesInjector()
+            final Stream<ExceptionRecognizer> exceptionRecognizers = getServiceInjector()
                     .streamServices(ExceptionRecognizer.class);
             final String recognizedMessageIfAny = new ExceptionRecognizerComposite(exceptionRecognizers).recognize(ex);
             final ExceptionModel exceptionModel = ExceptionModel.create(recognizedMessageIfAny, ex);
@@ -535,33 +534,23 @@ public abstract class PageAbstract extends WebPage implements ActionPromptProvid
     }
 
 
-
-    // -- injected (application-scope)
-
-    // REVIEW: can't inject because not serializable.
-    protected IsisSessionFactory getIsisSessionFactory() {
-        return IsisContext.getSessionFactory();
-    }
+    // -- DEPS
 
     protected IsisConfiguration getConfiguration() {
         return IsisContext.getConfiguration();
     }
 
-    protected ServiceInjector getServicesInjector() {
-        return getIsisSessionFactory().getServiceInjector();
+    protected ServiceRegistry getServiceRegistry() {
+        return IsisContext.getServiceRegistry();
     }
-
-    // -- derived from injected components (session-scope)
-
-    protected PersistenceSession getPersistenceSession() {
-        return getIsisSessionFactory().getCurrentSession().getPersistenceSession();
+    
+    protected ServiceInjector getServiceInjector() {
+        return IsisContext.getServiceInjector();
     }
 
     protected AuthenticationSession getAuthenticationSession() {
-        return getIsisSessionFactory().getCurrentSession().getAuthenticationSession();
+        return IsisContext.getAuthenticationSession().orElse(null);
     }
-
-
 
 
 }
