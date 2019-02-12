@@ -21,9 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.request.IRequestHandler;
-
 import org.apache.isis.applib.value.Blob;
 import org.apache.isis.applib.value.Clob;
 import org.apache.isis.commons.internal.collections._Lists;
@@ -32,7 +29,7 @@ import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.version.ConcurrencyException;
 import org.apache.isis.core.metamodel.facets.object.value.ValueFacet;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.viewer.wicket.model.models.ActionModel;
 import org.apache.isis.viewer.wicket.model.models.EntityCollectionModel;
 import org.apache.isis.viewer.wicket.model.models.ValueModel;
@@ -41,12 +38,16 @@ import org.apache.isis.viewer.wicket.ui.pages.entity.EntityPage;
 import org.apache.isis.viewer.wicket.ui.pages.standalonecollection.StandaloneCollectionPage;
 import org.apache.isis.viewer.wicket.ui.pages.value.ValuePage;
 import org.apache.isis.viewer.wicket.ui.pages.voidreturn.VoidReturnPage;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.request.IRequestHandler;
+
+import lombok.val;
 
 public enum ActionResultResponseType {
     OBJECT {
         @Override
         public ActionResultResponse interpretResult(final ActionModel model, final AjaxRequestTarget target, final ObjectAdapter resultAdapter) {
-            final ObjectAdapter actualAdapter = determineActualAdapter(resultAdapter, model.getIsisSessionFactory());
+            final ObjectAdapter actualAdapter = determineActualAdapter(resultAdapter);
             return toEntityPage(model, actualAdapter, null);
         }
 
@@ -59,7 +60,7 @@ public enum ActionResultResponseType {
     COLLECTION {
         @Override
         public ActionResultResponse interpretResult(final ActionModel actionModel, final AjaxRequestTarget target, final ObjectAdapter resultAdapter) {
-            final EntityCollectionModel collectionModel = EntityCollectionModel.createStandalone(resultAdapter, actionModel.getIsisSessionFactory());
+            final EntityCollectionModel collectionModel = EntityCollectionModel.createStandalone(resultAdapter);
             // take a copy of the actionModel, because the original can get mutated (specifically: its arguments cleared)
             final ActionModel actionModelCopy = actionModel.copy();
             collectionModel.setActionHint(actionModelCopy);
@@ -128,22 +129,18 @@ public enum ActionResultResponseType {
     }
 
     private static ObjectAdapter determineActualAdapter(
-            final ObjectAdapter resultAdapter,
-            final IsisSessionFactory isisSessionFactory) {
+            final ObjectAdapter resultAdapter) {
+    	
         if (resultAdapter.getSpecification().isNotCollection()) {
             return resultAdapter;
         } else {
             // will only be a single element
             final List<Object> pojoList = asList(resultAdapter);
             final Object pojo = pojoList.get(0);
-            return adapterFor(pojo, isisSessionFactory);
+            
+            val pojoToAdapter = IsisContext.pojoToAdapter();
+            return pojoToAdapter.apply(pojo);
         }
-    }
-
-    private static ObjectAdapter adapterFor(
-            final Object pojo,
-            final IsisSessionFactory isisSessionFactory) {
-        return isisSessionFactory.getCurrentSession().getPersistenceSession().adapterFor(pojo);
     }
 
     private static ActionResultResponse toEntityPage(final ActionModel model, final ObjectAdapter actualAdapter, final ConcurrencyException exIfAny) {

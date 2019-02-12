@@ -19,6 +19,8 @@
 
 package org.apache.isis.viewer.wicket.ui.panels;
 
+import java.util.function.Function;
+
 import javax.inject.Inject;
 
 import org.apache.wicket.Component;
@@ -29,6 +31,7 @@ import org.apache.isis.applib.annotation.SemanticsOf;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
@@ -162,8 +165,8 @@ public abstract class PanelAbstract<T extends IModel<?>> extends Panel {
     // Dependencies (from IsisContext)
     // ///////////////////////////////////////////////////////////////////
 
-    public PersistenceSession getPersistenceSession() {
-        return IsisContext.getPersistenceSession().orElse(null);
+    public Function<Object, ObjectAdapter> pojoToAdapter() {
+        return IsisContext.pojoToAdapter();
     }
     
     protected IsisConfiguration getConfiguration() {

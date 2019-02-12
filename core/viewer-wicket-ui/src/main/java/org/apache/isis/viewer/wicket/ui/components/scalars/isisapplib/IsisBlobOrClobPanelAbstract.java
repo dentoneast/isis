@@ -26,6 +26,15 @@ import java.util.List;
 import javax.activation.MimeType;
 import javax.imageio.ImageIO;
 
+import org.apache.isis.applib.value.Blob;
+import org.apache.isis.applib.value.NamedWithMimeType;
+import org.apache.isis.core.commons.lang.CloseableExtensions;
+import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.runtime.persistence.adapter.PojoAdapter;
+import org.apache.isis.viewer.wicket.model.models.ScalarModel;
+import org.apache.isis.viewer.wicket.ui.components.scalars.ScalarPanelAbstract2;
+import org.apache.isis.viewer.wicket.ui.components.widgets.bootstrap.FormGroup;
+import org.apache.isis.viewer.wicket.ui.util.Components;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -43,17 +52,6 @@ import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.IResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.isis.applib.value.Blob;
-import org.apache.isis.applib.value.NamedWithMimeType;
-import org.apache.isis.core.commons.lang.CloseableExtensions;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.viewer.wicket.model.models.ScalarModel;
-import org.apache.isis.viewer.wicket.ui.components.scalars.ScalarPanelAbstract2;
-import org.apache.isis.viewer.wicket.ui.components.widgets.bootstrap.FormGroup;
-import org.apache.isis.viewer.wicket.ui.util.Components;
 
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.fileinput.BootstrapFileInputField;
 
@@ -61,9 +59,6 @@ public abstract class IsisBlobOrClobPanelAbstract<T extends NamedWithMimeType> e
 
 
     private static final long serialVersionUID = 1L;
-
-    @SuppressWarnings("unused")
-    private static final Logger LOG = LoggerFactory.getLogger(IsisBlobOrClobPanelAbstract.class);
 
     private static final String ID_SCALAR_IF_REGULAR = "scalarIfRegular";
     private static final String ID_SCALAR_IF_REGULAR_DOWNLOAD = "scalarIfRegularDownload";
@@ -207,7 +202,8 @@ public abstract class IsisBlobOrClobPanelAbstract<T extends NamedWithMimeType> e
     }
 
     private FileUploadField createFileUploadField(String componentId) {
-        final BootstrapFileInputField fileUploadField = new BootstrapFileInputField(componentId, new IModel<List<FileUpload>>() {
+        final BootstrapFileInputField fileUploadField = new BootstrapFileInputField(
+        		componentId, new IModel<List<FileUpload>>() {
 
             private static final long serialVersionUID = 1L;
 
@@ -219,7 +215,7 @@ public abstract class IsisBlobOrClobPanelAbstract<T extends NamedWithMimeType> e
 
                 final T blob = getBlobOrClobFrom(fileUploads);
 
-                final ObjectAdapter adapter = getPersistenceSession().adapterFor(blob);
+                final ObjectAdapter adapter = PojoAdapter.ofValue(blob);
                 getModel().setObject(adapter);
             }
 

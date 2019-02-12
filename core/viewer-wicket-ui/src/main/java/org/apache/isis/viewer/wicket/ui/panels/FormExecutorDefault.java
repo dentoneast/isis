@@ -523,10 +523,6 @@ implements FormExecutor {
         return IsisSession.currentIfAny();
     }
 
-    protected PersistenceSession getPersistenceSession() {
-        return getCurrentSession().getPersistenceSession();
-    }
-
     protected ServiceRegistry getServiceRegistry() {
         return IsisContext.getServiceRegistry();
     }

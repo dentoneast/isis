@@ -25,16 +25,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.isis.applib.services.bookmark.Bookmark;
-import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
-import org.apache.isis.core.metamodel.spec.ManagedObject.SimpleManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
-import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.managers.Converters;
-import org.apache.isis.core.runtime.system.context.managers.UniversalObjectManager;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento_Legacy.Sort;
 import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento_Legacy.Type;
@@ -89,7 +83,7 @@ public interface ObjectAdapterMemento extends Serializable {
 //	}
 	
 	@Deprecated
-	default void resetVersion(PersistenceSession persistenceSession, SpecificationLoader specificationLoader) {
+	default void resetVersion() {
 		// no longer supported
 	}
 	

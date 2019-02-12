@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.apache.isis.applib.AppManifest;
@@ -36,6 +37,8 @@ import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.ConfigurationConstants;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
+import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelDeficiencies;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidException;
@@ -183,6 +186,7 @@ public interface IsisContext {
     }
 
     /**
+     * TODO [2033] decouple from JDO
      * @return framework's current PersistenceSession (if any)
      * @throws IllegalStateException - if IsisSessionFactory not resolvable
      */
@@ -192,12 +196,23 @@ public interface IsisContext {
     }
     
     /**
+     * TODO [2033] decouple from JDO
      * @return framework's current IsisTransactionManager (if any)
      * @throws IllegalStateException - if IsisSessionFactory not resolvable
      */
     public static Optional<IsisTransactionManager> getTransactionManager() {
         return getPersistenceSession()
         	    .map(PersistenceSession::getTransactionManager);
+    }
+    
+    //TODO [2033] decouple from JDO
+    public static Function<Object, ObjectAdapter> pojoToAdapter() {
+        return getPersistenceSession().get()::adapterFor;
+    }
+    
+    //TODO [2033] decouple from JDO
+    public static Function<RootOid, ObjectAdapter> rootOidToAdapter() {
+        return getPersistenceSession().get()::adapterFor;
     }
     
     /**

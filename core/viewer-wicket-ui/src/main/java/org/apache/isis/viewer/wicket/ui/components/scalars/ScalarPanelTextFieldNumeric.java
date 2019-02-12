@@ -36,7 +36,8 @@ import org.apache.isis.viewer.wicket.model.models.ScalarModel;
 /**
  * Panel for rendering numeric scalars.
  */
-public abstract class ScalarPanelTextFieldNumeric<T extends Serializable> extends ScalarPanelTextFieldAbstract<T> {
+public abstract class ScalarPanelTextFieldNumeric<T extends Serializable> 
+extends ScalarPanelTextFieldAbstract<T> {
 
     private static final long serialVersionUID = 1L;
 

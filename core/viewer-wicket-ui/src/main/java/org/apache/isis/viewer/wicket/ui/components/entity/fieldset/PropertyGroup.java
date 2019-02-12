@@ -205,7 +205,7 @@ public class PropertyGroup extends PanelAbstract<EntityModel> implements HasDyna
             final WebMarkupContainer container,
             final List<LinkAndLabel> entityActions) {
 
-        final PropertyMemento pm = new PropertyMemento(otoa, entityModel.getIsisSessionFactory());
+        final PropertyMemento pm = new PropertyMemento(otoa);
 
         final ScalarModel scalarModel =
                 entityModel.getPropertyModel(pm, EntityModel.Mode.VIEW, EntityModel.RenderingHint.REGULAR);
@@ -213,7 +213,7 @@ public class PropertyGroup extends PanelAbstract<EntityModel> implements HasDyna
         final Component component = getComponentFactoryRegistry()
                 .addOrReplaceComponent(container, ID_PROPERTY, ComponentType.SCALAR_NAME_AND_VALUE, scalarModel);
 
-        final ObjectAdapter adapter = entityModel.load(ConcurrencyChecking.NO_CHECK);
+        final ObjectAdapter adapter = entityModel.load();
         final List<ObjectAction> associatedActions =
                 ObjectAction.Util.findForAssociation(adapter, otoa);
 

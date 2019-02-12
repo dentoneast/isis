@@ -25,23 +25,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.AbstractLink;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.markup.html.panel.Fragment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.applib.layout.component.ServiceActionLayoutData;
 import org.apache.isis.applib.layout.menubars.MenuBars;
 import org.apache.isis.applib.layout.menubars.MenuSection;
 import org.apache.isis.applib.layout.menubars.bootstrap3.BS3Menu;
 import org.apache.isis.applib.layout.menubars.bootstrap3.BS3MenuBar;
 import org.apache.isis.applib.services.i18n.TranslationService;
-import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
@@ -53,10 +42,20 @@ import org.apache.isis.viewer.wicket.model.models.ServiceActionsModel;
 import org.apache.isis.viewer.wicket.ui.components.actionmenu.CssClassFaBehavior;
 import org.apache.isis.viewer.wicket.ui.util.CssClassAppender;
 import org.apache.isis.viewer.wicket.ui.util.Tooltips;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.AbstractLink;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.Fragment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.components.TooltipConfig;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.confirmation.ConfirmationBehavior;
 import de.agilecoders.wicket.extensions.markup.html.bootstrap.confirmation.ConfirmationConfig;
+import lombok.val;
 
 public final class ServiceActionUtil {
 
@@ -94,9 +93,7 @@ public final class ServiceActionUtil {
 
                 //XXX ISIS-1626, confirmation dialog for no-parameter menu actions
                 if (menuItem.requiresImmediateConfirmation()) {
-                    addConfirmationDialog(
-                            subMenuItemLink,
-                            menuItem.getPersistenceSession().getServiceInjector());
+                    addConfirmationDialog(subMenuItemLink);
                 }
 
             }
@@ -265,10 +262,9 @@ public final class ServiceActionUtil {
 
 
     private static void addConfirmationDialog(
-            final Component component,
-            final ServiceInjector servicesInjector) {
+            final Component component) {
 
-        final TranslationService translationService =
+        val translationService =
                 IsisContext.getServiceRegistry().lookupServiceElseFail(TranslationService.class);
 
         ConfirmationConfig confirmationConfig = new ConfirmationConfig();

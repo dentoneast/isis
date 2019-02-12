@@ -47,7 +47,6 @@ import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.context.managers.UniversalObjectManager;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.viewer.wicket.model.hints.UiHintContainer;
 import org.apache.isis.viewer.wicket.model.links.LinkAndLabel;
 import org.apache.isis.viewer.wicket.model.links.LinksProvider;
@@ -176,13 +175,14 @@ UiHintContainer {
                 if(sortedBy != null) {
                     @SuppressWarnings("unchecked")
                     final Comparator<Object> comparator = (Comparator<Object>) InstanceUtil.createInstance(sortedBy);
-                    entityCollectionModel.getIsisSessionFactory().getServiceInjector().injectServicesInto(comparator);
+                    IsisContext.getServiceInjector().injectServicesInto(comparator);
                     Collections.sort(objectList, comparator);
                 }
+                
+                val pojoToAdapter = IsisContext.pojoToAdapter();
 
                 final List<ObjectAdapter> adapterList =
-                        _Lists.map(objectList,
-                                entityCollectionModel.getPersistenceSession()::adapterFor);
+                        _Lists.map(objectList, pojoToAdapter);
 
                 return adapterList;
             }
@@ -240,8 +240,7 @@ UiHintContainer {
      * Factory.
      */
     public static EntityCollectionModel createStandalone(
-            final ObjectAdapter collectionAsAdapter,
-            final IsisSessionFactory sessionFactory) {
+            final ObjectAdapter collectionAsAdapter) {
 
         // dynamically determine the spec of the elements
         // (ie so a List<Object> can be rendered according to the runtime type of its elements,
@@ -253,8 +252,10 @@ UiHintContainer {
                 .map(ObjectAdapterMemento::ofPojo)
                 .collect(Collectors.toList());
 
+        val specificationLoader = IsisContext.getSpecificationLoader();
+        
         final ObjectSpecification elementSpec = lowestCommonSuperclassFinder.getLowestCommonSuperclass()
-                .map(sessionFactory.getSpecificationLoader()::loadSpecification)
+                .map(specificationLoader::loadSpecification)
                 .orElse(collectionAsAdapter.getSpecification().getElementSpecification());
 
         final Class<?> elementType;
@@ -360,7 +361,7 @@ UiHintContainer {
         final OneToManyAssociation collection = collectionFor(entityModel.getObjectAdapterMemento(), getLayoutData());
         this.typeOf = forName(collection.getSpecification());
 
-        this.collectionMemento = new CollectionMemento(collection, entityModel.getIsisSessionFactory());
+        this.collectionMemento = new CollectionMemento(collection);
 
         this.pageSize = pageSize(collection.getFacet(PagedFacet.class), PAGE_SIZE_DEFAULT_FOR_PARENTED);
 
@@ -379,7 +380,7 @@ UiHintContainer {
         }
         final String collectionId = collectionLayoutData.getId();
         final ObjectSpecId objectSpecId = parentObjectAdapterMemento.getObjectSpecId();
-        final ObjectSpecification objectSpec = getIsisSessionFactory().getSpecificationLoader().lookupBySpecId(objectSpecId);
+        final ObjectSpecification objectSpec = IsisContext.getSpecificationLoader().lookupBySpecId(objectSpecId);
         final OneToManyAssociation otma = (OneToManyAssociation) objectSpec.getAssociation(collectionId);
         return otma;
     }

@@ -19,6 +19,7 @@
 
 package org.apache.isis.viewer.wicket.model.models;
 
+import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
@@ -48,7 +49,7 @@ public abstract class ModelAbstract<T> extends LoadableDetachableModel<T> {
     // //////////////////////////////////////////////////////////////
 
     protected AuthenticationSession getAuthenticationSession() {
-        return getCurrentSession().getAuthenticationSession();
+        return IsisContext.getAuthenticationSession().orElse(null);
     }
 
     @Deprecated //TODO [2033] should not be needed in viewer, improve API!
@@ -60,13 +61,12 @@ public abstract class ModelAbstract<T> extends LoadableDetachableModel<T> {
         return IsisSession.currentIfAny();
     }
 
-    @Deprecated //TODO [2033] should not be needed in viewer, improve API!
-    public IsisSessionFactory getIsisSessionFactory() {
-        return IsisContext.getSessionFactory();
-    }
-
     public SpecificationLoader getSpecificationLoader() {
         return IsisContext.getSpecificationLoader();
+    }
+    
+    protected ServiceInjector getServicesInjector() {
+        return IsisContext.getServiceInjector();
     }
 
 

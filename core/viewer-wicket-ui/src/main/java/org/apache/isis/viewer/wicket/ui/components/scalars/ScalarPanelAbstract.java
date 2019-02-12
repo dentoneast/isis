@@ -383,12 +383,4 @@ public abstract class ScalarPanelAbstract extends PanelAbstract<ScalarModel> imp
         target.add(this);
     }
 
-
-    // ///////////////////////////////////////////////////////////////////
-
-    @Override
-    public ObjectAdapterProvider getObjectAdapterProvider() {
-        return getPersistenceSession();
-    }
-
 }

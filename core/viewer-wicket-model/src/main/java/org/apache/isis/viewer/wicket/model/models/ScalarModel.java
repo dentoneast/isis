@@ -51,6 +51,7 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.spec.feature.ObjectActionParameter;
 import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 import org.apache.isis.viewer.wicket.model.links.LinkAndLabel;
@@ -59,6 +60,8 @@ import org.apache.isis.viewer.wicket.model.mementos.ActionParameterMemento;
 import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
 import org.apache.isis.viewer.wicket.model.mementos.PropertyMemento;
 import org.apache.isis.viewer.wicket.model.mementos.SpecUtils;
+
+import lombok.val;
 
 /**
  * Represents a scalar of an entity, either a {@link Kind#PROPERTY property} or
@@ -816,7 +819,7 @@ public class ScalarModel extends EntityModel implements LinksProvider, FormExecu
                     .collect(Collectors.toList());
             final ObjectAdapterMemento memento =
                     ObjectAdapterMemento.ofMementoList(listOfMementos, getTypeOfSpecification().getSpecId());
-            super.setObjectMemento(memento, getPersistenceSession(), getSpecificationLoader()); // associated value
+            super.setObjectMemento(memento); // associated value
         } else {
             super.setObject(adapter); // associated value
         }
@@ -855,8 +858,9 @@ public class ScalarModel extends EntityModel implements LinksProvider, FormExecu
      */
     @Override
     protected AuthenticationSession getAuthenticationSession() {
-        return getPersistenceSession().getServiceInjector()
-                .lookupServiceElseFail(AuthenticationSessionProvider.class).getAuthenticationSession();
+        return IsisContext.getServiceRegistry()
+                .lookupServiceElseFail(AuthenticationSessionProvider.class)
+                .getAuthenticationSession();
     }
 
     public boolean isRequired() {
@@ -1069,8 +1073,9 @@ public class ScalarModel extends EntityModel implements LinksProvider, FormExecu
             final Object viewModel = adapter.getPojo();
             final boolean cloneable = recreatableObjectFacet.isCloneable(viewModel);
             if(cloneable) {
-                final Object newViewModel = recreatableObjectFacet.clone(viewModel);
-                adapter = getPersistenceSession().adapterFor(newViewModel);
+                val newViewModelPojo = recreatableObjectFacet.clone(viewModel);
+                val pojoToAdapter = IsisContext.pojoToAdapter();
+                adapter = pojoToAdapter.apply(newViewModelPojo);
             }
         }
 

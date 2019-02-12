@@ -20,23 +20,20 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.wicket.Session;
-import org.apache.wicket.util.convert.IConverter;
-import org.apache.wicket.util.string.Strings;
-import org.wicketstuff.select2.ChoiceProvider;
-
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
 import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
 import org.apache.isis.viewer.wicket.model.models.ScalarModel;
 import org.apache.isis.viewer.wicket.ui.components.scalars.IsisConverterLocator;
+import org.apache.wicket.Session;
+import org.apache.wicket.util.convert.IConverter;
+import org.apache.wicket.util.string.Strings;
+import org.wicketstuff.select2.ChoiceProvider;
 
 public abstract class ObjectAdapterMementoProviderAbstract extends ChoiceProvider<ObjectAdapterMemento> {
 
@@ -129,11 +126,7 @@ public abstract class ObjectAdapterMementoProviderAbstract extends ChoiceProvide
 
 
     protected SpecificationLoader getSpecificationLoader() {
-        return getIsisSessionFactory().getSpecificationLoader();
-    }
-
-    PersistenceSession getPersistenceSession() {
-        return getIsisSessionFactory().getCurrentSession().getPersistenceSession();
+        return IsisContext.getSpecificationLoader();
     }
 
     protected IsisSessionFactory getIsisSessionFactory() {
@@ -141,7 +134,7 @@ public abstract class ObjectAdapterMementoProviderAbstract extends ChoiceProvide
     }
 
     public AuthenticationSession getAuthenticationSession() {
-        return getIsisSessionFactory().getCurrentSession().getAuthenticationSession();
+        return IsisContext.getAuthenticationSession().orElse(null);
     }
 
 

@@ -39,6 +39,8 @@ import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.apache.wicket.util.resource.StringResourceStream;
 
+import lombok.val;
+
 import org.apache.isis.applib.Identifier;
 import org.apache.isis.applib.annotation.BookmarkPolicy;
 import org.apache.isis.applib.annotation.PromptStyle;
@@ -69,6 +71,7 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.spec.feature.ObjectActionParameter;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.viewer.wicket.model.common.PageParametersUtils;
 import org.apache.isis.viewer.wicket.model.mementos.ActionMemento;
 import org.apache.isis.viewer.wicket.model.mementos.ActionParameterMemento;
@@ -391,8 +394,9 @@ public class ActionModel extends BookmarkableModel<ObjectAdapter> implements For
         }
 
         try {
-            final RootOid oid = RootOid.deStringEncoded(encoded);
-            return getPersistenceSession().adapterFor(oid);
+            val rootOid = RootOid.deStringEncoded(encoded);
+            val rootOidToAdapter = IsisContext.rootOidToAdapter();
+            return rootOidToAdapter.apply(rootOid);			
         } catch (final Exception e) {
             return null;
         }
@@ -466,11 +470,13 @@ public class ActionModel extends BookmarkableModel<ObjectAdapter> implements For
         final Stream<RoutingService> routingServices = getServicesInjector().streamServices(RoutingService.class);
         final Object result = resultAdapter != null ? resultAdapter.getPojo() : null;
         
+        val pojoToAdapter = IsisContext.pojoToAdapter();
+        
         return routingServices
             .filter(routingService->routingService.canRoute(result))
             .map(routingService->routingService.route(result))
             .filter(_NullSafe::isPresent)
-            .map(routeTo->getPersistenceSession().adapterFor(routeTo))
+            .map(pojoToAdapter)
             .filter(_NullSafe::isPresent)
             .findFirst()
             .orElse(resultAdapter);
@@ -719,13 +725,5 @@ public class ActionModel extends BookmarkableModel<ObjectAdapter> implements For
         this.inlinePromptContext = inlinePromptContext;
     }
 
-    //////////////////////////////////////////////////
-    // Dependencies (from context)
-    //////////////////////////////////////////////////
-
-
-    ServiceInjector getServicesInjector() {
-        return getIsisSessionFactory().getServiceInjector();
-    }
 
 }

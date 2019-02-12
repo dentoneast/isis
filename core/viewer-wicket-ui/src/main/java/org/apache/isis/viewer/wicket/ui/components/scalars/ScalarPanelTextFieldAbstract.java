@@ -20,9 +20,20 @@
 package org.apache.isis.viewer.wicket.ui.components.scalars;
 
 import java.io.Serializable;
+import java.util.function.Function;
 
 import javax.inject.Inject;
 
+import org.apache.isis.commons.internal.base._Casts;
+import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.metamodel.facets.SingleIntValueFacet;
+import org.apache.isis.core.metamodel.facets.objectvalue.maxlen.MaxLengthFacet;
+import org.apache.isis.core.metamodel.facets.objectvalue.typicallen.TypicalLengthFacet;
+import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
+import org.apache.isis.viewer.wicket.model.models.ScalarModel;
+import org.apache.isis.viewer.wicket.ui.components.widgets.bootstrap.FormGroup;
+import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
+import org.apache.isis.viewer.wicket.ui.util.Tooltips;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -38,18 +49,6 @@ import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.IValidator;
 import org.apache.wicket.validation.ValidationError;
 
-import org.apache.isis.commons.internal.base._Casts;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
-import org.apache.isis.core.metamodel.facets.SingleIntValueFacet;
-import org.apache.isis.core.metamodel.facets.objectvalue.maxlen.MaxLengthFacet;
-import org.apache.isis.core.metamodel.facets.objectvalue.typicallen.TypicalLengthFacet;
-import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
-import org.apache.isis.viewer.wicket.model.models.ScalarModel;
-import org.apache.isis.viewer.wicket.ui.components.widgets.bootstrap.FormGroup;
-import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
-import org.apache.isis.viewer.wicket.ui.util.Tooltips;
-
 /**
  * Adapter for {@link PanelAbstract panel}s that use a {@link ScalarModel} as
  * their backing model.
@@ -63,7 +62,8 @@ import org.apache.isis.viewer.wicket.ui.util.Tooltips;
  * This implementation is for panels that use a textfield/text area.
  * </p>
  */
-public abstract class ScalarPanelTextFieldAbstract<T extends Serializable> extends ScalarPanelAbstract2 implements TextFieldValueModel.ScalarModelProvider {
+public abstract class ScalarPanelTextFieldAbstract<T extends Serializable> 
+extends ScalarPanelAbstract2 implements TextFieldValueModel.ScalarModelProvider {
 
     private static final long serialVersionUID = 1L;
 
@@ -218,7 +218,7 @@ public abstract class ScalarPanelTextFieldAbstract<T extends Serializable> exten
             @Override
             public void validate(final IValidatable<T> validatable) {
                 final T proposedValue = validatable.getValue();
-                final ObjectAdapter proposedAdapter = getPersistenceSession().adapterFor(proposedValue);
+                final ObjectAdapter proposedAdapter = pojoToAdapter().apply(proposedValue);
                 final String reasonIfAny = scalarModel.validate(proposedAdapter);
                 if (reasonIfAny != null) {
                     final ValidationError error = new ValidationError();
@@ -358,11 +358,6 @@ public abstract class ScalarPanelTextFieldAbstract<T extends Serializable> exten
     @Override
     protected WicketViewerSettings getSettings() {
         return settings;
-    }
-
-    @Override
-    public ObjectAdapterProvider getObjectAdapterProvider() {
-        return getPersistenceSession();
     }
 
 }
