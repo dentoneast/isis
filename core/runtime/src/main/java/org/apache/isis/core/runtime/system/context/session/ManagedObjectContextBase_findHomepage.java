@@ -1,4 +1,4 @@
-package org.apache.isis.core.runtime.managed;
+package org.apache.isis.core.runtime.system.context.session;
 
 import java.util.stream.Stream;
 

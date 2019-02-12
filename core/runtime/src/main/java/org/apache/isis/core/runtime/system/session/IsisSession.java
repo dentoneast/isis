@@ -23,8 +23,8 @@ import java.util.Optional;
 
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.core.commons.util.ToString;
-import org.apache.isis.core.runtime.managed.ManagedObjectContextBase;
 import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.context.session.ManagedObjectContextBase;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory;
 import org.apache.isis.core.runtime.system.transaction.IsisTransaction;
