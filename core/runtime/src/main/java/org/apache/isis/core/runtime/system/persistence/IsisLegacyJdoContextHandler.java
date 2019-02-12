@@ -18,6 +18,7 @@ import org.apache.isis.commons.internal.uri._URI.ContextType;
 import org.apache.isis.core.metamodel.IsisJdoMetamodelPlugin;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
+import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ManagedObject.SimpleManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
@@ -47,6 +48,13 @@ public class IsisLegacyJdoContextHandler implements ContextHandler {
 	public void init() {
 		isisJdoMetamodelPlugin = IsisJdoMetamodelPlugin.get();
 	}
+	
+	@Override
+	public ManagedObjectState stateOf(ManagedObject managedObject) {
+		val persistenceSession = IsisSession.currentIfAny().getPersistenceSession();
+		val state = persistenceSession.stateOf(managedObject.getPojo());
+		return state;
+	}
 
 	@Override
 	public URI uriOf(ManagedObject managedObject) {
@@ -64,12 +72,14 @@ public class IsisLegacyJdoContextHandler implements ContextHandler {
 		val spec = specLoader.lookupBySpecId(specId);
 		val id = objectUri.getQuery();
 		
-		val legacyOid = Oid.Factory.persistentOf(specId, id);
+		val rootOid = Oid.Factory.persistentOf(specId, id);
 		val persistenceSession = IsisSession.currentIfAny().getPersistenceSession();
 		
-		val objectAdapter = persistenceSession.adapterFor(legacyOid);
+		probe.println("resolve '%s' rootOid.id='%s'", objectUri, rootOid.getIdentifier());
 		
-		val managedObject = SimpleManagedObject.of(spec, objectAdapter.getPojo());
+		val pojo = persistenceSession.fetchPersistentPojo(rootOid);
+		
+		val managedObject = SimpleManagedObject.of(spec, pojo);
 		
 		return _CDI.InstanceFactory.singleton(managedObject);
 	}

@@ -19,6 +19,7 @@ import org.apache.isis.commons.internal.uri._URI.ContextType;
 import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.metamodel.facets.object.viewmodel.ViewModelFacet;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
+import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ManagedObject.SimpleManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
@@ -42,6 +43,11 @@ public class ViewModelContextManager implements ContextHandler {
 	@PostConstruct
 	public void init() {
 		//
+	}
+	
+	@Override
+	public ManagedObjectState stateOf(ManagedObject managedObject) {
+		return ManagedObjectState.not_Persistable;
 	}
 
 	@Override

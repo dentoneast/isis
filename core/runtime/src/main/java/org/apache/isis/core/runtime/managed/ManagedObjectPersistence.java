@@ -4,6 +4,7 @@ import java.util.stream.Stream;
 
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
+import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 
@@ -17,6 +18,7 @@ public interface ManagedObjectPersistence {
 	// -- METHODS NEEDED BY RO-VIEWER ...
 	
 	Stream<ObjectAdapter> streamServices(); //TODO [2033] use ServiceRegistry instead
+	ManagedObjectState stateOf(Object domainObject);
 	ObjectAdapter lookupService(final String serviceId); //TODO [2033] use ServiceRegistry instead
 	
 	//
@@ -28,7 +30,7 @@ public interface ManagedObjectPersistence {
 	ObjectAdapter newTransientInstance(ObjectSpecification domainTypeSpec);
 	void makePersistentInTransaction(ObjectAdapter objectAdapter);
 	Object fetchPersistentPojoInTransaction(RootOid rootOid);
-	boolean isTransient(Object domainObject);
+	
 	
 	// -- FACTORIES
 	
@@ -53,8 +55,8 @@ public interface ManagedObjectPersistence {
 			}
 			
 			@Override
-			public boolean isTransient(Object domainObject) {
-				return persistenceSession.isTransient(domainObject);
+			public ManagedObjectState stateOf(Object domainObject) {
+				return persistenceSession.stateOf(domainObject);
 			}
 			
 			@Override

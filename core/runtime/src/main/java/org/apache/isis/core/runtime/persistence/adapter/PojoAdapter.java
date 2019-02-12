@@ -21,6 +21,7 @@ package org.apache.isis.core.runtime.persistence.adapter;
 
 import static org.apache.isis.commons.internal.base._With.requires;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import org.apache.isis.commons.internal.base._Lazy;
@@ -31,11 +32,11 @@ import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.ParentedOid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
-import org.apache.isis.core.metamodel.adapter.oid.UniversalOid;
 import org.apache.isis.core.metamodel.adapter.version.ConcurrencyException;
 import org.apache.isis.core.metamodel.adapter.version.Version;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
+import org.apache.isis.core.runtime.system.context.managers.UniversalObjectManager;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -52,10 +53,12 @@ public final class PojoAdapter implements ObjectAdapter {
 
     private final AuthenticationSession authenticationSession;
     private final SpecificationLoader specificationLoader;
-    private final PersistenceSession persistenceSession;
+    private final UniversalObjectManager objectManager;
 
     private final Object pojo;
     private final Oid oid;
+
+    // -- FACTORIES
     
     public static PojoAdapter of(
             final Object pojo,
@@ -63,6 +66,11 @@ public final class PojoAdapter implements ObjectAdapter {
     	
         return of(pojo, oid, IsisSession.currentIfAny());
     }
+    
+    public static PojoAdapter ofValue(Serializable value) {
+		val oid = Oid.Factory.value();
+		return PojoAdapter.of(value, oid);
+	}
     
     public static PojoAdapter of(
             final Object pojo,
@@ -85,7 +93,7 @@ public final class PojoAdapter implements ObjectAdapter {
     	
     	Objects.requireNonNull(pojo);
 
-        this.persistenceSession = persistenceSession;
+        this.objectManager = UniversalObjectManager.current();
         this.specificationLoader = specificationLoader;
         this.authenticationSession = authenticationSession;
         
@@ -121,55 +129,48 @@ public final class PojoAdapter implements ObjectAdapter {
     }
 
     // -- getOid
+    
     @Override
     public Oid getOid() {
         return oid;
     }
 
-    // -- isTransient, representsPersistent, isDestroyed
+    // -- PREDICATES
     
-    @Override
-    public boolean isTransient() {
-    	
-    	if(oid instanceof UniversalOid) {
-    		return oid.isTransient(); //FIXME [2033] this is a quick-hack
-    	}
-    	
-        if(getSpecification().isService() || getSpecification().isViewModel()) {
+	@Override
+	public boolean isTransient() {
+		val spec = getSpecification();
+		if(spec.isService() || spec.isViewModel()) {
             // services and view models are treated as persistent objects
             return false;
         }
-        return persistenceSession.isTransient(pojo); 
-    }
+		val state = objectManager.stateOf(this);
+		return state.isDetached();
+	}
 
-    @Override
-    public boolean representsPersistent() {
-    	
-    	if(oid instanceof UniversalOid) {
-    		return oid.isPersistent(); //FIXME [2033] this is a quick-hack
-    	}
-    	
-        if(getSpecification().isService() || getSpecification().isViewModel()) {
+	@Override
+	public boolean representsPersistent() {
+		val spec = getSpecification();
+		if(spec.isService() || spec.isViewModel()) {
             // services and view models are treated as persistent objects
             return true;
         }
-        return persistenceSession.isRepresentingPersistent(pojo);
-    }
+		//was return persistenceSession.isRepresentingPersistent(pojo);
+		
+		val state = objectManager.stateOf(this);
+		return state.isPersistable();
+	}
 
-    @Override
-    public boolean isDestroyed() {
-    	
-    	if(oid instanceof UniversalOid) {
-    		return false; //FIXME [2033] this is a quick-hack
-    	}
-    	
-        if(getSpecification().isService() || getSpecification().isViewModel()) {
+	@Override
+	public boolean isDestroyed() {
+		val spec = getSpecification();
+		if(spec.isService() || spec.isViewModel() || spec.isValue()) {
             // services and view models are treated as persistent objects
             return false;
         }
-        return persistenceSession.isDestroyed(pojo);
-    }
-
+		val state = objectManager.stateOf(this);
+		return state.isDestroyed();
+	}
 
     // -- getAggregateRoot
     @Override
@@ -177,10 +178,10 @@ public final class PojoAdapter implements ObjectAdapter {
         if(!isParentedCollection()) {
             return this;
         }
-        ParentedOid collectionOid = (ParentedOid) oid;
-        final Oid rootOid = collectionOid.getParentOid();
-        ObjectAdapter rootadapter = persistenceSession.adapterFor(rootOid);
-        return rootadapter;
+        val collectionOid = (ParentedOid) oid;
+        val rootOid = collectionOid.getParentOid();
+        val rootAdapter = objectManager.resolve(rootOid);
+        return rootAdapter;
     }
 
     // -- getVersion, setVersion, checkLock
@@ -294,7 +295,6 @@ public final class PojoAdapter implements ObjectAdapter {
 		
 		return new PojoAdapter(pojo, oid, authenticationSession, specificationLoader, persistenceSession);
 	}
-
 
 
 }

@@ -44,6 +44,8 @@ import org.datanucleus.identity.DatastoreIdImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import lombok.val;
+
 import org.apache.isis.applib.query.Query;
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
@@ -72,7 +74,10 @@ import org.apache.isis.core.metamodel.facets.object.callbacks.UpdatedLifecycleEv
 import org.apache.isis.core.metamodel.services.container.query.QueryCardinality;
 import org.apache.isis.core.metamodel.spec.FreeStandingList;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
+import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
+import org.apache.isis.core.plugins.ioc.RequestContextHandle;
+import org.apache.isis.core.plugins.ioc.RequestContextService;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledFlag;
 import org.apache.isis.core.runtime.persistence.NotPersistableException;
 import org.apache.isis.core.runtime.persistence.ObjectNotFoundException;
@@ -84,6 +89,7 @@ import org.apache.isis.core.runtime.persistence.objectstore.transaction.Persiste
 import org.apache.isis.core.runtime.persistence.query.PersistenceQueryFindAllInstances;
 import org.apache.isis.core.runtime.persistence.query.PersistenceQueryFindUsingApplibQueryDefault;
 import org.apache.isis.core.runtime.services.RequestScopedService;
+import org.apache.isis.core.runtime.system.persistence.PersistenceSessionBase.State;
 import org.apache.isis.core.runtime.system.persistence.adaptermanager.ObjectAdapterContext;
 import org.apache.isis.core.runtime.system.persistence.adaptermanager.ObjectAdapterContext.MementoRecreateObjectSupport;
 import org.apache.isis.core.runtime.system.transaction.IsisTransaction;
@@ -104,8 +110,8 @@ import org.apache.isis.objectstore.jdo.datanucleus.persistence.spi.JdoObjectIdSe
 public class PersistenceSession4 extends PersistenceSessionBase
 implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PersistenceSession4.class);
     private ObjectAdapterContext objectAdapterContext;
+	private RequestContextHandle requestContextHandle;
 
     /**
      * Initialize the object store so that calls to this object store access
@@ -134,6 +140,10 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
         if (LOG.isDebugEnabled()) {
             LOG.debug("opening {}", this);
         }
+        
+        // this handle needs to be closed when the request-scope's life-cycle ends
+        // if null, some other mechanism is already taking care of it, then lets not interfere
+        requestContextHandle = requestContextService.startRequest(); 
 
         persistenceManager = jdoPersistenceManagerFactory.getPersistenceManager();
 
@@ -152,16 +162,15 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
 
         // tell the proxy of all request-scoped services to instantiate the underlying
         // services, store onto the thread-local and inject into them...
-        startRequestOnRequestScopedServices();
+        //FIXME [2033] CDI takes over ... startRequestOnRequestScopedServices();
 
         // ... and invoke all @PostConstruct
-        postConstructOnRequestScopedServices();
+        //FIXME [2033] CDI takes over ... postConstructOnRequestScopedServices();
 
         if(metricsService instanceof InstanceLifecycleListener) {
             final InstanceLifecycleListener metricsService = (InstanceLifecycleListener) this.metricsService;
             persistenceManager.addInstanceLifecycleListener(metricsService, (Class[]) null);
         }
-
 
         final Command command = createCommand();
         final Interaction interaction = factoryService.instantiate(Interaction.class);
@@ -187,7 +196,6 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
                 ((RequestScopedService)service).__isis_postConstruct();
             }
         });
-        
     }
 
     private void startRequestOnRequestScopedServices() {
@@ -246,10 +254,10 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
 
         // tell the proxy of all request-scoped services to invoke @PreDestroy
         // (if any) on all underlying services stored on their thread-locals...
-        preDestroyOnRequestScopedServices();
+      //FIXME [2033] CDI takes over ... preDestroyOnRequestScopedServices();
 
         // ... and then remove those underlying services from the thread-local
-        endRequestOnRequestScopeServices();
+      //FIXME [2033] CDI takes over ... endRequestOnRequestScopeServices();
 
         try {
             persistenceManager.close();
@@ -260,6 +268,8 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
         }
 
         objectAdapterContext.close();
+        
+        RequestContextService.closeHandle(requestContextHandle);
 
         this.state = State.CLOSED;
     }
@@ -558,7 +568,10 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
     @Override
     public void refreshRoot(final Object domainObject) {
         
-        if(!isRepresentingPersistent(domainObject)) {
+    	val state = stateOf(domainObject);
+    	val isRepresentingPersistent = state.isAttached() || state.isDestroyed();  
+    	
+        if(!isRepresentingPersistent) {
             debugLogNotPersistentIgnoring(domainObject);
             return; // only resolve object that is representing persistent
         }
@@ -783,11 +796,11 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
      */
     @Override
     public void invokeIsisPersistingCallback(final Persistable pojo) {
-        if (isTransient(pojo)) {
+        if (stateOf(pojo).isDetached()) {
             final ManagedObject adapter = ManagedObject.of(
                     ()->getSpecificationLoader().loadSpecification(pojo.getClass()),
                     pojo);
-
+            
             // persisting
             // previously this was performed in the DataNucleusSimplePersistAlgorithm.
             CallbackFacet.Util.callCallback(adapter, PersistingCallbackFacet.class);
@@ -818,6 +831,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
 
         if (rootOid.isTransient()) {
             // persisting
+            
             objectAdapterContext.asPersistent(adapter, this);
 
             CallbackFacet.Util.callCallback(adapter, PersistedCallbackFacet.class);
@@ -875,41 +889,21 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
     // -- 
     
     @Override
-    public boolean isTransient(@Nullable Object pojo) {
-        if (pojo!=null && pojo instanceof Persistable) {
-            final Persistable p = (Persistable) pojo;
-            final boolean isPersistent = p.dnIsPersistent();
-            final boolean isDeleted = p.dnIsDeleted();
-            if (!isPersistent && !isDeleted) {
-                return true;
+	public ManagedObjectState stateOf(@Nullable Object pojo) {
+    	if (pojo!=null && pojo instanceof Persistable) {
+    		val persistable = (Persistable) pojo;
+            val isDeleted = persistable.dnIsDeleted();
+            if(isDeleted) {
+            	return ManagedObjectState.persistable_Destroyed;
             }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isRepresentingPersistent(@Nullable Object pojo) {
-        if (pojo!=null && pojo instanceof Persistable) {
-            final Persistable p = (Persistable) pojo;
-            final boolean isPersistent = p.dnIsPersistent();
-            if (isPersistent) {
-                return true;
+            val isPersistent = persistable.dnIsPersistent();
+            if(isPersistent) {
+            	return ManagedObjectState.persistable_Attached;
             }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isDestroyed(@Nullable Object pojo) {
-        if (pojo!=null && pojo instanceof Persistable) {
-            final Persistable p = (Persistable) pojo;
-            final boolean isDeleted = p.dnIsDeleted();
-            if (isDeleted) {
-                return true;
-            }
-        }
-        return false;
-    }
+            return ManagedObjectState.persistable_Detached;
+    	}
+		return ManagedObjectState.not_Persistable;
+	}
     
     @Override
     public boolean isRecognized(Object pojo) {
@@ -952,6 +946,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
             LOG.debug("refresh immediately; oid={}", oid.enString());
         }
     }
+
     
 }
 

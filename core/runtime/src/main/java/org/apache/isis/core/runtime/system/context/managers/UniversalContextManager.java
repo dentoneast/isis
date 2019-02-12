@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
+import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 
@@ -71,6 +72,16 @@ public class UniversalContextManager implements ContextManager {
 		requires(spec, "spec");
 		return resolverFor(spec)
 				.flatMap(resolver->resolver.authorityFor(spec));
+	}
+
+	@Override
+	public ManagedObjectState stateOf(ManagedObject managedObject) {
+		if(managedObject==null) {
+			return ManagedObjectState.not_Persistable;
+		}
+		return resolverFor(managedObject.getSpecification())
+				.map(resolver->resolver.stateOf(managedObject))
+				.orElse(ManagedObjectState.not_Persistable);
 	}
 
 

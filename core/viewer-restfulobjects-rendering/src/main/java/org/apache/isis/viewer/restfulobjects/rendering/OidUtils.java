@@ -101,7 +101,9 @@ final class OidUtils {
             try {
                 final Object domainObject = rendererContext.fetchPersistentPojoInTransaction(rootOid);
                 //TODO[ISIS-1976] changed behavior: predicate was objectAdapter.isTransient();
-                return rendererContext.isTransient(domainObject) ? null : domainObject;
+                return rendererContext.stateOf(domainObject).isDetached()
+                		? null 
+                				: domainObject;
             } catch(final ObjectNotFoundException ex) {
                 return null;
             }

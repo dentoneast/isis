@@ -151,7 +151,7 @@ class ObjectAdapterContext_ObjectAdapterByIdProvider implements ObjectAdapterByI
             // else recreate
             try {
                 final Object pojo;
-                if(rootOid.isTransient() || rootOid.isViewModel()) {
+                if(rootOid.isViewModel() || rootOid.isTransient()) {
                     pojo = recreatePojoTransientOrViewModel(rootOid);
                 } else {
                     pojo = persistenceSession.fetchPersistentPojo(rootOid);

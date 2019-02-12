@@ -23,15 +23,11 @@ import java.net.URI;
 
 import org.apache.isis.applib.annotation.Value;
 import org.apache.isis.applib.services.bookmark.Bookmark;
-import org.apache.isis.commons.internal.uri._URI;
-import org.apache.isis.commons.internal.uri._URI.ContainerType;
-import org.apache.isis.commons.internal.uri._URI.ContextType;
 import org.apache.isis.core.commons.encoding.Encodable;
 import org.apache.isis.core.metamodel.adapter.version.Version;
+import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
-
-import lombok.val;
 
 
 /**
@@ -63,7 +59,7 @@ public interface Oid extends Encodable {
      * of its {@link ParentedOid#getParentOid() root}'s {@link RootOid#isTransient() state}.
      */
     boolean isTransient();
-
+    
     boolean isViewModel();
 
     boolean isPersistent();
