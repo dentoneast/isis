@@ -24,8 +24,7 @@ import org.apache.isis.applib.services.xmlsnapshot.XmlSnapshotServiceAbstract;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.runtime.snapshot.XmlSnapshot;
 import org.apache.isis.core.runtime.snapshot.XmlSnapshotBuilder;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 
 /**
  * This service allows an XML document to be generated capturing the data of a root entity and specified related
@@ -69,7 +68,7 @@ public class XmlSnapshotServiceDefault extends XmlSnapshotServiceAbstract {
     @Programmatic
     @Override
     public XmlSnapshotService.Snapshot snapshotFor(final Object domainObject) {
-        final ObjectAdapter adapter = getPersistenceSession().adapterFor(domainObject);
+        final ObjectAdapter adapter = IsisContext.pojoToAdapter().apply(domainObject);
         return new XmlSnapshot(adapter);
     }
 
@@ -83,19 +82,6 @@ public class XmlSnapshotServiceDefault extends XmlSnapshotServiceAbstract {
     public Builder builderFor(final Object domainObject) {
         return new XmlSnapshotServiceDefaultBuilder(domainObject);
     }
-
-
-    // //////////////////////////////////////
-
-
-    @javax.inject.Inject
-    IsisSessionFactory isisSessionFactory;
-
-    protected PersistenceSession getPersistenceSession() {
-        return isisSessionFactory.getCurrentSession().getPersistenceSession();
-    }
-
-
 
 
 }

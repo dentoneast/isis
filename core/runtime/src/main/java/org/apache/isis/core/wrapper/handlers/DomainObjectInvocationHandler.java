@@ -69,7 +69,7 @@ import org.apache.isis.core.metamodel.specloader.specimpl.ContributeeMember;
 import org.apache.isis.core.metamodel.specloader.specimpl.ObjectActionContributee;
 import org.apache.isis.core.metamodel.specloader.specimpl.ObjectActionMixedIn;
 import org.apache.isis.core.metamodel.specloader.specimpl.dflt.ObjectSpecificationDefault;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 
@@ -80,7 +80,6 @@ public class DomainObjectInvocationHandler<T> extends DelegatingInvocationHandle
 
     private final ProxyContextHandler proxy;
     private final ExecutionMode executionMode;
-    private final IsisSessionFactory isisSessionFactory;
 
     /**
      * The <tt>title()</tt> method; may be <tt>null</tt>.
@@ -107,13 +106,12 @@ public class DomainObjectInvocationHandler<T> extends DelegatingInvocationHandle
     public DomainObjectInvocationHandler(
             final T delegate,
             final ExecutionMode mode,
-            final ProxyContextHandler proxy,
-            final IsisSessionFactory isisSessionFactory) {
-        super(delegate, mode, isisSessionFactory);
+            final ProxyContextHandler proxy) {
+    	
+        super(delegate, mode);
 
         this.proxy = proxy;
         this.executionMode = mode;
-        this.isisSessionFactory = isisSessionFactory;
 
         final MetaModelContext context = MetaModelContext.current();
         
@@ -944,7 +942,7 @@ public class DomainObjectInvocationHandler<T> extends DelegatingInvocationHandle
     // /////////////////////////////////////////////////////////////////
 
     protected SpecificationLoader getSpecificationLoader() {
-        return isisSessionFactory.getSpecificationLoader();
+        return IsisContext.getSpecificationLoader();
     }
 
     public AuthenticationSessionProvider getAuthenticationSessionProvider() {
@@ -963,7 +961,4 @@ public class DomainObjectInvocationHandler<T> extends DelegatingInvocationHandle
         return (PersistenceSessionServiceInternal) objectAdapterProvider;
     }
 
-    public IsisSessionFactory getIsisSessionFactory() {
-        return isisSessionFactory;
-    }
 }

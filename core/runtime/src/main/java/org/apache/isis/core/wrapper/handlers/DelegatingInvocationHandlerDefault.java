@@ -27,7 +27,9 @@ import org.apache.isis.applib.services.wrapper.WrapperFactory.ExecutionMode;
 import org.apache.isis.applib.services.wrapper.events.InteractionEvent;
 import org.apache.isis.commons.internal._Constants;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
+import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 
 public class DelegatingInvocationHandlerDefault<T> implements DelegatingInvocationHandler<T> {
@@ -39,20 +41,18 @@ public class DelegatingInvocationHandlerDefault<T> implements DelegatingInvocati
     protected final Method equalsMethod;
     protected final Method hashCodeMethod;
     protected final Method toStringMethod;
-    private final IsisSessionFactory isisSessionFactory;
 
     private boolean resolveObjectChangedEnabled;
 
     public DelegatingInvocationHandlerDefault(
             final T delegate,
-            final ExecutionMode executionMode,
-            final IsisSessionFactory isisSessionFactory) {
-        this.isisSessionFactory = isisSessionFactory;
+            final ExecutionMode executionMode) {
+    	
         if (delegate == null) {
             throw new IllegalArgumentException("delegate must not be null");
         }
         this.delegate = delegate;
-        this.wrapperFactory = isisSessionFactory.getServiceInjector().lookupServiceElseFail(WrapperFactory.class);
+        this.wrapperFactory = IsisContext.getServiceRegistry().lookupServiceElseFail(WrapperFactory.class);
         this.executionMode = executionMode;
 
         try {
@@ -82,7 +82,8 @@ public class DelegatingInvocationHandlerDefault<T> implements DelegatingInvocati
 
     protected void resolveIfRequired(final Object domainObject) {
         if (resolveObjectChangedEnabled) {
-            getPersistenceSession().refreshRootInTransaction(domainObject);
+        	IsisSession.currentIfAny()
+        	.getPersistenceSession().refreshRootInTransaction(domainObject);
         }
     }
 
@@ -116,11 +117,6 @@ public class DelegatingInvocationHandlerDefault<T> implements DelegatingInvocati
     protected InteractionEvent notifyListeners(final InteractionEvent interactionEvent) {
         wrapperFactory.notifyListeners(interactionEvent);
         return interactionEvent;
-    }
-
-
-    private PersistenceSession getPersistenceSession() {
-        return isisSessionFactory.getCurrentSession().getPersistenceSession();
     }
 
 }

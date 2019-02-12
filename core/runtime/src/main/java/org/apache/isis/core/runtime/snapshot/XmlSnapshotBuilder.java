@@ -23,8 +23,6 @@ import java.util.List;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 
 /**
  * Builds an {@link XmlSnapshot} using a fluent use through a builder:
@@ -70,7 +68,7 @@ public class XmlSnapshotBuilder {
     }
 
     public XmlSnapshot build() {
-        final ObjectAdapter adapter = getPersistenceSession().adapterFor(domainObject);
+        final ObjectAdapter adapter = IsisContext.pojoToAdapter().apply(domainObject);
         final XmlSnapshot snapshot = (schema != null) ? new XmlSnapshot(adapter, schema) : new XmlSnapshot(adapter);
         for (final XmlSnapshotBuilder.PathAndAnnotation paa : paths) {
             if (paa.annotation != null) {
@@ -82,15 +80,5 @@ public class XmlSnapshotBuilder {
         return snapshot;
     }
 
-    // ///////////////////////////////////////////////////////
-    // Dependencies (from context)
-    // ///////////////////////////////////////////////////////
 
-    private static PersistenceSession getPersistenceSession() {
-        return getIsisSessionFactory().getCurrentSession().getPersistenceSession();
-    }
-
-    static IsisSessionFactory getIsisSessionFactory() {
-        return IsisContext.getSessionFactory();
-    }
 }

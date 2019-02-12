@@ -41,7 +41,7 @@ abstract class AbstractCollectionInvocationHandler<T, C> extends DelegatingInvoc
             final String collectionName,
             final DomainObjectInvocationHandler<T> handler,
             final OneToManyAssociation otma) {
-        super(collectionOrMapToProxy, handler.getExecutionMode(), handler.getIsisSessionFactory());
+        super(collectionOrMapToProxy, handler.getExecutionMode());
         this.collectionName = collectionName;
         this.oneToManyAssociation = otma;
         this.domainObject = handler.getDelegate();

@@ -71,7 +71,8 @@ import org.apache.isis.core.wrapper.proxy.ProxyCreator;
 public class WrapperFactoryDefault implements WrapperFactory {
 
     private final List<InteractionListener> listeners = new ArrayList<InteractionListener>();
-    private final Map<Class<? extends InteractionEvent>, InteractionEventDispatcher> dispatchersByEventClass = new HashMap<Class<? extends InteractionEvent>, InteractionEventDispatcher>();
+    private final Map<Class<? extends InteractionEvent>, InteractionEventDispatcher> dispatchersByEventClass =
+    		new HashMap<>();
 
 
     private final ProxyContextHandler proxyContextHandler;
@@ -257,18 +258,18 @@ public class WrapperFactoryDefault implements WrapperFactory {
             final ExecutionMode wrapperMode = wrapperObject.__isis_executionMode();
             if(wrapperMode != mode) {
                 final Object underlyingDomainObject = wrapperObject.__isis_wrapped();
-                return _Casts.uncheckedCast(createProxy(underlyingDomainObject, mode, isisSessionFactory));
+                return _Casts.uncheckedCast(createProxy(underlyingDomainObject, mode));
             }
             return domainObject;
         }
-        return createProxy(domainObject, mode, isisSessionFactory);
+        return createProxy(domainObject, mode);
     }
 
     protected <T> T createProxy(
             final T domainObject,
-            final ExecutionMode mode,
-            final IsisSessionFactory isisSessionFactory) {
-        return proxyContextHandler.proxy(domainObject, mode, isisSessionFactory);
+            final ExecutionMode mode) {
+    	
+        return proxyContextHandler.proxy(domainObject, mode);
     }
 
     @Override

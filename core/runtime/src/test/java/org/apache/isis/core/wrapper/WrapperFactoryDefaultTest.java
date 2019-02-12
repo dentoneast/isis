@@ -79,7 +79,7 @@ public class WrapperFactoryDefaultTest {
         wrapperFactory = new WrapperFactoryDefault(mockProxyCreator) {
 
             @Override
-            protected <T> T createProxy(T domainObject, ExecutionMode mode, final IsisSessionFactory isisSessionFactory) {
+            protected <T> T createProxy(T domainObject, ExecutionMode mode) {
                 WrapperFactoryDefaultTest.this.createProxyCalledWithMode = mode;
                 WrapperFactoryDefaultTest.this.createProxyCalledWithDomainObject = (DomainObject) domainObject;
                 return domainObject;

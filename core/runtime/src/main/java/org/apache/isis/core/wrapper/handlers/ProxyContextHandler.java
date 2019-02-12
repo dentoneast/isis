@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.apache.isis.applib.services.wrapper.WrapperFactory.ExecutionMode;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.wrapper.proxy.ProxyCreator;
 
 public class ProxyContextHandler {
@@ -37,12 +36,13 @@ public class ProxyContextHandler {
 
     public <T> T proxy(
             final T domainObject,
-            final ExecutionMode mode,
-            final IsisSessionFactory isisSessionFactory) {
+            final ExecutionMode mode) {
 
-        final DomainObjectInvocationHandler<T> invocationHandler = new DomainObjectInvocationHandler<T>(domainObject,
-                mode,
-                this, isisSessionFactory);
+        final DomainObjectInvocationHandler<T> invocationHandler = 
+        		new DomainObjectInvocationHandler<T>(
+        				domainObject,
+        				mode,
+        				this);
 
         return proxyCreator.instantiateProxy(invocationHandler);
     }
