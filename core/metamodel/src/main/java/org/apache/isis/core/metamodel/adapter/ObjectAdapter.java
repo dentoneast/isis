@@ -100,8 +100,7 @@ public interface ObjectAdapter extends ManagedObject {
     default public boolean isValue() {
         return getOid().isValue();
     }
-    
-    // -- UTIL
+
 
     public final class Util {
 

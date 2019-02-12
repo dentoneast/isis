@@ -7,7 +7,6 @@ import javax.enterprise.inject.Instance;
 
 import org.apache.isis.core.metamodel.adapter.oid.UniversalOid;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
-import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 
@@ -26,14 +25,6 @@ public interface ManagedObjectResolver {
 	 * @return identifier 
 	 */
 	URI uriOf(ManagedObject managedObject);
-	
-	/**
-	 * Returns the current (runtime) state of the given managedObject.
-	 * @param managedObject
-	 * @return
-	 */
-	ManagedObjectState stateOf(ManagedObject managedObject);
-	
 	
 	/**
 	 * Retrieve a reference to the ManagedObject as identified by the identifier. 
@@ -63,7 +54,5 @@ public interface ManagedObjectResolver {
 	 * @return
 	 */
 	Optional<AuthorityDescriptor> authorityFor(ObjectSpecification spec);
-	
-	
 	
 }

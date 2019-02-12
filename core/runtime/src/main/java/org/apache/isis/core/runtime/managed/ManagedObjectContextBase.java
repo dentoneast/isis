@@ -8,7 +8,6 @@ import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
-import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
@@ -89,8 +88,8 @@ public abstract class ManagedObjectContextBase implements ManagedObjectContext {
 	}
 
     @Override
-    public ManagedObjectState stateOf(Object domainObject) {
-		return ps().stateOf(domainObject);	
+    public boolean isTransient(Object domainObject) {
+		return ps().isTransient(domainObject);	
 	}
     
     // -- PERSISTENCE SUPPORT FOR MANAGED OBJECTS

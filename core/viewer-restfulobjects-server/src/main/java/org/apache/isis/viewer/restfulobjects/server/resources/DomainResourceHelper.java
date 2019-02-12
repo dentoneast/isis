@@ -31,7 +31,6 @@ import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
-import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
@@ -197,8 +196,8 @@ class DomainResourceHelper {
 		}
 
 		@Override
-		public ManagedObjectState stateOf(Object domainObject) {
-			return rendererContext.stateOf(domainObject);
+		public boolean isTransient(Object domainObject) {
+			return rendererContext.isTransient(domainObject);
 		}
 
 		@Override
@@ -210,8 +209,6 @@ class DomainResourceHelper {
 		public ObjectAdapter lookupService(String serviceId) {
 			return rendererContext.lookupService(serviceId);
 		}
-
-		
 
     }
 

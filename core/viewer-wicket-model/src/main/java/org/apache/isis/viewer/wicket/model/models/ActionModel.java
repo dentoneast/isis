@@ -39,8 +39,6 @@ import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.apache.wicket.util.resource.StringResourceStream;
 
-import lombok.val;
-
 import org.apache.isis.applib.Identifier;
 import org.apache.isis.applib.annotation.BookmarkPolicy;
 import org.apache.isis.applib.annotation.PromptStyle;
@@ -280,11 +278,11 @@ public class ActionModel extends BookmarkableModel<ObjectAdapter> implements For
 
 
     private static EntityModel newEntityModelFrom(final PageParameters pageParameters) {
-        val rootOid = oidFor(pageParameters);
-        if(rootOid.isTransient()) {
+        final RootOid oid = oidFor(pageParameters);
+        if(oid.isTransient()) {
             return null;
         } else {
-            return new EntityModel(ObjectAdapterMemento.ofRootOid(rootOid));
+            return new EntityModel(ObjectAdapterMemento.ofRootOid(oid));
         }
     }
 

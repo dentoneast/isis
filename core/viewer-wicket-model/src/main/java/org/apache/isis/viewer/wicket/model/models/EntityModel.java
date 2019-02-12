@@ -22,6 +22,11 @@ package org.apache.isis.viewer.wicket.model.models;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+
 import org.apache.isis.applib.annotation.BookmarkPolicy;
 import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.layout.component.CollectionLayoutData;
@@ -44,9 +49,6 @@ import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
 import org.apache.isis.viewer.wicket.model.mementos.PageParameterNames;
 import org.apache.isis.viewer.wicket.model.mementos.PropertyMemento;
 import org.apache.isis.viewer.wicket.model.util.ComponentHintKey;
-import org.apache.wicket.Component;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
  * Backing model to represent a {@link ObjectAdapter}.
@@ -89,7 +91,9 @@ public class EntityModel extends BookmarkableModel<ObjectAdapter> implements Obj
         if(getObjectAdapterMemento() == null) {
             return;
         }
-        getObjectAdapterMemento().resetVersion();
+        final PersistenceSession persistenceSession = getPersistenceSession();
+        final SpecificationLoader specificationLoader = getSpecificationLoader();
+        getObjectAdapterMemento().resetVersion(persistenceSession, specificationLoader);
     }
 
     public enum RenderingHint {
@@ -393,7 +397,7 @@ public class EntityModel extends BookmarkableModel<ObjectAdapter> implements Obj
      * {@link #getObject() entity}.
      */
     public void resetPropertyModels() {
-        adapterMemento.resetVersion();
+        adapterMemento.resetVersion(getPersistenceSession(), getSpecificationLoader());
         for (final PropertyMemento pm : propertyScalarModels.keySet()) {
             OneToOneAssociation otoa = pm.getProperty(getSpecificationLoader());
             final ScalarModel scalarModel = propertyScalarModels.get(pm);

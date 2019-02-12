@@ -26,7 +26,6 @@ import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterByIdProvider;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
-import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.runtime.persistence.objectstore.transaction.PersistenceCommand;
 import org.apache.isis.core.runtime.persistence.objectstore.transaction.TransactionalResource;
 import org.apache.isis.core.runtime.system.persistence.adaptermanager.ObjectAdapterContext.MementoRecreateObjectSupport;
@@ -76,41 +75,12 @@ extends
      */
     String identifierFor(Object pojo);
     
-    /**
-     * @since 2.0.0-M3
-     */
-    ManagedObjectState stateOf(Object pojo);
-    
-//    /**
-//     * For Persistable, state can either be ATTACHED or DETACHED or DESTROYED.
-//     * @since 2.0.0-M3
-//     */
-//    boolean isAttached(Object pojo);
-//    
-//    /**
-//     * For Persistable, state can either be ATTACHED or DETACHED or DESTROYED.
-//     * @since 2.0.0-M3
-//     */
-//    boolean isDetached(Object pojo);
-//       
-//    /**
-//     * For Persistable, state can either be ATTACHED or DETACHED or DESTROYED.
-//     * @since 2.0.0-M2
-//     */
-//    boolean isDestroyed(Object pojo);
-//    
-//    
-//    /**
-//     * Tests whether this object is persistent. Instances that represent persistent objects in the 
-//     * data store return true. (DELETED || ATTACHED)
-//     * <p>
-//     * May also be 'deleted' (that is, {@link #isDestroyed(Object)} could return true).
-//     * @param pojo
-//     * @return
-//     * @since 2.0.0-M2
-//     */
-//    boolean isRepresentingPersistent(Object pojo);
-    
+    /**@since 2.0.0-M2*/
+    boolean isTransient(Object pojo);
+    /**@since 2.0.0-M2*/
+    boolean isRepresentingPersistent(Object pojo);
+    /**@since 2.0.0-M2*/
+    boolean isDestroyed(Object pojo);
     /** whether pojo is recognized by the persistence layer, that is, it has an ObjectId
      * @since 2.0.0-M2*/
     boolean isRecognized(Object pojo);

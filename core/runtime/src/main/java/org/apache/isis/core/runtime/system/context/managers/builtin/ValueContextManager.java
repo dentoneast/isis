@@ -20,7 +20,6 @@ import org.apache.isis.commons.internal.memento._Mementos.SerializingAdapter;
 import org.apache.isis.commons.internal.uri._URI.ContainerType;
 import org.apache.isis.commons.internal.uri._URI.ContextType;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
-import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ManagedObject.SimpleManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
@@ -48,11 +47,6 @@ public class ValueContextManager implements ContextHandler {
 	public void init() {
 		urlEncodingService = new UrlEncodingServiceWithCompression();
 		serializingAdapter = new SimpleSerializingAdapter();
-	}
-	
-	@Override
-	public ManagedObjectState stateOf(ManagedObject managedObject) {
-		return ManagedObjectState.not_Persistable;
 	}
 	
 	@Override

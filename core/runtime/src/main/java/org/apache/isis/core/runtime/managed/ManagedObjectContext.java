@@ -7,7 +7,6 @@ import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
-import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -31,8 +30,7 @@ public interface ManagedObjectContext {
 	ObjectAdapter newTransientInstance(ObjectSpecification domainTypeSpec);
 	void makePersistentInTransaction(ObjectAdapter objectAdapter);
 	Object fetchPersistentPojoInTransaction(RootOid rootOid);
-	
-	ManagedObjectState stateOf(Object domainObject);
+	boolean isTransient(Object domainObject);
 	
 	void logoutAuthenticationSession();
 	
