@@ -32,9 +32,8 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.runtime.memento.Data;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledState;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledStateHolder;
-import org.apache.isis.core.runtime.persistence.objectstore.transaction.PersistenceCommand;
-import org.apache.isis.core.runtime.persistence.objectstore.transaction.TransactionalResource;
-import org.apache.isis.core.runtime.system.persistence.adaptermanager.ObjectAdapterContext.MementoRecreateObjectSupport;
+import org.apache.isis.core.runtime.persistence.transaction.PersistenceCommand;
+import org.apache.isis.core.runtime.persistence.transaction.TransactionalResource;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 
 public interface PersistenceSession 

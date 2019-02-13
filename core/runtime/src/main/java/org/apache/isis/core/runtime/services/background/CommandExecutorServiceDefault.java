@@ -53,7 +53,6 @@ import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.persistence.adaptermanager.ObjectAdapterLegacy;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.schema.cmd.v1.ActionDto;
@@ -351,7 +350,8 @@ public class CommandExecutorServiceDefault implements CommandExecutorService {
     }
 
     private ObjectAdapter adapterFor(final Object targetObject) {
-        return ObjectAdapterLegacy.__CommandExecutorServiceDefault.adapterFor(targetObject);
+        //TODO [2033] return ObjectAdapterLegacy.__CommandExecutorServiceDefault.adapterFor(targetObject);
+    	return IsisContext.pojoToAdapter().apply(targetObject);
     }
 
     // //////////////////////////////////////

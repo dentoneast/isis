@@ -29,9 +29,9 @@ import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.services.container.query.QueryCardinality;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-import org.apache.isis.core.runtime.persistence.query.PersistenceQueryFindAllInstances;
-import org.apache.isis.core.runtime.persistence.query.PersistenceQueryFindUsingApplibQueryDefault;
-import org.apache.isis.core.runtime.system.persistence.PersistenceQuery;
+import org.apache.isis.objectstore.jdo.datanucleus.persistence.PersistenceQuery;
+import org.apache.isis.objectstore.jdo.persistence.query.PersistenceQueryFindAllInstances;
+import org.apache.isis.objectstore.jdo.persistence.query.PersistenceQueryFindUsingApplibQueryDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

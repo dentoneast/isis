@@ -72,28 +72,26 @@ import org.apache.isis.core.plugins.ioc.RequestContextService;
 import org.apache.isis.core.runtime.memento.Data;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledState;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledStateHolder;
-import org.apache.isis.core.runtime.persistence.NotPersistableException;
 import org.apache.isis.core.runtime.persistence.ObjectNotFoundException;
 import org.apache.isis.core.runtime.persistence.PojoRefreshException;
-import org.apache.isis.core.runtime.persistence.UnsupportedFindException;
-import org.apache.isis.core.runtime.persistence.objectstore.transaction.CreateObjectCommand;
-import org.apache.isis.core.runtime.persistence.objectstore.transaction.DestroyObjectCommand;
-import org.apache.isis.core.runtime.persistence.objectstore.transaction.PersistenceCommand;
-import org.apache.isis.core.runtime.persistence.query.PersistenceQueryFindAllInstances;
-import org.apache.isis.core.runtime.persistence.query.PersistenceQueryFindUsingApplibQueryDefault;
+import org.apache.isis.core.runtime.persistence.transaction.CreateObjectCommand;
+import org.apache.isis.core.runtime.persistence.transaction.DestroyObjectCommand;
+import org.apache.isis.core.runtime.persistence.transaction.PersistenceCommand;
 import org.apache.isis.core.runtime.services.RequestScopedService;
-import org.apache.isis.core.runtime.system.persistence.PersistenceQuery;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.persistence.adaptermanager.ObjectAdapterContext;
 import org.apache.isis.core.runtime.system.transaction.IsisTransaction;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
+import org.apache.isis.objectstore.jdo.datanucleus.persistence.PersistenceQuery;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.commands.DataNucleusCreateObjectCommand;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.commands.DataNucleusDeleteObjectCommand;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.PersistenceQueryFindAllInstancesProcessor;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.PersistenceQueryFindUsingApplibQueryProcessor;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.PersistenceQueryProcessor;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.spi.JdoObjectIdSerializer;
+import org.apache.isis.objectstore.jdo.persistence.adaptermanager.ObjectAdapterContext;
+import org.apache.isis.objectstore.jdo.persistence.query.PersistenceQueryFindAllInstances;
+import org.apache.isis.objectstore.jdo.persistence.query.PersistenceQueryFindUsingApplibQueryDefault;
 import org.datanucleus.enhancement.Persistable;
 import org.datanucleus.exceptions.NucleusObjectNotFoundException;
 import org.datanucleus.identity.DatastoreIdImpl;
@@ -351,7 +349,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
      * The {@link QueryCardinality} determines whether all instances or just the
      * first matching instance is returned.
      *
-     * @throws org.apache.isis.core.runtime.persistence.UnsupportedFindException
+     * @throws org.apache.isis.objectstore.jdo.persistence.UnsupportedFindException
      *             if the criteria is not support by this persistor
      */
     private <T> ObjectAdapter findInstancesInTransaction(final Query<T> query, final QueryCardinality cardinality) {

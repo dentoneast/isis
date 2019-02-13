@@ -34,7 +34,7 @@ import org.datanucleus.enhancement.Persistable;
 
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.runtime.system.persistence.SuspendableListener;
+import org.apache.isis.objectstore.jdo.datanucleus.persistence.SuspendableListener;
 
 public class IsisLifecycleListener
 implements AttachLifecycleListener, ClearLifecycleListener, CreateLifecycleListener, DeleteLifecycleListener,

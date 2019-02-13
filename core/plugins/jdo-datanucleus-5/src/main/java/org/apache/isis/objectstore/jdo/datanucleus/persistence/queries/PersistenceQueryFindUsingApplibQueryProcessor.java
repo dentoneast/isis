@@ -34,9 +34,9 @@ import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.services.container.query.QueryCardinality;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
-import org.apache.isis.core.runtime.persistence.query.PersistenceQueryFindUsingApplibQueryDefault;
 import org.apache.isis.objectstore.jdo.datanucleus.metamodel.JdoPropertyUtils;
 import org.apache.isis.objectstore.jdo.persistence.PersistenceSession5;
+import org.apache.isis.objectstore.jdo.persistence.query.PersistenceQueryFindUsingApplibQueryDefault;
 
 public class PersistenceQueryFindUsingApplibQueryProcessor extends PersistenceQueryProcessorAbstract<PersistenceQueryFindUsingApplibQueryDefault> {
 

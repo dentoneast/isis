@@ -21,8 +21,8 @@ package org.apache.isis.objectstore.jdo.datanucleus.persistence.commands;
 import javax.jdo.PersistenceManager;
 
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.runtime.persistence.objectstore.transaction.PersistenceCommandAbstract;
-import org.apache.isis.core.runtime.persistence.objectstore.transaction.PersistenceCommandContext;
+import org.apache.isis.core.runtime.persistence.transaction.PersistenceCommandAbstract;
+import org.apache.isis.core.runtime.persistence.transaction.PersistenceCommandContext;
 
 public abstract class AbstractDataNucleusObjectCommand extends PersistenceCommandAbstract {
 
