@@ -19,11 +19,10 @@
 
 package org.apache.isis.viewer.wicket.ui;
 
+import org.apache.isis.viewer.wicket.ui.panels.PanelUtil;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.CssResourceReference;
-
-import org.apache.isis.viewer.wicket.ui.panels.PanelUtil;
 
 /**
  * Adapter implementation for {@link ComponentFactory}.

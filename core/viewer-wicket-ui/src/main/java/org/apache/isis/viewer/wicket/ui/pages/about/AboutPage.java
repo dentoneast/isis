@@ -19,10 +19,9 @@
 
 package org.apache.isis.viewer.wicket.ui.pages.about;
 
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-
 import org.apache.isis.viewer.wicket.ui.ComponentType;
 import org.apache.isis.viewer.wicket.ui.pages.PageAbstract;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 /**
  * Web page representing the about page.

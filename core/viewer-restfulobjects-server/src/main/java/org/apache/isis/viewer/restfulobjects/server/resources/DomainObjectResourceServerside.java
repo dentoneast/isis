@@ -32,8 +32,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
-
 import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.layout.component.ActionLayoutData;
 import org.apache.isis.applib.layout.component.CollectionLayoutData;
@@ -69,6 +67,7 @@ import org.apache.isis.viewer.restfulobjects.rendering.service.RepresentationSer
 //TODO deprecated non standard import org.apache.isis.viewer.restfulobjects.rendering.service.conneg.PrettyPrinting;
 import org.apache.isis.viewer.restfulobjects.rendering.util.Util;
 import org.apache.isis.viewer.restfulobjects.server.resources.serialization.SerializationStrategy;
+import org.apache.log4j.Logger;
 
 @Path("/objects")
 public class DomainObjectResourceServerside extends ResourceAbstract implements DomainObjectResource {

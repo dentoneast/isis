@@ -19,13 +19,12 @@
 
 package org.apache.isis.viewer.wicket.ui.components.unknown;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.request.resource.CssResourceReference;
-
 import org.apache.isis.viewer.wicket.ui.ComponentFactory;
 import org.apache.isis.viewer.wicket.ui.ComponentType;
 import org.apache.isis.viewer.wicket.ui.panels.PanelUtil;
+import org.apache.wicket.Component;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.request.resource.CssResourceReference;
 
 public class UnknownModelPanelFactory implements ComponentFactory {
 

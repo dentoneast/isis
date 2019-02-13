@@ -21,10 +21,9 @@ package org.apache.isis.viewer.wicket.model.models;
 
 import java.io.Serializable;
 
-import org.apache.wicket.request.resource.ResourceReference;
-
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
+import org.apache.wicket.request.resource.ResourceReference;
 
 /**
  * Ideally I'd like to move this to the <tt>org.apache.isis.viewer.wicket.model.isis</tt>

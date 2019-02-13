@@ -18,11 +18,10 @@
  */
 package org.apache.isis.viewer.wicket.ui.panels;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.viewer.wicket.model.models.BookmarkableModel;
 import org.apache.isis.viewer.wicket.model.models.ParentEntityModelProvider;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 
 public interface FormExecutorStrategy<M extends BookmarkableModel<ObjectAdapter> & ParentEntityModelProvider> {
 

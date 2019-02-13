@@ -16,9 +16,8 @@
  */
 package org.apache.isis.viewer.wicket.ui.components.widgets.zclip;
 
-import org.apache.wicket.model.Model;
-
 import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
+import org.apache.wicket.model.Model;
 
 public class SimpleClipboardModalWindowPanel extends PanelAbstract<Model<String>> {
 

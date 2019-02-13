@@ -18,11 +18,9 @@
  */
 package org.apache.isis.core.runtime.system.persistence.adaptermanager;
 
-import java.util.Objects;
 import java.util.UUID;
 
 import org.apache.isis.commons.internal.base._Lazy;
-import org.apache.isis.commons.internal.base._Tuples;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.facets.object.value.ValueFacet;
@@ -31,8 +29,6 @@ import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.runtime.system.SystemConstants;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.context.managers.ContextManager;
-import org.apache.isis.core.runtime.system.context.managers.Converters;
-import org.apache.isis.core.runtime.system.context.managers.Converters.FromUriConverter;
 import org.apache.isis.core.runtime.system.context.managers.ManagedObjectResolver;
 import org.apache.isis.core.runtime.system.persistence.adaptermanager.factories.OidFactory.OidProvider;
 import org.apache.isis.core.runtime.system.persistence.adaptermanager.factories.OidFactory.OidProvider2;

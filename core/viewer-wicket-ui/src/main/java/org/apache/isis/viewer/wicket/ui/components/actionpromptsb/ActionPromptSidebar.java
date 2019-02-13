@@ -16,13 +16,12 @@
  */
 package org.apache.isis.viewer.wicket.ui.components.actionpromptsb;
 
+import org.apache.isis.viewer.wicket.model.models.ActionPrompt;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.GenericPanel;
-
-import org.apache.isis.viewer.wicket.model.models.ActionPrompt;
 
 public class ActionPromptSidebar extends GenericPanel<Void> implements ActionPrompt /* implements ActionPrompt */ {
 

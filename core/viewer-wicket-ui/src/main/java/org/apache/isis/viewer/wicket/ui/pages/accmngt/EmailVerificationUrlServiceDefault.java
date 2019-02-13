@@ -20,16 +20,15 @@ package org.apache.isis.viewer.wicket.ui.pages.accmngt;
 
 import java.util.UUID;
 
+import org.apache.isis.viewer.wicket.model.models.PageType;
+import org.apache.isis.viewer.wicket.ui.pages.EmailVerificationUrlService;
+import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistry;
 import org.apache.wicket.Application;
 import org.apache.wicket.Page;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.UrlRenderer;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-
-import org.apache.isis.viewer.wicket.model.models.PageType;
-import org.apache.isis.viewer.wicket.ui.pages.EmailVerificationUrlService;
-import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistry;
 
 /**
  * An implementation of {@link org.apache.isis.viewer.wicket.ui.pages.EmailVerificationUrlService}

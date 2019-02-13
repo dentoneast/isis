@@ -19,12 +19,11 @@
 
 package org.apache.isis.viewer.wicket.ui.components.value;
 
-import org.apache.wicket.markup.html.basic.Label;
-
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.viewer.wicket.model.models.ValueModel;
 import org.apache.isis.viewer.wicket.ui.components.scalars.ScalarPanelAbstract2;
 import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
+import org.apache.wicket.markup.html.basic.Label;
 
 /**
  * Panel for rendering any value types that do not have their own custom

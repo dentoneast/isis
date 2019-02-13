@@ -19,6 +19,8 @@
 
 package org.apache.isis.applib.services.jdosupport;
 
+import static org.apache.isis.commons.internal.base._NullSafe.stream;
+
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -29,15 +31,11 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 import javax.jdo.Extent;
 import javax.jdo.PersistenceManager;
 import javax.jdo.datastore.JDOConnection;
-
-import org.datanucleus.api.jdo.JDOPersistenceManager;
-import org.datanucleus.query.typesafe.BooleanExpression;
-import org.datanucleus.query.typesafe.TypesafeQuery;
 
 import org.apache.isis.applib.FatalException;
 import org.apache.isis.applib.annotation.Programmatic;
@@ -49,17 +47,22 @@ import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.runtime.persistence.ObjectPersistenceException;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-
-import static org.apache.isis.commons.internal.base._NullSafe.stream;
+import org.datanucleus.api.jdo.JDOPersistenceManager;
+import org.datanucleus.query.typesafe.BooleanExpression;
+import org.datanucleus.query.typesafe.TypesafeQuery;
 
 
 /**
- * This service provdes a number of utility methods to supplement/support the capabilities of the JDO Objectstore.
+ * This service provides a number of utility methods to supplement/support the capabilities 
+ * of the JDO Objectstore.
  *
  * <p>
- * This implementation has no UI and there are no other implementations of the service API, and so it is annotated
- * with {@link org.apache.isis.applib.annotation.DomainService}.  Because it is implemented in the core, this means
- * that it is automatically registered and available for use; no further configuration is required.
+ * This implementation has no UI and there are no other implementations of the service API, 
+ * and so it is annotated
+ * with {@link org.apache.isis.applib.annotation.DomainService}.  Because it is implemented 
+ * in the core, this means
+ * that it is automatically registered and available for use; no further configuration is 
+ * required.
  */
 @Singleton
 public class IsisJdoSupportDN4 implements IsisJdoSupport_v3_1 {
@@ -204,8 +207,7 @@ public class IsisJdoSupportDN4 implements IsisJdoSupport_v3_1 {
 
     // //////////////////////////////////////
 
-    @javax.inject.Inject
-    IsisSessionFactory isisSessionFactory;
+    @Inject IsisSessionFactory isisSessionFactory;
 
     protected PersistenceSession getPersistenceSession() {
         return isisSessionFactory.getCurrentSession().getPersistenceSession();

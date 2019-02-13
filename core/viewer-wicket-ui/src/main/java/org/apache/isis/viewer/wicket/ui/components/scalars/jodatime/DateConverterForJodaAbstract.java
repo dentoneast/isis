@@ -20,11 +20,10 @@ package org.apache.isis.viewer.wicket.ui.components.scalars.jodatime;
 
 import java.util.Locale;
 
-import org.apache.wicket.util.convert.ConversionException;
-import org.joda.time.format.DateTimeFormatter;
-
 import org.apache.isis.viewer.wicket.ui.components.scalars.DateConverterAbstract;
 import org.apache.isis.viewer.wicket.ui.components.scalars.DateFormatSettings;
+import org.apache.wicket.util.convert.ConversionException;
+import org.joda.time.format.DateTimeFormatter;
 
 abstract class DateConverterForJodaAbstract<T> extends DateConverterAbstract<T> {
 

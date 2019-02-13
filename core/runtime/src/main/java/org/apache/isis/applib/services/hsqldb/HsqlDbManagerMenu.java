@@ -20,8 +20,6 @@ package org.apache.isis.applib.services.hsqldb;
 
 import javax.annotation.PostConstruct;
 
-import org.hsqldb.util.DatabaseManagerSwing;
-
 import org.apache.isis.applib.IsisApplibModule;
 import org.apache.isis.applib.annotation.Action;
 import org.apache.isis.applib.annotation.ActionLayout;
@@ -33,6 +31,7 @@ import org.apache.isis.applib.annotation.SemanticsOf;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.hsqldb.util.DatabaseManagerSwing;
 
 @DomainService(
         nature = NatureOfService.VIEW_MENU_ONLY,

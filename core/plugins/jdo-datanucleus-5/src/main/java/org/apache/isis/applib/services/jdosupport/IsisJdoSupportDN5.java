@@ -31,9 +31,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.jdo.Extent;
 import javax.jdo.JDOQLTypedQuery;
 import javax.jdo.PersistenceManager;

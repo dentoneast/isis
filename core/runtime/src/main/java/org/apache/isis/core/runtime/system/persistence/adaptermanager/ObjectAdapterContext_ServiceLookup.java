@@ -20,9 +20,6 @@ package org.apache.isis.core.runtime.system.persistence.adaptermanager;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.base._Timing;
 import org.apache.isis.commons.internal.base._Timing.StopWatch;
@@ -31,6 +28,8 @@ import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.core.commons.ensure.Assert;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * package private mixin for ObjectAdapterContext

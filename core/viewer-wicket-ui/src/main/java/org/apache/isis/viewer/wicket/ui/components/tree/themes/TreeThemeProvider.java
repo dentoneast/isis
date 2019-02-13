@@ -19,9 +19,8 @@
 
 package org.apache.isis.viewer.wicket.ui.components.tree.themes;
 
-import org.apache.wicket.behavior.Behavior;
-
 import org.apache.isis.commons.internal.context._Context;
+import org.apache.wicket.behavior.Behavior;
 
 public interface TreeThemeProvider {
 

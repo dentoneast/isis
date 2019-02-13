@@ -21,10 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
-
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-
 import org.apache.isis.applib.services.bookmark.Bookmark;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
@@ -33,6 +29,9 @@ import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
 import org.apache.isis.viewer.wicket.model.mementos.PageParameterNames;
 import org.apache.isis.viewer.wicket.model.models.EntityModel;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+
+import com.google.common.collect.Maps;
 
 public class BreadcrumbModel implements Serializable {
 

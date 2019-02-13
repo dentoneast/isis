@@ -19,9 +19,6 @@
 
 package org.apache.isis.viewer.wicket.ui.components.entity;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.model.IModel;
-
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.facets.object.value.ValueFacet;
@@ -29,6 +26,8 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.viewer.wicket.model.models.EntityModel;
 import org.apache.isis.viewer.wicket.ui.ComponentFactoryAbstract;
 import org.apache.isis.viewer.wicket.ui.ComponentType;
+import org.apache.wicket.Component;
+import org.apache.wicket.model.IModel;
 
 /**
  * Convenience adapter for a number of {@link ComponentFactoryAbstract component

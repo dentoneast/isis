@@ -21,9 +21,6 @@ package org.apache.isis.viewer.wicket.ui.components.actionmenu.serviceactions;
 
 import java.util.List;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.model.IModel;
-
 import org.apache.isis.applib.annotation.DomainServiceLayout;
 import org.apache.isis.applib.layout.menubars.MenuBars;
 import org.apache.isis.applib.services.menu.MenuBarsService;
@@ -33,6 +30,8 @@ import org.apache.isis.viewer.wicket.model.models.ServiceActionsModel;
 import org.apache.isis.viewer.wicket.ui.ComponentFactory;
 import org.apache.isis.viewer.wicket.ui.ComponentFactoryAbstract;
 import org.apache.isis.viewer.wicket.ui.ComponentType;
+import org.apache.wicket.Component;
+import org.apache.wicket.model.IModel;
 
 /**
  * {@link ComponentFactory} for a {@link ServiceActionsPanel} to represent the

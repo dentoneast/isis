@@ -16,19 +16,18 @@
  */
 package org.apache.isis.viewer.wicket.ui.components.widgets.zclip;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.request.Url;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.viewer.wicket.model.models.EntityModel;
 import org.apache.isis.viewer.wicket.model.models.ObjectAdapterModel;
 import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistry;
 import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistryAccessor;
 import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.request.Url;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import de.agilecoders.wicket.jquery.util.Strings2;
 

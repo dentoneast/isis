@@ -19,10 +19,9 @@
 
 package org.apache.isis.viewer.wicket.ui.components.actionmenu.serviceactions;
 
+import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.model.IModel;
-
-import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
 
 /**
  * Package-level adapter for menu items and submenu-items.

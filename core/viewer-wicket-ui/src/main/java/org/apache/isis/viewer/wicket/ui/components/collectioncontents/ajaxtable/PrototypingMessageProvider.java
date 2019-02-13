@@ -20,13 +20,12 @@ package org.apache.isis.viewer.wicket.ui.components.collectioncontents.ajaxtable
 
 import java.util.Locale;
 
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-
 import org.apache.isis.commons.internal.base._Timing;
 import org.apache.isis.commons.internal.base._Timing.StopWatch;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 
 /**
  * Responsibility: produce additional info when in prototyping mode 

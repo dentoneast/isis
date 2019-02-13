@@ -17,14 +17,13 @@
 
 package org.apache.isis.viewer.wicket.ui.util;
 
+import org.apache.isis.commons.internal.base._Strings;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.CssResourceReference;
-
-import org.apache.isis.commons.internal.base._Strings;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.components.TooltipBehavior;
 import de.agilecoders.wicket.core.markup.html.bootstrap.components.TooltipConfig;

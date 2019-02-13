@@ -18,6 +18,9 @@
  */
 package org.apache.isis.viewer.wicket.ui.components.widgets.themepicker;
 
+import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -28,10 +31,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.cookies.CookieUtils;
 import org.apache.wicket.util.string.Strings;
-
-import org.apache.isis.config.IsisConfiguration;
-import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 
 import de.agilecoders.wicket.core.Bootstrap;
 import de.agilecoders.wicket.core.settings.ActiveThemeProvider;

@@ -19,8 +19,9 @@
 package org.apache.isis.viewer.wicket.ui.pages;
 
 import java.io.Serializable;
-import org.apache.wicket.Page;
+
 import org.apache.isis.viewer.wicket.model.models.PageType;
+import org.apache.wicket.Page;
 
 /**
  * A Wicket specific service that may be used to create a link to a

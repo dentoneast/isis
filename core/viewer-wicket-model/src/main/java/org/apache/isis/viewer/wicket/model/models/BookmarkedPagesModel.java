@@ -24,12 +24,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 
 public class BookmarkedPagesModel extends ModelAbstract<List<BookmarkTreeNode>> {

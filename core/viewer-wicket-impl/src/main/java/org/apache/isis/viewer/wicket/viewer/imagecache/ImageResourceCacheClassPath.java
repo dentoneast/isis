@@ -25,17 +25,15 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
-
-import com.google.common.collect.Maps;
-
-import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.request.resource.ResourceReference;
 
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.Specification;
 import org.apache.isis.viewer.wicket.model.models.ImageResourceCache;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
+
+import com.google.common.collect.Maps;
 
 import images.Images;
 

@@ -22,11 +22,11 @@ package org.apache.isis.viewer.wicket.ui.app.registry;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.common.base.Predicate;
 import org.apache.isis.commons.internal.collections._Lists;
-
 import org.apache.isis.viewer.wicket.ui.ComponentFactory;
 import org.apache.isis.viewer.wicket.ui.ComponentType;
+
+import com.google.common.base.Predicate;
 
 /**
  * Defines an API for registering {@link ComponentFactory}s.

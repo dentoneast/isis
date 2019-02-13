@@ -21,10 +21,9 @@ package org.apache.isis.viewer.wicket.ui.components.scalars.jdk8time;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import org.apache.wicket.util.convert.ConversionException;
-
 import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
 import org.apache.isis.viewer.wicket.ui.components.scalars.DateFormatSettings;
+import org.apache.wicket.util.convert.ConversionException;
 
 /**
  * Uses the same pattern for both date and date/time.  The only real consequence of this is that when converting a

@@ -18,6 +18,9 @@ package org.apache.isis.viewer.wicket.ui.actionresponse;
 
 import java.net.URL;
 
+import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import org.apache.isis.viewer.wicket.model.models.VoidModel;
+import org.apache.isis.viewer.wicket.ui.pages.voidreturn.VoidReturnPage;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -28,10 +31,6 @@ import org.apache.wicket.request.handler.resource.ResourceStreamRequestHandler;
 import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.time.Duration;
-
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-import org.apache.isis.viewer.wicket.model.models.VoidModel;
-import org.apache.isis.viewer.wicket.ui.pages.voidreturn.VoidReturnPage;
 
 public enum ActionResultResponseHandlingStrategy {
     REDIRECT_TO_VOID {

@@ -18,12 +18,11 @@
  */
 package org.apache.isis.viewer.wicket.ui.components.scalars.jodatime;
 
+import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
+import org.apache.isis.viewer.wicket.ui.components.scalars.DateFormatSettings;
 import org.apache.wicket.util.convert.ConversionException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
-
-import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
-import org.apache.isis.viewer.wicket.ui.components.scalars.DateFormatSettings;
 
 public class DateConverterForJodaDateTime extends DateConverterForJodaAbstract<DateTime> {
 

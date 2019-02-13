@@ -21,7 +21,6 @@ package org.apache.isis.viewer.wicket.viewer.registries.components;
 import java.util.ServiceLoader;
 
 import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.commons.internal.context._Plugin;
 import org.apache.isis.viewer.wicket.ui.ComponentFactory;

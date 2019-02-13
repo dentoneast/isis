@@ -22,7 +22,6 @@ package org.apache.isis.viewer.wicket.model.links;
 import java.util.List;
 
 import org.apache.isis.commons.internal.collections._Lists;
-
 import org.apache.wicket.model.LoadableDetachableModel;
 
 

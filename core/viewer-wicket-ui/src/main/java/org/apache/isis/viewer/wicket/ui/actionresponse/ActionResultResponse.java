@@ -18,10 +18,9 @@ package org.apache.isis.viewer.wicket.ui.actionresponse;
 
 import java.net.URL;
 
+import org.apache.isis.viewer.wicket.ui.pages.PageAbstract;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.request.IRequestHandler;
-
-import org.apache.isis.viewer.wicket.ui.pages.PageAbstract;
 
 /**
  * The response to provide as a result of interpreting the response;

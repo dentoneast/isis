@@ -38,11 +38,10 @@ import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 
+//FIXME [2033] looks like a duplicate of ManagedObjectContextBase_findHomepage
 @Singleton
 public class HomePageProviderServiceDefault implements HomePageProviderService {
     
-    //private final static Logger LOG = LoggerFactory.getLogger(HomePageProviderServiceDefault.class);
-
     @Programmatic
     @Override
     public Object homePage() {

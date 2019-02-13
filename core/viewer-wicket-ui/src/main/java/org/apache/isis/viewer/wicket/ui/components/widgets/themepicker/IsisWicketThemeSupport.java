@@ -20,13 +20,12 @@ package org.apache.isis.viewer.wicket.ui.components.widgets.themepicker;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.commons.factory.InstanceUtil;
 import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.agilecoders.wicket.core.settings.ThemeProvider;
 

@@ -24,16 +24,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.RequiredTextField;
-import org.apache.wicket.markup.html.form.StatelessForm;
-import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.model.ResourceModel;
-import org.apache.wicket.util.cookies.CookieUtils;
-import org.apache.wicket.validation.validator.EmailAddressValidator;
-
 import org.apache.isis.applib.services.email.EmailService;
 import org.apache.isis.applib.services.userreg.EmailNotificationService;
 import org.apache.isis.applib.services.userreg.events.PasswordResetEvent;
@@ -44,6 +34,15 @@ import org.apache.isis.viewer.wicket.ui.pages.EmailVerificationUrlService;
 import org.apache.isis.viewer.wicket.ui.pages.PageNavigationService;
 import org.apache.isis.viewer.wicket.ui.pages.accmngt.AccountManagementPageAbstract;
 import org.apache.isis.viewer.wicket.ui.pages.accmngt.EmailAvailableValidator;
+import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.RequiredTextField;
+import org.apache.wicket.markup.html.form.StatelessForm;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.util.cookies.CookieUtils;
+import org.apache.wicket.validation.validator.EmailAddressValidator;
 
 /**
  * A panel with a form for creation of new users

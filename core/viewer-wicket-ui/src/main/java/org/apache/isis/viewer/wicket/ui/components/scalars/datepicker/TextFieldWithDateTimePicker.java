@@ -18,8 +18,14 @@
  */
 package org.apache.isis.viewer.wicket.ui.components.scalars.datepicker;
 
+import static de.agilecoders.wicket.jquery.JQuery.$;
+
 import java.util.Locale;
 
+import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import org.apache.isis.viewer.wicket.ui.components.scalars.DateConverter;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -30,13 +36,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.util.convert.IConverter;
-
-import org.apache.isis.config.IsisConfiguration;
-import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-import org.apache.isis.viewer.wicket.ui.components.scalars.DateConverter;
-
-import static de.agilecoders.wicket.jquery.JQuery.$;
 
 import de.agilecoders.wicket.core.util.Attributes;
 

@@ -19,11 +19,11 @@
 
 package org.apache.isis.viewer.wicket.ui.components.entity.icontitle;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.model.IModel;
 import org.apache.isis.viewer.wicket.model.models.EntityModel;
 import org.apache.isis.viewer.wicket.ui.ComponentType;
 import org.apache.isis.viewer.wicket.ui.components.entity.EntityComponentFactoryAbstract;
+import org.apache.wicket.Component;
+import org.apache.wicket.model.IModel;
 
 /**
  * {@link org.apache.isis.viewer.wicket.ui.ComponentFactory} for {@link org.apache.isis.viewer.wicket.ui.components.entity.icontitle.EntityIconAndTitlePanel}.

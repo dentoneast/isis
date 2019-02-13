@@ -19,12 +19,12 @@
 
 package org.apache.isis.viewer.wicket.ui.components.widgets.checkbox;
 
+import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.Model;
-import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
 
 /**
  * A button contained within its own form.

@@ -18,11 +18,10 @@ package org.apache.isis.viewer.wicket.ui.components.scalars.jdkmath;
 
 import java.math.BigDecimal;
 
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.convert.IConverter;
-
 import org.apache.isis.viewer.wicket.model.models.ScalarModel;
 import org.apache.isis.viewer.wicket.ui.components.scalars.TextFieldAbstract;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.convert.IConverter;
 
 final class BigDecimalTextField extends TextFieldAbstract<BigDecimal> {
 

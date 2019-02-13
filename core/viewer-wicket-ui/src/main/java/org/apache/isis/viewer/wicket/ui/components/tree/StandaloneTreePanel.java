@@ -19,12 +19,11 @@
 
 package org.apache.isis.viewer.wicket.ui.components.tree;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.Behavior;
-
 import org.apache.isis.viewer.wicket.model.models.ValueModel;
 import org.apache.isis.viewer.wicket.ui.components.tree.themes.TreeThemeProvider;
 import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.Behavior;
 
 public class StandaloneTreePanel extends PanelAbstract<ValueModel> {
 

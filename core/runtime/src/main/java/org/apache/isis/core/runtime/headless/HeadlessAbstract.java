@@ -20,8 +20,6 @@ package org.apache.isis.core.runtime.headless;
 
 import javax.inject.Inject;
 
-import org.joda.time.LocalDate;
-
 import org.apache.isis.applib.clock.Clock;
 import org.apache.isis.applib.fixtures.FixtureClock;
 import org.apache.isis.applib.fixtures.TickingFixtureClock;
@@ -38,6 +36,7 @@ import org.apache.isis.applib.services.sessmgmt.SessionManagementService;
 import org.apache.isis.applib.services.user.UserService;
 import org.apache.isis.applib.services.wrapper.WrapperFactory;
 import org.apache.isis.applib.services.xactn.TransactionService;
+import org.joda.time.LocalDate;
 
 /**
  * Reworked base class for headless access.

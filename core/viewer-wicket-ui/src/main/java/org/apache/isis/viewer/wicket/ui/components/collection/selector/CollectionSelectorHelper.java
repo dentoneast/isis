@@ -23,9 +23,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.model.IModel;
-
 import org.apache.isis.applib.layout.component.CollectionLayoutData;
 import org.apache.isis.applib.services.bookmark.Bookmark;
 import org.apache.isis.commons.internal.collections._Lists;
@@ -41,6 +38,8 @@ import org.apache.isis.viewer.wicket.ui.app.registry.ComponentFactoryRegistry;
 import org.apache.isis.viewer.wicket.ui.components.collectioncontents.ajaxtable.CollectionContentsAsAjaxTablePanelFactory;
 import org.apache.isis.viewer.wicket.ui.components.collectioncontents.multiple.CollectionContentsMultipleViewsPanelFactory;
 import org.apache.isis.viewer.wicket.ui.components.collectioncontents.unresolved.CollectionContentsHiddenPanelFactory;
+import org.apache.wicket.Component;
+import org.apache.wicket.model.IModel;
 
 public class CollectionSelectorHelper implements Serializable {
 

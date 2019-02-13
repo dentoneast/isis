@@ -20,13 +20,12 @@ package org.apache.isis.viewer.wicket.ui.components.widgets.select2;
 
 import java.util.List;
 
+import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.CssReferenceHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.wicketstuff.select2.ApplicationSettings;
-
-import org.apache.isis.commons.internal.collections._Lists;
 
 /**
  * A CSS reference that loads <a href="https://github.com/ivaynberg/select2/">Select2.css</a>

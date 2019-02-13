@@ -20,6 +20,16 @@ package org.apache.isis.viewer.wicket.ui.components.footer;
 
 import javax.inject.Inject;
 
+import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.config.beans.WebAppConfigBean;
+import org.apache.isis.viewer.wicket.model.common.PageParametersUtils;
+import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
+import org.apache.isis.viewer.wicket.ui.components.widgets.breadcrumbs.BreadcrumbPanel;
+import org.apache.isis.viewer.wicket.ui.components.widgets.themepicker.ThemeChooser;
+import org.apache.isis.viewer.wicket.ui.pages.about.AboutPage;
+import org.apache.isis.viewer.wicket.ui.pages.home.HomePage;
+import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
+import org.apache.isis.viewer.wicket.ui.util.Components;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.ComponentTag;
@@ -32,17 +42,6 @@ import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
-
-import org.apache.isis.config.IsisConfiguration;
-import org.apache.isis.config.beans.WebAppConfigBean;
-import org.apache.isis.viewer.wicket.model.common.PageParametersUtils;
-import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
-import org.apache.isis.viewer.wicket.ui.components.widgets.breadcrumbs.BreadcrumbPanel;
-import org.apache.isis.viewer.wicket.ui.components.widgets.themepicker.ThemeChooser;
-import org.apache.isis.viewer.wicket.ui.pages.about.AboutPage;
-import org.apache.isis.viewer.wicket.ui.pages.home.HomePage;
-import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
-import org.apache.isis.viewer.wicket.ui.util.Components;
 
 /**
  * A panel for the default page footer

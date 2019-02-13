@@ -18,11 +18,11 @@
  */
 package org.apache.isis.viewer.wicket.ui.components.footer;
 
-import org.apache.wicket.markup.ComponentTag;
-import org.apache.wicket.markup.html.WebComponent;
-
 import static org.apache.isis.commons.internal.resources._Resources.isLocalResource;
 import static org.apache.isis.commons.internal.resources._Resources.prependContextPathIfPresent;
+
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.WebComponent;
 
 public class CreditImage extends WebComponent {
 

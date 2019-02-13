@@ -20,14 +20,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.FormComponent;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.wicketstuff.select2.ChoiceProvider;
-
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
@@ -38,6 +30,13 @@ import org.apache.isis.viewer.wicket.ui.components.scalars.ScalarPanelSelect2Abs
 import org.apache.isis.viewer.wicket.ui.components.widgets.select2.Select2;
 import org.apache.isis.viewer.wicket.ui.components.widgets.select2.providers.ObjectAdapterMementoProviderForValueChoices;
 import org.apache.isis.viewer.wicket.ui.util.Tooltips;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.wicketstuff.select2.ChoiceProvider;
 
 public class ValueChoicesSelect2Panel extends ScalarPanelSelect2Abstract implements PanelWithChoices {
 

@@ -21,6 +21,16 @@ package org.apache.isis.viewer.wicket.ui.components.collection.selector;
 
 import java.util.List;
 
+import org.apache.isis.applib.services.bookmark.Bookmark;
+import org.apache.isis.core.commons.lang.StringExtensions;
+import org.apache.isis.viewer.wicket.model.hints.IsisSelectorEvent;
+import org.apache.isis.viewer.wicket.model.models.EntityCollectionModel;
+import org.apache.isis.viewer.wicket.model.models.EntityModel;
+import org.apache.isis.viewer.wicket.model.util.ComponentHintKey;
+import org.apache.isis.viewer.wicket.ui.CollectionContentsAsFactory;
+import org.apache.isis.viewer.wicket.ui.ComponentFactory;
+import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
+import org.apache.isis.viewer.wicket.ui.util.CssClassAppender;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -33,17 +43,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-
-import org.apache.isis.applib.services.bookmark.Bookmark;
-import org.apache.isis.core.commons.lang.StringExtensions;
-import org.apache.isis.viewer.wicket.model.hints.IsisSelectorEvent;
-import org.apache.isis.viewer.wicket.model.models.EntityCollectionModel;
-import org.apache.isis.viewer.wicket.model.models.EntityModel;
-import org.apache.isis.viewer.wicket.model.util.ComponentHintKey;
-import org.apache.isis.viewer.wicket.ui.CollectionContentsAsFactory;
-import org.apache.isis.viewer.wicket.ui.ComponentFactory;
-import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
-import org.apache.isis.viewer.wicket.ui.util.CssClassAppender;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons;
 

@@ -18,8 +18,6 @@
  */
 package org.apache.isis.viewer.wicket.ui.components.layout.bs3.row;
 
-import org.apache.wicket.markup.html.WebMarkupContainer;
-
 import org.apache.isis.applib.layout.grid.bootstrap3.BS3ClearFix;
 import org.apache.isis.applib.layout.grid.bootstrap3.BS3Col;
 import org.apache.isis.applib.layout.grid.bootstrap3.BS3Row;
@@ -32,6 +30,7 @@ import org.apache.isis.viewer.wicket.ui.components.layout.bs3.col.RepeatingViewW
 import org.apache.isis.viewer.wicket.ui.panels.HasDynamicallyVisibleContent;
 import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
 import org.apache.isis.viewer.wicket.ui.util.Components;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 
 public class Row extends PanelAbstract<EntityModel> implements HasDynamicallyVisibleContent {
 

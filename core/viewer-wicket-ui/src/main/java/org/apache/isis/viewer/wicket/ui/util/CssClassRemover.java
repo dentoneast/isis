@@ -21,13 +21,13 @@ package org.apache.isis.viewer.wicket.ui.util;
 
 import java.util.Set;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import org.apache.isis.commons.internal.collections._Sets;
-
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.model.Model;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 
 /**
  * Implementation of {@link AttributeAppender} that appends the provided CSS

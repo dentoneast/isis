@@ -18,11 +18,10 @@ package org.apache.isis.viewer.wicket.ui.components.scalars.uuid;
 
 import java.util.UUID;
 
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.util.convert.IConverter;
-
 import org.apache.isis.viewer.wicket.model.models.ScalarModel;
 import org.apache.isis.viewer.wicket.ui.components.scalars.TextFieldAbstract;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.convert.IConverter;
 
 final class UuidTextField extends TextFieldAbstract<UUID> {
 

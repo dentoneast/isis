@@ -19,9 +19,8 @@
 
 package org.apache.isis.viewer.wicket.ui.components.tree.themes;
 
-import org.apache.wicket.behavior.Behavior;
-
 import org.apache.isis.viewer.wicket.ui.components.tree.themes.bootstrap.IsisBootstrapTreeTheme;
+import org.apache.wicket.behavior.Behavior;
 
 public class TreeThemeProviderDefault implements TreeThemeProvider {
 

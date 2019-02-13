@@ -20,11 +20,9 @@ package org.apache.isis.core.runtime.services.i18n.po;
 
 import static org.apache.isis.config.internal._Config.getConfiguration;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.apache.isis.applib.services.i18n.LocaleProvider;
 import org.apache.isis.applib.services.i18n.TranslationService;

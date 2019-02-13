@@ -18,8 +18,6 @@
  */
 package org.apache.isis.viewer.wicket.ui.components.actions;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
@@ -28,6 +26,7 @@ import org.apache.isis.viewer.wicket.model.models.ActionPrompt;
 import org.apache.isis.viewer.wicket.ui.actionresponse.ActionResultResponse;
 import org.apache.isis.viewer.wicket.ui.actionresponse.ActionResultResponseType;
 import org.apache.isis.viewer.wicket.ui.panels.FormExecutorStrategy;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 
 public class ActionFormExecutorStrategy implements FormExecutorStrategy<ActionModel> {
 

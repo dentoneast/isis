@@ -22,9 +22,6 @@ package org.apache.isis.core.runtime.fixtures;
 import java.util.Collections;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.applib.fixtures.FixtureType;
 import org.apache.isis.applib.fixtures.InstallableFixture;
 import org.apache.isis.applib.fixturescripts.events.FixturesInstalledEvent;
@@ -38,6 +35,8 @@ import org.apache.isis.core.commons.lang.ObjectExtensions;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FixturesInstallerDelegate {
 

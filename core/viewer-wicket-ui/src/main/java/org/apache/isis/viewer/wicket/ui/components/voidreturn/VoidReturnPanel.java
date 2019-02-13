@@ -19,9 +19,8 @@
 
 package org.apache.isis.viewer.wicket.ui.components.voidreturn;
 
-import org.apache.wicket.model.IModel;
-
 import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
+import org.apache.wicket.model.IModel;
 
 public class VoidReturnPanel extends PanelAbstract<IModel<?>> {
 

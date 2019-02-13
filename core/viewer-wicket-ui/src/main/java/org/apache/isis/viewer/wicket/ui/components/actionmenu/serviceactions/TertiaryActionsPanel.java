@@ -22,6 +22,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.isis.commons.internal.collections._Lists;
+import org.apache.isis.viewer.wicket.model.models.PageType;
+import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistry;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -32,10 +35,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.resource.CssResourceReference;
-
-import org.apache.isis.commons.internal.collections._Lists;
-import org.apache.isis.viewer.wicket.model.models.PageType;
-import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistry;
 
 /**
  * A panel responsible to render the application actions as menu in a navigation bar.

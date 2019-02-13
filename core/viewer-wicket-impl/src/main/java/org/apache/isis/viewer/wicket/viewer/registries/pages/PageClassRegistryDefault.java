@@ -22,18 +22,16 @@ package org.apache.isis.viewer.wicket.viewer.registries.pages;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.inject.Singleton;
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-
-import com.google.common.collect.Maps;
-
-import org.apache.wicket.Page;
+import javax.inject.Singleton;
 
 import org.apache.isis.viewer.wicket.model.models.PageType;
 import org.apache.isis.viewer.wicket.ui.pages.PageClassList;
 import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistry;
 import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistrySpi;
+import org.apache.wicket.Page;
+
+import com.google.common.collect.Maps;
 
 /**
  * Default implementation of {@link PageClassRegistry}; just delegates to an

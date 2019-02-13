@@ -18,9 +18,6 @@
  */
 package org.apache.isis.core.runtime.system.persistence.adaptermanager;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.applib.events.lifecycle.AbstractLifecycleEvent;
 import org.apache.isis.applib.services.eventbus.EventBusService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
@@ -30,6 +27,8 @@ import org.apache.isis.core.metamodel.facets.object.callbacks.LifecycleEventFace
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * package private mixin for ObjectAdapterContext

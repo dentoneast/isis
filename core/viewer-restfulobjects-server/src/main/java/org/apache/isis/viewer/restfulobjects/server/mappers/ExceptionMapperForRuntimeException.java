@@ -18,16 +18,8 @@
  */
 package org.apache.isis.viewer.restfulobjects.server.mappers;
 
-import java.util.List;
-import java.util.Optional;
-
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
-
-import org.apache.isis.commons.internal.exceptions._Exceptions;
-import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.transaction.IsisTransaction;
-import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 
 @Provider
 public class ExceptionMapperForRuntimeException extends ExceptionMapperAbstract<RuntimeException> {

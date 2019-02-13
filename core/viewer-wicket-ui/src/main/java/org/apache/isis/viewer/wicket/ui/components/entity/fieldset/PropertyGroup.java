@@ -22,14 +22,6 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.repeater.RepeatingView;
-
 import org.apache.isis.applib.annotation.ActionLayout;
 import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.layout.component.FieldSet;
@@ -55,6 +47,13 @@ import org.apache.isis.viewer.wicket.ui.components.scalars.ScalarPanelAbstract2;
 import org.apache.isis.viewer.wicket.ui.panels.HasDynamicallyVisibleContent;
 import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
 import org.apache.isis.viewer.wicket.ui.util.Components;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.repeater.RepeatingView;
+
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
 
 public class PropertyGroup extends PanelAbstract<EntityModel> implements HasDynamicallyVisibleContent {
 

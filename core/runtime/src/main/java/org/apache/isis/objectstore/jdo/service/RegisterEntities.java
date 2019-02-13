@@ -27,13 +27,12 @@ import java.util.stream.Collectors;
 
 import javax.jdo.annotations.PersistenceCapable;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.JdoMetamodelUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RegisterEntities {
 

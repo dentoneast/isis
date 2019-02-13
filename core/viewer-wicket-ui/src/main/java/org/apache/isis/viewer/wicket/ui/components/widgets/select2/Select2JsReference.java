@@ -20,12 +20,11 @@ package org.apache.isis.viewer.wicket.ui.components.widgets.select2;
 
 import java.util.List;
 
+import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.wicket.Application;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.request.resource.ResourceReference;
-
-import org.apache.isis.commons.internal.collections._Lists;
 
 import de.agilecoders.wicket.webjars.request.resource.WebjarsJavaScriptResourceReference;
 

@@ -19,14 +19,13 @@
 
 package org.apache.isis.viewer.wicket.ui.components.widgets.linkandlabel;
 
+import org.apache.isis.viewer.wicket.ui.actionresponse.ActionResultResponseHandlingStrategy;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AbstractAjaxBehavior;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.UrlRenderer;
 import org.apache.wicket.request.cycle.RequestCycle;
-
-import org.apache.isis.viewer.wicket.ui.actionresponse.ActionResultResponseHandlingStrategy;
 
 public abstract class AjaxDeferredBehaviour extends AbstractAjaxBehavior {
     private static final long serialVersionUID = 1L;

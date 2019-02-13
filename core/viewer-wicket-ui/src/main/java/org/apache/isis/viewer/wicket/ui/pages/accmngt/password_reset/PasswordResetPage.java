@@ -21,16 +21,15 @@ package org.apache.isis.viewer.wicket.ui.pages.accmngt.password_reset;
 
 import java.util.concurrent.Callable;
 
-import org.apache.wicket.RestartResponseAtInterceptPageException;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
-import org.apache.wicket.util.string.StringValue;
-import org.apache.wicket.util.string.Strings;
-
 import org.apache.isis.applib.services.userreg.UserRegistrationService;
 import org.apache.isis.viewer.wicket.ui.errors.ExceptionModel;
 import org.apache.isis.viewer.wicket.ui.pages.accmngt.AccountConfirmationMap;
 import org.apache.isis.viewer.wicket.ui.pages.accmngt.AccountManagementPageAbstract;
 import org.apache.isis.viewer.wicket.ui.pages.login.WicketSignInPage;
+import org.apache.wicket.RestartResponseAtInterceptPageException;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+import org.apache.wicket.util.string.StringValue;
+import org.apache.wicket.util.string.Strings;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.common.NotificationPanel;
 

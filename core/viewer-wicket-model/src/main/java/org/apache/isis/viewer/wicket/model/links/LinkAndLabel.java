@@ -22,8 +22,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.function.Predicate;
 
-import org.apache.wicket.markup.html.link.AbstractLink;
-
 import org.apache.isis.applib.annotation.ActionLayout;
 import org.apache.isis.applib.annotation.PromptStyle;
 import org.apache.isis.applib.annotation.SemanticsOf;
@@ -31,6 +29,7 @@ import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.facets.members.cssclassfa.CssClassFaPosition;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
+import org.apache.wicket.markup.html.link.AbstractLink;
 
 public class LinkAndLabel implements Serializable {
 

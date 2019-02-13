@@ -20,7 +20,6 @@
 package org.apache.isis.viewer.wicket.ui.util;
 
 import org.apache.isis.commons.internal.base._Strings;
-
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.ComponentTag;

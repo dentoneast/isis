@@ -18,10 +18,9 @@ package org.apache.isis.viewer.wicket.ui.components.widgets.select2.providers;
 
 import java.util.Collection;
 
+import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
 import org.wicketstuff.select2.ChoiceProvider;
 import org.wicketstuff.select2.Response;
-
-import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
 
 public class EmptyChoiceProvider extends ChoiceProvider<ObjectAdapterMemento> {
     private static final long serialVersionUID = 1L;

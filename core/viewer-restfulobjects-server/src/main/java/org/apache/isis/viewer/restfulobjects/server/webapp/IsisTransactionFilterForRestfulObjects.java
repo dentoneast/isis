@@ -27,8 +27,6 @@ import javax.servlet.ServletResponse;
 
 import org.apache.isis.core.runtime.system.session.IsisRequestCycle;
 
-import lombok.val;
-
 //@WebFilter(servletNames= {"RestfulObjectsRestEasyDispatcher"}) //[ahuber] to support 
 //Servlet 3.0 annotations @WebFilter, @WebListener or others 
 //with skinny war deployment requires additional configuration, so for now we disable this annotation
@@ -42,7 +40,7 @@ public class IsisTransactionFilterForRestfulObjects implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
     		throws IOException, ServletException {
 
-		try(val cycle = IsisRequestCycle.next()) {
+		try(final IsisRequestCycle cycle = IsisRequestCycle.next()) {
 			cycle.beforeServletFilter();
 			chain.doFilter(request, response);
 			cycle.afterServletFilter();

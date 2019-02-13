@@ -20,7 +20,6 @@
 package org.apache.isis.viewer.wicket.ui.components.scalars;
 
 import java.io.Serializable;
-import java.util.function.Function;
 
 import javax.inject.Inject;
 

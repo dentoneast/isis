@@ -21,11 +21,10 @@ package org.apache.isis.core.runtime.system.internal;
 
 import java.util.Locale;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.runtime.system.SystemConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IsisLocaleInitializer {
 

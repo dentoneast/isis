@@ -16,6 +16,8 @@
  */
 package org.apache.isis.viewer.restfulobjects.rendering.service.conneg;
 
+import static org.apache.isis.config.internal._Config.getConfiguration;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -57,8 +59,6 @@ import org.apache.isis.viewer.restfulobjects.rendering.domainobjects.ObjectAndPr
 import org.apache.isis.viewer.restfulobjects.rendering.domainobjects.ObjectCollectionReprRenderer;
 import org.apache.isis.viewer.restfulobjects.rendering.domainobjects.ObjectPropertyReprRenderer;
 import org.apache.isis.viewer.restfulobjects.rendering.service.RepresentationService;
-
-import static org.apache.isis.config.internal._Config.getConfiguration;
 
 @DomainService(
         nature = NatureOfService.DOMAIN,

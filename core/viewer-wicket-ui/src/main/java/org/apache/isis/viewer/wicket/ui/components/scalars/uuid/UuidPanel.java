@@ -21,11 +21,10 @@ package org.apache.isis.viewer.wicket.ui.components.scalars.uuid;
 
 import java.util.UUID;
 
-import org.apache.wicket.markup.html.form.AbstractTextComponent;
-
 import org.apache.isis.viewer.wicket.model.models.ScalarModel;
 import org.apache.isis.viewer.wicket.ui.components.scalars.ScalarPanelTextFieldAbstract;
 import org.apache.isis.viewer.wicket.ui.components.scalars.TextFieldValueModel;
+import org.apache.wicket.markup.html.form.AbstractTextComponent;
 
 /**
  * Panel for rendering scalars of type {@link UUID}.

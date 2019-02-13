@@ -21,10 +21,9 @@ package org.apache.isis.viewer.wicket.ui.components.scalars.jdkdates;
 import java.util.Date;
 import java.util.Locale;
 
-import org.apache.wicket.util.convert.ConversionException;
-
 import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
 import org.apache.isis.viewer.wicket.ui.components.scalars.DateFormatSettings;
+import org.apache.wicket.util.convert.ConversionException;
 
 
 public class DateConverterForJavaUtilDate extends DateConverterForJavaAbstract<java.util.Date> {

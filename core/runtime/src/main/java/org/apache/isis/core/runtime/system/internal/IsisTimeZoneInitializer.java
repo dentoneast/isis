@@ -21,11 +21,10 @@ package org.apache.isis.core.runtime.system.internal;
 
 import java.util.TimeZone;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.config.ConfigurationConstants;
 import org.apache.isis.config.IsisConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IsisTimeZoneInitializer {
 

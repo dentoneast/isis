@@ -16,11 +16,10 @@
  */
 package org.apache.isis.viewer.wicket.ui.components.scalars;
 
+import org.apache.isis.viewer.wicket.model.models.ScalarModel;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.convert.IConverter;
-
-import org.apache.isis.viewer.wicket.model.models.ScalarModel;
 
 public abstract class TextFieldAbstract<T> extends TextField<T> {
 

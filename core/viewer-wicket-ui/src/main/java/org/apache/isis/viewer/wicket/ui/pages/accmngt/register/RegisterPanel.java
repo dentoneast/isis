@@ -18,6 +18,13 @@
  */
 package org.apache.isis.viewer.wicket.ui.pages.accmngt.register;
 
+import org.apache.isis.applib.services.userreg.UserDetails;
+import org.apache.isis.applib.services.userreg.UserRegistrationService;
+import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import org.apache.isis.viewer.wicket.ui.components.widgets.bootstrap.FormGroup;
+import org.apache.isis.viewer.wicket.ui.pages.accmngt.AccountConfirmationMap;
+import org.apache.isis.viewer.wicket.ui.pages.accmngt.UsernameAvailableValidator;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebSession;
@@ -32,14 +39,6 @@ import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
-
-import org.apache.isis.applib.services.userreg.UserDetails;
-import org.apache.isis.applib.services.userreg.UserRegistrationService;
-import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-import org.apache.isis.viewer.wicket.ui.components.widgets.bootstrap.FormGroup;
-import org.apache.isis.viewer.wicket.ui.pages.accmngt.AccountConfirmationMap;
-import org.apache.isis.viewer.wicket.ui.pages.accmngt.UsernameAvailableValidator;
 
 /**
  * A panel with a form for self-registration of a user

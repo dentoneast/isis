@@ -19,10 +19,9 @@ package org.apache.isis.viewer.wicket.ui.components.scalars.uuid;
 import java.util.Locale;
 import java.util.UUID;
 
+import org.apache.isis.commons.internal.base._Strings;
 import org.apache.wicket.util.convert.ConversionException;
 import org.apache.wicket.util.convert.IConverter;
-
-import org.apache.isis.commons.internal.base._Strings;
 
 /**
  * The {@link IConverter} implementation that our {@link UuidTextField} delegates to for converting strings into values.

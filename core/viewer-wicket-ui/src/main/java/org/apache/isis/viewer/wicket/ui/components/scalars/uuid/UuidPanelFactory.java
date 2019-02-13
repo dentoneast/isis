@@ -21,11 +21,10 @@ package org.apache.isis.viewer.wicket.ui.components.scalars.uuid;
 
 import java.util.UUID;
 
-import org.apache.wicket.Component;
-
 import org.apache.isis.viewer.wicket.model.models.ScalarModel;
 import org.apache.isis.viewer.wicket.ui.ComponentFactory;
 import org.apache.isis.viewer.wicket.ui.components.scalars.ComponentFactoryScalarAbstract;
+import org.apache.wicket.Component;
 
 /**
  * {@link ComponentFactory} for {@link UuidPanel}.

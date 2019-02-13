@@ -16,12 +16,11 @@
  */
 package org.apache.isis.viewer.wicket.model.models;
 
+import org.apache.isis.applib.annotation.PromptStyle;
+import org.apache.isis.applib.services.metamodel.MetaModelService;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-
-import org.apache.isis.applib.annotation.PromptStyle;
-import org.apache.isis.applib.services.metamodel.MetaModelService;
 
 public interface ActionPromptProvider {
 

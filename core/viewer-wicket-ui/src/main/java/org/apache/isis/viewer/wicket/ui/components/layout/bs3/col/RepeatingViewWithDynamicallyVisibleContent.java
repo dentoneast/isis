@@ -18,11 +18,10 @@
  */
 package org.apache.isis.viewer.wicket.ui.components.layout.bs3.col;
 
+import org.apache.isis.viewer.wicket.ui.panels.HasDynamicallyVisibleContent;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.repeater.RepeatingView;
-
-import org.apache.isis.viewer.wicket.ui.panels.HasDynamicallyVisibleContent;
 
 public class RepeatingViewWithDynamicallyVisibleContent extends RepeatingView implements HasDynamicallyVisibleContent {
 

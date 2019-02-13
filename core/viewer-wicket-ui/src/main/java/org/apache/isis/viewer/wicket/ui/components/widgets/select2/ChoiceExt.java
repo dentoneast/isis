@@ -16,13 +16,12 @@
  */
 package org.apache.isis.viewer.wicket.ui.components.widgets.select2;
 
+import org.apache.isis.core.metamodel.spec.ObjectSpecId;
+import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
 import org.wicketstuff.select2.ChoiceProvider;
 import org.wicketstuff.select2.Select2Choice;
 import org.wicketstuff.select2.Select2MultiChoice;
 import org.wicketstuff.select2.Settings;
-
-import org.apache.isis.core.metamodel.spec.ObjectSpecId;
-import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
 
 /**
  * Represents functionality that is common to both {@link Select2Choice} and {@link Select2MultiChoice}, but for

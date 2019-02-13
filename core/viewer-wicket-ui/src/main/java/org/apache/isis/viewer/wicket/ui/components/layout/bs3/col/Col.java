@@ -23,12 +23,6 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.FluentIterable;
-
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-
 import org.apache.isis.applib.layout.component.ActionLayoutData;
 import org.apache.isis.applib.layout.component.CollectionLayoutData;
 import org.apache.isis.applib.layout.component.DomainObjectLayoutData;
@@ -54,6 +48,11 @@ import org.apache.isis.viewer.wicket.ui.panels.HasDynamicallyVisibleContent;
 import org.apache.isis.viewer.wicket.ui.panels.PanelAbstract;
 import org.apache.isis.viewer.wicket.ui.util.Components;
 import org.apache.isis.viewer.wicket.ui.util.CssClassAppender;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 
 public class Col extends PanelAbstract<EntityModel> implements HasDynamicallyVisibleContent {
 

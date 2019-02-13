@@ -22,18 +22,17 @@ package org.apache.isis.viewer.wicket.ui.pages.login;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.Page;
-import org.apache.wicket.authroles.authentication.panel.SignInPanel;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.userreg.EmailNotificationService;
 import org.apache.isis.applib.services.userreg.UserRegistrationService;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.viewer.wicket.model.models.PageType;
 import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistry;
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.Page;
+import org.apache.wicket.authroles.authentication.panel.SignInPanel;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.common.NotificationPanel;
 
