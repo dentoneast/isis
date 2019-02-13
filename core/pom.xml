@@ -1312,6 +1312,19 @@ ${license.additional-notes}
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
+            <!-- runtime-extensions -->
+            <dependency>
+                <groupId>org.apache.isis.core</groupId>
+                <artifactId>isis-core-runtime-extensions</artifactId>
+                <version>${isis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.isis.core</groupId>
+                <artifactId>isis-core-runtime-extensions</artifactId>
+                <version>${isis.version}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
             
             <!-- webserver -->
             <dependency>

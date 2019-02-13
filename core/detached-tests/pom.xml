@@ -56,7 +56,7 @@
         
         <dependency>
 			<groupId>org.apache.isis.core</groupId>
-			<artifactId>isis-core-runtime</artifactId>
+			<artifactId>isis-core-runtime-extensions</artifactId>
 			<scope>test</scope>
 		</dependency>
         
