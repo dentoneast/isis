@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
 import org.apache.isis.core.metamodel.IsisJdoMetamodelPlugin;
 import org.apache.isis.core.metamodel.IsisJdoRuntimePlugin;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory;
-import org.apache.isis.objectstore.jdo.persistence.PersistenceSessionFactory4;
+import org.apache.isis.jdo.persistence.PersistenceSessionFactory4;
 
 public class IsisJdoSupportPlugin4 implements IsisJdoMetamodelPlugin, IsisJdoRuntimePlugin {
 

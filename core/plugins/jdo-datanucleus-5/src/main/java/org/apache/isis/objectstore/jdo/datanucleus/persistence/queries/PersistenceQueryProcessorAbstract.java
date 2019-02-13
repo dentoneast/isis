@@ -29,9 +29,10 @@ import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.commons.ensure.Assert;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.objectstore.jdo.datanucleus.persistence.PersistenceQuery;
-import org.apache.isis.objectstore.jdo.persistence.IsisLifecycleListener;
-import org.apache.isis.objectstore.jdo.persistence.PersistenceSession5;
+import org.apache.isis.jdo.datanucleus.persistence.PersistenceQuery;
+import org.apache.isis.jdo.datanucleus.persistence.queries.PersistenceQueryProcessor;
+import org.apache.isis.jdo.persistence.IsisLifecycleListener;
+import org.apache.isis.jdo.persistence.PersistenceSession5;
 
 public abstract class PersistenceQueryProcessorAbstract<T extends PersistenceQuery>
 implements PersistenceQueryProcessor<T> {

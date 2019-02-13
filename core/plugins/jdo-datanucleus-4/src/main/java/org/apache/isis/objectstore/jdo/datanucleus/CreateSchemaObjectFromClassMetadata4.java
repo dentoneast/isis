@@ -25,7 +25,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 
-import org.apache.isis.objectstore.jdo.datanucleus.DataNucleusPropertiesAware;
 import org.datanucleus.ClassLoaderResolver;
 import org.datanucleus.enhancer.EnhancementNucleusContextImpl;
 import org.datanucleus.metadata.AbstractClassMetaData;
@@ -35,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.apache.isis.commons.internal.base._Strings;
+import org.apache.isis.jdo.datanucleus.DataNucleusPropertiesAware;
 
 /**
  * Implementation note: the methods in this class are <tt>protected</tt> to allow for easy subclassing.

@@ -24,9 +24,10 @@ import javax.jdo.listener.InstanceLifecycleEvent;
 
 import org.apache.isis.core.commons.ensure.Assert;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.objectstore.jdo.datanucleus.persistence.PersistenceQuery;
-import org.apache.isis.objectstore.jdo.persistence.IsisLifecycleListener;
-import org.apache.isis.objectstore.jdo.persistence.PersistenceSession4;
+import org.apache.isis.jdo.datanucleus.persistence.PersistenceQuery;
+import org.apache.isis.jdo.datanucleus.persistence.queries.PersistenceQueryProcessor;
+import org.apache.isis.jdo.persistence.IsisLifecycleListener;
+import org.apache.isis.jdo.persistence.PersistenceSession4;
 import org.datanucleus.enhancement.Persistable;
 
 import org.apache.isis.commons.internal.collections._Lists;

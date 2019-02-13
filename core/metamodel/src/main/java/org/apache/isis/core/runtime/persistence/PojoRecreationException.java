@@ -25,7 +25,7 @@ public class PojoRecreationException extends ObjectPersistenceException {
     private static final long serialVersionUID = 1L;
 
     public PojoRecreationException(Oid oid, Throwable cause) {
-        super("Could not recreate pojo for oid oid " + oid, cause);
+        super(String.format("Could not recreate pojo for oid '%s'.", oid), cause);
 
     }
 }

@@ -21,7 +21,7 @@ package org.apache.isis.core.runtime.services.exceprecog.jdo;
 import org.junit.Before;
 import org.junit.Test;
 import org.apache.isis.config.internal._Config;
-import org.apache.isis.objectstore.jdo.exceprecog.ExceptionRecognizerCompositeForJdoObjectStore;
+import org.apache.isis.jdo.exceprecog.ExceptionRecognizerCompositeForJdoObjectStore;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;

@@ -18,7 +18,7 @@ package org.apache.isis.core.runtime.services.exceprecog.jdo;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 
-import org.apache.isis.objectstore.jdo.exceprecog.ExceptionRecognizerForSQLIntegrityConstraintViolationUniqueOrIndexException;
+import org.apache.isis.jdo.exceprecog.ExceptionRecognizerForSQLIntegrityConstraintViolationUniqueOrIndexException;
 import org.junit.Before;
 import org.junit.Test;
 

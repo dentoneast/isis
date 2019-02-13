@@ -38,7 +38,7 @@ import org.apache.isis.core.runtime.persistence.objectstore.transaction.PojoAdap
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2.Mode;
-import org.apache.isis.objectstore.jdo.persistence.PersistenceSession5;
+import org.apache.isis.jdo.persistence.PersistenceSession5;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
