@@ -38,20 +38,10 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.identity.SingleFieldIdentity;
 import javax.jdo.listener.InstanceLifecycleListener;
 
-import org.datanucleus.enhancement.Persistable;
-import org.datanucleus.exceptions.NucleusObjectNotFoundException;
-import org.datanucleus.identity.DatastoreIdImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import lombok.val;
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.isis.applib.query.Query;
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
 import org.apache.isis.applib.services.iactn.Interaction;
-import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
@@ -79,6 +69,7 @@ import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.plugins.ioc.RequestContextHandle;
 import org.apache.isis.core.plugins.ioc.RequestContextService;
+import org.apache.isis.core.runtime.memento.Data;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledState;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledStateHolder;
 import org.apache.isis.core.runtime.persistence.NotPersistableException;
@@ -94,7 +85,6 @@ import org.apache.isis.core.runtime.services.RequestScopedService;
 import org.apache.isis.core.runtime.system.persistence.PersistenceQuery;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.persistence.adaptermanager.ObjectAdapterContext;
-import org.apache.isis.core.runtime.system.persistence.adaptermanager.ObjectAdapterContext.MementoRecreateObjectSupport;
 import org.apache.isis.core.runtime.system.transaction.IsisTransaction;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -104,8 +94,12 @@ import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.Persisten
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.PersistenceQueryFindUsingApplibQueryProcessor;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.PersistenceQueryProcessor;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.spi.JdoObjectIdSerializer;
-import org.apache.isis.objectstore.jdo.persistence.PersistenceSessionBase;
-import org.apache.isis.objectstore.jdo.persistence.PersistenceSessionBase.State;
+import org.datanucleus.enhancement.Persistable;
+import org.datanucleus.exceptions.NucleusObjectNotFoundException;
+import org.datanucleus.identity.DatastoreIdImpl;
+
+import lombok.val;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * A wrapper around the JDO {@link PersistenceManager}, which also manages concurrency
@@ -909,11 +903,6 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
     }
 
     @Override
-    public MementoRecreateObjectSupport mementoSupport() {
-        return objectAdapterContext.mementoSupport();
-    }
-
-    @Override
     public ObjectAdapterProvider getObjectAdapterProvider() {
         return objectAdapterContext.getObjectAdapterProvider();
     }
@@ -922,6 +911,13 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
     public ObjectAdapterByIdProvider getObjectAdapterByIdProvider() {
         return objectAdapterContext.getObjectAdapterByIdProvider();
     }
+    
+    // -- MEMENTO SUPPORT
+    
+	@Override
+	public ObjectAdapter adapterOfMemento(ObjectSpecification spec, Oid oid, Data data) {
+		return objectAdapterContext.mementoSupport().recreateObject(spec, oid, data);
+	}
 
     // -- HELPER
     

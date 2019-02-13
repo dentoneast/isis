@@ -3,9 +3,11 @@ package org.apache.isis.core.runtime.system.context.session;
 import java.util.stream.Stream;
 
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
+import org.apache.isis.core.runtime.memento.Data;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledState;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 
@@ -28,7 +30,7 @@ public interface ManagedObjectPersistence {
 	
 	//
 	
-	ObjectAdapter adapterFor(Object pojo); //TODO [2033] use a ObjectAdapter providing service instead
+	ObjectAdapter adapterOfPojo(Object pojo); //TODO [2033] use a ObjectAdapter providing service instead
 
 	// 
 	
@@ -36,6 +38,9 @@ public interface ManagedObjectPersistence {
 	void makePersistentInTransaction(ObjectAdapter objectAdapter);
 	Object fetchPersistentPojoInTransaction(RootOid rootOid);
 	
+	// -- MEMENTO SUPPORT
+	
+    ObjectAdapter adapterOfMemento(ObjectSpecification spec, Oid oid, Data data);
 	
 	// -- FACTORIES
 	
@@ -70,8 +75,13 @@ public interface ManagedObjectPersistence {
 			}
 			
 			@Override
-			public ObjectAdapter adapterFor(Object pojo) {
+			public ObjectAdapter adapterOfPojo(Object pojo) {
 				return persistenceSession.adapterFor(pojo);
+			}
+			
+			@Override
+			public ObjectAdapter adapterOfMemento(ObjectSpecification spec, Oid oid, Data data) {
+				return persistenceSession.adapterOfMemento(spec, oid, data);
 			}
 
 			@Override
@@ -83,6 +93,8 @@ public interface ManagedObjectPersistence {
 			public FixturesInstalledState getFixturesInstalledState() {
 				return persistenceSession.getFixturesInstalledState();
 			}
+
+
 		};
 	}
 	

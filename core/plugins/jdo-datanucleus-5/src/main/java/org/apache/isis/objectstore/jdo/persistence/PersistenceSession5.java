@@ -69,6 +69,7 @@ import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.plugins.ioc.RequestContextHandle;
 import org.apache.isis.core.plugins.ioc.RequestContextService;
+import org.apache.isis.core.runtime.memento.Data;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledState;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledStateHolder;
 import org.apache.isis.core.runtime.persistence.NotPersistableException;
@@ -84,7 +85,6 @@ import org.apache.isis.core.runtime.services.RequestScopedService;
 import org.apache.isis.core.runtime.system.persistence.PersistenceQuery;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.persistence.adaptermanager.ObjectAdapterContext;
-import org.apache.isis.core.runtime.system.persistence.adaptermanager.ObjectAdapterContext.MementoRecreateObjectSupport;
 import org.apache.isis.core.runtime.system.transaction.IsisTransaction;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -94,7 +94,6 @@ import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.Persisten
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.PersistenceQueryFindUsingApplibQueryProcessor;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.PersistenceQueryProcessor;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.spi.JdoObjectIdSerializer;
-import org.apache.isis.objectstore.jdo.persistence.PersistenceSessionBase;
 import org.datanucleus.enhancement.Persistable;
 import org.datanucleus.exceptions.NucleusObjectNotFoundException;
 import org.datanucleus.identity.DatastoreIdImpl;
@@ -904,11 +903,6 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
     }
 
     @Override
-    public MementoRecreateObjectSupport mementoSupport() {
-        return objectAdapterContext.mementoSupport();
-    }
-
-    @Override
     public ObjectAdapterProvider getObjectAdapterProvider() {
         return objectAdapterContext.getObjectAdapterProvider();
     }
@@ -917,6 +911,13 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
     public ObjectAdapterByIdProvider getObjectAdapterByIdProvider() {
         return objectAdapterContext.getObjectAdapterByIdProvider();
     }
+    
+    // -- MEMENTO SUPPORT
+    
+	@Override
+	public ObjectAdapter adapterOfMemento(ObjectSpecification spec, Oid oid, Data data) {
+		return objectAdapterContext.mementoSupport().recreateObject(spec, oid, data);
+	}
 
     // -- HELPER
     

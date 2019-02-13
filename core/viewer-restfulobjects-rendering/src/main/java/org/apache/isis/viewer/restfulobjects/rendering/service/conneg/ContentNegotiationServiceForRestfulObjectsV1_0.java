@@ -225,7 +225,7 @@ public class ContentNegotiationServiceForRestfulObjectsV1_0 implements ContentNe
                 final String actionArguments = actionArgumentsFrom(objectAndActionInvocation);
                 final DomainObjectList list = domainObjectListFrom(collectionAdapters, elementSpec, actionOwningType, actionId, actionArguments);
 
-                adapter = rendererContext.adapterForPojo(list);
+                adapter = rendererContext.adapterOfPojo(list);
 
             } else {
                 adapter = objectAndActionInvocation.getReturnedAdapter();

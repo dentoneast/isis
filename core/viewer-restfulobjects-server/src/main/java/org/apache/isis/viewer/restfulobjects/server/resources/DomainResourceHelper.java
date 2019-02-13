@@ -30,6 +30,7 @@ import org.apache.isis.applib.services.xactn.TransactionService;
 import org.apache.isis.commons.internal.base._Tuples.Tuple2;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.spec.ManagedObjectState;
@@ -38,6 +39,7 @@ import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
+import org.apache.isis.core.runtime.memento.Data;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledState;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.viewer.restfulobjects.applib.JsonRepresentation;
@@ -179,8 +181,13 @@ class DomainResourceHelper {
 		}
 
 		@Override
-		public ObjectAdapter adapterForPojo(Object pojo) {
-			return rendererContext.adapterForPojo(pojo);
+		public ObjectAdapter adapterOfPojo(Object pojo) {
+			return rendererContext.adapterOfPojo(pojo);
+		}
+		
+		@Override
+		public ObjectAdapter adapterOfMemento(ObjectSpecification spec, Oid oid, Data data) {
+			return rendererContext.adapterOfMemento(spec, oid, data);
 		}
 
 		@Override
@@ -222,6 +229,8 @@ class DomainResourceHelper {
 		public FixturesInstalledState getFixturesInstalledState() {
 			return rendererContext.getFixturesInstalledState();
 		}
+
+		
 
 		
 

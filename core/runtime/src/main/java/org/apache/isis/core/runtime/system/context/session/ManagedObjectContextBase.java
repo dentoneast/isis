@@ -8,11 +8,13 @@ import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.commons.internal.base._Tuples.Tuple2;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
+import org.apache.isis.core.runtime.memento.Data;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledState;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -55,8 +57,13 @@ public abstract class ManagedObjectContextBase implements ManagedObjectContext {
 	}
     
     @Override //FIXME [2033] decouple from JDO
-    public ObjectAdapter adapterForPojo(Object pojo) {
-		return ps().adapterFor(pojo);
+    public ObjectAdapter adapterOfPojo(Object pojo) {
+		return ps().adapterOfPojo(pojo);
+	}
+    
+    @Override //FIXME [2033] decouple from JDO
+    public ObjectAdapter adapterOfMemento(ObjectSpecification spec, Oid oid, Data data) {
+		return ps().adapterOfMemento(spec, oid, data);
 	}
     
     @Override //FIXME [2033] decouple from JDO
