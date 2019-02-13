@@ -13,6 +13,7 @@ import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
+import org.apache.isis.core.runtime.persistence.FixturesInstalledState;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 
@@ -62,6 +63,13 @@ public abstract class ManagedObjectContextBase implements ManagedObjectContext {
 	public ObjectAdapter lookupService(String serviceId) {
 		return ps().lookupService(serviceId);
 	}
+    
+    // -- FIXTURE SCRIPT STATE SUPPORT
+    
+    @Override //FIXME [2033] decouple from JDO
+    public FixturesInstalledState getFixturesInstalledState() {
+    	return ps().getFixturesInstalledState();
+    }
     
     // -- HOMEPAGE LOOKUP SUPPORT
     

@@ -27,6 +27,8 @@ import org.apache.isis.core.metamodel.adapter.ObjectAdapterByIdProvider;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.spec.ManagedObjectState;
+import org.apache.isis.core.runtime.persistence.FixturesInstalledState;
+import org.apache.isis.core.runtime.persistence.FixturesInstalledStateHolder;
 import org.apache.isis.core.runtime.persistence.objectstore.transaction.PersistenceCommand;
 import org.apache.isis.core.runtime.persistence.objectstore.transaction.TransactionalResource;
 import org.apache.isis.core.runtime.system.persistence.adaptermanager.ObjectAdapterContext.MementoRecreateObjectSupport;
@@ -80,36 +82,6 @@ extends
      * @since 2.0.0-M3
      */
     ManagedObjectState stateOf(Object pojo);
-    
-//    /**
-//     * For Persistable, state can either be ATTACHED or DETACHED or DESTROYED.
-//     * @since 2.0.0-M3
-//     */
-//    boolean isAttached(Object pojo);
-//    
-//    /**
-//     * For Persistable, state can either be ATTACHED or DETACHED or DESTROYED.
-//     * @since 2.0.0-M3
-//     */
-//    boolean isDetached(Object pojo);
-//       
-//    /**
-//     * For Persistable, state can either be ATTACHED or DETACHED or DESTROYED.
-//     * @since 2.0.0-M2
-//     */
-//    boolean isDestroyed(Object pojo);
-//    
-//    
-//    /**
-//     * Tests whether this object is persistent. Instances that represent persistent objects in the 
-//     * data store return true. (DELETED || ATTACHED)
-//     * <p>
-//     * May also be 'deleted' (that is, {@link #isDestroyed(Object)} could return true).
-//     * @param pojo
-//     * @return
-//     * @since 2.0.0-M2
-//     */
-//    boolean isRepresentingPersistent(Object pojo);
     
     /** whether pojo is recognized by the persistence layer, that is, it has an ObjectId
      * @since 2.0.0-M2*/
@@ -184,7 +156,27 @@ extends
     static final String INSTALL_FIXTURES_KEY = "isis.persistor.datanucleus.install-fixtures";
     static final boolean INSTALL_FIXTURES_DEFAULT = false;
     
-    boolean isFixturesInstalled();
+    /**
+     * Determine if the object store has been initialized with its set of start
+     * up objects.
+     *
+     * <p>
+     * This method is called only once after the init has been called. If this flag
+     * returns <code>not_Installed</code> the framework will run the fixtures to
+     * initialise the persistor.
+     *
+     * <p>
+     * Returns the cached value of {@link #getFixturesInstalledState()
+     * whether fixtures are installed} from the
+     * {@link PersistenceSessionFactory}.
+     * <p>
+     * This caching is important because if we've determined, for a given run,
+     * that fixtures are not installed, then we don't want to change our mind by
+     * asking the object store again in another session.
+     *
+     * @see FixturesInstalledStateHolder
+     */
+    FixturesInstalledState getFixturesInstalledState();
     
     // -- MEMENTO SUPPORT
     

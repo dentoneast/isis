@@ -22,14 +22,15 @@ package org.apache.isis.core.runtime.persistence;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 
 /**
- * For {@link org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory} implementations that can cache the
- * {@link PersistenceSession#isFixturesInstalled()} so is only called once per
+ * For {@link org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory} 
+ * implementations that can cache the
+ * {@link PersistenceSession#getFixturesInstalledState()} so is only called once per
  * application scope.
  */
-public interface FixturesInstalledFlag {
+public interface FixturesInstalledStateHolder {
 
-    public Boolean isFixturesInstalled();
-
-    public void setFixturesInstalled(Boolean fixturesInstalled);
+    public FixturesInstalledState getFixturesInstalledState();
+    
+    public void setFixturesInstalledState(FixturesInstalledState fixturesInstalledState);
 
 }

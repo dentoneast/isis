@@ -12,6 +12,7 @@ import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
+import org.apache.isis.core.runtime.persistence.FixturesInstalledState;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 
 /**
@@ -28,7 +29,7 @@ public interface ManagedObjectContext {
     ServiceRegistry getServiceRegistry();
     
 	Stream<ObjectAdapter> streamServiceAdapters();
-	_Tuples.Tuple2<ObjectAdapter, ObjectAction> findHomePageAction();
+	_Tuples.Tuple2<ObjectAdapter, ObjectAction> findHomePageAction(); //TODO [2033] there's also a HomepageService
 	
 	ObjectAdapter lookupService(String serviceId);
 	ObjectAdapter adapterForPojo(Object pojo);
@@ -37,7 +38,9 @@ public interface ManagedObjectContext {
 	Object fetchPersistentPojoInTransaction(RootOid rootOid);
 	
 	ManagedObjectState stateOf(Object domainObject);
+	FixturesInstalledState getFixturesInstalledState();
 	
 	void logoutAuthenticationSession();
+	
 	
 }

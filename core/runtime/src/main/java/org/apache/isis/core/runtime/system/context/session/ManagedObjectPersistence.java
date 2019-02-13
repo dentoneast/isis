@@ -6,9 +6,13 @@ import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
+import org.apache.isis.core.runtime.persistence.FixturesInstalledState;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 
 /**
+ * TODO [2033] only temporary for refactoring, ultimately to be removed or refined
+ * <p>
+ * Adds a layer of abstraction on top of the yet too complex PersistenceSession.
  * 
  * @since 2.0.0-M3
  *
@@ -20,6 +24,7 @@ public interface ManagedObjectPersistence {
 	Stream<ObjectAdapter> streamServices(); //TODO [2033] use ServiceRegistry instead
 	ManagedObjectState stateOf(Object domainObject);
 	ObjectAdapter lookupService(final String serviceId); //TODO [2033] use ServiceRegistry instead
+	FixturesInstalledState getFixturesInstalledState();
 	
 	//
 	
@@ -73,7 +78,13 @@ public interface ManagedObjectPersistence {
 			public ObjectAdapter lookupService(String serviceId) {
 				return persistenceSession.lookupService(serviceId);
 			}
+
+			@Override
+			public FixturesInstalledState getFixturesInstalledState() {
+				return persistenceSession.getFixturesInstalledState();
+			}
 		};
 	}
+	
 	
 }

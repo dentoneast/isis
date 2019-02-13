@@ -26,6 +26,7 @@ package org.apache.isis.applib.fixtures;
  * @see InstallableFixture#getType()
  */
 public enum FixtureType {
+	
     /**
      * A fixture that installs data (either reference data or operational data)
      * into an object store.
@@ -38,8 +39,9 @@ public enum FixtureType {
      * time booted to initially seed them).
      */
     DOMAIN_OBJECTS,
+    
     /**
-     * A fixture that does not installs data into the object store.
+     * A fixture that does not install data into the object store.
      *
      * <p>
      * Fixtures of this type are always installed. Typical examples are:
@@ -50,5 +52,13 @@ public enum FixtureType {
      * ).
      * </ul>
      */
-    OTHER;
+    OTHER
+    
+    ;
+	
+	public boolean isAlwaysInstall() {
+		return this == OTHER;
+	}
+	
+	
 }

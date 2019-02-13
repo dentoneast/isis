@@ -32,14 +32,17 @@ import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-import org.apache.isis.core.runtime.persistence.FixturesInstalledFlag;
+import org.apache.isis.core.runtime.persistence.FixturesInstalledState;
+import org.apache.isis.core.runtime.persistence.FixturesInstalledStateHolder;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.objectstore.jdo.datanucleus.JDOStateManagerForIsis;
 import org.apache.isis.objectstore.jdo.service.RegisterEntities;
 import org.datanucleus.PropertyNames;
 import org.datanucleus.api.jdo.JDOPersistenceManagerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -50,11 +53,9 @@ import org.slf4j.LoggerFactory;
  * must be annotated using {@link Programmatic}.
  * </p>
  */
-@Vetoed // has a producer
+@Slf4j @Vetoed // has a producer
 public class PersistenceSessionFactory5
-implements PersistenceSessionFactory, FixturesInstalledFlag {
-
-    private static final Logger LOG = LoggerFactory.getLogger(PersistenceSessionFactory5.class);
+implements PersistenceSessionFactory, FixturesInstalledStateHolder {
 
     public static final String JDO_OBJECTSTORE_CONFIG_PREFIX = "isis.persistor.datanucleus";  // specific to the JDO objectstore
     public static final String DATANUCLEUS_CONFIG_PREFIX = "isis.persistor.datanucleus.impl"; // reserved for datanucleus' own config props
@@ -64,6 +65,10 @@ implements PersistenceSessionFactory, FixturesInstalledFlag {
             _Lazy.threadSafe(this::createDataNucleusApplicationComponents);
 
     private IsisConfiguration configuration;
+    
+    @Getter(onMethod=@__({@Override})) 
+    @Setter(onMethod=@__({@Override})) 
+    FixturesInstalledState fixturesInstalledState;
     
     @Programmatic
     @Override
@@ -105,10 +110,6 @@ implements PersistenceSessionFactory, FixturesInstalledFlag {
         DataNucleusApplicationComponents5.catalogNamedQueries(classesToBePersisted, specificationLoader);
     }
 
-    private boolean shouldCreate(final DataNucleusApplicationComponents5 applicationComponents) {
-        return applicationComponents == null || applicationComponents.isStale();
-    }
-
     private static void addDataNucleusPropertiesIfRequired(
             final Map<String, String> props) {
 
@@ -131,24 +132,24 @@ implements PersistenceSessionFactory, FixturesInstalledFlag {
             String transactionType = props.get("javax.jdo.option.TransactionType");
             // extended logging
             if(transactionType == null) {
-                LOG.info("found config properties to use non-JTA JNDI datasource ({})", connectionFactoryName);
+                log.info("found config properties to use non-JTA JNDI datasource ({})", connectionFactoryName);
                 if(connectionFactory2Name != null) {
-                    LOG.warn("found config properties to use non-JTA JNDI datasource ({}); second '-nontx' JNDI datasource also configured but will not be used ({})", connectionFactoryName, connectionFactory2Name);
+                	log.warn("found config properties to use non-JTA JNDI datasource ({}); second '-nontx' JNDI datasource also configured but will not be used ({})", connectionFactoryName, connectionFactory2Name);
                 }
             } else {
-                LOG.info("found config properties to use JTA JNDI datasource ({})", connectionFactoryName);
+            	log.info("found config properties to use JTA JNDI datasource ({})", connectionFactoryName);
             }
             if(connectionFactory2Name == null) {
                 // JDO/DN itself will (probably) throw an exception
-                LOG.error("found config properties to use JTA JNDI datasource ({}) but config properties for second '-nontx' JNDI datasource were *not* found", connectionFactoryName);
+            	log.error("found config properties to use JTA JNDI datasource ({}) but config properties for second '-nontx' JNDI datasource were *not* found", connectionFactoryName);
             } else {
-                LOG.info("... and config properties for second '-nontx' JNDI datasource also found; {}", connectionFactory2Name);
+            	log.info("... and config properties for second '-nontx' JNDI datasource also found; {}", connectionFactory2Name);
             }
             // nothing further to do
             return;
         } else {
             // use JDBC connection properties; put if not present
-            LOG.info("did *not* find config properties to use JNDI datasource; will use JDBC");
+        	log.info("did *not* find config properties to use JNDI datasource; will use JDBC");
 
             putIfNotPresent(props, "javax.jdo.option.ConnectionDriverName", "org.hsqldb.jdbcDriver");
             putIfNotPresent(props, "javax.jdo.option.ConnectionURL", "jdbc:hsqldb:mem:test");
@@ -190,7 +191,7 @@ implements PersistenceSessionFactory, FixturesInstalledFlag {
         Objects.requireNonNull(applicationComponents.get(),
                 () -> "PersistenceSession5 requires initialization. "+this.hashCode());
         
-        final FixturesInstalledFlag fixturesInstalledFlag = this;
+        final FixturesInstalledStateHolder fixturesInstalledStateHolder = this;
         
         //[ahuber] if stale force recreate
         guardAgainstStaleState();
@@ -200,22 +201,9 @@ implements PersistenceSessionFactory, FixturesInstalledFlag {
 
         return new PersistenceSession5(
                 authenticationSession, persistenceManagerFactory,
-                fixturesInstalledFlag);
+                fixturesInstalledStateHolder);
     }
 
-    private Boolean fixturesInstalled;
-
-    @Programmatic
-    @Override
-    public Boolean isFixturesInstalled() {
-        return fixturesInstalled;
-    }
-
-    @Programmatic
-    @Override
-    public void setFixturesInstalled(final Boolean fixturesInstalled) {
-        this.fixturesInstalled = fixturesInstalled;
-    }
     
     // [ahuber] JRebel support, not tested at all
     private void guardAgainstStaleState() {
@@ -228,6 +216,8 @@ implements PersistenceSessionFactory, FixturesInstalledFlag {
             applicationComponents.clear();
         }
     }
+
+
 
 
 }

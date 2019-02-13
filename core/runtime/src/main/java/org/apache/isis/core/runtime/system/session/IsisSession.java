@@ -126,5 +126,7 @@ public class IsisSession extends ManagedObjectContextBase {
         return getPersistenceSession().getTransactionManager();
     }
 
+	
+
 
 }

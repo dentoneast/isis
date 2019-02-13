@@ -24,15 +24,14 @@ import java.util.List;
 
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 
 public abstract class FixturesInstallerAbstract {
 
     private final FixturesInstallerDelegate delegate;
     protected final IsisConfiguration configuration;
 
-    public FixturesInstallerAbstract(final IsisSessionFactory isisSessionFactory) {
-        delegate = new FixturesInstallerDelegate(isisSessionFactory);
+    public FixturesInstallerAbstract() {
+        delegate = new FixturesInstallerDelegate();
         configuration = IsisContext.getConfiguration();
     }
 

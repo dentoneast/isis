@@ -32,8 +32,9 @@ import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.commons.lang.ObjectExtensions;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,10 +45,8 @@ public class FixturesInstallerDelegate {
 
     // -- Constructor, fields
 
-    private final IsisSessionFactory isisSessionFactory;
-
-    public FixturesInstallerDelegate(final IsisSessionFactory isisSessionFactory) {
-        this.isisSessionFactory = isisSessionFactory;
+    public FixturesInstallerDelegate() {
+        
     }
 
     private final List<Object> fixtures = _Lists.newArrayList();
@@ -74,8 +73,6 @@ public class FixturesInstallerDelegate {
         return Collections.unmodifiableList(fixtures);
     }
 
-
-
     // -- installFixtures
 
     /**
@@ -96,7 +93,7 @@ public class FixturesInstallerDelegate {
             if(fireEvents) {
                 eventBusService.post(new FixturesInstallingEvent(this));
             }
-            installFixtures(Collections.unmodifiableList(fixtures));
+            installFixtures(getFixtures());
         } finally {
             if(fireEvents) {
                 eventBusService.post(new FixturesInstalledEvent(this));
@@ -115,7 +112,7 @@ public class FixturesInstallerDelegate {
     }
 
     private void installFixtureInTransaction(final Object fixture) {
-        getServicesInjector().injectServicesInto(fixture);
+        getServiceInjector().injectServicesInto(fixture);
 
         // now, install the fixture itself
         try {
@@ -136,7 +133,7 @@ public class FixturesInstallerDelegate {
     }
 
     private void installFixture(final Object fixture) {
-        isisSessionFactory.getServiceInjector().injectServicesInto(fixture);
+        getServiceInjector().injectServicesInto(fixture);
 
         if (fixture instanceof InstallableFixture) {
             final InstallableFixture installableFixture = (InstallableFixture) fixture;
@@ -149,27 +146,28 @@ public class FixturesInstallerDelegate {
 
     private boolean shouldInstallFixture(final InstallableFixture installableFixture) {
         final FixtureType fixtureType = installableFixture.getType();
-        if (fixtureType == FixtureType.DOMAIN_OBJECTS) {
-            return !isisSessionFactory.getCurrentSession().getPersistenceSession().isFixturesInstalled();
+        
+        if(fixtureType.isAlwaysInstall()) {
+        	return true;
         }
-
-        // fixtureType is OTHER; always install.
-        return true;
+        
+        //TODO [2033] what, why? only install if already installed?
+        return IsisSession.currentIfAny().getFixturesInstalledState().isInstalled();
     }
 
 
     // -- dependencies (derived)
 
-    private ServiceInjector getServicesInjector() {
-        return isisSessionFactory.getServiceInjector();
+    private ServiceInjector getServiceInjector() {
+        return IsisContext.getServiceInjector();
     }
 
     private EventBusService getEventBusService() {
-        return getServicesInjector().lookupServiceElseFail(EventBusService.class);
+        return IsisContext.getServiceRegistry().lookupServiceElseFail(EventBusService.class);
     }
 
     private PersistenceSession getPersistenceSession() {
-        return isisSessionFactory.getCurrentSession().getPersistenceSession();
+        return IsisSession.currentIfAny().getPersistenceSession();
     }
 
     private IsisTransactionManager getTransactionManager() {

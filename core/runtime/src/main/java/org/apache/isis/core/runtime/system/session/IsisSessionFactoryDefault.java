@@ -137,8 +137,8 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
             // installFixturesIfRequired
             //
             final FixturesInstallerFromConfiguration fixtureInstaller =
-                    new FixturesInstallerFromConfiguration(this);
-            fixtureInstaller.installFixtures();
+                    new FixturesInstallerFromConfiguration();
+            fixtureInstaller.installFixtures(); //TODO [2033] if too early, pass over 'this' ... new FixturesInstallerFromConfiguration(this) 
 
             //
             // translateServicesAndEnumConstants

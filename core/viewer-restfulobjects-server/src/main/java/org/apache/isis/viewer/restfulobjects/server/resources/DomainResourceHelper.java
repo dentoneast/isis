@@ -38,6 +38,7 @@ import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
+import org.apache.isis.core.runtime.persistence.FixturesInstalledState;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.viewer.restfulobjects.applib.JsonRepresentation;
 import org.apache.isis.viewer.restfulobjects.applib.client.RestfulResponse;
@@ -215,6 +216,11 @@ class DomainResourceHelper {
 		@Override
 		public Tuple2<ObjectAdapter, ObjectAction> findHomePageAction() {
 			return rendererContext.findHomePageAction();
+		}
+
+		@Override
+		public FixturesInstalledState getFixturesInstalledState() {
+			return rendererContext.getFixturesInstalledState();
 		}
 
 		

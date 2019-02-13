@@ -38,24 +38,21 @@ import org.apache.isis.core.commons.util.ToString;
 import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.plugins.ioc.RequestContextService;
-import org.apache.isis.core.runtime.persistence.FixturesInstalledFlag;
+import org.apache.isis.core.runtime.persistence.FixturesInstalledStateHolder;
 import org.apache.isis.core.runtime.services.changes.ChangedObjectsServiceInternal;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.PersistenceQueryProcessor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 abstract class PersistenceSessionBase implements PersistenceSession {
-
-    // -- CONSTANTS
-
-    protected static final Logger LOG = LoggerFactory.getLogger(PersistenceSession.class);
 
     // -- FIELDS
 
-    protected final FixturesInstalledFlag fixturesInstalledFlag;
+    protected final FixturesInstalledStateHolder fixturesInstalledStateHolder;
 
     protected final PersistenceQueryFactory persistenceQueryFactory;
     protected final IsisConfiguration configuration;
@@ -109,15 +106,15 @@ abstract class PersistenceSessionBase implements PersistenceSession {
     protected PersistenceSessionBase(
             final AuthenticationSession authenticationSession,
             final PersistenceManagerFactory jdoPersistenceManagerFactory,
-            final FixturesInstalledFlag fixturesInstalledFlag) {
+            final FixturesInstalledStateHolder fixturesInstalledFlag) {
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("creating {}", this);
+        if (log.isDebugEnabled()) {
+        	log.debug("creating {}", this);
         }
 
         this.serviceInjector = IsisContext.getServiceInjector();;
         this.jdoPersistenceManagerFactory = jdoPersistenceManagerFactory;
-        this.fixturesInstalledFlag = fixturesInstalledFlag;
+        this.fixturesInstalledStateHolder = fixturesInstalledFlag;
 
         // injected
         this.configuration = _Config.getConfiguration();
