@@ -35,6 +35,7 @@ import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento_Legacy.
 
 import lombok.val;
 
+//FIXME [2033] move this (including its implementation) to 'runtime'
 public interface ObjectAdapterMemento extends Serializable {
 
 	String asString();
