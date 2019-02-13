@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.runtime.persistence.query.PersistenceQueryFindAllInstances;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession4;
+import org.apache.isis.objectstore.jdo.persistence.PersistenceSession4;
 
 public class PersistenceQueryFindAllInstancesProcessor extends PersistenceQueryProcessorAbstract<PersistenceQueryFindAllInstances> {
 

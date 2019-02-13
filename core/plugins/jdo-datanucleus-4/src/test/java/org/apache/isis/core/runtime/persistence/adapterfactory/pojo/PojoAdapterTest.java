@@ -35,10 +35,10 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.persistence.adapter.PojoAdapter;
 import org.apache.isis.core.runtime.persistence.objectstore.transaction.PojoAdapterBuilder;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession4;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2.Mode;
+import org.apache.isis.objectstore.jdo.persistence.PersistenceSession4;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
