@@ -218,15 +218,7 @@ public class Memento implements Serializable {
     // ///////////////////////////////////////////////////////////////
 
     protected SpecificationLoader getSpecificationLoader() {
-        return getIsisSessionFactory().getSpecificationLoader();
-    }
-
-    protected PersistenceSession getPersistenceSession() {
-        return getIsisSessionFactory().getCurrentSession().getPersistenceSession();
-    }
-
-    IsisSessionFactory getIsisSessionFactory() {
-        return IsisContext.getSessionFactory();
+        return IsisContext.getSpecificationLoader();
     }
 
 }

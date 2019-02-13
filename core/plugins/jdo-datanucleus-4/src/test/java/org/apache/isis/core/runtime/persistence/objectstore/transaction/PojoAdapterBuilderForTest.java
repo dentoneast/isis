@@ -31,14 +31,10 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.persistence.adapter.PojoAdapter;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
-import org.apache.isis.objectstore.jdo.persistence.PersistenceSession5;
 
-@Deprecated //TODO [2033] only used by tests, move to test scope
-public class PojoAdapterBuilder {
+public class PojoAdapterBuilderForTest {
 
-    private PersistenceSession5 persistenceSession;
-
-    private PojoAdapterBuilder(){
+    private PojoAdapterBuilderForTest(){
     }
     
     private Object pojo = new Object();
@@ -106,29 +102,29 @@ public class PojoAdapterBuilder {
         abstract Oid oidFor(RootOid rootOid, ObjectSpecId objectSpecId, String supplementalId);
     }
 
-    public static PojoAdapterBuilder create() {
-        return new PojoAdapterBuilder();
+    public static PojoAdapterBuilderForTest create() {
+        return new PojoAdapterBuilderForTest();
     }
 
-    public PojoAdapterBuilder withIdentifier(String identifier) {
+    public PojoAdapterBuilderForTest withIdentifier(String identifier) {
         this.identifier = identifier;
         return this;
     }
     
-    public PojoAdapterBuilder withObjectType(String objectType) {
+    public PojoAdapterBuilderForTest withObjectType(String objectType) {
         this.objectSpecId = ObjectSpecId.of(objectType);
         return this;
     }
     
-    public PojoAdapterBuilder withPojo(Object pojo) {
+    public PojoAdapterBuilderForTest withPojo(Object pojo) {
         this.pojo = pojo;
         return this;
     }
 
     //test only
-    public PojoAdapterBuilder withOid(String oidAndTitle) {
-        final Iterator<String> iterator = _Strings.splitThenStream(oidAndTitle, "|").iterator(); 
-                
+    PojoAdapterBuilderForTest withOid(String oidAndTitle) {
+        final Iterator<String> iterator = _Strings.splitThenStream(oidAndTitle, "|").iterator();
+        
         if(!iterator.hasNext()) { return this; }
         withObjectType(iterator.next());
         if(!iterator.hasNext()) { return this; }
@@ -141,7 +137,7 @@ public class PojoAdapterBuilder {
     /**
      * A Persistence of VALUE implies a Type of VALUE also
      */
-    public PojoAdapterBuilder with(Persistence persistence) {
+    public PojoAdapterBuilderForTest with(Persistence persistence) {
         this.persistence = persistence;
         if(persistence == Persistence.VALUE) {
             this.type = Type.VALUE;
@@ -152,7 +148,7 @@ public class PojoAdapterBuilder {
     /**
      * A Type of VALUE implies a Persistence of VALUE also.
      */
-    public PojoAdapterBuilder with(Type type) {
+    public PojoAdapterBuilderForTest with(Type type) {
         this.type = type;
         if(type == Type.VALUE) {
             this.persistence = Persistence.VALUE;
@@ -160,32 +156,27 @@ public class PojoAdapterBuilder {
         return this;
     }
     
-    public PojoAdapterBuilder with(ObjectSpecification objectSpec) {
+    public PojoAdapterBuilderForTest with(ObjectSpecification objectSpec) {
         this.objectSpec = objectSpec;
         return this;
     }
 
-    public PojoAdapterBuilder with(PersistenceSession5 persistenceSession) {
-        this.persistenceSession = persistenceSession;
-        return this;
-    }
-
-    public PojoAdapterBuilder with(SpecificationLoader specificationLoader) {
+    public PojoAdapterBuilderForTest with(SpecificationLoader specificationLoader) {
         this.specificationLoader = specificationLoader;
         return this;
     }
     
-    public PojoAdapterBuilder with(AuthenticationSession authenticationSession) {
+    public PojoAdapterBuilderForTest with(AuthenticationSession authenticationSession) {
         this.authenticationSession = authenticationSession;
         return this;
     }
     
-    public PojoAdapterBuilder with(Version version) {
+    public PojoAdapterBuilderForTest with(Version version) {
         this.version = version;
         return this;
     }
 
-    public PojoAdapterBuilder withTitleString(String titleString) {
+    public PojoAdapterBuilderForTest withTitleString(String titleString) {
         this.titleString = titleString;
         return this;
     }
@@ -194,7 +185,7 @@ public class PojoAdapterBuilder {
         final RootOid rootOid = persistence.createOid(objectSpecId, identifier);
         final Oid oid = type.oidFor(rootOid, objectSpecId, aggregatedId);
         final PojoAdapter pojoAdapter = PojoAdapter.forTest(pojo, oid, authenticationSession,
-                specificationLoader, persistenceSession);
+                specificationLoader);
         if(persistence == Persistence.PERSISTENT && version != null) {
             pojoAdapter.setVersion(version);
         }

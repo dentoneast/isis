@@ -37,7 +37,6 @@ import org.apache.isis.core.metamodel.adapter.version.Version;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.managers.UniversalObjectManager;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.slf4j.Logger;
@@ -79,17 +78,15 @@ public final class PojoAdapter implements ObjectAdapter {
     	
     	val authenticationSession = isisSession.getAuthenticationSession(); 
     	val specificationLoader = isisSession.getSpecificationLoader();
-    	val persistenceSession = isisSession.getPersistenceSession();
     	
-        return new PojoAdapter(pojo, oid, authenticationSession, specificationLoader, persistenceSession);
+        return new PojoAdapter(pojo, oid, authenticationSession, specificationLoader);
     }
 
     private PojoAdapter(
             final Object pojo,
             final Oid oid,
             final AuthenticationSession authenticationSession,
-            final SpecificationLoader specificationLoader,
-            final PersistenceSession persistenceSession) {
+            final SpecificationLoader specificationLoader) {
     	
     	Objects.requireNonNull(pojo);
 
@@ -289,10 +286,9 @@ public final class PojoAdapter implements ObjectAdapter {
 	public static PojoAdapter forTest(final Object pojo,
             final Oid oid,
             final AuthenticationSession authenticationSession,
-            final SpecificationLoader specificationLoader,
-            final PersistenceSession persistenceSession) {
+            final SpecificationLoader specificationLoader) {
 		
-		return new PojoAdapter(pojo, oid, authenticationSession, specificationLoader, persistenceSession);
+		return new PojoAdapter(pojo, oid, authenticationSession, specificationLoader);
 	}
 
 

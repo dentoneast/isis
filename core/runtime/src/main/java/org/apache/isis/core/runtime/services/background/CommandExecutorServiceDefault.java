@@ -369,7 +369,7 @@ public class CommandExecutorServiceDefault implements CommandExecutorService {
     }
 
     protected SpecificationLoader getSpecificationLoader() {
-        return getIsisSessionFactory().getSpecificationLoader();
+        return IsisContext.getSpecificationLoader();
     }
 
     // //////////////////////////////////////

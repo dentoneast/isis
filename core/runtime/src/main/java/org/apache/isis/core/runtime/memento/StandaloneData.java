@@ -29,6 +29,7 @@ import org.apache.isis.core.commons.encoding.DataOutputExtended;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.facets.object.encodeable.EncodableFacet;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 
 public class StandaloneData extends Data {
 
@@ -117,9 +118,9 @@ public class StandaloneData extends Data {
 
     public ObjectAdapter getAdapter() {
         if (objectAsSerializable != null) {
-            return getPersistenceSession().adapterFor(objectAsSerializable);
+            return IsisContext.pojoToAdapter().apply(objectAsSerializable);
         } else {
-            final ObjectSpecification spec = getIsisSessionFactory().getSpecificationLoader().loadSpecification(getClassName());
+            final ObjectSpecification spec = getSpecificationLoader().loadSpecification(getClassName());
             final EncodableFacet encodeableFacet = spec.getFacet(EncodableFacet.class);
             return encodeableFacet.fromEncodedString(objectAsEncodedString);
         }

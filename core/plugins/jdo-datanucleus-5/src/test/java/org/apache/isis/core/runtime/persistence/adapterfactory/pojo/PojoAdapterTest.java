@@ -34,7 +34,7 @@ import org.apache.isis.core.metamodel.adapter.version.Version;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.persistence.adapter.PojoAdapter;
-import org.apache.isis.core.runtime.persistence.objectstore.transaction.PojoAdapterBuilder;
+import org.apache.isis.core.runtime.persistence.objectstore.transaction.PojoAdapterBuilderForTest;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2.Mode;
@@ -70,8 +70,7 @@ public class PojoAdapterTest {
                 domainObject, 
                 Factory.persistentOf(ObjectSpecId.of("CUS"), "1"),
                 mockAuthenticationSession,
-                mockSpecificationLoader, 
-                mockPersistenceSession);
+                mockSpecificationLoader);
         
         adapter.setVersion(mockVersion);
         
@@ -128,7 +127,7 @@ public class PojoAdapterTest {
     @Test(expected=ConcurrencyException.class)
     public void checkLock_whenVersionsDifferent() throws Exception {
 
-        adapter = PojoAdapterBuilder.create()
+        adapter = PojoAdapterBuilderForTest.create()
                 .with(mockSpecificationLoader)
                 .withTitleString("some pojo")
                 .with(mockVersion)

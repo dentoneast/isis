@@ -56,8 +56,8 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.specimpl.ObjectMemberAbstract;
 import org.apache.isis.core.runtime.persistence.adapter.PojoAdapter;
-import org.apache.isis.core.runtime.persistence.objectstore.transaction.PojoAdapterBuilder;
-import org.apache.isis.core.runtime.persistence.objectstore.transaction.PojoAdapterBuilder.Persistence;
+import org.apache.isis.core.runtime.persistence.objectstore.transaction.PojoAdapterBuilderForTest;
+import org.apache.isis.core.runtime.persistence.objectstore.transaction.PojoAdapterBuilderForTest.Persistence;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
@@ -126,11 +126,10 @@ public class ObjectMemberAbstractTest {
                 mockPersistable,
                 Factory.persistentOf(ObjectSpecId.of("CUS"), "1"),
                 mockAuthenticationSession,
-                mockSpecificationLoader,
-                null);
+                mockSpecificationLoader);
 
 
-        transientAdapter = PojoAdapterBuilder.create()
+        transientAdapter = PojoAdapterBuilderForTest.create()
                 .with(mockSpecificationLoader)
                 .with(Persistence.TRANSIENT)
                 .withPojo(mockPersistable)
