@@ -84,6 +84,8 @@ public final class AppConfigLocator {
     		"org.apache.isis.applib.services.wrapper.WrapperFactory",
     		"org.apache.isis.core.metamodel.services.bookmarks.BookmarkServiceInternalDefault",
     		
+    		"org.apache.isis.jdo.datanucleus.persistence.IsisLegacyJdoContextHandler",
+    		
     		"org.apache.isis.applib.services.homepage.HomePageProviderService"
     		
     		

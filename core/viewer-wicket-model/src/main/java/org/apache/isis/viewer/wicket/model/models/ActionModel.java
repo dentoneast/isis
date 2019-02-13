@@ -459,20 +459,25 @@ public class ActionModel extends BookmarkableModel<ObjectAdapter> implements For
 
         // if this action is a mixin, then it will fill in the details automatically.
         final ObjectAdapter mixedInAdapter = null;
+        
+        //FIXME [2033] creates wrong adapter type: 'attached' vs 'detached'
         final ObjectAdapter resultAdapter =
                 action.executeWithRuleChecking(
                         targetAdapter, mixedInAdapter, arguments,
                         InteractionInitiatedBy.USER,
                         WHERE_FOR_ACTION_INVOCATION);
 
-        final Stream<RoutingService> routingServices = getServicesInjector().streamServices(RoutingService.class);
-        final Object result = resultAdapter != null ? resultAdapter.getPojo() : null;
+        
+        PersistableTypeGuard.post(resultAdapter);
+        
+        final Stream<RoutingService> routingServices = getServiceRegistry().streamServices(RoutingService.class);
+        final Object resultPojo = resultAdapter != null ? resultAdapter.getPojo() : null;
         
         val pojoToAdapter = IsisContext.pojoToAdapter();
         
         return routingServices
-            .filter(routingService->routingService.canRoute(result))
-            .map(routingService->routingService.route(result))
+            .filter(routingService->routingService.canRoute(resultPojo))
+            .map(routingService->routingService.route(resultPojo))
             .filter(_NullSafe::isPresent)
             .map(pojoToAdapter)
             .filter(_NullSafe::isPresent)

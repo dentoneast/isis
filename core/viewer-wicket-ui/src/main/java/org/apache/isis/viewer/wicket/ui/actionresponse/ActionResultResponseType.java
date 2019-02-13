@@ -32,6 +32,7 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.viewer.wicket.model.models.ActionModel;
 import org.apache.isis.viewer.wicket.model.models.EntityCollectionModel;
+import org.apache.isis.viewer.wicket.model.models.PersistableTypeGuard;
 import org.apache.isis.viewer.wicket.model.models.ValueModel;
 import org.apache.isis.viewer.wicket.model.models.VoidModel;
 import org.apache.isis.viewer.wicket.ui.pages.entity.EntityPage;
@@ -47,7 +48,7 @@ public enum ActionResultResponseType {
     OBJECT {
         @Override
         public ActionResultResponse interpretResult(final ActionModel model, final AjaxRequestTarget target, final ObjectAdapter resultAdapter) {
-            final ObjectAdapter actualAdapter = determineActualAdapter(resultAdapter);
+            final ObjectAdapter actualAdapter = determineActualAdapter(resultAdapter); // intercepts collections
             return toEntityPage(model, actualAdapter, null);
         }
 
@@ -130,7 +131,7 @@ public enum ActionResultResponseType {
 
     private static ObjectAdapter determineActualAdapter(
             final ObjectAdapter resultAdapter) {
-    	
+
         if (resultAdapter.getSpecification().isNotCollection()) {
             return resultAdapter;
         } else {
@@ -139,11 +140,19 @@ public enum ActionResultResponseType {
             final Object pojo = pojoList.get(0);
             
             val pojoToAdapter = IsisContext.pojoToAdapter();
-            return pojoToAdapter.apply(pojo);
+            val actualAdapter = pojoToAdapter.apply(pojo);
+            
+            return actualAdapter;
         }
     }
 
-    private static ActionResultResponse toEntityPage(final ActionModel model, final ObjectAdapter actualAdapter, final ConcurrencyException exIfAny) {
+    private static ActionResultResponse toEntityPage(
+    		final ActionModel model, 
+    		final ObjectAdapter actualAdapter, 
+    		final ConcurrencyException exIfAny) {
+    	
+    	PersistableTypeGuard.post(actualAdapter);
+    	
         // this will not preserve the URL (because pageParameters are not copied over)
         // but trying to preserve them seems to cause the 302 redirect to be swallowed somehow
         final EntityPage entityPage =

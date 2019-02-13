@@ -19,7 +19,7 @@
 
 package org.apache.isis.viewer.wicket.model.models;
 
-import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSession;
@@ -58,9 +58,8 @@ public abstract class ModelAbstract<T> extends LoadableDetachableModel<T> {
         return IsisContext.getSpecificationLoader();
     }
     
-    protected ServiceInjector getServicesInjector() {
-        return IsisContext.getServiceInjector();
+    protected ServiceRegistry getServiceRegistry() {
+        return IsisContext.getServiceRegistry();
     }
-
 
 }

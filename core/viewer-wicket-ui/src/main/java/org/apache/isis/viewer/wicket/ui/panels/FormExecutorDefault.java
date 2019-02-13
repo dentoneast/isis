@@ -53,6 +53,7 @@ import org.apache.isis.viewer.wicket.model.models.EntityModel;
 import org.apache.isis.viewer.wicket.model.models.FormExecutor;
 import org.apache.isis.viewer.wicket.model.models.ParentEntityModelProvider;
 import org.apache.isis.viewer.wicket.model.models.ScalarModel;
+import org.apache.isis.viewer.wicket.model.models.PersistableTypeGuard;
 import org.apache.isis.viewer.wicket.ui.components.scalars.isisapplib.IsisBlobOrClobPanelAbstract;
 import org.apache.isis.viewer.wicket.ui.errors.JGrowlUtil;
 import org.apache.isis.viewer.wicket.ui.pages.entity.EntityPage;
@@ -146,6 +147,7 @@ implements FormExecutor {
             // (The DB exception might actually be thrown by the flush() that follows.
             //
             final ObjectAdapter resultAdapter = obtainResultAdapter();
+
             // flush any queued changes; any concurrency or violation exceptions will actually be thrown here
             IsisRequestCycle.onResultAdapterObtained();
 

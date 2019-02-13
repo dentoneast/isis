@@ -26,6 +26,7 @@ import org.apache.isis.applib.annotation.BookmarkPolicy;
 import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.layout.component.CollectionLayoutData;
 import org.apache.isis.commons.internal.collections._Maps;
+import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
@@ -36,6 +37,7 @@ import org.apache.isis.core.metamodel.facets.object.bookmarkpolicy.BookmarkPolic
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.viewer.wicket.model.common.PageParametersUtils;
 import org.apache.isis.viewer.wicket.model.hints.UiHintContainer;
 import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
@@ -45,6 +47,8 @@ import org.apache.isis.viewer.wicket.model.util.ComponentHintKey;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
+
+import lombok.val;
 
 /**
  * Backing model to represent a {@link ObjectAdapter}.
@@ -324,8 +328,17 @@ implements ObjectAdapterModel, UiHintContainer {
      * when rendering after post-and-redirect.
      * @return
      */
-    @Deprecated //TODO [2033] remove
+    @Deprecated //TODO [2033] remove ?
     public ObjectAdapter load(ConcurrencyChecking concurrencyChecking) {
+    	
+    	if(concurrencyChecking==ConcurrencyChecking.CHECK && adapterMemento!=null) {
+    		val spec = IsisContext.getSpecificationLoader().lookupBySpecId(adapterMemento.getObjectSpecId());
+    		if(spec.isPersistenceCapable()) {
+        		val info = "adapterMemento '"+adapterMemento+"'";
+        		_Probe.warnNotImplementedYet("[2033] ConcurrencyChecking no longer supported!? "+info);    			
+    		}
+    	}
+    	
         return load();
     }
 
@@ -342,6 +355,9 @@ implements ObjectAdapterModel, UiHintContainer {
         if (adapterMemento == null) {
             return null;
         }
+        
+        PersistableTypeGuard.post(adapterMemento);
+        
         final ObjectAdapter objectAdapter = adapterMemento.getObjectAdapter();
         return objectAdapter;
     }
@@ -351,6 +367,7 @@ implements ObjectAdapterModel, UiHintContainer {
     public void setObject(final ObjectAdapter adapter) {
         super.setObject(adapter);
         adapterMemento = ObjectAdapterMemento.ofAdapter(adapter);
+        PersistableTypeGuard.post(adapterMemento);
     }
 
     public void setObjectMemento(final ObjectAdapterMemento memento) {
@@ -359,6 +376,7 @@ implements ObjectAdapterModel, UiHintContainer {
                 ? memento.getObjectAdapter()
                         : null);
         adapterMemento = memento;
+        PersistableTypeGuard.post(adapterMemento);
     }
 
 
