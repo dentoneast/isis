@@ -17,6 +17,7 @@ import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.commons.internal.uri._URI.ContainerType;
 import org.apache.isis.commons.internal.uri._URI.ContextType;
 import org.apache.isis.core.commons.exceptions.IsisException;
+import org.apache.isis.core.metamodel.facets.actions.action.invocation.PersistableTypeGuard;
 import org.apache.isis.core.metamodel.facets.object.viewmodel.ViewModelFacet;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ManagedObject.SimpleManagedObject;
@@ -96,6 +97,9 @@ public class ViewModelContextManager implements ContextHandler {
 
 	@Override
 	public boolean recognizes(ObjectSpecification spec) {
+		
+		PersistableTypeGuard.instate(spec);
+		
 		return spec.isViewModel();
 	}
 

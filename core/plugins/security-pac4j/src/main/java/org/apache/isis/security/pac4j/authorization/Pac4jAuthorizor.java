@@ -19,46 +19,49 @@
 package org.apache.isis.security.pac4j.authorization;
 
 import org.apache.isis.applib.Identifier;
+import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.core.security.authorization.standard.Authorizor;
 
 public class Pac4jAuthorizor implements Authorizor {
 
+	private final static _Probe probe = _Probe.unlimited().label("Pac4jAuthorizor");
+	
     @Override
     public void init() {
         // TODO Auto-generated method stub
-        System.out.println("!!! Pac4jAuthorizor.init");
+    	probe.println("init");
     }
 
     @Override
     public void shutdown() {
         // TODO Auto-generated method stub
-        System.out.println("!!! Pac4jAuthorizor.shutdown");
+    	probe.println("shutdown");
     }
 
     @Override
     public boolean isVisibleInAnyRole(Identifier identifier) {
-        System.out.println("!!! Pac4jAuthorizor.isVisibleInAnyRole identifier="+identifier);
+    	probe.println("isVisibleInAnyRole identifier="+identifier);
         // TODO Auto-generated method stub
         return true;
     }
 
     @Override
     public boolean isUsableInAnyRole(Identifier identifier) {
-        System.out.println("!!! Pac4jAuthorizor.isUsableInAnyRole identifier="+identifier);
+    	probe.println("isUsableInAnyRole identifier="+identifier);
         // TODO Auto-generated method stub
         return true;
     }
 
     @Override
     public boolean isVisibleInRole(String role, Identifier identifier) {
-        System.out.println("!!! Pac4jAuthorizor.isVisibleInRole role="+role+", identifier="+identifier);
+    	probe.println("isVisibleInRole role="+role+", identifier="+identifier);
         // TODO Auto-generated method stub
         return true;
     }
 
     @Override
     public boolean isUsableInRole(String role, Identifier identifier) {
-        System.out.println("!!! Pac4jAuthorizor.isUsableInRole role="+role+", identifier="+identifier);
+    	probe.println("isUsableInRole role="+role+", identifier="+identifier);
         // TODO Auto-generated method stub
         return true;
     }

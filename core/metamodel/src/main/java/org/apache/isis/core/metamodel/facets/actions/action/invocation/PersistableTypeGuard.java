@@ -1,7 +1,9 @@
 package org.apache.isis.core.metamodel.facets.actions.action.invocation;
 
+import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 
 @Deprecated //TODO [2033] debug only
 public class PersistableTypeGuard {
@@ -10,21 +12,33 @@ public class PersistableTypeGuard {
 			"SimpleObject",
 			"Customer"
 	};
+	
+	private final static _Probe probe = _Probe.unlimited().label("PersistableTypeGuard"); 
 
-	public static void post(ObjectAdapter actualAdapter) {
-		
-		String debug = "" + actualAdapter.getOid();
-		
-		if(isPersistable(debug)) {
-            System.out.println("!!! [ObjectAdapter] "+debug);
-            if(debug.contains("!")) {
-                throw _Exceptions.unexpectedCodeReach();
-            }            
-        }
-		
+	public static void instate(ObjectAdapter actualAdapter) {
+		String magicString = "" + actualAdapter.getOid();
+		instate(magicString, probe, "ObjectAdapter");
 	}
 	
-	private static boolean isPersistable(String input) {
+	public static void instate(ObjectSpecification spec) {
+		String magicString = (spec.isViewModel() ? "!" : "") + spec.getSpecId().asString();
+		instate(magicString, probe, "ObjectSpecification");
+	}
+	
+	// -- HELPER
+	
+	protected static void instate(String magicString, _Probe probe, String type) {
+		
+		if(isPersistable(magicString)) {
+            if(magicString.contains("!")) {
+    			probe.println("Intercepted by guard [%s] '%s'", type, magicString);
+                throw _Exceptions.unexpectedCodeReach();
+            }            
+            probe.println("[%s] '%s'", type, magicString);
+        }
+	}
+	
+	protected static boolean isPersistable(String input) {
 		for(String x : persistableObjects) {
 			if(input.contains("."+x+":")) {
 				return true;

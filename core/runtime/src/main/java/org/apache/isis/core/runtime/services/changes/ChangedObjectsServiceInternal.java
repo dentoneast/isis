@@ -215,7 +215,7 @@ public class ChangedObjectsServiceInternal implements WithTransactionScope {
 
                     final ObjectAdapter adapter = aap.getAdapter();
                     if(adapter.isDestroyed()) {
-                        // don't touch the object!!!
+                        // don't touch the object!
                         // JDO, for example, will complain otherwise...
                         papv.setPost(IsisTransaction.Placeholder.DELETED);
                     } else {

@@ -32,7 +32,8 @@ import lombok.val;
 @Singleton
 public class CDIContextManager implements ContextHandler {
 
-	private final static _Probe probe = _Probe.unlimited().label("CDIContextManager");
+	private final static _Probe probe = _Probe.unlimited().label("CDIContextManager")
+			.silence();
 	
 	@Inject SpecificationLoader specLoader;
 	@Inject ServiceRegistry serviceRegistry;

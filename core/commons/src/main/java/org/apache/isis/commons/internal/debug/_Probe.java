@@ -58,6 +58,7 @@ public class _Probe {
     private String label = "Probe";
     private String indentLiteral = "  ";
     private String emphasisFormat = "__PROBE__ %s";
+    private boolean silenced = false;
     
     private final LongAdder counter = new LongAdder();
     
@@ -110,6 +111,11 @@ public class _Probe {
         return this;
     }
     
+    public _Probe silence() {
+    	this.silenced = true;
+		return this;
+	}
+    
     // -- INDENTING
     
     public int currentIndent = 0;
@@ -119,7 +125,9 @@ public class _Probe {
     public void println(int indent, CharSequence chars) {
         if(counter.longValue()<maxCalls) {
             counter.increment();
-            print_line(indent, chars);
+            if(!silenced) {
+            	print_line(indent, chars);
+            }
             return;
         }
         
@@ -181,6 +189,8 @@ public class _Probe {
         final String message = "["+label+" "+counterValue+"] "+chars; 
         out.println(String.format(emphasisFormat, message));
     }
+
+	
 
 	
 

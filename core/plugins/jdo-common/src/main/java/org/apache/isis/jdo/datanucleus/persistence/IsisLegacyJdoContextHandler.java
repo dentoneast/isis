@@ -56,8 +56,16 @@ public class IsisLegacyJdoContextHandler implements ContextHandler {
 
 	@Override
 	public URI uriOf(ManagedObject managedObject) {
+		
+		val pojo = managedObject.getPojo();
+		val spec = managedObject.getSpecification();
+		
     	try {
-			return identifierForPersistable(managedObject.getPojo(), managedObject.getSpecification());
+			
+    		val objectUri = identifierForPersistable(pojo, spec);
+			
+    		return objectUri;
+			
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
 			throw _Exceptions.unrecoverable(e);
@@ -67,29 +75,21 @@ public class IsisLegacyJdoContextHandler implements ContextHandler {
 	@Override
 	public Instance<ManagedObject> resolve(ObjectSpecId specId, URI objectUri) {
 		
-//		val spec = specLoader.lookupBySpecId(specId);
-//		val id = objectUri.getQuery();
-//		
-//		val rootOid = Oid.Factory.persistentOf(specId, id);
-//		val persistenceSession = IsisSession.currentIfAny().getPersistenceSession();
-//		
-//		probe.println("resolve '%s' rootOid.id='%s'", objectUri, rootOid.getIdentifier());
-//		
-//		val pojo = persistenceSession.fetchPersistentPojo(rootOid);
-//		
-//		val managedObject = SimpleManagedObject.of(spec, pojo);
-//		
-//		return _CDI.InstanceFactory.singleton(managedObject);
-		
 		val spec = specLoader.lookupBySpecId(specId);
 		val id = objectUri.getQuery();
 		
-		val legacyOid = Oid.Factory.persistentOf(specId, id);
+		val rootOid = Oid.Factory.persistentOf(specId, id);
+		
+		probe.println("resolve '%s' rootOid.id='%s'", objectUri, rootOid.getIdentifier());
+
 		val persistenceSession = IsisSession.currentIfAny().getPersistenceSession();
+		val pojo = persistenceSession.fetchPersistentPojo(rootOid);
+
+//TODO [2033] remove, this was the old way of doing it ...		
+//		val objectAdapter = persistenceSession.adapterFor(rootOid);
+//		val pojo = objectAdapter.getPojo();
 		
-		val objectAdapter = persistenceSession.adapterFor(legacyOid);
-		
-		val managedObject = SimpleManagedObject.of(spec, objectAdapter.getPojo());
+		val managedObject = SimpleManagedObject.of(spec, pojo);
 		
 		return _CDI.InstanceFactory.singleton(managedObject);
 		

@@ -148,8 +148,7 @@ implements ImperativeFacet {
                 getPersistenceSessionServiceInternal().executeWithinTransaction(()->
                     doInvoke(owningAction, targetAdapter, mixedInAdapter, argumentAdapters, interactionInitiatedBy));
         
-        System.out.println("!!!!!!!!!!! WTF");
-        PersistableTypeGuard.post(executionResult);
+        PersistableTypeGuard.instate(executionResult);
         
         return executionResult;
     }

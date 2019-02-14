@@ -32,7 +32,7 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.viewer.wicket.model.models.ActionModel;
 import org.apache.isis.viewer.wicket.model.models.EntityCollectionModel;
-import org.apache.isis.viewer.wicket.model.models.PersistableTypeGuard;
+import org.apache.isis.viewer.wicket.model.models.PersistableTypeGuard2;
 import org.apache.isis.viewer.wicket.model.models.ValueModel;
 import org.apache.isis.viewer.wicket.model.models.VoidModel;
 import org.apache.isis.viewer.wicket.ui.pages.entity.EntityPage;
@@ -151,7 +151,7 @@ public enum ActionResultResponseType {
     		final ObjectAdapter actualAdapter, 
     		final ConcurrencyException exIfAny) {
     	
-    	PersistableTypeGuard.post(actualAdapter);
+    	PersistableTypeGuard2.instate(actualAdapter);
     	
         // this will not preserve the URL (because pageParameters are not copied over)
         // but trying to preserve them seems to cause the 302 redirect to be swallowed somehow

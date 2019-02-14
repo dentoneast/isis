@@ -460,7 +460,7 @@ public class ActionModel extends BookmarkableModel<ObjectAdapter> implements For
         // if this action is a mixin, then it will fill in the details automatically.
         final ObjectAdapter mixedInAdapter = null;
         
-        //FIXME [2033] creates wrong adapter type: 'attached' vs 'detached'
+        //FIXME [2033] not sure ... creates wrong adapter type: 'attached' vs 'detached'
         final ObjectAdapter resultAdapter =
                 action.executeWithRuleChecking(
                         targetAdapter, mixedInAdapter, arguments,
@@ -468,7 +468,7 @@ public class ActionModel extends BookmarkableModel<ObjectAdapter> implements For
                         WHERE_FOR_ACTION_INVOCATION);
 
         
-        PersistableTypeGuard.post(resultAdapter);
+        PersistableTypeGuard2.instate(resultAdapter);
         
         final Stream<RoutingService> routingServices = getServiceRegistry().streamServices(RoutingService.class);
         final Object resultPojo = resultAdapter != null ? resultAdapter.getPojo() : null;

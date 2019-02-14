@@ -356,7 +356,7 @@ implements ObjectAdapterModel, UiHintContainer {
             return null;
         }
         
-        PersistableTypeGuard.post(adapterMemento);
+        PersistableTypeGuard2.instate(adapterMemento);
         
         final ObjectAdapter objectAdapter = adapterMemento.getObjectAdapter();
         return objectAdapter;
@@ -367,7 +367,7 @@ implements ObjectAdapterModel, UiHintContainer {
     public void setObject(final ObjectAdapter adapter) {
         super.setObject(adapter);
         adapterMemento = ObjectAdapterMemento.ofAdapter(adapter);
-        PersistableTypeGuard.post(adapterMemento);
+        PersistableTypeGuard2.instate(adapterMemento);
     }
 
     public void setObjectMemento(final ObjectAdapterMemento memento) {
@@ -376,7 +376,7 @@ implements ObjectAdapterModel, UiHintContainer {
                 ? memento.getObjectAdapter()
                         : null);
         adapterMemento = memento;
-        PersistableTypeGuard.post(adapterMemento);
+        PersistableTypeGuard2.instate(adapterMemento);
     }
 
 
