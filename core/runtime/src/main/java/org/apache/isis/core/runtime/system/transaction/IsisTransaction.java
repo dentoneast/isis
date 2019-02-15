@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.WithTransactionScope;
-import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.xactn.Transaction;
 import org.apache.isis.applib.services.xactn.TransactionState;
 import org.apache.isis.commons.internal.collections._Lists;
@@ -177,22 +177,21 @@ public class IsisTransaction implements TransactionScopedComponent, Transaction 
     public IsisTransaction(
             final UUID interactionId,
             final int sequence,
-            /*final AuthenticationSession authenticationSession,*/
-            final ServiceInjector servicesInjector) {
+            final ServiceRegistry serviceRegistry) {
 
         this.interactionId = interactionId;
         this.sequence = sequence;
         //        this.authenticationSession = authenticationSession;
 
-        final PersistenceSessionServiceInternalDefault persistenceSessionService = servicesInjector
+        final PersistenceSessionServiceInternalDefault persistenceSessionService = serviceRegistry
                 .lookupServiceElseFail(PersistenceSessionServiceInternalDefault.class);
         this.transactionManager = persistenceSessionService.getTransactionManager();
 
         //        this.messageBroker = authenticationSession.getMessageBroker();
-        this.publishingServiceInternal = servicesInjector.lookupServiceElseFail(PublishingServiceInternal.class);
-        this.auditingServiceInternal = servicesInjector.lookupServiceElseFail(AuditingServiceInternal.class);
+        this.publishingServiceInternal = serviceRegistry.lookupServiceElseFail(PublishingServiceInternal.class);
+        this.auditingServiceInternal = serviceRegistry.lookupServiceElseFail(AuditingServiceInternal.class);
 
-        withTransactionScopes = servicesInjector.streamServices(WithTransactionScope.class)
+        withTransactionScopes = serviceRegistry.streamServices(WithTransactionScope.class)
                 .collect(Collectors.toList());
 
         this.state = State.IN_PROGRESS;

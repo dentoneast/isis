@@ -29,16 +29,17 @@ import org.apache.isis.applib.services.xactn.Transaction;
 import org.apache.isis.applib.services.xactn.TransactionService;
 import org.apache.isis.applib.services.xactn.TransactionState;
 import org.apache.isis.core.commons.exceptions.IsisException;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
+import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.runtime.system.transaction.IsisTransaction;
+import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 
 @Singleton
 public class TransactionServiceDefault implements TransactionService {
 
-
     @Override
     public void flushTransaction() {
-        persistenceSessionServiceInternal.flush();
+    	isisTransactionManager().flushTransaction();
     }
 
     @Override
@@ -63,14 +64,14 @@ public class TransactionServiceDefault implements TransactionService {
         case NONE:
             break;
         case IN_PROGRESS:
-            persistenceSessionServiceInternal.commit();
+        	isisTransactionManager().endTransaction();
             break;
         case MUST_ABORT:
             switch (policy) {
             case UNLESS_MARKED_FOR_ABORT:
                 throw new IsisException("Transaction is marked to abort");
             case ALWAYS:
-                persistenceSessionServiceInternal.abortTransaction();
+            	isisTransactionManager().abortTransaction();
                 final Transaction currentTransaction = currentTransaction();
                 if(currentTransaction instanceof IsisTransaction) {
                     ((IsisTransaction)currentTransaction).getThenClearAbortCause();
@@ -84,25 +85,35 @@ public class TransactionServiceDefault implements TransactionService {
             break;
         }
 
-        persistenceSessionServiceInternal.beginTran(commandIfAny);
+        isisTransactionManager().startTransaction(commandIfAny);
     }
 
     @Override
     public Transaction currentTransaction() {
-        return persistenceSessionServiceInternal.currentTransaction();
+        return isisTransactionManager().getCurrentTransaction();
     }
 
     @Override
     public CountDownLatch currentTransactionLatch() {
-        return persistenceSessionServiceInternal.currentTransactionLatch();
+    	IsisTransaction transaction = isisTransactionManager().getCurrentTransaction();
+        return transaction==null ? new CountDownLatch(0) : transaction.countDownLatch();
     }
 
     @Override
     public TransactionState getTransactionState() {
-        return persistenceSessionServiceInternal.getTransactionState();
+        final IsisTransaction transaction = isisTransactionManager().getCurrentTransaction();
+        if (transaction == null) {
+            return TransactionState.NONE;
+        }
+        IsisTransaction.State state = transaction.getState();
+        return state.getTransactionState();
     }
 
-    @Inject PersistenceSessionServiceInternal persistenceSessionServiceInternal;
+    @Inject IsisSessionFactory isisSessionFactory;
+    
+    IsisTransactionManager isisTransactionManager() {
+    	return IsisContext.getTransactionManager().get();
+    }
 
 
 }

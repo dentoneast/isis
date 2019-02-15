@@ -19,36 +19,40 @@
 
 package org.apache.isis.core.runtime.services.sessmgmt;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.sessmgmt.SessionManagementService;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
+
+import lombok.val;
 
 @Singleton
 public class SessionManagementServiceDefault implements SessionManagementService {
-
-    @Programmatic
+	
     @Override
     public void nextSession() {
 
         final AuthenticationSession authenticationSession =
-                isisSessionFactory.getCurrentSession().getAuthenticationSession();
+        		IsisContext.getAuthenticationSession().get();
 
-        persistenceSessionServiceInternal.commit();
+        val isisTransactionManager = isisTransactionManager();
+        
+        isisTransactionManager.endTransaction();
+        
         isisSessionFactory.closeSession();
 
         isisSessionFactory.openSession(authenticationSession);
-        persistenceSessionServiceInternal.beginTran();
+        isisTransactionManager.startTransaction();
+        
     }
 
-
-    @javax.inject.Inject
+    @Inject IsisSessionFactory isisSessionFactory;
     
-    IsisSessionFactory isisSessionFactory;
-    @javax.inject.Inject
-    PersistenceSessionServiceInternal persistenceSessionServiceInternal;
-
+    IsisTransactionManager isisTransactionManager() {
+    	return IsisContext.getTransactionManager().get();
+    }
 }

@@ -22,11 +22,13 @@ package org.apache.isis.core.runtime.system.transaction;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+import javax.enterprise.inject.Vetoed;
+
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.command.CommandContext;
 import org.apache.isis.applib.services.iactn.Interaction;
 import org.apache.isis.applib.services.iactn.InteractionContext;
-import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.runtime.persistence.transaction.PersistenceCommand;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
@@ -36,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import lombok.val;
 
+@Vetoed // held by persistence session 
 public class IsisTransactionManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(IsisTransactionManager.class);
@@ -48,25 +51,23 @@ public class IsisTransactionManager {
      * Holds the current or most recently completed transaction.
      */
     private IsisTransaction currentTransaction;
-
-    // -- constructor, fields
+    
 
     private final PersistenceSession persistenceSession;
-    private final ServiceInjector servicesInjector;
+    private final ServiceRegistry serviceRegistry;
 
     private final CommandContext commandContext;
     private final InteractionContext interactionContext;
 
     public IsisTransactionManager(
             final PersistenceSession persistenceSession,
-            final ServiceInjector servicesInjector) {
+            final ServiceRegistry serviceRegistry) {
 
         this.persistenceSession = persistenceSession;
-        //this.authenticationSession = authenticationSession;
-        this.servicesInjector = servicesInjector;
+        this.serviceRegistry = serviceRegistry;
 
-        this.commandContext = this.servicesInjector.lookupServiceElseFail(CommandContext.class);
-        this.interactionContext = this.servicesInjector.lookupServiceElseFail(InteractionContext.class);
+        this.commandContext = serviceRegistry.lookupServiceElseFail(CommandContext.class);
+        this.interactionContext = serviceRegistry.lookupServiceElseFail(InteractionContext.class);
     }
 
     public PersistenceSession getPersistenceSession() {
@@ -239,7 +240,7 @@ public class IsisTransactionManager {
             final UUID transactionId = command.getUniqueId();
 
             this.currentTransaction = new IsisTransaction(transactionId,
-                    interaction.next(Interaction.Sequence.TRANSACTION.id()), /*authenticationSession,*/ servicesInjector);
+                    interaction.next(Interaction.Sequence.TRANSACTION.id()), serviceRegistry);
             transactionLevel = 0;
 
             persistenceSession.startTransaction();

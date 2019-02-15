@@ -33,6 +33,7 @@ import org.apache.isis.applib.services.factory.FactoryService;
 import org.apache.isis.applib.services.iactn.InteractionContext;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.metrics.MetricsService;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.user.UserService;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.config.IsisConfiguration;
@@ -41,10 +42,8 @@ import org.apache.isis.core.commons.util.ToString;
 import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
-import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.plugins.ioc.RequestContextService;
-import org.apache.isis.core.runtime.memento.Data;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledStateHolder;
 import org.apache.isis.core.runtime.services.changes.ChangedObjectsServiceInternal;
 import org.apache.isis.core.runtime.system.context.IsisContext;
@@ -52,7 +51,6 @@ import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.jdo.datanucleus.persistence.queries.PersistenceQueryProcessor;
-import org.apache.isis.jdo.persistence.adaptermanager.ObjectAdapterContext;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -69,6 +67,7 @@ abstract class PersistenceSessionBase implements PersistenceSession {
     protected final AuthenticationSession authenticationSession;
 
     protected final ServiceInjector serviceInjector;
+    protected final ServiceRegistry serviceRegistry;
 
     protected final CommandContext commandContext;
     protected final CommandService commandService;
@@ -104,7 +103,8 @@ abstract class PersistenceSessionBase implements PersistenceSession {
     /**
      * populated only when {@link #open()}ed.
      */
-    protected final Map<Class<?>, PersistenceQueryProcessor<?>> persistenceQueryProcessorByClass = _Maps.newHashMap();
+    protected final Map<Class<?>, PersistenceQueryProcessor<?>> persistenceQueryProcessorByClass = 
+    		_Maps.newHashMap();
 
     // -- CONSTRUCTOR
 
@@ -121,7 +121,8 @@ abstract class PersistenceSessionBase implements PersistenceSession {
         	log.debug("creating {}", this);
         }
 
-        this.serviceInjector = IsisContext.getServiceInjector();;
+        this.serviceInjector = IsisContext.getServiceInjector();
+        this.serviceRegistry = IsisContext.getServiceRegistry();
         this.jdoPersistenceManagerFactory = jdoPersistenceManagerFactory;
         this.fixturesInstalledStateHolder = fixturesInstalledFlag;
 
@@ -144,7 +145,7 @@ abstract class PersistenceSessionBase implements PersistenceSession {
         this.persistenceQueryFactory = new PersistenceQueryFactory(
                 obj->this.getObjectAdapterProvider().adapterFor(obj), 
                 this.specificationLoader);
-        this.transactionManager = new IsisTransactionManager(this, serviceInjector);
+        this.transactionManager = new IsisTransactionManager(this, serviceRegistry);
 
         this.state = State.NOT_INITIALIZED;
     }
@@ -263,11 +264,11 @@ abstract class PersistenceSessionBase implements PersistenceSession {
     }
 
     private <T> T lookupServiceIfAny(final Class<T> serviceType) {
-        return serviceInjector.lookupService(serviceType).orElse(null);
+        return serviceRegistry.lookupService(serviceType).orElse(null);
     }
 
     protected <T> List<T> lookupServices(final Class<T> serviceClass) {
-        return serviceInjector.streamServices(serviceClass).collect(Collectors.toList());
+        return serviceRegistry.streamServices(serviceClass).collect(Collectors.toList());
     }
 
     /**
