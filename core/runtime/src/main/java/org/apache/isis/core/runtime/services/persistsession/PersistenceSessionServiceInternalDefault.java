@@ -62,11 +62,6 @@ public class PersistenceSessionServiceInternalDefault implements PersistenceSess
     }
     
     @Override
-    public void makePersistent(final ObjectAdapter adapter) {
-        getPersistenceSession().makePersistentInTransaction(adapter);
-    }
-
-    @Override
     public ObjectAdapter createTransientInstance(final ObjectSpecification spec) {
         return getPersistenceSession().newTransientInstance(spec);
     }

@@ -44,6 +44,8 @@ import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 
+import lombok.val;
+
 @Singleton
 public class RepositoryServiceInternalDefault implements RepositoryService {
 
@@ -99,7 +101,9 @@ public class RepositoryServiceInternalDefault implements RepositoryService {
         if (isPersistent(object)) {
             throw new PersistFailedException("Object already persistent; OID=" + adapter.getOid());
         }
-        persistenceSessionServiceInternal.makePersistent(adapter);
+        
+        val ps = IsisContext.getPersistenceSession().get();
+        ps.makePersistentInTransaction(adapter);
 
         return object;
     }

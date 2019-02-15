@@ -97,15 +97,6 @@ public interface PersistenceSessionServiceInternal extends ObjectAdapterProvider
     
     // -- PERSISTENCE
 
-    /**
-     * Provided by the <tt>PersistenceSession</tt> when used by framework.
-     *
-     * <p>
-     * Called by <tt>DomainObjectContainerDefault</tt> and also by
-     * <tt>DomainObjectInvocationHandler#handleSaveMethod()</tt>.
-     */
-    void makePersistent(ObjectAdapter adapter);
-
     // -- allMatchingQuery, firstMatchingQuery
     /**
      * Provided by <tt>PersistenceSession</tt> when used by framework.

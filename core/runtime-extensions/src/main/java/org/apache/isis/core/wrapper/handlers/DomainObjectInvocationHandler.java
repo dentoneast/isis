@@ -73,6 +73,8 @@ import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 
+import lombok.val;
+
 public class DomainObjectInvocationHandler<T> extends DelegatingInvocationHandlerDefault<T> {
 
     private final AuthenticationSessionProvider authenticationSessionProvider;
@@ -403,11 +405,12 @@ public class DomainObjectInvocationHandler<T> extends DelegatingInvocationHandle
 
         if (getExecutionMode().shouldExecute()) {
             if (targetAdapter.isTransient()) {
+            	val ps = IsisContext.getPersistenceSession().get();
                 if(getExecutionMode().shouldFailFast()) {
-                    getPersistenceSessionService().makePersistent(targetAdapter);
+                	ps.makePersistentInTransaction(targetAdapter);
                 } else {
                     try {
-                        getPersistenceSessionService().makePersistent(targetAdapter);
+                    	ps.makePersistentInTransaction(targetAdapter);
                     } catch(Exception ignore) {
                         // ignore
                     }
