@@ -23,6 +23,7 @@ import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.repository.RepositoryService;
 import org.apache.isis.applib.services.title.TitleService;
+import org.apache.isis.applib.services.xactn.TransactionService;
 import org.apache.isis.applib.services.xactn.TransactionState;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.config.IsisConfiguration;
@@ -95,6 +96,10 @@ public final class MetaModelContexts {
         private final RepositoryService repositoryService =
         _CDI.getSingleton(RepositoryService.class);
         
+        @Getter(lazy=true) 
+        private final TransactionService transactionService =
+        _CDI.getSingleton(TransactionService.class);
+        
 
         @Override
         public final AuthenticationSession getAuthenticationSession() {
@@ -108,7 +113,7 @@ public final class MetaModelContexts {
 
         @Override
         public final TransactionState getTransactionState() {
-            return getPersistenceSessionServiceInternal().getTransactionState();
+            return getTransactionService().getTransactionState();
         }
 
     }

@@ -60,42 +60,7 @@ public class PersistenceSessionServiceInternalDefault implements PersistenceSess
         return getPersistenceSession();
     }
 
-    @Override
-    public void beginTran() {
-        beginTran(null);
-    }
-
-    @Override
-    public void beginTran(final Command commandIfAny) {
-        getTransactionManager().startTransaction(commandIfAny);
-    }
-
-    @Override
-    public boolean flush() {
-        return getTransactionManager().flushTransaction();
-    }
-
-    @Override
-    public void commit() {
-        getTransactionManager().endTransaction();
-    }
-
-    @Override
-    public void abortTransaction() {
-        getTransactionManager().abortTransaction();
-    }
-
-    @Override
-    public Transaction currentTransaction() {
-        return getTransactionManager().getCurrentTransaction();
-    }
-
-    @Override
-    public CountDownLatch currentTransactionLatch() {
-        IsisTransaction transaction = getTransactionManager().getCurrentTransaction();
-        return transaction==null ? new CountDownLatch(0) : transaction.countDownLatch();
-    }
-
+    
     @Override
     public void executeWithinTransaction(Runnable task) {
         getTransactionManager().executeWithinTransaction(task);
@@ -104,16 +69,6 @@ public class PersistenceSessionServiceInternalDefault implements PersistenceSess
     @Override
     public <T> T executeWithinTransaction(Supplier<T> task) {
         return getTransactionManager().executeWithinTransaction(task);
-    }
-
-    @Override
-    public TransactionState getTransactionState() {
-        final IsisTransaction transaction = getTransactionManager().getCurrentTransaction();
-        if (transaction == null) {
-            return TransactionState.NONE;
-        }
-        IsisTransaction.State state = transaction.getState();
-        return state.getTransactionState();
     }
 
     protected PersistenceSession getPersistenceSession() {
