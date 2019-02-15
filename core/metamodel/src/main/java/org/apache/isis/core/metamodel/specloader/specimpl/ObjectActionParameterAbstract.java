@@ -24,8 +24,6 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.apache.isis.applib.Identifier;
-import org.apache.isis.applib.query.Query;
-import org.apache.isis.applib.query.QueryFindAllInstances;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.core.commons.lang.ClassExtensions;
@@ -44,7 +42,6 @@ import org.apache.isis.core.metamodel.facetapi.MultiTypedFacet;
 import org.apache.isis.core.metamodel.facets.TypedHolder;
 import org.apache.isis.core.metamodel.facets.all.describedas.DescribedAsFacet;
 import org.apache.isis.core.metamodel.facets.all.named.NamedFacet;
-import org.apache.isis.core.metamodel.facets.object.choices.ChoicesFacetFromBoundedAbstract;
 import org.apache.isis.core.metamodel.facets.objectvalue.mandatory.MandatoryFacet;
 import org.apache.isis.core.metamodel.facets.param.autocomplete.ActionParameterAutoCompleteFacet;
 import org.apache.isis.core.metamodel.facets.param.autocomplete.MinLengthUtil;
@@ -446,20 +443,6 @@ public abstract class ObjectActionParameterAbstract implements ObjectActionParam
             }
         }
     }
-
-    /**
-     * unused - incorporated into the {@link ChoicesFacetFromBoundedAbstract}
-     */
-    @SuppressWarnings("unused")
-    private <T> void addAllInstancesForType(final List<ObjectAdapter> adapters) {
-        final Query<T> query = new QueryFindAllInstances<T>(getSpecification().getFullIdentifier());
-        final List<ObjectAdapter> allInstancesAdapter = getObjectPersistor().allMatchingQuery(query);
-        for (final ObjectAdapter choiceAdapter : allInstancesAdapter) {
-            adapters.add(choiceAdapter);
-        }
-    }
-
-
 
     // -- Validation
 

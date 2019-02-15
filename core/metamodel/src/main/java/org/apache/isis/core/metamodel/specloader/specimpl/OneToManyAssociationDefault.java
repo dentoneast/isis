@@ -162,7 +162,7 @@ public class OneToManyAssociationDefault extends ObjectAssociationAbstract imple
         if (collection == null) {
             return null;
         }
-        return getObjectAdapterProvider().adapterFor(collection, (RootOid)ownerAdapter.getOid(), this);
+        return getObjectAdapterProvider().adapterForCollection(collection, (RootOid)ownerAdapter.getOid(), this);
     }
     
     @Override

@@ -338,6 +338,8 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
         final ObjectAdapter instances = findInstancesInTransaction(query, QueryCardinality.MULTIPLE);
         return CollectionFacet.Utils.toAdapterList(instances);
     }
+    
+    
     @Override
     public <T> ObjectAdapter firstMatchingQuery(final Query<T> query) {
         final ObjectAdapter instances = findInstancesInTransaction(query, QueryCardinality.SINGLE);

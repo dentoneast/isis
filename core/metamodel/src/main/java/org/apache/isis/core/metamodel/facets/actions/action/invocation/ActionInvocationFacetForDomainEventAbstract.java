@@ -46,11 +46,10 @@ import org.apache.isis.applib.services.command.CommandContext;
 import org.apache.isis.applib.services.command.spi.CommandService;
 import org.apache.isis.applib.services.iactn.Interaction;
 import org.apache.isis.applib.services.iactn.InteractionContext;
-import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.metamodel.MetaModelService;
 import org.apache.isis.applib.services.metamodel.MetaModelService.Mode;
 import org.apache.isis.applib.services.queryresultscache.QueryResultsCache;
-import org.apache.isis.applib.services.repository.RepositoryService;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.xactn.TransactionService;
 import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.base._Strings;
@@ -59,7 +58,6 @@ import org.apache.isis.core.commons.lang.ArrayExtensions;
 import org.apache.isis.core.commons.lang.MethodInvocationPreprocessor;
 import org.apache.isis.core.commons.lang.ThrowableExtensions;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.CollectionUtils;
@@ -73,23 +71,17 @@ import org.apache.isis.core.metamodel.services.ixn.InteractionDtoServiceInternal
 import org.apache.isis.core.metamodel.services.publishing.PublishingServiceInternal;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
-import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 import org.apache.isis.schema.ixn.v1.ActionInvocationDto;
 
 public abstract class ActionInvocationFacetForDomainEventAbstract
 extends ActionInvocationFacetAbstract
 implements ImperativeFacet {
 
-    //private final static Logger LOG = LoggerFactory.getLogger(ActionInvocationFacetForDomainEventAbstract.class);
-
     private final Method method;
     private final ObjectSpecification onType;
     private final ObjectSpecification returnType;
 
-    private final ObjectAdapterProvider objectAdapterProvider;
-    private final AuthenticationSessionProvider authenticationSessionProvider;
-
-    private final ServiceInjector servicesInjector;
+    private final ServiceRegistry serviceRegistry;
     
     private final Class<? extends ActionDomainEvent<?>> eventType;
     private final DomainEventHelper domainEventHelper;
@@ -105,10 +97,8 @@ implements ImperativeFacet {
         this.method = method;
         this.onType = onType;
         this.returnType = returnType;
-        this.objectAdapterProvider = getObjectAdapterProvider();
-        this.authenticationSessionProvider = getAuthenticationSessionProvider();
-        this.servicesInjector = getServiceInjector();
-        this.domainEventHelper = new DomainEventHelper(this.servicesInjector);
+        this.serviceRegistry = getServiceRegistry();
+        this.domainEventHelper = new DomainEventHelper(this.serviceRegistry);
     }
 
     /**
@@ -430,19 +420,15 @@ implements ImperativeFacet {
     }
 
     private MetaModelService getMetaModelService() {
-        return servicesInjector.lookupServiceElseFail(MetaModelService.class);
+        return serviceRegistry.lookupServiceElseFail(MetaModelService.class);
     }
 
     private TransactionService getTransactionService() {
-        return servicesInjector.lookupServiceElseFail(TransactionService.class);
+        return serviceRegistry.lookupServiceElseFail(TransactionService.class);
     }
 
     private BookmarkService getBookmarkService() {
-        return servicesInjector.lookupServiceElseFail(BookmarkService.class);
-    }
-
-    private RepositoryService getRepositoryService() {
-        return servicesInjector.lookupServiceElseFail(RepositoryService.class);
+        return serviceRegistry.lookupServiceElseFail(BookmarkService.class);
     }
 
     protected ObjectAdapter filteredIfRequired(
@@ -509,30 +495,30 @@ implements ImperativeFacet {
     // /////////////////////////////////////////////////////////
 
     private CommandContext getCommandContext() {
-        return servicesInjector.lookupServiceElseFail(CommandContext.class);
+        return serviceRegistry.lookupServiceElseFail(CommandContext.class);
     }
     private InteractionContext getInteractionContext() {
-        return servicesInjector.lookupServiceElseFail(InteractionContext.class);
+        return serviceRegistry.lookupServiceElseFail(InteractionContext.class);
     }
 
     private QueryResultsCache getQueryResultsCache() {
-        return servicesInjector.lookupServiceElseFail(QueryResultsCache.class);
+        return serviceRegistry.lookupServiceElseFail(QueryResultsCache.class);
     }
 
     private CommandService getCommandService() {
-        return servicesInjector.lookupServiceElseFail(CommandService.class);
+        return serviceRegistry.lookupServiceElseFail(CommandService.class);
     }
 
     private ClockService getClockService() {
-        return servicesInjector.lookupServiceElseFail(ClockService.class);
+        return serviceRegistry.lookupServiceElseFail(ClockService.class);
     }
 
     private PublishingServiceInternal getPublishingServiceInternal() {
-        return servicesInjector.lookupServiceElseFail(PublishingServiceInternal.class);
+        return serviceRegistry.lookupServiceElseFail(PublishingServiceInternal.class);
     }
 
     private InteractionDtoServiceInternal getInteractionDtoServiceInternal() {
-        return servicesInjector.lookupServiceElseFail(InteractionDtoServiceInternal.class);
+        return serviceRegistry.lookupServiceElseFail(InteractionDtoServiceInternal.class);
     }
 
     // /////////////////////////////////////////////////////////

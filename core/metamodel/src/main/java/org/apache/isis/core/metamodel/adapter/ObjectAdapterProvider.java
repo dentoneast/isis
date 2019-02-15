@@ -18,13 +18,10 @@
  */
 package org.apache.isis.core.metamodel.adapter;
 
-import static org.apache.isis.commons.internal.base._With.mapIfPresentElse;
-
 import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
-import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
@@ -40,14 +37,6 @@ public interface ObjectAdapterProvider {
     // -- INTERFACE
 
     /**
-     * @param pojo
-     * @return oid for the given domain object 
-     */
-    default @Nullable Oid oidFor(@Nullable Object domainObject) {
-        return mapIfPresentElse(adapterFor(domainObject), ObjectAdapter::getOid, null);
-    }
-    
-    /**
      * @return standalone (value) or root adapter
      */
     @Nullable ObjectAdapter adapterFor(@Nullable Object domainObject);
@@ -55,7 +44,7 @@ public interface ObjectAdapterProvider {
     /**
      * @return collection adapter.
      */
-    ObjectAdapter adapterFor(
+    ObjectAdapter adapterForCollection(
             Object domainObject,
             RootOid parentOid,
             OneToManyAssociation collection);
@@ -113,11 +102,11 @@ public interface ObjectAdapterProvider {
             return getObjectAdapterProvider().adapterFor(domainObject);
         }
 
-        default ObjectAdapter adapterFor(
+        default ObjectAdapter adapterForCollection(
                 final Object pojo,
                 final RootOid parentOid,
                 OneToManyAssociation collection) {
-            return getObjectAdapterProvider().adapterFor(pojo, parentOid, collection);
+            return getObjectAdapterProvider().adapterForCollection(pojo, parentOid, collection);
         }
 
         default ManagedObject disposableAdapterForViewModel(final Object viewModelPojo) {

@@ -138,12 +138,14 @@ public class CollectionAnnotationFacetFactory extends FacetFactoryAbstract {
 
             if(collectionDomainEventFacet instanceof CollectionDomainEventFacetForCollectionAnnotation) {
                 replacementFacet = new CollectionAddToFacetForDomainEventFromCollectionAnnotation(
-                        collectionDomainEventFacet.getEventType(), getterFacet, collectionAddToFacet, collectionDomainEventFacet, holder, getServiceInjector());
+                        collectionDomainEventFacet.getEventType(), getterFacet, collectionAddToFacet, 
+                        collectionDomainEventFacet, holder, getServiceRegistry());
             } else
                 // default
             {
                 replacementFacet = new CollectionAddToFacetForDomainEventFromDefault(
-                        collectionDomainEventFacet.getEventType(), getterFacet, collectionAddToFacet, collectionDomainEventFacet, holder, getServiceInjector());
+                        collectionDomainEventFacet.getEventType(), getterFacet, 
+                        collectionAddToFacet, collectionDomainEventFacet, holder, getServiceRegistry());
             }
             FacetUtil.addFacet(replacementFacet);
         }
@@ -155,11 +157,10 @@ public class CollectionAnnotationFacetFactory extends FacetFactoryAbstract {
             final CollectionRemoveFromFacetForDomainEventFromAbstract replacementFacet;
 
             if(collectionDomainEventFacet instanceof CollectionDomainEventFacetForCollectionAnnotation) {
-                replacementFacet = new CollectionRemoveFromFacetForDomainEventFromCollectionAnnotation(collectionDomainEventFacet.getEventType(), getterFacet, collectionRemoveFromFacet, collectionDomainEventFacet, getServiceInjector(), holder);
-            } else
+                replacementFacet = new CollectionRemoveFromFacetForDomainEventFromCollectionAnnotation(collectionDomainEventFacet.getEventType(), getterFacet, collectionRemoveFromFacet, collectionDomainEventFacet, getServiceRegistry(), holder);
+            } else {
                 // default
-            {
-                replacementFacet = new CollectionRemoveFromFacetForDomainEventFromDefault(collectionDomainEventFacet.getEventType(), getterFacet, collectionRemoveFromFacet, collectionDomainEventFacet, getServiceInjector(), holder);
+                replacementFacet = new CollectionRemoveFromFacetForDomainEventFromDefault(collectionDomainEventFacet.getEventType(), getterFacet, collectionRemoveFromFacet, collectionDomainEventFacet, getServiceRegistry(), holder);
             }
             FacetUtil.addFacet(replacementFacet);
         }

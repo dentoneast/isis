@@ -21,6 +21,7 @@ package org.apache.isis.core.metamodel;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
+import org.apache.isis.applib.services.repository.RepositoryService;
 import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.applib.services.xactn.TransactionState;
 import org.apache.isis.commons.internal.cdi._CDI;
@@ -90,6 +91,10 @@ public final class MetaModelContexts {
         private final PersistenceSessionServiceInternal persistenceSessionServiceInternal =
         _CDI.getSingleton(PersistenceSessionServiceInternal.class);
 
+        @Getter(lazy=true) 
+        private final RepositoryService repositoryService =
+        _CDI.getSingleton(RepositoryService.class);
+        
 
         @Override
         public final AuthenticationSession getAuthenticationSession() {

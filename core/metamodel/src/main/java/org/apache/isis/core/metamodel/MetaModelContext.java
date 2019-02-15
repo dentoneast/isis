@@ -21,6 +21,7 @@ package org.apache.isis.core.metamodel;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
+import org.apache.isis.applib.services.repository.RepositoryService;
 import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.applib.services.xactn.TransactionState;
 import org.apache.isis.commons.internal.context._Context;
@@ -67,7 +68,10 @@ public interface MetaModelContext {
 
     ObjectSpecification getSpecification(Class<?> type);
     
+    @Deprecated //TODO[2033] replace with getRepositoryService()
     PersistenceSessionServiceInternal getPersistenceSessionServiceInternal();
+    
+    RepositoryService getRepositoryService();
     
     TransactionState getTransactionState();
 
@@ -136,8 +140,13 @@ public interface MetaModelContext {
             return getMetaModelContext().getSpecification(type);
         }
         
+        @Deprecated
         public default PersistenceSessionServiceInternal getPersistenceSessionServiceInternal() {
             return getMetaModelContext().getPersistenceSessionServiceInternal();
+        }
+        
+        public default RepositoryService getRepositoryService() {
+            return getMetaModelContext().getRepositoryService();
         }
         
         public default TransactionState getTransactionState() {

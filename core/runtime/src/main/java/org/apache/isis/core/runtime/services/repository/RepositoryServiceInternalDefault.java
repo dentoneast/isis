@@ -40,8 +40,8 @@ import org.apache.isis.applib.services.wrapper.WrapperFactory;
 import org.apache.isis.applib.services.xactn.TransactionService;
 import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.metamodel.adapter.ObjectAdapterPredicate;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 
 import lombok.val;
@@ -174,7 +174,15 @@ public class RepositoryServiceInternalDefault implements RepositoryService {
     }
 
     <T> List<T> submitQuery(final Query<T> query) {
-        final List<ObjectAdapter> allMatching = persistenceSessionServiceInternal.allMatchingQuery(query);
+    	val ps = IsisContext.getPersistenceSession().get();
+        final List<ObjectAdapter> allMatching = ps.allMatchingQuery(query);
+        
+        // since 2.0.0-M3, used by choices facet, to remove entries, that are destroyed or should not be visible
+        if(query instanceof ObjectAdapterPredicate) {
+        	val predicate = (ObjectAdapterPredicate)query;
+        	allMatching.removeIf(x->!predicate.test(x));
+        }
+        
         return ObjectAdapter.Util.unwrapTypedPojoList(allMatching);
     }
 
@@ -214,14 +222,12 @@ public class RepositoryServiceInternalDefault implements RepositoryService {
     }
 
     private ObjectAdapterProvider getObjectAdapterProvider() {
-        return persistenceSessionServiceInternal;
+        return IsisContext.getPersistenceSession().get();
     }
 
     @Inject FactoryService factoryService;
     @Inject WrapperFactory wrapperFactory;
     @Inject TransactionService transactionService;
-    @Inject PersistenceSessionServiceInternal persistenceSessionServiceInternal;
-
 
 
 }

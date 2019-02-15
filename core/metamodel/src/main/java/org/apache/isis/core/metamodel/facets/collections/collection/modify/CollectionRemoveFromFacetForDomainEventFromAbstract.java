@@ -26,7 +26,7 @@ import java.util.Map;
 
 import org.apache.isis.applib.events.domain.AbstractDomainEvent;
 import org.apache.isis.applib.events.domain.CollectionDomainEvent;
-import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
@@ -48,8 +48,6 @@ implements CollectionRemoveFromFacet {
 
     private final PropertyOrCollectionAccessorFacet getterFacet;
     private final CollectionRemoveFromFacet collectionRemoveFromFacet;
-    // TODO: seems to be unused, remove?
-    private final CollectionDomainEventFacetAbstract collectionDomainEventFacet;
 
     private final DomainEventHelper domainEventHelper;
 
@@ -58,13 +56,12 @@ implements CollectionRemoveFromFacet {
                     final PropertyOrCollectionAccessorFacet getterFacet,
                     final CollectionRemoveFromFacet collectionRemoveFromFacet,
                     final CollectionDomainEventFacetAbstract collectionDomainEventFacet,
-                    final ServiceInjector servicesInjector,
+                    final ServiceRegistry serviceRegistry,
                     final FacetHolder holder) {
         super(type(), eventType, holder);
         this.getterFacet = getterFacet;
         this.collectionRemoveFromFacet = collectionRemoveFromFacet;
-        this.collectionDomainEventFacet = collectionDomainEventFacet;
-        this.domainEventHelper = new DomainEventHelper(servicesInjector);
+        this.domainEventHelper = new DomainEventHelper(serviceRegistry);
     }
 
     @Override

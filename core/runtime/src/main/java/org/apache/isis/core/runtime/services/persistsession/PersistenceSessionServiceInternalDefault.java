@@ -31,7 +31,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.isis.applib.NonRecoverableException;
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.query.Query;
 import org.apache.isis.applib.services.bookmark.Bookmark;
 import org.apache.isis.applib.services.bookmark.BookmarkService;
@@ -59,64 +58,6 @@ public class PersistenceSessionServiceInternalDefault implements PersistenceSess
     @Override
     public ObjectAdapterProvider getObjectAdapterProvider() {
         return getPersistenceSession();
-    }
-    
-    @Override
-    public ObjectAdapter createViewModelInstance(ObjectSpecification spec, String memento) {
-        return getPersistenceSession().recreateViewModelInstance(spec, memento);
-    }
-
-    @Override
-    public Object lookup(
-            final Bookmark bookmark,
-            final BookmarkService.FieldResetPolicy fieldResetPolicy) {
-        
-        final RootOid rootOid = Factory.ofBookmark(bookmark);
-        final PersistenceSession ps = getPersistenceSession();
-        final boolean denyRefresh = fieldResetPolicy == BookmarkService.FieldResetPolicy.DONT_REFRESH; 
-                        
-        if(rootOid.isViewModel()) {
-            final ObjectAdapter adapter = ps.adapterFor(rootOid, ConcurrencyChecking.NO_CHECK);
-            final Object pojo = mapIfPresentElse(adapter, ObjectAdapter::getPojo, null);
-            
-            return pojo;
-            
-        } else if(denyRefresh) {
-            
-            final Object pojo = ps.fetchPersistentPojoInTransaction(rootOid);
-            return pojo;            
-            
-        } else {
-            final ObjectAdapter adapter = ps.adapterFor(rootOid, ConcurrencyChecking.NO_CHECK);
-            
-            final Object pojo = mapIfPresentElse(adapter, ObjectAdapter::getPojo, null);
-            acceptIfPresent(pojo, ps::refreshRootInTransaction);
-            return pojo;
-        }
-        
-    }
-
-    @Override
-    public Bookmark bookmarkFor(Object domainObject) {
-        final ObjectAdapter adapter = getPersistenceSession().adapterFor(domainObject);
-        if(adapter.isValue()) {
-            // values cannot be bookmarked
-            return null;
-        }
-        final Oid oid = adapter.getOid();
-        if(!(oid instanceof RootOid)) {
-            // must be root
-            return null;
-        }
-        final RootOid rootOid = (RootOid) oid;
-        return rootOid.asBookmark();
-    }
-
-    @Override
-    public Bookmark bookmarkFor(Class<?> cls, String identifier) {
-        final ObjectSpecification objectSpec = specificationLoader.loadSpecification(cls);
-        String objectType = objectSpec.getSpecId().asString();
-        return new Bookmark(objectType, identifier);
     }
 
     @Override
@@ -156,16 +97,6 @@ public class PersistenceSessionServiceInternalDefault implements PersistenceSess
     }
 
     @Override
-    public <T> List<ObjectAdapter> allMatchingQuery(final Query<T> query) {
-        return getPersistenceSession().allMatchingQuery(query);
-    }
-
-    @Override
-    public <T> ObjectAdapter firstMatchingQuery(final Query<T> query) {
-        return getPersistenceSession().firstMatchingQuery(query);
-    }
-
-    @Override
     public void executeWithinTransaction(Runnable task) {
         getTransactionManager().executeWithinTransaction(task);
     }
@@ -195,14 +126,9 @@ public class PersistenceSessionServiceInternalDefault implements PersistenceSess
         return requireNonNull(isisSessionFactory, "IsisSessionFactory was not injected.");
     }
 
-    @Programmatic
     public IsisTransactionManager getTransactionManager() {
         return getPersistenceSession().getTransactionManager();
     }
-///
-//    protected SpecificationLoader getSpecificationLoader() {
-//        return getIsisSessionFactory().getSpecificationLoader();
-//    }
 
     @Inject SpecificationLoader specificationLoader;
     @Inject IsisSessionFactory isisSessionFactory;

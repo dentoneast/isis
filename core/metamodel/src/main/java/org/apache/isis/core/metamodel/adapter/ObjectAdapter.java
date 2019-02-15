@@ -204,25 +204,26 @@ public interface ObjectAdapter extends ManagedObject {
             return visibleAdapters(objectAdapters, interactionInitiatedBy);
         }
 
-        /**
-         * as per {@link #visibleAdapters(ObjectAdapter, InteractionInitiatedBy)}.
-         *  @param objectAdapters - iterable over the respective adapters of a collection (as returned by a getter of a collection, or of an autoCompleteNXxx() or choicesNXxx() method, etc
-         * @param interactionInitiatedBy
-         * @deprecated use stream variant instead
-         */
-        public static List<ObjectAdapter> visibleAdapters(
-                final Iterable<ObjectAdapter> objectAdapters,
-                final InteractionInitiatedBy interactionInitiatedBy) {
-            final List<ObjectAdapter> adapters = _Lists.newArrayList();
-            for (final ObjectAdapter adapter : objectAdapters) {
-                final boolean visible = isVisible(adapter,
-                        interactionInitiatedBy);
-                if(visible) {
-                    adapters.add(adapter);
-                }
-            }
-            return adapters;
-        }
+//        /**
+//         * as per {@link #visibleAdapters(ObjectAdapter, InteractionInitiatedBy)}.
+//         *  @param objectAdapters - iterable over the respective adapters of a collection 
+//         *  (as returned by a getter of a collection, or of an autoCompleteNXxx() or choicesNXxx() method, etc
+//         * @param interactionInitiatedBy
+//         * @deprecated use stream variant instead
+//         */
+//        public static List<ObjectAdapter> visibleAdapters(
+//                final Iterable<ObjectAdapter> objectAdapters,
+//                final InteractionInitiatedBy interactionInitiatedBy) {
+//            final List<ObjectAdapter> adapters = _Lists.newArrayList();
+//            for (final ObjectAdapter adapter : objectAdapters) {
+//                final boolean visible = isVisible(adapter,
+//                        interactionInitiatedBy);
+//                if(visible) {
+//                    adapters.add(adapter);
+//                }
+//            }
+//            return adapters;
+//        }
         
         public static List<ObjectAdapter> visibleAdapters(
                 final Stream<ObjectAdapter> objectAdapters,

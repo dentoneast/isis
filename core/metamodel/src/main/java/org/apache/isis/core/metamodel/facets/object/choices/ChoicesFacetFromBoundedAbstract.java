@@ -20,6 +20,7 @@
 package org.apache.isis.core.metamodel.facets.object.choices;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.apache.isis.applib.query.Query;
 import org.apache.isis.applib.query.QueryFindAllInstances;
@@ -27,6 +28,7 @@ import org.apache.isis.applib.services.wrapper.events.UsabilityEvent;
 import org.apache.isis.applib.services.wrapper.events.ValidityEvent;
 import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.commons.internal.collections._Arrays;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.facetapi.Facet;
@@ -38,10 +40,10 @@ import org.apache.isis.core.metamodel.interactions.ObjectValidityContext;
 import org.apache.isis.core.metamodel.interactions.UsabilityContext;
 import org.apache.isis.core.metamodel.interactions.ValidatingInteractionAdvisor;
 import org.apache.isis.core.metamodel.interactions.ValidityContext;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
-import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
+
+import lombok.val;
 
 /**
  * A fixed number of choices because the number of instances of this class is bounded.
@@ -63,18 +65,9 @@ implements ChoicesFacet, DisablingInteractionAdvisor, ValidatingInteractionAdvis
         return ChoicesFacet.class;
     }
 
-    private final AuthenticationSessionProvider authenticationSessionProvider;
-    private final PersistenceSessionServiceInternal persistenceSessionServiceInternal;
-
     public ChoicesFacetFromBoundedAbstract(
             final FacetHolder holder) {
         super(type(), holder, Derivation.NOT_DERIVED);
-        this.authenticationSessionProvider = getAuthenticationSessionProvider();
-        this.persistenceSessionServiceInternal = getPersistenceSessionServiceInternal();
-    }
-
-    public PersistenceSessionServiceInternal getPersistenceSessionService() {
-        return persistenceSessionServiceInternal;
     }
 
     @Override
@@ -119,15 +112,15 @@ implements ChoicesFacet, DisablingInteractionAdvisor, ValidatingInteractionAdvis
     public Object[] getChoices(
             ObjectAdapter adapter,
             final InteractionInitiatedBy interactionInitiatedBy) {
-        final Query query = new QueryFindAllInstances(getObjectSpecification().getFullIdentifier());
-        final List<ObjectAdapter> allInstancesAdapter = getPersistenceSessionService().allMatchingQuery(query);
-
-        final List<ObjectAdapter> adapters =
-                ObjectAdapter.Util.visibleAdapters(allInstancesAdapter, interactionInitiatedBy);
-
-        return _NullSafe.stream(adapters)
-                .map(ObjectAdapter.Util::unwrapPojo)
-                .collect(_Arrays.toArray(Object.class, _NullSafe.size(adapters)));
+    	
+    	val context = MetaModelContext.current();
+    	val repository = context.getRepositoryService();
+    	
+    	final Predicate<ObjectAdapter> visibilityFilter = 
+    			objectAdapter -> ObjectAdapter.Util.isVisible(objectAdapter, interactionInitiatedBy); 
+    	
+        val query = new QueryFindAllChoices(getObjectSpecification().getFullIdentifier(), visibilityFilter);
+        return repository.allMatches(query).toArray();
     }
 
 }

@@ -16,42 +16,16 @@
  */
 package org.apache.isis.core.metamodel.services.persistsession;
 
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Supplier;
 
-import org.apache.isis.applib.query.Query;
-import org.apache.isis.applib.services.bookmark.Bookmark;
-import org.apache.isis.applib.services.bookmark.BookmarkService;
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.xactn.Transaction;
 import org.apache.isis.applib.services.xactn.TransactionState;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
-import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 
 public interface PersistenceSessionServiceInternal extends ObjectAdapterProvider.Delegating {
     
-    // -- FACTORIES
-
-    @Deprecated //TODO [2033] move this responsibility to IsisSession
-    ObjectAdapter createViewModelInstance(ObjectSpecification spec, String memento);
-    
-    // -- BOOKMARKS
-
-    /**
-     * Provided by <tt>PersistenceSession</tt> when used by framework.
-     *
-     * <p>
-     * Called by <tt>BookmarkServicesDefault</tt>.
-     * @return
-     */
-    Object lookup(Bookmark bookmark, final BookmarkService.FieldResetPolicy fieldResetPolicy);
-
-    Bookmark bookmarkFor(Object domainObject);
-
-    Bookmark bookmarkFor(Class<?> cls, String identifier);
-
     // -- TRANSACTIONS
 
     void beginTran();
@@ -85,27 +59,5 @@ public interface PersistenceSessionServiceInternal extends ObjectAdapterProvider
     void executeWithinTransaction(Runnable task);
     
     <T> T executeWithinTransaction(Supplier<T> task);
-    
-    // -- PERSISTENCE
-
-    // -- allMatchingQuery, firstMatchingQuery
-    /**
-     * Provided by <tt>PersistenceSession</tt> when used by framework.
-     *
-     * <p>
-     * Called by <tt>DomainObjectContainerDefault</tt> and also by the choices
-     * facets.
-     */
-    <T> List<ObjectAdapter> allMatchingQuery(Query<T> query);
-
-    /**
-     * Provided by <tt>PersistenceSession</tt> when used by framework.
-     *
-     * <p>
-     * Called by <tt>DomainObjectContainerDefault</tt>.
-     */
-    <T> ObjectAdapter firstMatchingQuery(Query<T> query);
-
-    
 
 }

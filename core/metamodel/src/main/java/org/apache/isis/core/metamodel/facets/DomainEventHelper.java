@@ -36,7 +36,7 @@ import org.apache.isis.applib.events.domain.CollectionDomainEvent;
 import org.apache.isis.applib.events.domain.PropertyDomainEvent;
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.eventbus.EventBusService;
-import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.facetapi.IdentifiedHolder;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
@@ -45,11 +45,11 @@ import org.apache.isis.core.metamodel.spec.feature.ObjectActionParameter;
 
 public class DomainEventHelper {
 
-    private final ServiceInjector servicesInjector;
+    private final ServiceRegistry serviceRegistry;
 
 
-    public DomainEventHelper(final ServiceInjector servicesInjector) {
-        this.servicesInjector = servicesInjector;
+    public DomainEventHelper(final ServiceRegistry serviceRegistry) {
+        this.serviceRegistry = serviceRegistry;
     }
 
     // -- postEventForAction, newActionDomainEvent
@@ -401,7 +401,7 @@ public class DomainEventHelper {
     private EventBusService getEventBusService() {
         // previously this method used to cache, however it prevents integration tests
         // from switching out the EventBusService with a mock.
-        return this.servicesInjector.lookupService(EventBusService.class).orElse(null);
+        return this.serviceRegistry.lookupService(EventBusService.class).orElse(null);
     }
 
 

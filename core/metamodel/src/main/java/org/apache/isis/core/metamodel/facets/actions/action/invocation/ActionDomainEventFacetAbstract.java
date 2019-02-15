@@ -66,7 +66,7 @@ extends SingleClassValueFacetAbstract implements ActionDomainEventFacet {
         // sadness: same as in TranslationFactory
         this.translationContext = ((IdentifiedHolder)holder).getIdentifier().toClassAndNameIdentityString();
 
-        domainEventHelper = new DomainEventHelper(getServiceInjector());
+        domainEventHelper = new DomainEventHelper(getServiceRegistry());
     }
 
     @Override

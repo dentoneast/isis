@@ -107,7 +107,7 @@ class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvide
     
     
     @Override
-    public ObjectAdapter adapterFor(Object pojo, RootOid parentOid, OneToManyAssociation collection) {
+    public ObjectAdapter adapterForCollection(Object pojo, RootOid parentOid, OneToManyAssociation collection) {
 
         requires(parentOid, "parentOid");
         requires(collection, "collection");

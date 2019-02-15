@@ -16,10 +16,13 @@
  */
 package org.apache.isis.jdo.persistence;
 
+import static org.apache.isis.commons.internal.base._With.mapIfPresentElse;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 
@@ -267,6 +270,14 @@ abstract class PersistenceSessionBase implements PersistenceSession {
         return serviceInjector.streamServices(serviceClass).collect(Collectors.toList());
     }
 
+    /**
+     * @param pojo
+     * @return oid for the given domain object 
+     */
+    protected @Nullable Oid oidFor(@Nullable Object domainObject) {
+        return mapIfPresentElse(adapterFor(domainObject), ObjectAdapter::getOid, null);
+    }
+    
     @Override
     public String toString() {
         return new ToString(this).toString();

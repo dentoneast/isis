@@ -26,7 +26,7 @@ import java.util.Set;
 
 import org.apache.isis.applib.events.domain.AbstractDomainEvent;
 import org.apache.isis.applib.events.domain.CollectionDomainEvent;
-import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.facetapi.Facet;
@@ -48,21 +48,18 @@ implements CollectionAddToFacet {
 
     private final PropertyOrCollectionAccessorFacet getterFacet;
     private final CollectionAddToFacet collectionAddToFacet;
-    // TODO: seems to be unused, remove?
-    private final CollectionDomainEventFacetAbstract collectionDomainEventFacet;
 
     public CollectionAddToFacetForDomainEventFromAbstract(
             final Class<? extends CollectionDomainEvent<?, ?>> eventType,
                     final PropertyOrCollectionAccessorFacet getterFacet,
                     final CollectionAddToFacet collectionAddToFacet,
                     final CollectionDomainEventFacetAbstract collectionDomainEventFacet,
-                    final ServiceInjector servicesInjector,
+                    final ServiceRegistry serviceRegistry,
                     final FacetHolder holder) {
         super(type(), eventType, holder);
         this.getterFacet = getterFacet;
         this.collectionAddToFacet = collectionAddToFacet;
-        this.collectionDomainEventFacet = collectionDomainEventFacet;
-        this.domainEventHelper = new DomainEventHelper(servicesInjector);
+        this.domainEventHelper = new DomainEventHelper(serviceRegistry);
     }
 
     @Override
