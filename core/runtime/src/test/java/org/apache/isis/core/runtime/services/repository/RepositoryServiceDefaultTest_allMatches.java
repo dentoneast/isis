@@ -17,7 +17,7 @@
  *  under the License.
  */
 
-package org.apache.isis.core.metamodel.services.repository;
+package org.apache.isis.core.runtime.services.repository;
 
 import java.util.List;
 
@@ -30,6 +30,7 @@ import org.junit.Test;
 import org.apache.isis.applib.query.Query;
 import org.apache.isis.applib.services.xactn.TransactionService;
 import org.apache.isis.config.internal._Config;
+import org.apache.isis.core.runtime.services.repository.RepositoryServiceInternalDefault;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2.Mode;
 

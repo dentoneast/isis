@@ -45,7 +45,7 @@ import org.apache.isis.core.metamodel.services.persistsession.PersistenceSession
 import org.apache.isis.core.runtime.persistence.ObjectNotFoundException;
 
 /**
- * This service enables a serializable &quot;bookmark&quot; to be created for an entity.
+ * This service enables a serializable 'bookmark' to be created for an entity.
  *
  * <p>
  * This implementation has no UI and there are no other implementations of the service API, and so it annotated

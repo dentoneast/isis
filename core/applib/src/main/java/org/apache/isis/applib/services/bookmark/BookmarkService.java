@@ -18,10 +18,8 @@
  */
 package org.apache.isis.applib.services.bookmark;
 
-import org.apache.isis.applib.annotation.Programmatic;
-
 /**
- * This service enables a serializable &quot;bookmark&quot; to be created for an entity.
+ * This service enables a serializable 'bookmark' to be created for an entity.
  *
  * <p>
  * Because an implementation of this service (<tt>BookmarkServiceDefault</tt>) is annotated with
@@ -31,22 +29,15 @@ import org.apache.isis.applib.annotation.Programmatic;
  */
 public interface BookmarkService {
 
-    @Programmatic
     Bookmark bookmarkFor(Object domainObject);
-
-    @Programmatic
     Bookmark bookmarkFor(Class<?> cls, String identifier);
-
-    @Programmatic
     Object lookup(BookmarkHolder bookmarkHolder, FieldResetPolicy fieldResetPolicy);
-
-    @Programmatic
     Object lookup(Bookmark bookmark, FieldResetPolicy fieldResetPolicy);
 
     /**
      * As {@link #lookup(Bookmark, FieldResetPolicy)}, but down-casting to the specified type.
      */
-    @Programmatic <T> T lookup(Bookmark bookmark, FieldResetPolicy fieldResetPolicy, Class<T> cls);
+    <T> T lookup(Bookmark bookmark, FieldResetPolicy fieldResetPolicy, Class<T> cls);
 
     enum FieldResetPolicy {
         /**
@@ -57,7 +48,8 @@ public interface BookmarkService {
          *
          * If the object is a view model, then is ignored; the behaviour is as for {@link #DONT_REFRESH}
          *
-         * @deprecated - retained for backwards compatibility with previous behaviour, but in most/all cases {@link #DONT_REFRESH} makes more sense/is less surprising.
+         * @deprecated - retained for backwards compatibility with previous behaviour, but in most/all cases 
+         * {@link #DONT_REFRESH} makes more sense/is less surprising.
          */
         @Deprecated
         RESET,
