@@ -73,12 +73,17 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
 
     
     @Override
-    public <T> Optional<T> lookupService(Class<T> serviceClass) {
+    public <T> Instance<T> lookupServices(Class<T> serviceClass) {
         return _CDI.getInstance(serviceClass, _Lists.of(_CDI.QUALIFIER_ANY))
-        		.filter(Instance::isResolvable)
-                .map(Instance::get);
+        		.orElse(_CDI.InstanceFactory.empty());
     }
     
+//    @Override
+//    public <T> Optional<T> lookupResolvableService(Class<T> serviceClass) {
+//        return _CDI.getInstance(serviceClass, _Lists.of(_CDI.QUALIFIER_ANY))
+//        		.filter(Instance::isResolvable)
+//                .map(Instance::get);
+//    }
    
     
     /**

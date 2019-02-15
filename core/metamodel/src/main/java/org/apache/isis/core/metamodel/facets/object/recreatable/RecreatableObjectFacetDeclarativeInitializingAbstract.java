@@ -30,7 +30,6 @@ import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.PostConstructMethodCache;
 import org.apache.isis.core.metamodel.facets.properties.update.modify.PropertySetterFacet;
-import org.apache.isis.core.metamodel.services.bookmarks.BookmarkServiceInternalDefault;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.Contributed;
@@ -111,26 +110,25 @@ extends RecreatableObjectFacetAbstract {
 
 	// -- HELPER
 
-	private void init() {
+	private void initDependencies() {
 		val serviceRegistry = getServiceRegistry();
 		this.codec = serviceRegistry.lookupServiceElseFail(UrlEncodingService.class);
-		this.serializer = serviceRegistry.lookupService(SerializingAdapter.class)
-				.orElseGet(()->serviceRegistry.lookupServiceElseFail(BookmarkServiceInternalDefault.class));
+		this.serializer = serviceRegistry.lookupServiceElseFail(SerializingAdapter.class);
 	}
 
-	private void ensureInit() {
+	private void ensureDependenciesInited() {
 		if(codec==null) {
-			init();
+			initDependencies();
 		}
 	}
 
 	private _Mementos.Memento newMemento() {
-		ensureInit();
+		ensureDependenciesInited();
 		return _Mementos.create(codec, serializer);
 	}
 
 	private _Mementos.Memento parseMemento(String input) {
-		ensureInit();
+		ensureDependenciesInited();
 		return _Mementos.parse(codec, serializer, input);
 	}
 

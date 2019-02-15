@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import javax.annotation.Priority;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -52,12 +53,11 @@ import org.apache.isis.core.runtime.persistence.ObjectNotFoundException;
  * with {@link org.apache.isis.applib.annotation.DomainService}.  Because this class is implemented in core, this means
  * that it is automatically registered and available for use; no further configuration is required.
  */
-@Singleton
+@Singleton @Priority(value=10)
 public class BookmarkServiceInternalDefault implements BookmarkService, SerializingAdapter {
 
 
     @Override
-    @Programmatic
     public Object lookup(
             final BookmarkHolder bookmarkHolder,
             final FieldResetPolicy fieldResetPolicy) {
@@ -78,8 +78,6 @@ public class BookmarkServiceInternalDefault implements BookmarkService, Serializ
         }
     }
 
-
-    @Programmatic
     @Override
     public Object lookup(
             final Bookmark bookmark,
@@ -96,7 +94,6 @@ public class BookmarkServiceInternalDefault implements BookmarkService, Serializ
     }
 
     @SuppressWarnings("unchecked")
-    @Programmatic
     @Override
     public <T> T lookup(
             final Bookmark bookmark,
@@ -105,7 +102,7 @@ public class BookmarkServiceInternalDefault implements BookmarkService, Serializ
         return (T) lookup(bookmark, fieldResetPolicy);
     }
 
-    @Programmatic
+    
     @Override
     public Bookmark bookmarkFor(final Object domainObject) {
         if(domainObject == null) {
@@ -118,16 +115,10 @@ public class BookmarkServiceInternalDefault implements BookmarkService, Serializ
         return wrapperFactory != null ? wrapperFactory.unwrap(domainObject) : domainObject;
     }
 
-
-    @Programmatic
     @Override
     public Bookmark bookmarkFor(Class<?> cls, String identifier) {
         return persistenceSessionServiceInternal.bookmarkFor(cls, identifier);
     }
-
-
-
-
 
     private Map<String,Object> servicesByClassName;
     private Object lookupService(final String className) {
