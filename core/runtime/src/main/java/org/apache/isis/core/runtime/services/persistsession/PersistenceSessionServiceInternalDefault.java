@@ -62,11 +62,6 @@ public class PersistenceSessionServiceInternalDefault implements PersistenceSess
     }
     
     @Override
-    public ObjectAdapter createTransientInstance(final ObjectSpecification spec) {
-        return getPersistenceSession().newTransientInstance(spec);
-    }
-
-    @Override
     public ObjectAdapter createViewModelInstance(ObjectSpecification spec, String memento) {
         return getPersistenceSession().recreateViewModelInstance(spec, memento);
     }

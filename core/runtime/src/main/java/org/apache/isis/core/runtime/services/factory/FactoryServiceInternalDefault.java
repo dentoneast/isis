@@ -17,7 +17,7 @@
  *  under the License.
  */
 
-package org.apache.isis.core.metamodel.services.factory;
+package org.apache.isis.core.runtime.services.factory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -35,6 +35,9 @@ import org.apache.isis.core.metamodel.facets.object.mixin.MixinFacet;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
+import org.apache.isis.core.runtime.system.context.IsisContext;
+
+import lombok.val;
 
 @Singleton
 public class FactoryServiceInternalDefault implements FactoryService {
@@ -53,7 +56,8 @@ public class FactoryServiceInternalDefault implements FactoryService {
      * Factored out as a potential hook method for subclasses.
      */
     protected ObjectAdapter doCreateTransientInstance(final ObjectSpecification spec) {
-        return persistenceSessionServiceInternal.createTransientInstance(spec);
+    	val ps = IsisContext.getPersistenceSession().get();
+    	return ps.newTransientInstance(spec);
     }
 
 

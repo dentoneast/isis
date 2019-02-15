@@ -34,15 +34,6 @@ public interface PersistenceSessionServiceInternal extends ObjectAdapterProvider
     
     // -- FACTORIES
 
-    /**
-     * Provided by the <tt>PersistenceSession</tt> when used by framework.
-     *
-     * <p>
-     * Called by <tt>DomainObjectContainerDefault</tt>.
-     */
-    @Deprecated //TODO [2033] move this responsibility to IsisSession 
-    ObjectAdapter createTransientInstance(ObjectSpecification spec);
-
     @Deprecated //TODO [2033] move this responsibility to IsisSession
     ObjectAdapter createViewModelInstance(ObjectSpecification spec, String memento);
     
