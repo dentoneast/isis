@@ -19,65 +19,36 @@
 
 package org.apache.isis.core.runtime.services.sessmgmt;
 
-import static java.util.Objects.requireNonNull;
-import static java.util.Optional.ofNullable;
-
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.isis.applib.NonRecoverableException;
+import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.sessmgmt.SessionManagementService;
-import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.session.IsisSession;
+import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
-
-import lombok.val;
 
 @Singleton
 public class SessionManagementServiceDefault implements SessionManagementService {
-	
-//	@PostConstruct
-//	public void init() {
-//    	isisTransactionManager = isisSessionFactory.getCurrentSession().getPersistenceSession().getTransactionManager(); 
-//	}
 
+    @Programmatic
     @Override
     public void nextSession() {
 
         final AuthenticationSession authenticationSession =
                 isisSessionFactory.getCurrentSession().getAuthenticationSession();
 
-		val isisTransactionManager = getTransactionManager();
-        
-        isisTransactionManager.endTransaction();
-        
-        
+        persistenceSessionServiceInternal.commit();
         isisSessionFactory.closeSession();
 
         isisSessionFactory.openSession(authenticationSession);
-        isisTransactionManager.startTransaction();
-        
+        persistenceSessionServiceInternal.beginTran();
     }
 
 
-    @Inject IsisSessionFactory isisSessionFactory;
-    //IsisTransactionManager isisTransactionManager;
-
-    protected PersistenceSession getPersistenceSession() {
-        return ofNullable(getIsisSessionFactory().getCurrentSession())
-                .map(IsisSession::getPersistenceSession)
-                .orElseThrow(()->new NonRecoverableException("No IsisSession on current thread."));
-    }
-
-    private IsisSessionFactory getIsisSessionFactory() {
-        return requireNonNull(isisSessionFactory, "IsisSessionFactory was not injected.");
-    }
-
-    public IsisTransactionManager getTransactionManager() {
-        return getPersistenceSession().getTransactionManager();
-    }
+    @javax.inject.Inject
     
+    IsisSessionFactory isisSessionFactory;
+    @javax.inject.Inject
+    PersistenceSessionServiceInternal persistenceSessionServiceInternal;
+
 }

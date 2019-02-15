@@ -16,13 +16,45 @@
  */
 package org.apache.isis.core.metamodel.services.persistsession;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.function.Supplier;
 
+import org.apache.isis.applib.services.command.Command;
+import org.apache.isis.applib.services.xactn.Transaction;
+import org.apache.isis.applib.services.xactn.TransactionState;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 
 public interface PersistenceSessionServiceInternal extends ObjectAdapterProvider.Delegating {
     
     // -- TRANSACTIONS
+
+    void beginTran();
+
+    void beginTran(final Command commandIfAny);
+
+    /**
+     * Provided by <tt>TransactionManager</tt> when used by framework.
+     *
+     * <p>
+     * Called by <tt>DomainObjectContainerDefault</tt>.
+     */
+    boolean flush();
+
+    /**
+     * Provided by <tt>TransactionManager</tt> when used by framework.
+     *
+     * <p>
+     * Called by <tt>DomainObjectContainerDefault</tt>.
+     */
+    void commit();
+
+    void abortTransaction();
+
+    Transaction currentTransaction();
+
+    CountDownLatch currentTransactionLatch();
+
+    TransactionState getTransactionState();
 
     void executeWithinTransaction(Runnable task);
     

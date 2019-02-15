@@ -21,7 +21,7 @@ package org.apache.isis.core.runtime.services.xactn;
 
 import java.util.concurrent.CountDownLatch;
 
-import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.isis.applib.services.command.Command;
@@ -29,24 +29,16 @@ import org.apache.isis.applib.services.xactn.Transaction;
 import org.apache.isis.applib.services.xactn.TransactionService;
 import org.apache.isis.applib.services.xactn.TransactionState;
 import org.apache.isis.core.commons.exceptions.IsisException;
-import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.runtime.system.transaction.IsisTransaction;
-import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 
 @Singleton
 public class TransactionServiceDefault implements TransactionService {
 
-    @PostConstruct
-	public void init() {
-    	isisTransactionManager = IsisContext.getTransactionManager().get();
-    	
-    	System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "+isisTransactionManager);
-    	
-	}
-	
+
     @Override
     public void flushTransaction() {
-    	isisTransactionManager.flushTransaction();
+        persistenceSessionServiceInternal.flush();
     }
 
     @Override
@@ -71,14 +63,14 @@ public class TransactionServiceDefault implements TransactionService {
         case NONE:
             break;
         case IN_PROGRESS:
-        	isisTransactionManager.endTransaction();
+            persistenceSessionServiceInternal.commit();
             break;
         case MUST_ABORT:
             switch (policy) {
             case UNLESS_MARKED_FOR_ABORT:
                 throw new IsisException("Transaction is marked to abort");
             case ALWAYS:
-            	isisTransactionManager.abortTransaction();
+                persistenceSessionServiceInternal.abortTransaction();
                 final Transaction currentTransaction = currentTransaction();
                 if(currentTransaction instanceof IsisTransaction) {
                     ((IsisTransaction)currentTransaction).getThenClearAbortCause();
@@ -92,31 +84,25 @@ public class TransactionServiceDefault implements TransactionService {
             break;
         }
 
-        isisTransactionManager.startTransaction(commandIfAny);
+        persistenceSessionServiceInternal.beginTran(commandIfAny);
     }
 
     @Override
     public Transaction currentTransaction() {
-        return isisTransactionManager.getCurrentTransaction();
+        return persistenceSessionServiceInternal.currentTransaction();
     }
 
     @Override
     public CountDownLatch currentTransactionLatch() {
-    	IsisTransaction transaction = isisTransactionManager.getCurrentTransaction();
-        return transaction==null ? new CountDownLatch(0) : transaction.countDownLatch();
+        return persistenceSessionServiceInternal.currentTransactionLatch();
     }
 
     @Override
     public TransactionState getTransactionState() {
-        final IsisTransaction transaction = isisTransactionManager.getCurrentTransaction();
-        if (transaction == null) {
-            return TransactionState.NONE;
-        }
-        IsisTransaction.State state = transaction.getState();
-        return state.getTransactionState();
+        return persistenceSessionServiceInternal.getTransactionState();
     }
 
-    IsisTransactionManager isisTransactionManager;
+    @Inject PersistenceSessionServiceInternal persistenceSessionServiceInternal;
 
 
 }
