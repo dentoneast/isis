@@ -16,7 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.apache.isis.core.metamodel.services.bookmarks;
+package org.apache.isis.core.runtime.services.bookmarks;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -42,8 +42,8 @@ import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.collections._Sets;
 import org.apache.isis.commons.internal.memento._Mementos.SerializingAdapter;
+import org.apache.isis.core.metamodel.exceptions.persistence.ObjectNotFoundException;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
-import org.apache.isis.core.runtime.persistence.ObjectNotFoundException;
 
 /**
  * This service enables a serializable 'bookmark' to be created for an entity.

@@ -34,11 +34,11 @@ import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.adapter.version.ConcurrencyException;
 import org.apache.isis.core.metamodel.adapter.version.Version;
+import org.apache.isis.core.metamodel.exceptions.persistence.ObjectNotFoundException;
+import org.apache.isis.core.metamodel.exceptions.persistence.PojoRecreationException;
 import org.apache.isis.core.metamodel.facets.object.viewmodel.ViewModelFacet;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-import org.apache.isis.core.runtime.persistence.ObjectNotFoundException;
-import org.apache.isis.core.runtime.persistence.PojoRecreationException;
 import org.apache.isis.core.runtime.system.context.managers.ContextManager;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -107,7 +107,7 @@ class ObjectAdapterContext_ObjectAdapterByIdProvider implements ObjectAdapterByI
      * will be {@link RootOid#setVersion(Version) set} to the current
      * value.  This allows the client to retry if they wish.
      *
-     * @throws {@link org.apache.isis.core.runtime.persistence.ObjectNotFoundException} if the object does not exist.
+     * @throws {@link org.apache.isis.core.metamodel.exceptions.persistence.ObjectNotFoundException} if the object does not exist.
      */
     @Override
     public ObjectAdapter adapterFor(

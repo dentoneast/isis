@@ -24,11 +24,11 @@ import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
+import org.apache.isis.core.metamodel.exceptions.persistence.ObjectNotFoundException;
+import org.apache.isis.core.metamodel.exceptions.persistence.PojoRecreationException;
 import org.apache.isis.core.metamodel.facets.object.viewmodel.ViewModelFacet;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
-import org.apache.isis.core.runtime.persistence.ObjectNotFoundException;
-import org.apache.isis.core.runtime.persistence.PojoRecreationException;
 
 final class OidUtils {
 

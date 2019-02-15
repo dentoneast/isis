@@ -44,7 +44,7 @@ import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
-import org.apache.isis.core.runtime.persistence.ObjectPersistenceException;
+import org.apache.isis.core.metamodel.exceptions.persistence.ObjectPersistenceException;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.datanucleus.api.jdo.JDOPersistenceManager;

@@ -42,6 +42,7 @@ import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 
 @Singleton
 public class RepositoryServiceInternalDefault implements RepositoryService {
@@ -112,7 +113,6 @@ public class RepositoryServiceInternalDefault implements RepositoryService {
     }
 
     @Override
-    
     public void remove(final Object domainObject) {
         removeIfNotAlready(domainObject);
     }
@@ -129,11 +129,10 @@ public class RepositoryServiceInternalDefault implements RepositoryService {
             throw new RepositoryException("Object not persistent: " + adapter);
         }
 
-        persistenceSessionServiceInternal.remove(adapter);
+        IsisContext.getPersistenceSession().get().destroyObjectInTransaction(adapter);
     }
 
     @Override
-    
     public void removeAndFlush(final Object domainObject) {
         remove(domainObject);
         transactionService.flushTransaction();

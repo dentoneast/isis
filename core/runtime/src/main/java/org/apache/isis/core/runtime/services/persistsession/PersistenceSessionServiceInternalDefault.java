@@ -67,11 +67,6 @@ public class PersistenceSessionServiceInternalDefault implements PersistenceSess
     }
 
     @Override
-    public void remove(final ObjectAdapter adapter) {
-        getPersistenceSession().destroyObjectInTransaction(adapter);
-    }
-
-    @Override
     public ObjectAdapter createTransientInstance(final ObjectSpecification spec) {
         return getPersistenceSession().newTransientInstance(spec);
     }

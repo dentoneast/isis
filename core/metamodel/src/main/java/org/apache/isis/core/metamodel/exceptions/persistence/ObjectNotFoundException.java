@@ -17,28 +17,22 @@
  *  under the License.
  */
 
-package org.apache.isis.core.runtime.sysout;
+package org.apache.isis.core.metamodel.exceptions.persistence;
 
-import java.io.PrintStream;
+import org.apache.isis.core.metamodel.adapter.oid.Oid;
 
-public class SystemPrinter {
+/**
+ * Indicates that the <tt>PojoRecreator</tt> was unable to instantiate a new pojo for the specified
+ * {@link org.apache.isis.core.metamodel.adapter.oid.Oid}.
+ */
+public class ObjectNotFoundException extends ObjectPersistenceException {
+    private static final long serialVersionUID = 1L;
 
-    private final PrintStream output;
-
-    public SystemPrinter() {
-        this(System.out);
+    public ObjectNotFoundException(final Oid oid) {
+        super("Object not found in store with oid " + oid);
     }
 
-    public SystemPrinter(final PrintStream output) {
-        this.output = output;
+    public ObjectNotFoundException(final Oid oid, final Throwable cause) {
+        super("Object not found in store with oid " + oid, cause);
     }
-
-    protected PrintStream getOutput() {
-        return output;
-    }
-
-    public void printErrorMessage(final String message) {
-        output.println("Error: " + message);
-    }
-
 }

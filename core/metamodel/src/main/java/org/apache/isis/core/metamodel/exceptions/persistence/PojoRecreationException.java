@@ -17,26 +17,15 @@
  *  under the License.
  */
 
-package org.apache.isis.core.runtime.persistence;
+package org.apache.isis.core.metamodel.exceptions.persistence;
 
-import org.apache.isis.core.commons.exceptions.IsisException;
+import org.apache.isis.core.metamodel.adapter.oid.Oid;
 
-public class ObjectPersistenceException extends IsisException {
+public class PojoRecreationException extends ObjectPersistenceException {
     private static final long serialVersionUID = 1L;
 
-    public ObjectPersistenceException() {
-        super();
-    }
+    public PojoRecreationException(Oid oid, Throwable cause) {
+        super(String.format("Could not recreate pojo for oid '%s'.", oid), cause);
 
-    public ObjectPersistenceException(final String message) {
-        super(message);
-    }
-
-    public ObjectPersistenceException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
-
-    public ObjectPersistenceException(final Throwable cause) {
-        super(cause);
     }
 }

@@ -32,7 +32,6 @@ import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
 import org.apache.isis.commons.internal.base._Reduction;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.reflection._Reflect;
-import org.omg.PortableInterceptor.INACTIVE;
 
 import lombok.val;
 
