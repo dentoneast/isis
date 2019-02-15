@@ -82,7 +82,7 @@ public final class AppConfigLocator {
     		
     		"org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal",
     		"org.apache.isis.applib.services.wrapper.WrapperFactory",
-    		"org.apache.isis.core.metamodel.services.bookmarks.BookmarkServiceInternalDefault",
+    		"org.apache.isis.core.runtime.services.bookmarks.BookmarkServiceInternalDefault",
     		
     		"org.apache.isis.jdo.datanucleus.persistence.IsisLegacyJdoContextHandler",
     		

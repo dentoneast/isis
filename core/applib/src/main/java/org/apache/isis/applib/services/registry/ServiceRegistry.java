@@ -32,6 +32,7 @@ import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
 import org.apache.isis.commons.internal.base._Reduction;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.reflection._Reflect;
+import org.omg.PortableInterceptor.INACTIVE;
 
 import lombok.val;
 
@@ -120,21 +121,14 @@ public interface ServiceRegistry {
     	}
     	// dealing with ambiguity, get the one, with highest priority annotated
     	
-    	final Comparator<T> comparator = (a, b) -> {
-    		val prioAnnot1 = _Reflect.getAnnotation(a.getClass(), Priority.class);
-    		val prioAnnot2 = _Reflect.getAnnotation(b.getClass(), Priority.class);
-    		val prio1 = prioAnnot1!=null ? prioAnnot1.value() : 0;
-    		val prio2 = prioAnnot2!=null ? prioAnnot2.value() : 0;
-    		return Integer.compare(prio1, prio2);
-    	}; 
-    	
-    	//TODO [2033] not tested yet, whether the 'direction' is correct < vs > 
-    	final _Reduction<T> toMinReduction = 
-    			_Reduction.of((max, next)-> comparator.compare(next, max) > 0 ? next : max);
+    	val prioComparator = InstanceByPriorityComparator.instance();
+    	val toMaxPrioReduction =
+    			//TODO [2033] not tested yet, whether the 'direction' is correct < vs >
+    			_Reduction.<T>of((max, next)-> prioComparator.leftIsHigherThanRight(next, max) ? next : max);
 		
-    	instance.forEach(toMinReduction);
+    	instance.forEach(toMaxPrioReduction);
     	
-    	return toMinReduction.getResult();
+    	return toMaxPrioReduction.getResult();
     }
 
     public default <T> T lookupServiceElseFail(final Class<T> serviceClass) {
@@ -161,8 +155,43 @@ public interface ServiceRegistry {
      */
     void validateServices();
 
+    // -- PRIORITY ANNOTATION HANDLING
 	
+    static class InstanceByPriorityComparator implements Comparator<Object> {
+    	
+    	private final static InstanceByPriorityComparator INSTANCE =
+    			new InstanceByPriorityComparator();
+    	
+    	public static InstanceByPriorityComparator instance() {
+    		return INSTANCE;
+    	}
 
+		@Override
+		public int compare(Object o1, Object o2) {
+			
+			if(o1==null) {
+				if(o2==null) {
+					return 0;
+				} else {
+					return -1; // o1 < o2
+				}
+			} 
+			if(o2==null) {
+				return 1; // o1 > o2
+			}
+			
+			val prioAnnot1 = _Reflect.getAnnotation(o1.getClass(), Priority.class);
+    		val prioAnnot2 = _Reflect.getAnnotation(o2.getClass(), Priority.class);
+    		val prio1 = prioAnnot1!=null ? prioAnnot1.value() : 0;
+    		val prio2 = prioAnnot2!=null ? prioAnnot2.value() : 0;
+    		return Integer.compare(prio1, prio2);
+		}
+		
+		public boolean leftIsHigherThanRight(Object left, Object right) {
+			return compare(left, right) > 0;
+		}
+    	
+    }
 
 
 
