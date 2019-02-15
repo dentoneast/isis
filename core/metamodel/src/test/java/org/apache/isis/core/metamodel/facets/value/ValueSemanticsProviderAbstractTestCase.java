@@ -38,7 +38,7 @@ import org.apache.isis.core.metamodel.facets.object.encodeable.encoder.Encodable
 import org.apache.isis.core.metamodel.facets.object.parseable.ParseableFacet;
 import org.apache.isis.core.metamodel.facets.object.parseable.parser.ParseableFacetUsingParser;
 import org.apache.isis.core.metamodel.facets.object.value.vsp.ValueSemanticsProviderAndFacetAbstract;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
@@ -65,7 +65,7 @@ public abstract class ValueSemanticsProviderAbstractTestCase {
     @Mock
     protected ServiceInjector mockServicesInjector;
     @Mock
-    protected PersistenceSessionServiceInternal mockSessionServiceInternal;
+    protected ObjectAdapterProviderService mockSessionServiceInternal;
     @Mock
     protected SpecificationLoader mockSpecificationLoader;
     @Mock

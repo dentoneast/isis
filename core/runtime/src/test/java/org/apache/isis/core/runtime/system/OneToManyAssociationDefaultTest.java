@@ -34,7 +34,7 @@ import org.apache.isis.core.metamodel.facets.FacetedMethod;
 import org.apache.isis.core.metamodel.facets.all.named.NamedFacet;
 import org.apache.isis.core.metamodel.facets.collections.modify.CollectionAddToFacet;
 import org.apache.isis.core.metamodel.facets.propcoll.notpersisted.NotPersistedFacet;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
@@ -73,7 +73,7 @@ public class OneToManyAssociationDefaultTest {
     @Mock
     private MessageService mockMessageService;
     @Mock
-    private PersistenceSessionServiceInternal mockPersistenceSessionServiceInternal;
+    private ObjectAdapterProviderService mockPersistenceSessionServiceInternal;
     @Mock
     private FacetedMethod mockPeer;
     @Mock

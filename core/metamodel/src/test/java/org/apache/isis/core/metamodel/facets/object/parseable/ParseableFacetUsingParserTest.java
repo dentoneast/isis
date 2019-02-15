@@ -20,7 +20,7 @@ package org.apache.isis.core.metamodel.facets.object.parseable;
 
 import java.util.IllegalFormatWidthException;
 
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 
 import org.jmock.Expectations;
@@ -52,7 +52,7 @@ public class ParseableFacetUsingParserTest {
     @Mock
     private ServiceInjector mockServicesInjector;
     @Mock
-    private PersistenceSessionServiceInternal mockAdapterManager;
+    private ObjectAdapterProviderService mockAdapterManager;
 
     private ParseableFacetUsingParser parseableFacetUsingParser;
 

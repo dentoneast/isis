@@ -153,7 +153,8 @@ extends SingleValueFacetAbstract<Class<? extends PropertyDomainEvent<?,?>>> {
             final InteractionInitiatedBy interactionInitiatedBy) {
 
         final ObjectAdapter mixedInAdapter = null;
-        getPersistenceSessionServiceInternal().executeWithinTransaction(()->{
+        
+        getTransactionService().executeWithinTransaction(()->{
             doSetOrClearProperty(style, owningProperty, targetAdapter, mixedInAdapter, newValueAdapter, interactionInitiatedBy);
         });
 

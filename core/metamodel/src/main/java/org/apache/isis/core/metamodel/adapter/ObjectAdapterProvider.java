@@ -40,6 +40,8 @@ public interface ObjectAdapterProvider {
      * @return standalone (value) or root adapter
      */
     @Nullable ObjectAdapter adapterFor(@Nullable Object domainObject);
+    
+    @Nullable ObjectAdapter adapterForServicePojo(Object servicePojo);
 
     /**
      * @return collection adapter.
@@ -101,6 +103,10 @@ public interface ObjectAdapterProvider {
         default ObjectAdapter adapterFor(Object domainObject) {
             return getObjectAdapterProvider().adapterFor(domainObject);
         }
+        
+        default ObjectAdapter adapterForServicePojo(Object servicePojo) {
+        	return getObjectAdapterProvider().adapterFor(servicePojo);
+        }
 
         default ObjectAdapter adapterForCollection(
                 final Object pojo,
@@ -138,6 +144,9 @@ public interface ObjectAdapterProvider {
         }
         
     }
+
+
+	
     
 
 }

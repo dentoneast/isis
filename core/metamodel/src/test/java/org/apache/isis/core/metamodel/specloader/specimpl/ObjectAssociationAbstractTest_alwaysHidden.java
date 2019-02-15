@@ -42,7 +42,7 @@ import org.apache.isis.core.metamodel.facets.all.hide.HiddenFacet;
 import org.apache.isis.core.metamodel.facets.members.hidden.HiddenFacetAbstract;
 import org.apache.isis.core.metamodel.interactions.UsabilityContext;
 import org.apache.isis.core.metamodel.interactions.VisibilityContext;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
@@ -67,7 +67,7 @@ public class ObjectAssociationAbstractTest_alwaysHidden {
     @Mock
     private SpecificationLoader mockSpecificationLoader;
     @Mock
-    private PersistenceSessionServiceInternal mockPersistenceSessionServiceInternal;
+    private ObjectAdapterProviderService mockPersistenceSessionServiceInternal;
 
     public static class Customer {
         public String getFirstName() {

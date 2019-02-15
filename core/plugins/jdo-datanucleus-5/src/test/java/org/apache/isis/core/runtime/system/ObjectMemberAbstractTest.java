@@ -48,7 +48,7 @@ import org.apache.isis.core.metamodel.interactions.PropertyVisibilityContext;
 import org.apache.isis.core.metamodel.interactions.UsabilityContext;
 import org.apache.isis.core.metamodel.interactions.VisibilityContext;
 import org.apache.isis.core.metamodel.services.ServiceInjectorBuilder_forTesting;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
 import org.apache.isis.core.metamodel.services.registry.ServiceRegistryBuilder_forTesting;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
@@ -85,7 +85,7 @@ public class ObjectMemberAbstractTest {
     @Mock
     private AuthenticationSessionProvider mockAuthenticationSessionProvider;
     @Mock
-    private PersistenceSessionServiceInternal mockPersistenceSessionServiceInternal;
+    private ObjectAdapterProviderService mockPersistenceSessionServiceInternal;
     @Mock
     private AuthenticationSession mockAuthenticationSession;
     @Mock

@@ -26,13 +26,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.isis.applib.NonRecoverableException;
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.factory.FactoryService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.facets.object.mixin.MixinFacet;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
@@ -43,13 +41,11 @@ import lombok.val;
 public class FactoryServiceInternalDefault implements FactoryService {
 
 
-    @Programmatic
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T instantiate(final Class<T> domainClass) {
         final ObjectSpecification spec = specificationLoader.loadSpecification(domainClass);
         final ObjectAdapter adapter = doCreateTransientInstance(spec);
-        return (T) adapter.getPojo();
+        return _Casts.uncheckedCast(adapter.getPojo());
     }
 
     /**
@@ -61,14 +57,11 @@ public class FactoryServiceInternalDefault implements FactoryService {
     }
 
 
-    @Programmatic
     @Override
     public <T> T m(final Class<T> mixinClass, final Object mixedIn) {
         return mixin(mixinClass, mixedIn);
     }
 
-
-    @Programmatic
     @Override
     public <T> T mixin(final Class<T> mixinClass, final Object mixedIn) {
         final ObjectSpecification objectSpec = specificationLoader.loadSpecification(mixinClass);
@@ -99,6 +92,5 @@ public class FactoryServiceInternalDefault implements FactoryService {
 
     @Inject SpecificationLoader specificationLoader;
     @Inject ServiceInjector serviceInjector;
-    @Inject PersistenceSessionServiceInternal persistenceSessionServiceInternal;
 
 }

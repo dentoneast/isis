@@ -50,7 +50,6 @@ import org.apache.isis.applib.services.metamodel.MetaModelService;
 import org.apache.isis.applib.services.metamodel.MetaModelService.Mode;
 import org.apache.isis.applib.services.queryresultscache.QueryResultsCache;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
-import org.apache.isis.applib.services.xactn.TransactionService;
 import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.core.commons.exceptions.IsisException;
@@ -135,7 +134,7 @@ implements ImperativeFacet {
             final InteractionInitiatedBy interactionInitiatedBy) {
 
         final ObjectAdapter executionResult = 
-                getPersistenceSessionServiceInternal().executeWithinTransaction(()->
+        		getTransactionService().executeWithinTransaction(()->
                     doInvoke(owningAction, targetAdapter, mixedInAdapter, argumentAdapters, interactionInitiatedBy));
         
         PersistableTypeGuard.instate(executionResult);
@@ -421,10 +420,6 @@ implements ImperativeFacet {
 
     private MetaModelService getMetaModelService() {
         return serviceRegistry.lookupServiceElseFail(MetaModelService.class);
-    }
-
-    private TransactionService getTransactionService() {
-        return serviceRegistry.lookupServiceElseFail(TransactionService.class);
     }
 
     private BookmarkService getBookmarkService() {

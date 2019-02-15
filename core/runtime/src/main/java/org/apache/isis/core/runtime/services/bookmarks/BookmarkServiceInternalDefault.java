@@ -40,7 +40,6 @@ import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.wrapper.WrapperFactory;
 import org.apache.isis.applib.tree.TreeState;
 import org.apache.isis.commons.internal.base._Casts;
-import org.apache.isis.commons.internal.base._With;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.collections._Sets;
@@ -51,7 +50,6 @@ import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.Oid.Factory;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.exceptions.persistence.ObjectNotFoundException;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
@@ -273,7 +271,6 @@ public class BookmarkServiceInternalDefault implements BookmarkService, Serializ
 
     // -- INJECTION
 
-    @Inject PersistenceSessionServiceInternal persistenceSessionServiceInternal;
     @Inject SpecificationLoader specificationLoader;
     @Inject WrapperFactory wrapperFactory;
     @Inject ServiceRegistry serviceRegistry;

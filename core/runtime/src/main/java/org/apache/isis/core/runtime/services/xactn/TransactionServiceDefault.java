@@ -20,6 +20,7 @@
 package org.apache.isis.core.runtime.services.xactn;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.function.Supplier;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -108,6 +109,16 @@ public class TransactionServiceDefault implements TransactionService {
         IsisTransaction.State state = transaction.getState();
         return state.getTransactionState();
     }
+    
+	@Override
+	public void executeWithinTransaction(Runnable task) {
+		isisTransactionManager().executeWithinTransaction(task);
+	}
+
+	@Override
+	public <T> T executeWithinTransaction(Supplier<T> task) {
+		return isisTransactionManager().executeWithinTransaction(task);
+	}
 
     @Inject IsisSessionFactory isisSessionFactory;
     

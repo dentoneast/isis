@@ -27,12 +27,11 @@ import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.applib.services.wrapper.WrapperFactory;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
 
 @Singleton
 public class TitleServiceDefault implements TitleService {
 
-    @Programmatic
     @Override
     public String titleOf(final Object domainObject) {
         final ObjectAdapter objectAdapter = getObjectAdapterProvider().adapterFor(unwrapped(domainObject));
@@ -44,7 +43,6 @@ public class TitleServiceDefault implements TitleService {
         }
     }
 
-    @Programmatic
     @Override
     public String iconNameOf(final Object domainObject) {
         final ObjectAdapter objectAdapter = getObjectAdapterProvider().adapterFor(unwrapped(domainObject));
@@ -63,7 +61,7 @@ public class TitleServiceDefault implements TitleService {
         return sessionServiceInternal;
     }
     
-    @Inject PersistenceSessionServiceInternal sessionServiceInternal;
+    @Inject ObjectAdapterProviderService sessionServiceInternal;
     @Inject WrapperFactory wrapperFactory;
 
 }

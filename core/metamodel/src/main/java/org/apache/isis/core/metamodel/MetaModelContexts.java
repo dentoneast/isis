@@ -29,7 +29,7 @@ import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -89,8 +89,8 @@ public final class MetaModelContexts {
         _CDI.getSingleton(TitleService.class);
 
         @Getter(lazy=true) 
-        private final PersistenceSessionServiceInternal persistenceSessionServiceInternal =
-        _CDI.getSingleton(PersistenceSessionServiceInternal.class);
+        private final ObjectAdapterProviderService objectAdapterProviderService =
+        _CDI.getSingleton(ObjectAdapterProviderService.class);
 
         @Getter(lazy=true) 
         private final RepositoryService repositoryService =

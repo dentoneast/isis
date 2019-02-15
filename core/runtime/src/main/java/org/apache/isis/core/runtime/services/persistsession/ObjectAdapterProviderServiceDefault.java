@@ -21,36 +21,22 @@ package org.apache.isis.core.runtime.services.persistsession;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
-import java.util.function.Supplier;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.isis.applib.NonRecoverableException;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
-import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 
-@Singleton
-public class PersistenceSessionServiceInternalDefault implements PersistenceSessionServiceInternal {
+@Singleton //FIXME [2033] this should replace the ObjectAdapterContext_ObjectAdapterProvider
+public class ObjectAdapterProviderServiceDefault implements ObjectAdapterProviderService {
 
     @Override
     public ObjectAdapterProvider getObjectAdapterProvider() {
         return getPersistenceSession();
-    }
-
-    @Override
-    public void executeWithinTransaction(Runnable task) {
-        getTransactionManager().executeWithinTransaction(task);
-    }
-    
-    @Override
-    public <T> T executeWithinTransaction(Supplier<T> task) {
-        return getTransactionManager().executeWithinTransaction(task);
     }
 
     protected PersistenceSession getPersistenceSession() {
@@ -63,11 +49,6 @@ public class PersistenceSessionServiceInternalDefault implements PersistenceSess
         return requireNonNull(isisSessionFactory, "IsisSessionFactory was not injected.");
     }
 
-    public IsisTransactionManager getTransactionManager() {
-        return getPersistenceSession().getTransactionManager();
-    }
-
-    @Inject SpecificationLoader specificationLoader;
     @Inject IsisSessionFactory isisSessionFactory;
 
 }

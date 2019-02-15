@@ -19,6 +19,7 @@ package org.apache.isis.core.metamodel.specloader.specimpl;
 import java.util.List;
 
 import org.apache.isis.core.commons.lang.ListExtensions;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.facetapi.FeatureType;
@@ -54,7 +55,8 @@ implements ObjectActionParameterContributee {
     }
 
     protected ObjectAdapter getServiceAdapter() {
-        return getObjectPersistor().adapterFor(servicePojo);
+    	return MetaModelContext.current().getObjectAdapterProvider()
+    	.adapterForServicePojo(servicePojo);
     }
 
     @Override

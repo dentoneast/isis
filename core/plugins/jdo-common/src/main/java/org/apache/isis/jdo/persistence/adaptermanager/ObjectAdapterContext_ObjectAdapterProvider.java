@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.base._Lazy;
+import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.core.commons.ensure.Assert;
 import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
@@ -55,8 +56,8 @@ import lombok.val;
  */
 class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvider {
     
-    @SuppressWarnings("unused")
-    private static final Logger LOG = LoggerFactory.getLogger(ObjectAdapterContext_ObjectAdapterProvider.class);
+	private final static _Probe probe = _Probe.unlimited().label("ObjectAdapterContext_ObjectAdapterProvider");
+    
     private final ObjectAdapterContext objectAdapterContext;
 //    private final PersistenceSession persistenceSession;
     private final ServiceInjector serviceInjector;
@@ -100,10 +101,17 @@ class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvide
         	return oidProviderForManagedContexts.adapterFor(managedObject, resolver);
         }
         
+        probe.println("[2033] we should not need to fall through here any longer");
+        
         final RootOid rootOid = oidFactory.oidFor(pojo);
         final ObjectAdapter newAdapter = objectAdapterContext.getFactories().createRootAdapter(pojo, rootOid);
         return objectAdapterContext.injectServices(newAdapter);
     }
+    
+	@Override
+	public ObjectAdapter adapterForServicePojo(Object servicePojo) {
+		return adapterFor(servicePojo);
+	}
     
     
     @Override
@@ -174,6 +182,8 @@ class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvide
         })
         .collect(Collectors.toMap(ServiceUtil::idOfAdapter, v->v, (o,n)->n, LinkedHashMap::new));
     }
+
+
     
    
 }

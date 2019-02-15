@@ -80,7 +80,8 @@ public final class AppConfigLocator {
     		"org.apache.isis.applib.services.user.UserService",
     		"org.apache.isis.applib.services.xactn.TransactionService",
     		
-    		"org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal",
+    		"org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService",
+    		
     		"org.apache.isis.applib.services.wrapper.WrapperFactory",
     		"org.apache.isis.core.runtime.services.bookmarks.BookmarkServiceInternalDefault",
     		

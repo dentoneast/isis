@@ -134,7 +134,7 @@ public class IsisTransactionManager {
     public void executeWithinTransaction(
             final Command existingCommandIfAny,
             final Runnable task) {
-        final boolean initiallyInTransaction = inTransaction();
+        final boolean initiallyInTransaction = isInTransaction();
         if (!initiallyInTransaction) {
             startTransaction(existingCommandIfAny);
         }
@@ -181,7 +181,7 @@ public class IsisTransactionManager {
     public <Q> Q executeWithinTransaction(
             final Command existingCommandIfAny,
             final Supplier<Q> task) {
-        final boolean initiallyInTransaction = inTransaction();
+        final boolean initiallyInTransaction = isInTransaction();
         if (!initiallyInTransaction) {
             startTransaction(existingCommandIfAny);
         }
@@ -202,7 +202,7 @@ public class IsisTransactionManager {
         }
     }
 
-    public boolean inTransaction() {
+    public boolean isInTransaction() {
         return getCurrentTransaction() != null && !getCurrentTransaction().getState().isComplete();
     }
 
@@ -240,7 +240,7 @@ public class IsisTransactionManager {
             final UUID transactionId = command.getUniqueId();
 
             this.currentTransaction = new IsisTransaction(transactionId,
-                    interaction.next(Interaction.Sequence.TRANSACTION.id()), serviceRegistry);
+                    interaction.next(Interaction.Sequence.TRANSACTION.id()), serviceRegistry, this);
             transactionLevel = 0;
 
             persistenceSession.startTransaction();

@@ -39,7 +39,6 @@ import org.apache.isis.core.runtime.persistence.transaction.CreateObjectCommand;
 import org.apache.isis.core.runtime.persistence.transaction.DestroyObjectCommand;
 import org.apache.isis.core.runtime.persistence.transaction.PersistenceCommand;
 import org.apache.isis.core.runtime.services.auditing.AuditingServiceInternal;
-import org.apache.isis.core.runtime.services.persistsession.PersistenceSessionServiceInternalDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -177,15 +176,15 @@ public class IsisTransaction implements TransactionScopedComponent, Transaction 
     public IsisTransaction(
             final UUID interactionId,
             final int sequence,
-            final ServiceRegistry serviceRegistry) {
+            final ServiceRegistry serviceRegistry, 
+            IsisTransactionManager transactionManager) {
 
         this.interactionId = interactionId;
         this.sequence = sequence;
         //        this.authenticationSession = authenticationSession;
 
-        final PersistenceSessionServiceInternalDefault persistenceSessionService = serviceRegistry
-                .lookupServiceElseFail(PersistenceSessionServiceInternalDefault.class);
-        this.transactionManager = persistenceSessionService.getTransactionManager();
+        
+        this.transactionManager = transactionManager;
 
         //        this.messageBroker = authenticationSession.getMessageBroker();
         this.publishingServiceInternal = serviceRegistry.lookupServiceElseFail(PublishingServiceInternal.class);

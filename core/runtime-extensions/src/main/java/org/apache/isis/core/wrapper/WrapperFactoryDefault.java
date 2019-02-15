@@ -51,7 +51,6 @@ import org.apache.isis.applib.services.wrapper.events.PropertyUsabilityEvent;
 import org.apache.isis.applib.services.wrapper.events.PropertyVisibilityEvent;
 import org.apache.isis.applib.services.wrapper.listeners.InteractionListener;
 import org.apache.isis.commons.internal.base._Casts;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 import org.apache.isis.core.wrapper.dispatchers.InteractionEventDispatcher;
@@ -316,17 +315,8 @@ public class WrapperFactoryDefault implements WrapperFactory {
         dispatcher.dispatch(interactionEvent);
     }
 
-
-    @Inject
-    AuthenticationSessionProvider authenticationSessionProvider;
-
-    @Inject
-    PersistenceSessionServiceInternal persistenceSessionServiceInternal;
-
-    @Inject
-    IsisSessionFactory isisSessionFactory;
-
-    @Inject
-    FactoryService factoryService;
+    @Inject AuthenticationSessionProvider authenticationSessionProvider;
+    @Inject IsisSessionFactory isisSessionFactory;
+    @Inject FactoryService factoryService;
 
 }

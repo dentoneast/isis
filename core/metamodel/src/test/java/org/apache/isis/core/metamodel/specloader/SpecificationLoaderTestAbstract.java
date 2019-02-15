@@ -46,7 +46,7 @@ import org.apache.isis.core.metamodel.facets.collections.modify.CollectionFacet;
 import org.apache.isis.core.metamodel.facets.object.plural.PluralFacet;
 import org.apache.isis.core.metamodel.metamodelvalidator.dflt.MetaModelValidatorDefault;
 import org.apache.isis.core.metamodel.progmodel.ProgrammingModelAbstract.DeprecatedPolicy;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 import org.apache.isis.progmodels.dflt.ProgrammingModelFacetsJava5;
@@ -73,8 +73,8 @@ abstract class SpecificationLoaderTestAbstract {
         }
         
         @Produces
-        PersistenceSessionServiceInternal mockPersistenceSessionServiceInternal() {
-            return Mockito.mock(PersistenceSessionServiceInternal.class);
+        ObjectAdapterProviderService mockPersistenceSessionServiceInternal() {
+            return Mockito.mock(ObjectAdapterProviderService.class);
         }
         
         @Produces
@@ -114,7 +114,7 @@ abstract class SpecificationLoaderTestAbstract {
     
     @Inject protected AuthenticationSessionProvider mockAuthenticationSessionProvider;
     @Inject protected GridService2 mockGridService;
-    @Inject protected PersistenceSessionServiceInternal mockPersistenceSessionServiceInternal;
+    @Inject protected ObjectAdapterProviderService mockPersistenceSessionServiceInternal;
     @Inject protected MessageService mockMessageService;
     @Inject protected SpecificationLoader specificationLoader;
     

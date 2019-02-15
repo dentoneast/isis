@@ -23,11 +23,11 @@ import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.repository.RepositoryService;
 import org.apache.isis.applib.services.title.TitleService;
+import org.apache.isis.applib.services.xactn.TransactionService;
 import org.apache.isis.applib.services.xactn.TransactionState;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
-import org.apache.isis.core.metamodel.services.persistsession.PersistenceSessionServiceInternal;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -68,10 +68,9 @@ public interface MetaModelContext {
 
     ObjectSpecification getSpecification(Class<?> type);
     
-    @Deprecated //TODO[2033] replace with getRepositoryService()
-    PersistenceSessionServiceInternal getPersistenceSessionServiceInternal();
-    
     RepositoryService getRepositoryService();
+    
+    TransactionService getTransactionService();
     
     TransactionState getTransactionState();
 
@@ -140,17 +139,16 @@ public interface MetaModelContext {
             return getMetaModelContext().getSpecification(type);
         }
         
-        @Deprecated
-        public default PersistenceSessionServiceInternal getPersistenceSessionServiceInternal() {
-            return getMetaModelContext().getPersistenceSessionServiceInternal();
-        }
-        
         public default RepositoryService getRepositoryService() {
             return getMetaModelContext().getRepositoryService();
         }
         
         public default TransactionState getTransactionState() {
             return getMetaModelContext().getTransactionState();
+        }
+        
+        public default TransactionService getTransactionService() {
+            return getMetaModelContext().getTransactionService();
         }
         
     }

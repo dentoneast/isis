@@ -16,16 +16,9 @@
  */
 package org.apache.isis.core.metamodel.services.persistsession;
 
-import java.util.function.Supplier;
-
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 
-public interface PersistenceSessionServiceInternal extends ObjectAdapterProvider.Delegating {
+public interface ObjectAdapterProviderService extends ObjectAdapterProvider.Delegating {
     
-    // -- TRANSACTIONS
-
-    void executeWithinTransaction(Runnable task);
-    
-    <T> T executeWithinTransaction(Supplier<T> task);
 
 }
