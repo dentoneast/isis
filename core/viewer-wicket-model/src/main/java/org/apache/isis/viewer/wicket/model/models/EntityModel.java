@@ -323,6 +323,8 @@ implements ObjectAdapterModel, UiHintContainer {
     // loadObject, load, setObject
     // //////////////////////////////////////////////////////////
 
+    private final static _Probe probe = _Probe.unlimited().label("EntityModel");
+    
     /**
      * Not Wicket API, but used by <tt>EntityPage</tt> to do eager loading
      * when rendering after post-and-redirect.
@@ -335,7 +337,7 @@ implements ObjectAdapterModel, UiHintContainer {
     		val spec = IsisContext.getSpecificationLoader().lookupBySpecId(adapterMemento.getObjectSpecId());
     		if(spec.isPersistenceCapable()) {
         		val info = "adapterMemento '"+adapterMemento+"'";
-        		_Probe.warnNotImplementedYet("[2033] ConcurrencyChecking no longer supported!? "+info);    			
+        		probe.warnNotImplementedYet("[2033] ConcurrencyChecking no longer supported!? "+info);    			
     		}
     	}
     	

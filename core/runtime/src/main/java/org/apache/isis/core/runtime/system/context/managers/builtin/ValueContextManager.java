@@ -85,7 +85,7 @@ public class ValueContextManager implements ContextHandler {
 				objectUri);
 		
 		//FIXME [2033] we expect a base64 encoded memento container, but do get plaintext
-		_Probe.warnNotImplementedYet("we expect a base64 encoded memento container, "
+		probe.warnNotImplementedYet("we expect a base64 encoded memento container, "
 				+ "but do get plaintext here: '%s'", serialized);
 		
 //		if("String".equals(expectedType.getSimpleName())) {
@@ -150,7 +150,8 @@ public class ValueContextManager implements ContextHandler {
 			if(value instanceof Serializable) {
 				return (Serializable) value;
 			}
-			_Probe.warnNotImplementedYet("This SerializingAdapter can only handle values that are 'serializable'. Got '%s'.", ""+value);
+			probe.warnNotImplementedYet("This SerializingAdapter can only handle values that are 'serializable'. "
+					+ "Got '%s'.", ""+value);
 			
 			//throw _Exceptions.unrecoverable("This SerializingAdapter can only handle values that are 'serializable'.");
 			return null;

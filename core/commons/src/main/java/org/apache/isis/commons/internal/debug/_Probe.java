@@ -160,6 +160,17 @@ public class _Probe {
     public void println(String format, Object...args) {
         println(currentIndent, format, args);
     }
+    
+    public void warnNotImplementedYet(String format, Object... args) {
+    	val warnMsg = String.format(format, args);
+    	val restore_out = out;
+    	out=System.err;
+    	println("WARN NotImplementedYet %s", warnMsg);
+    	errOut("-------------------------------------");
+    	_Exceptions.dumpStackTrace(System.err, 1, 12);
+    	errOut("-------------------------------------");
+    	out=restore_out;
+	}
 
     // -- CONVENIENT DEBUG TOOLS (STATIC)
 
@@ -170,14 +181,6 @@ public class _Probe {
     public static void errOut(String format, Object... args) {
         System.err.println(String.format(format, args));
     }
-    
-    public static void warnNotImplementedYet(String format, Object... args) {
-    	val warnMsg = String.format(format, args);
-    	errOut("WARN NotImplementedYet %s", warnMsg);
-    	errOut("-------------------------------------");
-    	_Exceptions.dumpStackTrace(System.err, 1, 12);
-    	errOut("-------------------------------------");
-	}
 
     // -- HELPER
     

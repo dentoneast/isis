@@ -75,6 +75,8 @@ UiHintContainer {
 
     private static final int PAGE_SIZE_DEFAULT_FOR_PARENTED = 12;
     private static final int PAGE_SIZE_DEFAULT_FOR_STANDALONE = 25;
+    
+    private final static _Probe probe = _Probe.unlimited().label("EntityCollectionModel");
 
     public enum Type {
         /**
@@ -108,7 +110,7 @@ UiHintContainer {
             }
             
             private Stream<ObjectAdapter> loadOneByOne(final EntityCollectionModel model) {
-            	_Probe.warnNotImplementedYet("We no longer access the PersistenceSession directly.");
+            	probe.warnNotImplementedYet("We no longer access the PersistenceSession directly.");
             	return loadInBulk(model);
             	
 //FIXME [2033] reinstate legacy behavior, or remove ?            	
