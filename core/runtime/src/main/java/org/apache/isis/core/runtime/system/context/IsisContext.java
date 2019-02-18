@@ -38,7 +38,9 @@ import org.apache.isis.config.ConfigurationConstants;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelDeficiencies;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidException;
@@ -205,14 +207,21 @@ public interface IsisContext {
         	    .map(PersistenceSession::getTransactionManager);
     }
     
-    //TODO [2033] decouple from JDO
-    public static Function<Object, ObjectAdapter> pojoToAdapter() {
-        return getPersistenceSession().get()::adapterFor;
+    /**
+     * @return framework's ServiceRegistry
+     * @throws NoSuchElementException - if ServiceRegistry not managed
+     */
+    public static ObjectAdapterProvider getObjectAdapterProvider() {
+        return _CDI.getSingleton(ObjectAdapterProviderService.class)
+        		.getObjectAdapterProvider();
     }
     
-    //TODO [2033] decouple from JDO
+    public static Function<Object, ObjectAdapter> pojoToAdapter() {
+        return getObjectAdapterProvider()::adapterFor;
+    }
+    
     public static Function<RootOid, ObjectAdapter> rootOidToAdapter() {
-        return getPersistenceSession().get()::adapterFor;
+        return getObjectAdapterProvider()::adapterFor;
     }
     
     /**

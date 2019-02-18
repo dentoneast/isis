@@ -36,13 +36,11 @@ import org.apache.isis.applib.services.command.CommandContext;
 import org.apache.isis.applib.services.factory.FactoryService;
 import org.apache.isis.commons.internal._Constants;
 import org.apache.isis.core.commons.lang.ArrayExtensions;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.services.command.CommandDtoServiceInternal;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.classsubstitutor.ProxyEnhanced;
 import org.apache.isis.core.plugins.codegen.ProxyFactory;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -168,9 +166,7 @@ public class BackgroundServiceDefault implements BackgroundService {
                 mixedInIfAny,
                 specificationLoader,
                 commandDtoServiceInternal,
-                commandContext,
-                this::getObjectAdapterProvider);
-
+                commandContext);
     }
 
 
@@ -181,10 +177,5 @@ public class BackgroundServiceDefault implements BackgroundService {
     @Inject private CommandContext commandContext;
     @Inject private FactoryService factoryService;
     @Inject private SpecificationLoader specificationLoader;
-    @Inject private IsisSessionFactory isisSessionFactory;
-
-    protected ObjectAdapterProvider getObjectAdapterProvider() {
-        return isisSessionFactory.getCurrentSession().getPersistenceSession();
-    }
 
 }

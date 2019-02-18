@@ -74,11 +74,11 @@ public interface ObjectAdapterProvider {
      * Creates a new instance of the specified type and returns it.
      *
      * <p>
-     * The returned object will be initialised (had the relevant callback
+     * The returned object will be initialized (had the relevant callback
      * lifecycle methods invoked).
      *
      * <p>
-     * While creating the object it will be initialised with default values and
+     * While creating the object it will be initialized with default values and
      * its created lifecycle method (its logical constructor) will be invoked.
      *
      */

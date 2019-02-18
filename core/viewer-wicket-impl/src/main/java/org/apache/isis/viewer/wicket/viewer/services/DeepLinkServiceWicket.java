@@ -26,7 +26,7 @@ import javax.inject.Singleton;
 
 import org.apache.isis.applib.services.linking.DeepLinkService;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.runtime.system.session.IsisSession;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
 import org.apache.isis.viewer.wicket.model.models.EntityModel;
 import org.apache.isis.viewer.wicket.model.models.PageType;
 import org.apache.isis.viewer.wicket.ui.pages.PageClassRegistry;
@@ -42,12 +42,13 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 @Singleton
 public class DeepLinkServiceWicket implements DeepLinkService {
 
-    @Inject private PageClassRegistry pageClassRegistry;
+	@Inject private PageClassRegistry pageClassRegistry;
+	@Inject private ObjectAdapterProviderService objectAdapterProvider;
 	
     @Override
     public URI deepLinkFor(final Object domainObject) {
 
-        final ObjectAdapter objectAdapter = IsisSession.currentIfAny().adapterOfPojo(domainObject);
+        final ObjectAdapter objectAdapter = objectAdapterProvider.adapterFor(domainObject);
         final PageParameters pageParameters = EntityModel.createPageParameters(objectAdapter);
 
         //PageClassRegistry pageClassRegistry = guiceBeanProvider.lookup(PageClassRegistry.class);

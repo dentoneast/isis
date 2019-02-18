@@ -31,11 +31,9 @@ import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.facets.object.mixin.MixinFacet;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-import org.apache.isis.core.runtime.system.context.IsisContext;
-
-import lombok.val;
 
 @Singleton
 public class FactoryServiceInternalDefault implements FactoryService {
@@ -52,8 +50,7 @@ public class FactoryServiceInternalDefault implements FactoryService {
      * Factored out as a potential hook method for subclasses.
      */
     protected ObjectAdapter doCreateTransientInstance(final ObjectSpecification spec) {
-    	val ps = IsisContext.getPersistenceSession().get();
-    	return ps.newTransientInstance(spec);
+    	return objectAdapterProvider.newTransientInstance(spec);
     }
 
 
@@ -92,5 +89,6 @@ public class FactoryServiceInternalDefault implements FactoryService {
 
     @Inject SpecificationLoader specificationLoader;
     @Inject ServiceInjector serviceInjector;
+    @Inject ObjectAdapterProviderService objectAdapterProvider;
 
 }

@@ -25,18 +25,23 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.isis.applib.NonRecoverableException;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 
+import lombok.val;
+
 @Singleton //FIXME [2033] this should replace the ObjectAdapterContext_ObjectAdapterProvider
 public class ObjectAdapterProviderServiceDefault implements ObjectAdapterProviderService {
 
     @Override
     public ObjectAdapterProvider getObjectAdapterProvider() {
-        return getPersistenceSession();
+    	//val metaModelContext = MetaModelContext.current(); //don't do this, MetaModelContext actually uses this service 
+        //return metaModelContext.getObjectAdapterProvider();
+    	return getPersistenceSession();
     }
 
     protected PersistenceSession getPersistenceSession() {

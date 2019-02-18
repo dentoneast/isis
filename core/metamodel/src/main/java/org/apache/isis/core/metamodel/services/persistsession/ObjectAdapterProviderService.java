@@ -18,6 +18,7 @@ package org.apache.isis.core.metamodel.services.persistsession;
 
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 
+//TODO [2033] instead of delegating, this service should replace ObjectAdapterProvider
 public interface ObjectAdapterProviderService extends ObjectAdapterProvider.Delegating {
     
 

@@ -38,9 +38,9 @@ import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 
 public interface PersistenceSession 
 extends 
-    ObjectAdapterProvider.Delegating,
-    ObjectAdapterByIdProvider.Delegating,
-    TransactionalResource {
+    ObjectAdapterProvider.Delegating, //TODO [2033] remove this interface
+    ObjectAdapterByIdProvider.Delegating, //TODO [2033] remove this interface
+    TransactionalResource { //TODO [2033] remove this interface
 
     // -------------------------------------------------------------------------------------------------
     // -- STABLE API (DRAFT)

@@ -1,13 +1,17 @@
 package org.apache.isis.core.runtime.system.context.session;
 
+import java.util.function.Supplier;
+
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.commons.internal.base._Tuples.Tuple2;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
 import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
@@ -36,6 +40,7 @@ public abstract class ManagedObjectContextBase implements ManagedObjectContext {
     @Getter protected final ServiceRegistry serviceRegistry;
     @Getter protected final SpecificationLoader specificationLoader;
     @Getter protected final AuthenticationSession authenticationSession;
+    @Getter protected final Supplier<ObjectAdapterProvider> objectAdapterProvider;
     
     // -- NO ARG CONSTRUCTOR
     
@@ -45,13 +50,14 @@ public abstract class ManagedObjectContextBase implements ManagedObjectContext {
         serviceRegistry = IsisContext.getServiceRegistry();
         specificationLoader = IsisContext.getSpecificationLoader();
         authenticationSession = IsisContext.getAuthenticationSession().orElse(null);
+        objectAdapterProvider = IsisContext::getObjectAdapterProvider;
     }
     
     // -- OBJECT ADAPTER SUPPORT
     
-    @Override //FIXME [2033] decouple from JDO
+    @Override
     public ObjectAdapter adapterOfPojo(Object pojo) {
-		return ps().adapterOfPojo(pojo);
+		return objectAdapterProvider.get().adapterFor(pojo);
 	}
     
     @Override //FIXME [2033] decouple from JDO

@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 import org.apache.isis.applib.services.background.BackgroundCommandService;
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.command.CommandContext;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.facets.actions.action.invocation.CommandUtil;
@@ -40,6 +41,8 @@ import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.specimpl.ObjectActionMixedIn;
 import org.apache.isis.core.metamodel.specloader.specimpl.dflt.ObjectSpecificationDefault;
 import org.apache.isis.schema.cmd.v1.CommandDto;
+
+import lombok.val;
 
 class CommandInvocationHandler<T> implements InvocationHandler {
 
@@ -57,15 +60,16 @@ class CommandInvocationHandler<T> implements InvocationHandler {
             Object mixedInIfAny,
             SpecificationLoader specificationLoader,
             CommandDtoServiceInternal commandDtoServiceInternal,
-            CommandContext commandContext,
-            Supplier<ObjectAdapterProvider> adapterProviderSupplier) {
+            CommandContext commandContext) {
+    	
         this.backgroundCommandService = requires(backgroundCommandService, "backgroundCommandService");
         this.target = requires(target, "target");
         this.mixedInIfAny = mixedInIfAny;
         this.specificationLoader = requires(specificationLoader, "specificationLoader");
         this.commandDtoServiceInternal = requires(commandDtoServiceInternal, "commandDtoServiceInternal");
         this.commandContext = requires(commandContext, "commandContext");
-        this.adapterProviderSupplier = requires(adapterProviderSupplier, "adapterProviderSupplier");
+        
+        this.adapterProviderSupplier = MetaModelContext.current()::getObjectAdapterProvider;
     }
 
     @Override

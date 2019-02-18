@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.isis.applib.annotation.Programmatic;
@@ -28,10 +29,10 @@ import org.apache.isis.applib.services.bookmark.BookmarkService;
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.command.CommandContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.facets.actions.action.invocation.CommandUtil;
 import org.apache.isis.core.metamodel.services.command.CommandDtoServiceInternal;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.spec.feature.ObjectActionParameter;
@@ -48,6 +49,9 @@ import org.apache.isis.schema.common.v1.OidsDto;
 import org.apache.isis.schema.common.v1.ValueWithTypeDto;
 import org.apache.isis.schema.utils.CommandDtoUtils;
 import org.apache.isis.schema.utils.CommonDtoUtils;
+
+import lombok.AccessLevel;
+import lombok.Getter;
 
 @Singleton
 public class CommandDtoServiceInternalDefault implements CommandDtoServiceInternal {
@@ -170,24 +174,13 @@ public class CommandDtoServiceInternalDefault implements CommandDtoServiceIntern
 
     // //////////////////////////////////////
 
-    // -- injected services
-    @javax.inject.Inject
-    CommandContext commandContext;
-
-    @javax.inject.Inject
-    private BookmarkService bookmarkService;
-
-    @javax.inject.Inject
-    SpecificationLoader specificationLoader;
-
-    @javax.inject.Inject
-    IsisSessionFactory isisSessionFactory;
-
-    protected ObjectAdapterProvider getObjectAdapterProvider() {
-        return isisSessionFactory.getCurrentSession().getPersistenceSession();
-    }
-
-
+    @Inject CommandContext commandContext;
+    @Inject private BookmarkService bookmarkService;
+    @Inject SpecificationLoader specificationLoader;
+    @Inject IsisSessionFactory isisSessionFactory;
+    
+    @Getter(value=AccessLevel.PROTECTED)
+    @Inject private ObjectAdapterProviderService objectAdapterProvider;
 
 
 }
