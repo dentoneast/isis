@@ -155,34 +155,6 @@ class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvide
     public ObjectAdapter recreateViewModelInstance(ObjectSpecification objectSpec, final String memento) {
         return objectAdapterContext.objectCreationMixin.recreateInstance(objectSpec, memento);
     }
-    
-    // -- SERVICE SUPPORT
-    
-    @Override
-    public Stream<ObjectAdapter> streamServices() {
-        return serviceAdapters.get().values().stream();
-    }
-    
-    @Override
-    public ObjectAdapter lookupService(final String serviceId) {
-        return serviceAdapters.get().get(serviceId);
-    }
-    
-    
-    // -- HELPER
-    
-    private final _Lazy<Map<String, ObjectAdapter>> serviceAdapters = _Lazy.of(this::initServiceAdapters);
-    
-    private Map<String, ObjectAdapter> initServiceAdapters() {
-        
-        return serviceInjector.streamServices()
-        .map(this::adapterFor) 
-        .peek(serviceAdapter->{
-            Assert.assertFalse("expected to not be 'transient'", serviceAdapter.getOid().isTransient());
-        })
-        .collect(Collectors.toMap(ServiceUtil::idOfAdapter, v->v, (o,n)->n, LinkedHashMap::new));
-    }
-
 
     
    

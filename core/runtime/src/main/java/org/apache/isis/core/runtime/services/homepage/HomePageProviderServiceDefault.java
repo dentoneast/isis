@@ -28,6 +28,7 @@ import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.services.homepage.HomePageProviderService;
 import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.commons.internal.base._NullSafe;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.consent.Consent;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
@@ -35,8 +36,8 @@ import org.apache.isis.core.metamodel.facets.actions.homepage.HomePageFacet;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.Contributed;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
-import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
+
+import lombok.val;
 
 //FIXME [2033] looks like a duplicate of ManagedObjectContextBase_findHomepage
 @Singleton
@@ -51,11 +52,11 @@ public class HomePageProviderServiceDefault implements HomePageProviderService {
     private final _Lazy<Object> homePage = _Lazy.of(this::lookupHomePage);
 
     private Object lookupHomePage() {
-        final Stream<ObjectAdapter> serviceAdapters = 
-                IsisContext.getPersistenceSession()
-                .map(PersistenceSession::streamServices)
-                .orElse(Stream.empty());
-        
+    	
+    	val metaModelContext = MetaModelContext.current();
+    	
+        final Stream<ObjectAdapter> serviceAdapters = metaModelContext.streamServiceAdapters(); 
+                
         return serviceAdapters.map(serviceAdapter->{
             final ObjectSpecification serviceSpec = serviceAdapter.getSpecification();
             final Stream<ObjectAction> objectActions = serviceSpec.streamObjectActions(Contributed.EXCLUDED);

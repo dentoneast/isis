@@ -46,7 +46,7 @@ import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.collections._Sets;
 import org.apache.isis.commons.internal.context._Context;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.facets.actions.notinservicemenu.NotInServiceMenuFacet;
 import org.apache.isis.core.metamodel.facets.all.named.NamedFacet;
 import org.apache.isis.core.metamodel.facets.members.order.MemberOrderFacet;
@@ -61,6 +61,8 @@ import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import lombok.val;
 
 @Singleton
 public class MenuBarsServiceBS3 implements MenuBarsService {
@@ -179,10 +181,10 @@ public class MenuBarsServiceBS3 implements MenuBarsService {
     private BS3MenuBars deriveMenuBarsFromMetaModelFacets() {
         final BS3MenuBars menuBars = new BS3MenuBars();
 
-        final Stream<ObjectAdapter> serviceAdapters =
-                isisSessionFactory.getCurrentSession().getPersistenceSession().streamServices();
-
-        final List<ManagedObject> visibleServiceAdapters = serviceAdapters.filter(objectAdapter -> {
+        val metaModelContext = MetaModelContext.current();
+        
+        final List<ManagedObject> visibleServiceAdapters = metaModelContext.streamServiceAdapters()
+        .filter(objectAdapter -> {
             if (objectAdapter == null) {
                 return false;
             }

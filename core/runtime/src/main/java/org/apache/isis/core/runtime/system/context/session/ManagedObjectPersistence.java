@@ -1,7 +1,5 @@
 package org.apache.isis.core.runtime.system.context.session;
 
-import java.util.stream.Stream;
-
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
@@ -23,9 +21,7 @@ public interface ManagedObjectPersistence {
 
 	// -- METHODS NEEDED BY RO-VIEWER ...
 	
-	Stream<ObjectAdapter> streamServices(); //TODO [2033] use ServiceRegistry instead
 	ManagedObjectState stateOf(Object domainObject);
-	ObjectAdapter lookupService(final String serviceId); //TODO [2033] use ServiceRegistry instead
 	FixturesInstalledState getFixturesInstalledState();
 	
 	//
@@ -48,11 +44,6 @@ public interface ManagedObjectPersistence {
 	
 	static ManagedObjectPersistence of(PersistenceSession persistenceSession) {
 		return new ManagedObjectPersistence() {
-			
-			@Override
-			public Stream<ObjectAdapter> streamServices() {
-				return persistenceSession.streamServices();
-			}
 			
 			@Override
 			public ObjectAdapter newTransientInstance(ObjectSpecification domainTypeSpec) {
@@ -82,11 +73,6 @@ public interface ManagedObjectPersistence {
 			@Override
 			public ObjectAdapter adapterOfMemento(ObjectSpecification spec, Oid oid, Data data) {
 				return persistenceSession.adapterOfMemento(spec, oid, data);
-			}
-
-			@Override
-			public ObjectAdapter lookupService(String serviceId) {
-				return persistenceSession.lookupService(serviceId);
 			}
 
 			@Override

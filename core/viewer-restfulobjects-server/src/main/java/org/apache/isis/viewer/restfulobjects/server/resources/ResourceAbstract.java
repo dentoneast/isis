@@ -33,6 +33,7 @@ import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.command.CommandContext;
 import org.apache.isis.core.commons.url.UrlDecoderUtil;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
@@ -43,6 +44,8 @@ import org.apache.isis.viewer.restfulobjects.rendering.RestfulObjectsApplication
 import org.apache.isis.viewer.restfulobjects.rendering.service.RepresentationService;
 import org.apache.isis.viewer.restfulobjects.rendering.util.Util;
 import org.apache.isis.viewer.restfulobjects.server.ResourceContext;
+
+import lombok.val;
 
 public abstract class ResourceAbstract {
 
@@ -135,7 +138,10 @@ public abstract class ResourceAbstract {
     }
 
     protected ObjectAdapter getServiceAdapter(final String serviceId) {
-        final ObjectAdapter serviceAdapter = resourceContext.lookupService(serviceId);
+    	
+    	val metaModelContext = MetaModelContext.current();
+    	
+        final ObjectAdapter serviceAdapter = metaModelContext.lookupServiceAdapterById(serviceId);
         if(serviceAdapter==null) {
         	throw RestfulObjectsApplicationException.createWithMessage(HttpStatusCode.NOT_FOUND, 
             		"Could not locate service '%s'", serviceId);    

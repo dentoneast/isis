@@ -18,6 +18,8 @@
  */
 package org.apache.isis.core.metamodel;
 
+import java.util.stream.Stream;
+
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
@@ -27,6 +29,7 @@ import org.apache.isis.applib.services.xactn.TransactionService;
 import org.apache.isis.applib.services.xactn.TransactionState;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
@@ -73,6 +76,10 @@ public interface MetaModelContext {
     TransactionService getTransactionService();
     
     TransactionState getTransactionState();
+    
+	Stream<ObjectAdapter> streamServiceAdapters();
+	
+	ObjectAdapter lookupServiceAdapterById(String serviceId);
 
     // -- PRESET INSTANCES
     
@@ -91,68 +98,91 @@ public interface MetaModelContext {
         
         public MetaModelContext getMetaModelContext();
         
+        @Override
         public default IsisConfiguration getConfiguration() {
             return getMetaModelContext().getConfiguration();
         }
         
+        @Override
         public default ObjectAdapterProvider getObjectAdapterProvider() {
             return getMetaModelContext().getObjectAdapterProvider();
         }
 
+        @Override
         public default ServiceInjector getServiceInjector() {
             return getMetaModelContext().getServiceInjector();
         }
 
+        @Override
         public default ServiceRegistry getServiceRegistry() {
             return getMetaModelContext().getServiceRegistry();
         }
 
+        @Override
         public default SpecificationLoader getSpecificationLoader() {
             return getMetaModelContext().getSpecificationLoader();
         }
 
+        @Override
         public default AuthenticationSessionProvider getAuthenticationSessionProvider() {
             return getMetaModelContext().getAuthenticationSessionProvider();
         }
 
+        @Override
         public default TranslationService getTranslationService() {
             return getMetaModelContext().getTranslationService();
         }
 
+        @Override
         public default AuthenticationSession getAuthenticationSession() {
             return getMetaModelContext().getAuthenticationSession();
         }
 
+        @Override
         public default AuthorizationManager getAuthorizationManager() {
             return getMetaModelContext().getAuthorizationManager();
         }
 
+        @Override
         public default AuthenticationManager getAuthenticationManager() {
             return getMetaModelContext().getAuthenticationManager();
         }
 
+        @Override
         public default TitleService getTitleService() {
             return getMetaModelContext().getTitleService();
         }
 
+        @Override
         public default ObjectSpecification getSpecification(Class<?> type) {
             return getMetaModelContext().getSpecification(type);
         }
         
+        @Override
         public default RepositoryService getRepositoryService() {
             return getMetaModelContext().getRepositoryService();
         }
         
+        @Override
         public default TransactionState getTransactionState() {
             return getMetaModelContext().getTransactionState();
         }
         
+        @Override
         public default TransactionService getTransactionService() {
             return getMetaModelContext().getTransactionService();
         }
         
+        @Override
+        public default Stream<ObjectAdapter> streamServiceAdapters() {
+        	return streamServiceAdapters();
+        }
+        
+        @Override
+        default ObjectAdapter lookupServiceAdapterById(String serviceId) {
+        	return lookupServiceAdapterById(serviceId);
+        }
+        
     }
-
-   
     
 }

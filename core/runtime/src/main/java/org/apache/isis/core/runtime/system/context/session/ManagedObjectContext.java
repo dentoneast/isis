@@ -18,9 +18,10 @@ import org.apache.isis.core.runtime.persistence.FixturesInstalledState;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 
 /**
- * 
+ * TODO [2033] this was introduced for refactoring, use MetaModelContext instead if possible
+ *  
  * @since 2.0.0-M3
- *
+ * 
  */
 public interface ManagedObjectContext {
 
@@ -30,10 +31,11 @@ public interface ManagedObjectContext {
     ServiceInjector getServiceInjector();
     ServiceRegistry getServiceRegistry();
     
-	Stream<ObjectAdapter> streamServiceAdapters();
+	//Stream<ObjectAdapter> streamServiceAdapters();
+    
 	_Tuples.Tuple2<ObjectAdapter, ObjectAction> findHomePageAction(); //TODO [2033] there's also a HomepageService
 	
-	ObjectAdapter lookupService(String serviceId);
+	//ObjectAdapter lookupService(String serviceId);
 	
 	ObjectAdapter adapterOfPojo(Object pojo);
 	ObjectAdapter adapterOfMemento(ObjectSpecification spec, Oid oid, Data data);

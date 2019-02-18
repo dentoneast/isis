@@ -17,7 +17,6 @@
 package org.apache.isis.viewer.restfulobjects.server.resources;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -176,11 +175,6 @@ class DomainResourceHelper {
 		}
 
 		@Override
-		public Stream<ObjectAdapter> streamServiceAdapters() {
-			return rendererContext.streamServiceAdapters();
-		}
-
-		@Override
 		public ObjectAdapter adapterOfPojo(Object pojo) {
 			return rendererContext.adapterOfPojo(pojo);
 		}
@@ -216,11 +210,6 @@ class DomainResourceHelper {
 		}
 
 		@Override
-		public ObjectAdapter lookupService(String serviceId) {
-			return rendererContext.lookupService(serviceId);
-		}
-
-		@Override
 		public Tuple2<ObjectAdapter, ObjectAction> findHomePageAction() {
 			return rendererContext.findHomePageAction();
 		}
@@ -230,9 +219,6 @@ class DomainResourceHelper {
 			return rendererContext.getFixturesInstalledState();
 		}
 
-		
-
-		
 
     }
 

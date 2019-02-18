@@ -1,7 +1,5 @@
 package org.apache.isis.core.runtime.system.context.session;
 
-import java.util.stream.Stream;
-
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.base._Lazy;
@@ -52,11 +50,6 @@ public abstract class ManagedObjectContextBase implements ManagedObjectContext {
     // -- OBJECT ADAPTER SUPPORT
     
     @Override //FIXME [2033] decouple from JDO
-    public Stream<ObjectAdapter> streamServiceAdapters() {
-		return ps().streamServices();
-	}
-    
-    @Override //FIXME [2033] decouple from JDO
     public ObjectAdapter adapterOfPojo(Object pojo) {
 		return ps().adapterOfPojo(pojo);
 	}
@@ -65,12 +58,7 @@ public abstract class ManagedObjectContextBase implements ManagedObjectContext {
     public ObjectAdapter adapterOfMemento(ObjectSpecification spec, Oid oid, Data data) {
 		return ps().adapterOfMemento(spec, oid, data);
 	}
-    
-    @Override //FIXME [2033] decouple from JDO
-	public ObjectAdapter lookupService(String serviceId) {
-		return ps().lookupService(serviceId);
-	}
-    
+ 
     // -- FIXTURE SCRIPT STATE SUPPORT
     
     @Override //FIXME [2033] decouple from JDO

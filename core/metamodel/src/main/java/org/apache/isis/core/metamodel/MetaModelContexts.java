@@ -18,6 +18,11 @@
  */
 package org.apache.isis.core.metamodel;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
@@ -25,10 +30,14 @@ import org.apache.isis.applib.services.repository.RepositoryService;
 import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.applib.services.xactn.TransactionService;
 import org.apache.isis.applib.services.xactn.TransactionState;
+import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
+import org.apache.isis.core.commons.ensure.Assert;
+import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
+import org.apache.isis.core.metamodel.services.ServiceUtil;
 import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
@@ -38,6 +47,7 @@ import org.apache.isis.core.security.authentication.manager.AuthenticationManage
 import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
 
 import lombok.Getter;
+import lombok.val;
 
 /**
  * 
@@ -115,6 +125,38 @@ public final class MetaModelContexts {
         public final TransactionState getTransactionState() {
             return getTransactionService().getTransactionState();
         }
+        
+        // -- SERVICE SUPPORT
+        
+        @Override
+        public Stream<ObjectAdapter> streamServiceAdapters() {
+            return serviceAdapters.get().values().stream();
+        }
+        
+        @Override
+        public ObjectAdapter lookupServiceAdapterById(final String serviceId) {
+            return serviceAdapters.get().get(serviceId);
+        }
+        
+        
+        // -- HELPER
+        
+        private final _Lazy<Map<String, ObjectAdapter>> serviceAdapters = _Lazy.of(this::initServiceAdapters);
+        
+        private Map<String, ObjectAdapter> initServiceAdapters() {
+        	
+        	val objectAdapterProvider = getObjectAdapterProvider();
+        	
+            return getServiceRegistry().streamServices()
+            .map(objectAdapterProvider::adapterFor) 
+            .peek(serviceAdapter->{
+                Assert.assertFalse("expected to not be 'transient'", serviceAdapter.getOid().isTransient());
+            })
+            .collect(Collectors.toMap(ServiceUtil::idOfAdapter, v->v, (o,n)->n, LinkedHashMap::new));
+        }
+
+        // -------------------------------------------------------------------------------
+
 
     }
 

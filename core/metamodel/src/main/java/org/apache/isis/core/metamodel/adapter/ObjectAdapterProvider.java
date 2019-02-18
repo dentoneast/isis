@@ -18,8 +18,6 @@
  */
 package org.apache.isis.core.metamodel.adapter;
 
-import java.util.stream.Stream;
-
 import javax.annotation.Nullable;
 
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
@@ -88,11 +86,6 @@ public interface ObjectAdapterProvider {
     
     @Nullable ObjectAdapter recreateViewModelInstance(ObjectSpecification objectSpec, @Nullable final String memento);
     
-    // -- SERVICE LOOKUP 
-    
-    Stream<ObjectAdapter> streamServices();
-    ObjectAdapter lookupService(String serviceId);
-    
     
     // -- FOR THOSE THAT IMPLEMENT THROUGH DELEGATION
     
@@ -135,18 +128,7 @@ public interface ObjectAdapterProvider {
             return getObjectAdapterProvider().recreateViewModelInstance(objectSpec, memento);
         }
         
-        default Stream<ObjectAdapter> streamServices() {
-            return getObjectAdapterProvider().streamServices();
-        }
-        
-        default ObjectAdapter lookupService(String serviceId) {
-            return getObjectAdapterProvider().lookupService(serviceId);
-        }
-        
     }
-
-
-	
     
 
 }

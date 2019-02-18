@@ -6,6 +6,7 @@ import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.commons.internal.base._Tuples;
 import org.apache.isis.commons.internal.base._Tuples.Tuple2;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.consent.Consent;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
@@ -16,8 +17,11 @@ import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import lombok.var;
 
 /**
+ * TODO [2033], there's already a service doing this
+ * 
  * @since 2.0.0-M3
  */
 @RequiredArgsConstructor
@@ -26,7 +30,10 @@ final class ManagedObjectContextBase_findHomepage {
 	private final ManagedObjectContextBase holder;
 
 	public Tuple2<ObjectAdapter, ObjectAction> findHomePageAction() {
-		final Stream<ObjectAdapter> serviceAdapters = holder.streamServiceAdapters();
+		
+		var metaModelContext = MetaModelContext.current();
+		
+		final Stream<ObjectAdapter> serviceAdapters = metaModelContext.streamServiceAdapters();
 		return serviceAdapters.map(serviceAdapter->{
 			final ObjectSpecification serviceSpec = serviceAdapter.getSpecification();
 			final Stream<ObjectAction> objectActions = serviceSpec.streamObjectActions(Contributed.EXCLUDED);

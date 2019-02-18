@@ -19,11 +19,7 @@
 
 package org.apache.isis.viewer.wicket.ui.components.actionmenu.serviceactions;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.isis.applib.layout.component.ServiceActionLayoutData;
 import org.apache.isis.applib.layout.menubars.MenuBars;
@@ -33,7 +29,7 @@ import org.apache.isis.applib.layout.menubars.bootstrap3.BS3MenuBar;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.collections._Lists;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.runtime.system.SystemConstants;
 import org.apache.isis.core.runtime.system.context.IsisContext;
@@ -206,12 +202,7 @@ public final class ServiceActionUtil {
 
         // we no longer use ServiceActionsModel#getObject() because the model only holds the services for the
         // menuBar in question, whereas the "Other" menu may reference a service which is defined for some other menubar
-        final Stream<ObjectAdapter> serviceAdapters = 
-                IsisContext.getSessionFactory().getCurrentSession().getPersistenceSession().streamServices();
-
-        final Map<String, ObjectAdapter> serviceAdapterBySpecId = 
-                serviceAdapters
-                .collect(Collectors.toMap(a->a.getSpecification().getSpecId().asString(), a->a, (o,n)->n, HashMap::new));
+        val metaModelContext = MetaModelContext.current();
 
         final List<CssMenuItem> menuItems = _Lists.newArrayList();
         for (final BS3Menu menu : menuBar.getMenus()) {
@@ -223,9 +214,9 @@ public final class ServiceActionUtil {
                 boolean firstSection = true;
 
                 for (final ServiceActionLayoutData actionLayoutData : menuSection.getServiceActions()) {
-                    final String objectTypeLiteral = actionLayoutData.getObjectType();
+                    val serviceSpecId = actionLayoutData.getObjectType();
                     
-                    final ObjectAdapter serviceAdapter = serviceAdapterBySpecId.get(objectTypeLiteral);
+                    val serviceAdapter = metaModelContext.lookupServiceAdapterById(serviceSpecId);
                     if(serviceAdapter == null) {
                         // service not recognized, presumably the menu layout is out of sync with actual configured modules
                         continue;
