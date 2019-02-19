@@ -48,6 +48,8 @@ import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 
+import lombok.val;
+
 public class OneToManyAssociationDefault extends ObjectAssociationAbstract implements OneToManyAssociation {
 
     public OneToManyAssociationDefault(final FacetedMethod facetedMethod) {
@@ -162,7 +164,10 @@ public class OneToManyAssociationDefault extends ObjectAssociationAbstract imple
         if (collection == null) {
             return null;
         }
-        return getObjectAdapterProvider().adapterForCollection(collection, (RootOid)ownerAdapter.getOid(), this);
+        
+        val parentOid = (RootOid)ownerAdapter.getOid();
+        val newAdapter = getObjectAdapterProvider().adapterForCollection(collection, parentOid, this);
+        return newAdapter.injectServices(getServiceInjector());
     }
     
     @Override

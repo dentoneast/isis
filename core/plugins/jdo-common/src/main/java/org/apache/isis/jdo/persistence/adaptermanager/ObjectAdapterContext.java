@@ -23,6 +23,8 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import lombok.val;
+
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.commons.ensure.Assert;
 import org.apache.isis.core.commons.ensure.IsisAssertException;
@@ -206,20 +208,20 @@ final public class ObjectAdapterContext {
     }
     
     public ObjectAdapter recreatePojo(Oid oid, Object recreatedPojo) {
-        final ObjectAdapter createdAdapter = createRootOrAggregatedAdapter(oid, recreatedPojo);
-        return injectServices(createdAdapter);
+        val createdAdapter = createRootOrAggregatedAdapter(oid, recreatedPojo);
+        return createdAdapter.injectServices(servicesInjector);
     }
 
-    // package private
-    ObjectAdapter injectServices(final ObjectAdapter adapter) {
-        Objects.requireNonNull(adapter);
-        if(adapter.isValue()) {
-            return adapter; // guard against value objects
-        }
-        final Object pojo = adapter.getPojo();
-        servicesInjector.injectServicesInto(pojo);
-        return adapter;
-    }
+//    // package private
+//    ObjectAdapter injectServices(final ObjectAdapter adapter) {
+//        Objects.requireNonNull(adapter);
+//        if(adapter.isValue()) {
+//            return adapter; // guard against value objects
+//        }
+//        final Object pojo = adapter.getPojo();
+//        servicesInjector.injectServicesInto(pojo);
+//        return adapter;
+//    }
     
     // package private
     ObjectAdapter createRootOrAggregatedAdapter(final Oid oid, final Object pojo) {

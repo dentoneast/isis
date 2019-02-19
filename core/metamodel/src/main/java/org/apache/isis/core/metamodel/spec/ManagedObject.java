@@ -31,7 +31,7 @@ import lombok.Value;
 
 /**
  * Represents an instance of some element of the meta-model managed by the framework, 
- * that is IoC-container provided beans or persistence-stack provided entities.  
+ * that is IoC-container provided beans, persistence-stack provided entities or view-models.  
  *
  */
 public interface ManagedObject {

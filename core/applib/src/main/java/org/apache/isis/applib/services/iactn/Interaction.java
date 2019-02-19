@@ -19,6 +19,7 @@
 
 package org.apache.isis.applib.services.iactn;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +27,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.LongAdder;
+
+import javax.inject.Inject;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.annotation.Value;
@@ -53,9 +56,9 @@ import org.apache.isis.schema.utils.MemberExecutionDtoUtils;
 import org.apache.isis.schema.utils.jaxbadapters.JavaSqlTimestampXmlGregorianCalendarAdapter;
 
 /**
- * Represents an action invocation or property modification, resulting in some state change of the system.  It captures
- * not only the target object and arguments passed, but also builds up the call-graph, and captures metrics, eg
- * for profiling.
+ * Represents an action invocation or property modification, resulting in some state change of the system.  
+ * It captures not only the target object and arguments passed, but also builds up the call-graph, and captures 
+ * metrics, eg for profiling.
  *
  * <p>
  *     The distinction between {@link Command} and this object is perhaps subtle: the former represents the
@@ -78,11 +81,11 @@ import org.apache.isis.schema.utils.jaxbadapters.JavaSqlTimestampXmlGregorianCal
  *
  */
 @Value
-public class Interaction implements HasUniqueId {
+public class Interaction implements HasUniqueId, Serializable {
 
-    // -- transactionId (property)
-
-    private UUID interactionId;
+	private static final long serialVersionUID = 1L;
+	
+	private UUID interactionId;
 
     @Programmatic
     @Override
@@ -697,10 +700,7 @@ public class Interaction implements HasUniqueId {
     }
 
 
-    @javax.inject.Inject
-    MetricsService metricsService;
-
-    @javax.inject.Inject
-    ClockService clockService;
+    @Inject MetricsService metricsService;
+    @Inject ClockService clockService;
 
 }

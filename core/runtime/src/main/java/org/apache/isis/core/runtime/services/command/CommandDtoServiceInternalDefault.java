@@ -32,7 +32,7 @@ import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.facets.actions.action.invocation.CommandUtil;
 import org.apache.isis.core.metamodel.services.command.CommandDtoServiceInternal;
-import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterService;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
 import org.apache.isis.core.metamodel.spec.feature.ObjectActionParameter;
@@ -180,7 +180,7 @@ public class CommandDtoServiceInternalDefault implements CommandDtoServiceIntern
     @Inject IsisSessionFactory isisSessionFactory;
     
     @Getter(value=AccessLevel.PROTECTED)
-    @Inject private ObjectAdapterProviderService objectAdapterProvider;
+    @Inject private ObjectAdapterService objectAdapterProvider;
 
 
 }

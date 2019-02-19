@@ -26,7 +26,7 @@ import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.applib.services.wrapper.WrapperFactory;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
-import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterService;
 
 @Singleton
 public class TitleServiceDefault implements TitleService {
@@ -60,7 +60,7 @@ public class TitleServiceDefault implements TitleService {
         return sessionServiceInternal;
     }
     
-    @Inject ObjectAdapterProviderService sessionServiceInternal;
+    @Inject ObjectAdapterService sessionServiceInternal;
     @Inject WrapperFactory wrapperFactory;
 
 }

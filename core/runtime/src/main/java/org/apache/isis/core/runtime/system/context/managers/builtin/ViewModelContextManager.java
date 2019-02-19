@@ -1,7 +1,5 @@
 package org.apache.isis.core.runtime.system.context.managers.builtin;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.util.Optional;
 
@@ -16,7 +14,6 @@ import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.commons.internal.uri._URI.ContainerType;
 import org.apache.isis.commons.internal.uri._URI.ContextType;
-import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.metamodel.facets.actions.action.invocation.PersistableTypeGuard;
 import org.apache.isis.core.metamodel.facets.object.viewmodel.ViewModelFacet;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
@@ -128,43 +125,11 @@ public class ViewModelContextManager implements ContextHandler {
 					+ spec.getFullIdentifier());
 		}
 
-		final Object viewModelPojo;
-		if(facet.getRecreationMechanism().isInitializes()) {
-			viewModelPojo = instantiateAndInjectServices(spec);
-			facet.initialize(viewModelPojo, serialized);
-		} else {
-			viewModelPojo = facet.instantiate(spec.getCorrespondingClass(), serialized);
-		}
+		val viewModelPojo = facet.createViewModelPojo(spec, serialized, ObjectSpecification::instantiatePojo);
 		return viewModelPojo;
 	}
 	
-	private Object instantiateAndInjectServices(final ObjectSpecification objectSpec) {
-
-        final Class<?> correspondingClass = objectSpec.getCorrespondingClass();
-        if (correspondingClass.isArray()) {
-            return Array.newInstance(correspondingClass.getComponentType(), 0);
-        }
-
-        final Class<?> cls = correspondingClass;
-        if (Modifier.isAbstract(cls.getModifiers())) {
-            throw new IsisException("Cannot create an instance of an abstract class: " + cls);
-        }
-
-        final Object newInstance;
-        try {
-            newInstance = cls.newInstance();
-        } catch (final IllegalAccessException | InstantiationException e) {
-        	
-        	val errMsg = String.format("Failed to create instance of type '%s'", 
-        			objectSpec.getFullIdentifier()); 
-        	
-            throw new IsisException(errMsg, e);
-        }
-
-        serviceInjector.injectServicesInto(newInstance);
-        return newInstance;
-
-    }
+	
 	
 }
 

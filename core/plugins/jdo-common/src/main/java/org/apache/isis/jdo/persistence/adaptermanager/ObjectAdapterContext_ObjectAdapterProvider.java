@@ -20,6 +20,7 @@ package org.apache.isis.jdo.persistence.adaptermanager;
 
 import static org.apache.isis.commons.internal.base._With.requires;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,7 +33,9 @@ import org.apache.isis.core.commons.ensure.Assert;
 import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
+import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
+import org.apache.isis.core.metamodel.facets.object.value.ValueFacet;
 import org.apache.isis.core.metamodel.services.ServiceUtil;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ManagedObject.SimpleManagedObject;
@@ -40,6 +43,7 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.persistence.adapter.OidFactory;
+import org.apache.isis.core.runtime.persistence.adapter.PojoAdapter;
 import org.apache.isis.core.runtime.persistence.adapter.OidFactory.OidProvider2;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.slf4j.Logger;
@@ -103,9 +107,9 @@ class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvide
         
         probe.println("[2033] we should not need to fall through here any longer");
         
-        final RootOid rootOid = oidFactory.oidFor(pojo);
-        final ObjectAdapter newAdapter = objectAdapterContext.getFactories().createRootAdapter(pojo, rootOid);
-        return objectAdapterContext.injectServices(newAdapter);
+        val rootOid = oidFactory.oidFor(pojo);
+        val newAdapter = objectAdapterContext.getFactories().createRootAdapter(pojo, rootOid);
+        return newAdapter.injectServices(serviceInjector);
     }
     
     @Override
@@ -115,15 +119,9 @@ class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvide
         requires(collection, "collection");
 
         // the List, Set etc. instance gets wrapped in its own adapter
-        final ObjectAdapter newAdapter = objectAdapterContext.getFactories()
+        val newAdapter = objectAdapterContext.getFactories()
                 .createCollectionAdapter(pojo, parentOid, collection);
-
-        return objectAdapterContext.injectServices(newAdapter);
-    }
-    
-    @Override
-    public ManagedObject disposableAdapterForViewModel(final Object viewModelPojo) {
-        return ManagedObject.of(()->specificationLoader.loadSpecification(viewModelPojo.getClass()), viewModelPojo);
+        return newAdapter.injectServices(serviceInjector);
     }
 
     @Override
@@ -139,7 +137,7 @@ class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvide
     }
     
     @Override
-    public ObjectAdapter recreateViewModelInstance(ObjectSpecification objectSpec, final String memento) {
+    public ObjectAdapter adapterForViewModelMementoString(ObjectSpecification objectSpec, final String memento) {
         return objectAdapterContext.objectCreationMixin.recreateInstance(objectSpec, memento);
     }
 

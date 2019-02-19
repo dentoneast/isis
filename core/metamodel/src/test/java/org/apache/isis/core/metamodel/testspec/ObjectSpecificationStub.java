@@ -37,6 +37,7 @@ import org.apache.isis.core.metamodel.interactions.ObjectTitleContext;
 import org.apache.isis.core.metamodel.interactions.ObjectValidityContext;
 import org.apache.isis.core.metamodel.spec.ActionType;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
+import org.apache.isis.core.metamodel.spec.ManagedObjectType;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.Contributed;
@@ -375,5 +376,10 @@ public class ObjectSpecificationStub extends FacetHolderImpl implements ObjectSp
     public ObjectSpecification getElementSpecification() {
         return elementSpecification;
     }
+
+	@Override
+	public ManagedObjectType getManagedObjectType() {
+		return ManagedObjectType.valueOf(this);
+	}
 
 }

@@ -40,7 +40,7 @@ import org.apache.isis.core.metamodel.facetapi.FeatureType;
 import org.apache.isis.core.metamodel.facetapi.IdentifiedHolder;
 import org.apache.isis.core.metamodel.facetapi.MethodRemover;
 import org.apache.isis.core.metamodel.facets.object.domainobject.autocomplete.AutoCompleteFacetForDomainObjectAnnotation;
-import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterService;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.metamodel.spec.feature.OneToOneActionParameter;
@@ -58,7 +58,7 @@ public abstract class AbstractFacetFactoryJUnit4TestCase {
     @Mock
     protected SpecificationLoader mockSpecificationLoader;
     @Mock
-    protected ObjectAdapterProviderService mockPersistenceSessionServiceInternal;
+    protected ObjectAdapterService mockPersistenceSessionServiceInternal;
     @Mock
     protected MethodRemover mockMethodRemover;
     @Mock

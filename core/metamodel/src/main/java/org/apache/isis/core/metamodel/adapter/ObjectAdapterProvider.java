@@ -47,19 +47,6 @@ public interface ObjectAdapterProvider {
             RootOid parentOid,
             OneToManyAssociation collection);
 
-    /**
-     * Returns an ObjectAdapter that holds the ObjectSpecification used for 
-     * interrogating the domain object's metadata. 
-     * <p>
-     * Does _not_ perform dependency injection on the domain object. Also bypasses 
-     * caching (if any), that is each call to this method creates a new unique instance.
-     * </p>
-     * 
-     * @param viewModelPojo domain object
-     * @return  
-     */
-    ManagedObject disposableAdapterForViewModel(Object viewModelPojo);
-    
     ObjectAdapter adapterForViewModel(Object viewModelPojo, String mementoStr);
     
 
@@ -80,7 +67,7 @@ public interface ObjectAdapterProvider {
      */
     ObjectAdapter newTransientInstance(ObjectSpecification objectSpec);
     
-    @Nullable ObjectAdapter recreateViewModelInstance(ObjectSpecification objectSpec, @Nullable final String memento);
+    @Nullable ObjectAdapter adapterForViewModelMementoString(ObjectSpecification objectSpec, @Nullable final String memento);
     
     
     // -- FOR THOSE THAT IMPLEMENT THROUGH DELEGATION
@@ -104,10 +91,6 @@ public interface ObjectAdapterProvider {
             return getObjectAdapterProvider().adapterForCollection(pojo, parentOid, collection);
         }
 
-        default ManagedObject disposableAdapterForViewModel(final Object viewModelPojo) {
-            return getObjectAdapterProvider().disposableAdapterForViewModel(viewModelPojo);
-        }
-
         default ObjectAdapter adapterForViewModel(final Object viewModelPojo, final String mementoString) {
             return getObjectAdapterProvider().adapterForViewModel(viewModelPojo, mementoString);
         }
@@ -116,8 +99,8 @@ public interface ObjectAdapterProvider {
             return getObjectAdapterProvider().newTransientInstance(objectSpec);
         }
         
-        default ObjectAdapter recreateViewModelInstance(ObjectSpecification objectSpec, final String memento) {
-            return getObjectAdapterProvider().recreateViewModelInstance(objectSpec, memento);
+        default ObjectAdapter adapterForViewModelMementoString(ObjectSpecification objectSpec, final String memento) {
+            return getObjectAdapterProvider().adapterForViewModelMementoString(objectSpec, memento);
         }
         
     }

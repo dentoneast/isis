@@ -76,6 +76,7 @@ import org.apache.isis.core.metamodel.interactions.ObjectValidityContext;
 import org.apache.isis.core.metamodel.layout.DeweyOrderSet;
 import org.apache.isis.core.metamodel.spec.ActionType;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
+import org.apache.isis.core.metamodel.spec.ManagedObjectType;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.ObjectSpecificationException;
@@ -1119,7 +1120,16 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
             final ManagedObject targetAdapter, final InteractionInitiatedBy interactionInitiatedBy) {
         return new ObjectValidityContext(targetAdapter, getIdentifier(), interactionInitiatedBy);
     }
-
+    
+    private ManagedObjectType managedObjectType; 
+    
+    @Override
+    public ManagedObjectType getManagedObjectType() {
+    	if(managedObjectType==null) {
+    		managedObjectType = ManagedObjectType.valueOf(this);
+    	}
+    	return managedObjectType;
+    }
 
     // -- convenience isXxx (looked up from facets)
     @Override

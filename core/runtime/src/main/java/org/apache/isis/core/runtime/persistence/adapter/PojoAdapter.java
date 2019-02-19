@@ -23,6 +23,7 @@ import static org.apache.isis.commons.internal.base._With.requires;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.core.commons.exceptions.IsisException;
@@ -34,21 +35,18 @@ import org.apache.isis.core.metamodel.adapter.oid.ParentedOid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.adapter.version.ConcurrencyException;
 import org.apache.isis.core.metamodel.adapter.version.Version;
+import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.managers.UniversalObjectManager;
 import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import lombok.val;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public final class PojoAdapter implements ObjectAdapter {
-
-    private final static Logger LOG = LoggerFactory.getLogger(PojoAdapter.class);
-
-    // -- Constructor, fields
 
     private final AuthenticationSession authenticationSession;
     private final SpecificationLoader specificationLoader;
@@ -69,6 +67,11 @@ public final class PojoAdapter implements ObjectAdapter {
     public static PojoAdapter ofValue(Serializable value) {
 		val oid = Oid.Factory.value();
 		return PojoAdapter.of(value, oid);
+	}
+    
+    public static ObjectAdapter ofTransient(Object pojo, ObjectSpecId specId) {
+    	val identifier = UUID.randomUUID().toString();
+		return PojoAdapter.of(pojo, Oid.Factory.transientOf(specId, identifier));
 	}
     
     public static PojoAdapter of(
@@ -208,11 +211,11 @@ public final class PojoAdapter implements ObjectAdapter {
                 thisVersion.different(otherVersion)) {
 
             if(ConcurrencyChecking.isCurrentlyEnabled()) {
-                LOG.info("concurrency conflict detected on {} ({})", thisOid, otherVersion);
+                log.info("concurrency conflict detected on {} ({})", thisOid, otherVersion);
                 final String currentUser = authenticationSession.getUserName();
                 throw new ConcurrencyException(currentUser, thisOid, thisVersion, otherVersion);
             } else {
-                LOG.info("concurrency conflict detected but suppressed, on {} ({})", thisOid, otherVersion );
+                log.info("concurrency conflict detected but suppressed, on {} ({})", thisOid, otherVersion );
             }
         }
     }
@@ -290,6 +293,8 @@ public final class PojoAdapter implements ObjectAdapter {
 		
 		return new PojoAdapter(pojo, oid, authenticationSession, specificationLoader);
 	}
+
+	
 
 
 }

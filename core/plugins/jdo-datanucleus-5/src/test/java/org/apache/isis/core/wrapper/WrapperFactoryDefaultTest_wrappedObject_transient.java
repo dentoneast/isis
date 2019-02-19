@@ -51,7 +51,7 @@ import org.apache.isis.core.metamodel.facets.members.disabled.DisabledFacet;
 import org.apache.isis.core.metamodel.facets.members.disabled.DisabledFacetAbstractAlwaysEverywhere;
 import org.apache.isis.core.metamodel.facets.properties.accessor.PropertyAccessorFacetViaAccessor;
 import org.apache.isis.core.metamodel.facets.properties.update.modify.PropertySetterFacetViaSetterMethod;
-import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterService;
 import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.specimpl.dflt.ObjectSpecificationDefault;
@@ -79,7 +79,7 @@ public class WrapperFactoryDefaultTest_wrappedObject_transient {
     private AuthenticationSessionProvider mockAuthenticationSessionProvider;
 
     @Mock
-    private ObjectAdapterProviderService mockPersistenceSessionServiceInternal;
+    private ObjectAdapterService mockPersistenceSessionServiceInternal;
     @Mock
     private SpecificationLoader mockSpecificationLoader;
     @Mock

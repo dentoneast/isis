@@ -427,7 +427,7 @@ public class ObjectSpecificationDefault extends ObjectSpecificationAbstract impl
     public String toString() {
         final ToString str = new ToString(this);
         str.append("class", getFullIdentifier());
-        str.append("type", (isParentedOrFreeCollection() ? "Collection" : "Object"));
+        str.append("type", getManagedObjectType().name());
         str.append("superclass", superclass() == null ? "Object" : superclass().getFullIdentifier());
         return str.toString();
     }

@@ -55,7 +55,7 @@ import org.apache.isis.core.metamodel.facets.properties.update.init.PropertyInit
 import org.apache.isis.core.metamodel.facets.properties.update.modify.PropertySetterFacetViaModifyMethod;
 import org.apache.isis.core.metamodel.facets.properties.validating.method.PropertyValidateFacetViaMethod;
 import org.apache.isis.core.metamodel.services.command.CommandDtoServiceInternal;
-import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterService;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectMember;
@@ -91,7 +91,7 @@ public class WrapperFactoryDefaultTest_wrappedObject {
     @Mock
     private AuthenticationSessionProvider mockAuthenticationSessionProvider;
     @Mock
-    private ObjectAdapterProviderService mockPersistenceSessionServiceInternal;
+    private ObjectAdapterService mockPersistenceSessionServiceInternal;
     @Mock
     private MessageService mockMessageService;
     @Mock

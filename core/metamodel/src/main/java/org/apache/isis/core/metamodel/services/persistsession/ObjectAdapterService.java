@@ -1,4 +1,4 @@
-/**
+/*
  *  Licensed to the Apache Software Foundation (ASF) under one or more
  *  contributor license agreements.  See the NOTICE file distributed with
  *  this work for additional information regarding copyright ownership.
@@ -18,8 +18,12 @@ package org.apache.isis.core.metamodel.services.persistsession;
 
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 
-//TODO [2033] instead of delegating, this service should replace ObjectAdapterProvider
-public interface ObjectAdapterProviderService extends ObjectAdapterProvider.Delegating {
+/**
+ * 
+ * @since 2.0.0-M3
+ *
+ */
+public interface ObjectAdapterService extends ObjectAdapterProvider {
     
 
 }

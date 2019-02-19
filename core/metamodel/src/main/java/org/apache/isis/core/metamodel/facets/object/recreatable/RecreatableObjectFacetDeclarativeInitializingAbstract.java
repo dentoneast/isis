@@ -59,8 +59,9 @@ extends RecreatableObjectFacetAbstract {
 
 		final Set<String> mementoKeys = memento.keySet();
 
-		final ObjectAdapter viewModelAdapter = getObjectAdapterProvider().adapterForViewModel(viewModelPojo, mementoStr);
-
+		final ObjectAdapter viewModelAdapter = getObjectAdapterProvider()
+				.adapterForViewModel(viewModelPojo, mementoStr);
+		viewModelAdapter.injectServices(getServiceInjector());
 
 		final ObjectSpecification spec = viewModelAdapter.getSpecification();
 		final Stream<OneToOneAssociation> properties = spec.streamProperties(Contributed.EXCLUDED);
@@ -87,7 +88,17 @@ extends RecreatableObjectFacetAbstract {
 
 		final _Mementos.Memento memento = newMemento();
 
-		final ManagedObject ownerAdapter = getObjectAdapterProvider().disposableAdapterForViewModel(viewModelPojo);
+		final ManagedObject ownerAdapter = 
+	    /*
+	     * ObjectAdapter that holds the ObjectSpecification used for 
+	     * interrogating the domain object's metadata. 
+	     * 
+	     * Does _not_ perform dependency injection on the domain object. Also bypasses 
+	     * caching (if any), that is each call to this method creates a new unique instance.
+	     */
+	    ManagedObject.of(getSpecificationLoader().loadSpecification(viewModelPojo.getClass()), viewModelPojo);
+		
+		
 		final ObjectSpecification spec = ownerAdapter.getSpecification();
 
 		final Stream<OneToOneAssociation> properties = spec.streamProperties(Contributed.EXCLUDED);

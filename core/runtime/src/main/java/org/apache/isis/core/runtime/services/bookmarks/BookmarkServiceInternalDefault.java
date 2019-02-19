@@ -50,7 +50,7 @@ import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.Oid.Factory;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.exceptions.persistence.ObjectNotFoundException;
-import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterService;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
@@ -272,6 +272,6 @@ public class BookmarkServiceInternalDefault implements BookmarkService, Serializ
     @Inject SpecificationLoader specificationLoader;
     @Inject WrapperFactory wrapperFactory;
     @Inject ServiceRegistry serviceRegistry;
-    @Inject ObjectAdapterProviderService objectAdapterProvider;
+    @Inject ObjectAdapterService objectAdapterProvider;
 
 }

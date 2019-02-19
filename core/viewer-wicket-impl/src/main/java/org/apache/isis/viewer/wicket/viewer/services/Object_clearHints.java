@@ -18,6 +18,8 @@
  */
 package org.apache.isis.viewer.wicket.viewer.services;
 
+import javax.inject.Inject;
+
 import org.apache.isis.applib.annotation.Action;
 import org.apache.isis.applib.annotation.ActionLayout;
 import org.apache.isis.applib.annotation.CommandPersistence;
@@ -38,7 +40,8 @@ public class Object_clearHints {
         this.object = object;
     }
 
-    public static class ActionDomainEvent extends org.apache.isis.applib.events.domain.ActionDomainEvent<Object> { }
+    public static class ActionDomainEvent extends org.apache.isis.applib.events.domain.ActionDomainEvent<Object> {
+		private static final long serialVersionUID = 1L; }
 
     @Action(
             domainEvent = ActionDomainEvent.class,
@@ -69,10 +72,7 @@ public class Object_clearHints {
                         : null;
     }
 
-    @javax.inject.Inject
-    HintStore hintStore;
-
-    @javax.inject.Inject
-    BookmarkService bookmarkService;
+    @Inject HintStore hintStore;
+    @Inject BookmarkService bookmarkService;
 
 }

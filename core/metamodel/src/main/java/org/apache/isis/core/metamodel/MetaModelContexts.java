@@ -38,7 +38,7 @@ import org.apache.isis.core.commons.ensure.Assert;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.services.ServiceUtil;
-import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterService;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -99,8 +99,8 @@ public final class MetaModelContexts {
         _CDI.getSingleton(TitleService.class);
 
         @Getter(lazy=true) 
-        private final ObjectAdapterProviderService objectAdapterProviderService =
-        _CDI.getSingleton(ObjectAdapterProviderService.class);
+        private final ObjectAdapterService objectAdapterService =
+        _CDI.getSingleton(ObjectAdapterService.class);
 
         @Getter(lazy=true) 
         private final RepositoryService repositoryService =

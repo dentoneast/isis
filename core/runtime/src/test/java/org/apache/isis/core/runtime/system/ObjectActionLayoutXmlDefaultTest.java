@@ -31,7 +31,7 @@ import org.apache.isis.applib.services.message.MessageService;
 import org.apache.isis.core.metamodel.facets.FacetedMethod;
 import org.apache.isis.core.metamodel.facets.all.named.NamedFacet;
 import org.apache.isis.core.metamodel.facets.all.named.NamedFacetAbstract;
-import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterService;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.specimpl.ObjectActionDefault;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
@@ -61,7 +61,7 @@ public class ObjectActionLayoutXmlDefaultTest {
     @Mock
     private MessageService mockMessageService;
     @Mock
-    private ObjectAdapterProviderService mockPersistenceSessionServiceInternal;
+    private ObjectAdapterService mockPersistenceSessionServiceInternal;
 
     private ServiceInjector stubServicesInjector;
 

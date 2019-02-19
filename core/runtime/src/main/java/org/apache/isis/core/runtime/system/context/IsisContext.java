@@ -40,7 +40,7 @@ import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
-import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterProviderService;
+import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterService;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelDeficiencies;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidException;
@@ -212,8 +212,7 @@ public interface IsisContext {
      * @throws NoSuchElementException - if ServiceRegistry not managed
      */
     public static ObjectAdapterProvider getObjectAdapterProvider() {
-        return _CDI.getSingleton(ObjectAdapterProviderService.class)
-        		.getObjectAdapterProvider();
+        return _CDI.getSingleton(ObjectAdapterService.class);
     }
     
     public static Function<Object, ObjectAdapter> pojoToAdapter() {

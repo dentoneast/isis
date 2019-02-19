@@ -16,11 +16,17 @@ public class PersistableTypeGuard {
 	private final static _Probe probe = _Probe.unlimited().label("PersistableTypeGuard"); 
 
 	public static void instate(ObjectAdapter actualAdapter) {
+		if(actualAdapter==null) {
+			return;
+		}
 		String magicString = "" + actualAdapter.getOid();
 		instate(magicString, probe, "ObjectAdapter");
 	}
 	
 	public static void instate(ObjectSpecification spec) {
+		if(spec==null) {
+			return;
+		}
 		String magicString = (spec.isViewModel() ? "!" : "") + spec.getSpecId().asString();
 		instate(magicString, probe, "ObjectSpecification");
 	}
