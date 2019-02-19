@@ -108,12 +108,6 @@ class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvide
         return objectAdapterContext.injectServices(newAdapter);
     }
     
-	@Override
-	public ObjectAdapter adapterForServicePojo(Object servicePojo) {
-		return adapterFor(servicePojo);
-	}
-    
-    
     @Override
     public ObjectAdapter adapterForCollection(Object pojo, RootOid parentOid, OneToManyAssociation collection) {
 
@@ -125,13 +119,6 @@ class ObjectAdapterContext_ObjectAdapterProvider implements ObjectAdapterProvide
                 .createCollectionAdapter(pojo, parentOid, collection);
 
         return objectAdapterContext.injectServices(newAdapter);
-    }
-
-    @Override
-    public ObjectSpecification specificationForViewModel(Object viewModelPojo) {
-        final ObjectSpecification objectSpecification = 
-                specificationLoader.loadSpecification(viewModelPojo.getClass());
-        return objectSpecification;
     }
     
     @Override

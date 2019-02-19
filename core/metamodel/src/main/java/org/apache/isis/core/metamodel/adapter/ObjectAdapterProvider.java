@@ -39,8 +39,6 @@ public interface ObjectAdapterProvider {
      */
     @Nullable ObjectAdapter adapterFor(@Nullable Object domainObject);
     
-    @Nullable ObjectAdapter adapterForServicePojo(Object servicePojo);
-
     /**
      * @return collection adapter.
      */
@@ -62,8 +60,6 @@ public interface ObjectAdapterProvider {
      */
     ManagedObject disposableAdapterForViewModel(Object viewModelPojo);
     
-    ObjectSpecification specificationForViewModel(Object viewModelPojo);
-
     ObjectAdapter adapterForViewModel(Object viewModelPojo, String mementoStr);
     
 
@@ -110,10 +106,6 @@ public interface ObjectAdapterProvider {
 
         default ManagedObject disposableAdapterForViewModel(final Object viewModelPojo) {
             return getObjectAdapterProvider().disposableAdapterForViewModel(viewModelPojo);
-        }
-        
-        default ObjectSpecification specificationForViewModel(Object viewModelPojo) {
-            return getObjectAdapterProvider().specificationForViewModel(viewModelPojo);
         }
 
         default ObjectAdapter adapterForViewModel(final Object viewModelPojo, final String mementoString) {

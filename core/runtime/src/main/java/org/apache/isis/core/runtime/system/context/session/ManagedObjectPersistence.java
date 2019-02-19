@@ -23,10 +23,6 @@ public interface ManagedObjectPersistence {
 	
 	ManagedObjectState stateOf(Object domainObject);
 	FixturesInstalledState getFixturesInstalledState();
-	
-	//
-	
-//	ObjectAdapter adapterOfPojo(Object pojo); //TODO [2033] use a ObjectAdapter providing service instead
 
 	// 
 	
@@ -65,11 +61,6 @@ public interface ManagedObjectPersistence {
 				return persistenceSession.fetchPersistentPojoInTransaction(rootOid);
 			}
 			
-//			@Override
-//			public ObjectAdapter adapterOfPojo(Object pojo) {
-//				return persistenceSession.adapterFor(pojo);
-//			}
-//			
 			@Override
 			public ObjectAdapter adapterOfMemento(ObjectSpecification spec, Oid oid, Data data) {
 				return persistenceSession.adapterOfMemento(spec, oid, data);

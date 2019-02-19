@@ -222,7 +222,7 @@ public class RepositoryServiceInternalDefault implements RepositoryService {
     }
 
     private ObjectAdapterProvider getObjectAdapterProvider() {
-        return IsisContext.getPersistenceSession().get();
+        return IsisContext.getObjectAdapterProvider();
     }
 
     @Inject FactoryService factoryService;

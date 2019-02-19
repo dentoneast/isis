@@ -100,7 +100,7 @@ public interface ObjectAdapterMemento extends Serializable {
 	
 	static ObjectAdapterMemento ofPojo(Object pojo) {
 		val isisSession = IsisSession.currentIfAny();
-		val adapterProvider = isisSession.getPersistenceSession(); 	//FIXME [2033] use UniversalObjectManager
+		val adapterProvider = isisSession.getObjectAdapterProvider().get();
 		val objectAdapter = adapterProvider.adapterFor(pojo);
 		return ofAdapter(objectAdapter);
 	}
