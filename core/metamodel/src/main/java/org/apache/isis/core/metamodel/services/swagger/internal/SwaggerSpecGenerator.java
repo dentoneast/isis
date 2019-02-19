@@ -18,10 +18,10 @@
  */
 package org.apache.isis.core.metamodel.services.swagger.internal;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import org.apache.isis.applib.services.swagger.SwaggerService;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import io.swagger.models.Swagger;
 import io.swagger.util.Json;

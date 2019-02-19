@@ -19,10 +19,9 @@
 
 package org.apache.isis.core.metamodel.facets.value.datetimejoda;
 
-import org.joda.time.DateTime;
-
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.facetapi.Facet;
+import org.joda.time.DateTime;
 
 public interface JodaDateTimeValueFacet extends Facet {
 

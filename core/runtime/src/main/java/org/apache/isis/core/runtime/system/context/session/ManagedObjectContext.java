@@ -1,7 +1,5 @@
 package org.apache.isis.core.runtime.system.context.session;
 
-import java.util.stream.Stream;
-
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.base._Tuples;

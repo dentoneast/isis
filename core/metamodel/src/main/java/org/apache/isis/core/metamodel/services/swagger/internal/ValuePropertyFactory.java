@@ -27,14 +27,13 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.context._Plugin;
 import org.apache.isis.core.metamodel.services.swagger.internal.ValuePropertyPlugin.ValuePropertyCollector;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 
 import io.swagger.models.properties.BooleanProperty;
 import io.swagger.models.properties.ByteArrayProperty;

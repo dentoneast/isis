@@ -42,8 +42,6 @@ import org.apache.isis.core.metamodel.specloader.specimpl.ObjectActionMixedIn;
 import org.apache.isis.core.metamodel.specloader.specimpl.dflt.ObjectSpecificationDefault;
 import org.apache.isis.schema.cmd.v1.CommandDto;
 
-import lombok.val;
-
 class CommandInvocationHandler<T> implements InvocationHandler {
 
     private final BackgroundCommandService backgroundCommandService;

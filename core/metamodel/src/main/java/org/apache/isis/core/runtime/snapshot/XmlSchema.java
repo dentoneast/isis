@@ -21,13 +21,12 @@ package org.apache.isis.core.runtime.snapshot;
 
 import java.util.function.BiConsumer;
 
+import org.apache.isis.applib.services.xmlsnapshot.XmlSnapshotService.Snapshot;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
-
-import org.apache.isis.applib.services.xmlsnapshot.XmlSnapshotService.Snapshot;
 
 /**
  * Represents the schema for the derived snapshot.

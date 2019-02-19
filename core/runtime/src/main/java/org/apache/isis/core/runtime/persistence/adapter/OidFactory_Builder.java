@@ -27,9 +27,9 @@ import java.util.function.Function;
 
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.spec.ManagedObject.SimpleManagedObject;
+import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.runtime.persistence.adapter.OidFactory.OidFactoryBuilder;
 import org.apache.isis.core.runtime.persistence.adapter.OidFactory.OidProvider;
-import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 
 import lombok.val;
 

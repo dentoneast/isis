@@ -22,7 +22,6 @@ package org.apache.isis.core.metamodel.services.title;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.applib.services.wrapper.WrapperFactory;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;

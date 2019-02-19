@@ -34,15 +34,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.commons.internal.base._Bytes;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.resources._Resources;
 import org.apache.isis.core.commons.lang.InputStreamExtensions;
 import org.apache.isis.core.commons.lang.ResourceUtil;
 import org.apache.isis.core.commons.lang.StringExtensions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Serves static web-resources by class-path or file-system lookup.

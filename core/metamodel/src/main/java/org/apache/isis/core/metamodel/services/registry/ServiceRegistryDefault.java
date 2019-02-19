@@ -22,7 +22,6 @@ package org.apache.isis.core.metamodel.services.registry;
 import static org.apache.isis.commons.internal.base._NullSafe.stream;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -48,8 +47,6 @@ import org.apache.isis.commons.internal.collections._Multimaps;
 import org.apache.isis.commons.internal.collections._Multimaps.ListMultimap;
 import org.apache.isis.commons.internal.collections._Multimaps.SetMultimap;
 import org.apache.isis.commons.internal.collections._Sets;
-import org.apache.isis.core.commons.ensure.Assert;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.services.ServiceUtil;
 
 import lombok.val;

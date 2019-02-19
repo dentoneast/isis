@@ -24,8 +24,8 @@ import java.util.Map;
 
 import org.apache.isis.applib.NonRecoverableException;
 import org.apache.isis.applib.annotation.ViewModelLayout;
-import org.apache.isis.applib.services.eventbus.EventBusService;
 import org.apache.isis.applib.events.ui.LayoutUiEvent;
+import org.apache.isis.applib.services.eventbus.EventBusService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.facetapi.Facet;
