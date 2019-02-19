@@ -89,6 +89,7 @@ import org.apache.isis.jdo.datanucleus.persistence.queries.PersistenceQueryProce
 import org.apache.isis.jdo.persistence.NotPersistableException;
 import org.apache.isis.jdo.persistence.PersistenceSessionBase;
 import org.apache.isis.jdo.persistence.UnsupportedFindException;
+import org.apache.isis.jdo.persistence.PersistenceSessionBase.State;
 import org.apache.isis.jdo.persistence.adaptermanager.ObjectAdapterContext;
 import org.apache.isis.jdo.persistence.query.PersistenceQueryFindAllInstances;
 import org.apache.isis.jdo.persistence.query.PersistenceQueryFindUsingApplibQueryDefault;
@@ -338,6 +339,8 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
         final ObjectAdapter instances = findInstancesInTransaction(query, QueryCardinality.MULTIPLE);
         return CollectionFacet.Utils.toAdapterList(instances);
     }
+    
+    
     @Override
     public <T> ObjectAdapter firstMatchingQuery(final Query<T> query) {
         final ObjectAdapter instances = findInstancesInTransaction(query, QueryCardinality.SINGLE);
@@ -372,7 +375,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
                 ()->processPersistenceQuery(processor, persistenceQuery) );
         final ObjectSpecification specification = persistenceQuery.getSpecification();
         final FreeStandingList results = FreeStandingList.of(specification, instances);
-        return adapterFor(results);
+        return objectAdapterProvider.adapterFor(results);
     }
 
     /**
@@ -735,7 +738,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
 
     @Override
     public void enlistDeletingAndInvokeIsisRemovingCallbackFacet(final Persistable pojo) {
-        ObjectAdapter adapter = adapterFor(pojo);
+        ObjectAdapter adapter = objectAdapterProvider.adapterFor(pojo);
 
         changedObjectsServiceInternal.enlistDeleting(adapter);
 
@@ -812,7 +815,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
      */
     @Override
     public void enlistCreatedAndRemapIfRequiredThenInvokeIsisInvokePersistingOrUpdatedCallback(final Persistable pojo) {
-        final ObjectAdapter adapter = adapterFor(pojo);
+        final ObjectAdapter adapter = objectAdapterProvider.adapterFor(pojo);
 
         final RootOid rootOid = (RootOid) adapter.getOid(); // ok since this is for a Persistable
 
@@ -863,7 +866,7 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
      */
     @Override
     public void ensureRootObject(final Persistable pojo) {
-        final Oid oid = adapterFor(pojo).getOid();
+        final Oid oid = objectAdapterProvider.adapterFor(pojo).getOid();
         if (!(oid instanceof RootOid)) {
             throw new IsisException(MessageFormat.format("Not a RootOid: oid={0}, for {1}", oid, pojo));
         }
@@ -903,11 +906,6 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
         return false;
     }
 
-    @Override
-    public ObjectAdapterProvider getObjectAdapterProvider() {
-        return objectAdapterContext.getObjectAdapterProvider();
-    }
-    
     @Override
     public ObjectAdapterByIdProvider getObjectAdapterByIdProvider() {
         return objectAdapterContext.getObjectAdapterByIdProvider();

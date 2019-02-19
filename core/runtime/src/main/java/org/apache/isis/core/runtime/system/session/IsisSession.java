@@ -56,7 +56,7 @@ public class IsisSession extends ManagedObjectContextBase {
 				IsisContext.getServiceRegistry(),
 				IsisContext.getSpecificationLoader(),
 				authenticationSession,
-				IsisContext::getObjectAdapterProvider);
+				IsisContext.getObjectAdapterProvider());
 		
 		this.persistenceSession =
                 persistenceSessionFactory.createPersistenceSession(authenticationSession);

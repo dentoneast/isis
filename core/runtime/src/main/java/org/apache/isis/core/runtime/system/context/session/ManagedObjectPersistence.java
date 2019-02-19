@@ -26,7 +26,6 @@ public interface ManagedObjectPersistence {
 
 	// 
 	
-	ObjectAdapter newTransientInstance(ObjectSpecification domainTypeSpec);
 	void makePersistentInTransaction(ObjectAdapter objectAdapter);
 	Object fetchPersistentPojoInTransaction(RootOid rootOid);
 	
@@ -41,10 +40,6 @@ public interface ManagedObjectPersistence {
 	static ManagedObjectPersistence of(PersistenceSession persistenceSession) {
 		return new ManagedObjectPersistence() {
 			
-			@Override
-			public ObjectAdapter newTransientInstance(ObjectSpecification domainTypeSpec) {
-				return persistenceSession.newTransientInstance(domainTypeSpec);
-			}
 			
 			@Override
 			public void makePersistentInTransaction(ObjectAdapter objectAdapter) {

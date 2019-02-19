@@ -41,6 +41,7 @@ import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.commons.util.ToString;
 import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.plugins.ioc.RequestContextService;
@@ -68,6 +69,7 @@ abstract class PersistenceSessionBase implements PersistenceSession {
 
     protected final ServiceInjector serviceInjector;
     protected final ServiceRegistry serviceRegistry;
+    protected final ObjectAdapterProvider objectAdapterProvider;
 
     protected final CommandContext commandContext;
     protected final CommandService commandService;
@@ -123,6 +125,7 @@ abstract class PersistenceSessionBase implements PersistenceSession {
 
         this.serviceInjector = IsisContext.getServiceInjector();
         this.serviceRegistry = IsisContext.getServiceRegistry();
+        this.objectAdapterProvider = IsisContext.getObjectAdapterProvider();
         this.jdoPersistenceManagerFactory = jdoPersistenceManagerFactory;
         this.fixturesInstalledStateHolder = fixturesInstalledFlag;
 
@@ -143,7 +146,7 @@ abstract class PersistenceSessionBase implements PersistenceSession {
 
         // sub-components
         this.persistenceQueryFactory = new PersistenceQueryFactory(
-                obj->this.getObjectAdapterProvider().adapterFor(obj), 
+                obj->objectAdapterProvider.adapterFor(obj), 
                 this.specificationLoader);
         this.transactionManager = new IsisTransactionManager(this, serviceRegistry);
 
@@ -276,7 +279,7 @@ abstract class PersistenceSessionBase implements PersistenceSession {
      * @return oid for the given domain object 
      */
     protected @Nullable Oid oidFor(@Nullable Object domainObject) {
-        return mapIfPresentElse(adapterFor(domainObject), ObjectAdapter::getOid, null);
+        return mapIfPresentElse(objectAdapterProvider.adapterFor(domainObject), ObjectAdapter::getOid, null);
     }
     
     @Override

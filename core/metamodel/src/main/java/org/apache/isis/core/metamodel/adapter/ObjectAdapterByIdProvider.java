@@ -70,12 +70,6 @@ public interface ObjectAdapterByIdProvider {
 
         
     }
-
-
-   
-
-
-    
     
 
 }

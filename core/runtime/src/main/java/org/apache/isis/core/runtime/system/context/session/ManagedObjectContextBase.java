@@ -1,7 +1,5 @@
 package org.apache.isis.core.runtime.system.context.session;
 
-import java.util.function.Supplier;
-
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.base._Lazy;
@@ -39,7 +37,7 @@ public abstract class ManagedObjectContextBase implements ManagedObjectContext {
     @Getter protected final ServiceRegistry serviceRegistry;
     @Getter protected final SpecificationLoader specificationLoader;
     @Getter protected final AuthenticationSession authenticationSession;
-    @Getter protected final Supplier<ObjectAdapterProvider> objectAdapterProvider;
+    @Getter protected final ObjectAdapterProvider objectAdapterProvider;
     
     // -- NO ARG CONSTRUCTOR
     
@@ -49,14 +47,14 @@ public abstract class ManagedObjectContextBase implements ManagedObjectContext {
         serviceRegistry = IsisContext.getServiceRegistry();
         specificationLoader = IsisContext.getSpecificationLoader();
         authenticationSession = IsisContext.getAuthenticationSession().orElse(null);
-        objectAdapterProvider = IsisContext::getObjectAdapterProvider;
+        objectAdapterProvider = IsisContext.getObjectAdapterProvider();
     }
     
     // -- OBJECT ADAPTER SUPPORT
     
     @Override
     public ObjectAdapter adapterOfPojo(Object pojo) {
-		return objectAdapterProvider.get().adapterFor(pojo);
+		return objectAdapterProvider.adapterFor(pojo);
 	}
     
     @Override //FIXME [2033] decouple from JDO
@@ -94,7 +92,7 @@ public abstract class ManagedObjectContextBase implements ManagedObjectContext {
     
     @Override
     public ObjectAdapter newTransientInstance(ObjectSpecification domainTypeSpec) {
-		return ps().newTransientInstance(domainTypeSpec);
+		return objectAdapterProvider.newTransientInstance(domainTypeSpec);
 	}
 	
     @Override

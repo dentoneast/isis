@@ -43,6 +43,7 @@ import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.exceptions.persistence.ObjectPersistenceException;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
@@ -70,7 +71,7 @@ public class IsisJdoSupportDN4 implements IsisJdoSupport_v3_1 {
     @Programmatic
     @Override
     public <T> T refresh(final T domainObject) {
-        final ObjectAdapter adapter = getPersistenceSession().adapterFor(domainObject);
+        final ObjectAdapter adapter = objectAdapterProvider.adapterFor(domainObject);
         getPersistenceSession().refreshRoot(adapter);
         return domainObject;
     }
@@ -208,6 +209,7 @@ public class IsisJdoSupportDN4 implements IsisJdoSupport_v3_1 {
     // //////////////////////////////////////
 
     @Inject IsisSessionFactory isisSessionFactory;
+    @Inject ObjectAdapterProvider objectAdapterProvider;
 
     protected PersistenceSession getPersistenceSession() {
         return isisSessionFactory.getCurrentSession().getPersistenceSession();

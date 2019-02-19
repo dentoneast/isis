@@ -21,7 +21,6 @@ package org.apache.isis.core.metamodel.adapter;
 import javax.annotation.Nullable;
 
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
-import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 
@@ -78,10 +77,6 @@ public interface ObjectAdapterProvider {
         
         default ObjectAdapter adapterFor(Object domainObject) {
             return getObjectAdapterProvider().adapterFor(domainObject);
-        }
-        
-        default ObjectAdapter adapterForServicePojo(Object servicePojo) {
-        	return getObjectAdapterProvider().adapterFor(servicePojo);
         }
 
         default ObjectAdapter adapterForCollection(

@@ -22,15 +22,18 @@ import java.util.List;
 
 import javax.jdo.listener.InstanceLifecycleEvent;
 
+import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.commons.ensure.Assert;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
+import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.jdo.datanucleus.persistence.PersistenceQuery;
 import org.apache.isis.jdo.datanucleus.persistence.queries.PersistenceQueryProcessor;
 import org.apache.isis.jdo.persistence.IsisLifecycleListener;
 import org.apache.isis.jdo.persistence.PersistenceSession4;
 import org.datanucleus.enhancement.Persistable;
 
-import org.apache.isis.commons.internal.collections._Lists;
+import lombok.val;
 
 public abstract class PersistenceQueryProcessorAbstract<T extends PersistenceQuery>
 implements PersistenceQueryProcessor<T> {
@@ -49,6 +52,8 @@ implements PersistenceQueryProcessor<T> {
      * to be called.
      */
     protected List<ObjectAdapter> loadAdapters(final List<?> pojos) {
+    	val objectAdapterProvider = objectAdapterProvider();
+    	
         final List<ObjectAdapter> adapters = _Lists.newArrayList();
         for (final Object pojo : pojos) {
             // ought not to be necessary, however for some queries it seems that the
@@ -59,12 +64,18 @@ implements PersistenceQueryProcessor<T> {
                 adapter = persistenceSession.initializeMapAndCheckConcurrency((Persistable) pojo);
             } else {
                 // a value type
-                adapter = persistenceSession.adapterFor(pojo);
+                adapter = objectAdapterProvider.adapterFor(pojo);
             }
             Assert.assertNotNull(adapter);
             adapters.add(adapter);
         }
         return adapters;
+    }
+    
+    // -- HELPER
+    
+    protected static ObjectAdapterProvider objectAdapterProvider() { 
+        return IsisContext.getObjectAdapterProvider();
     }
 
 

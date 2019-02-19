@@ -35,53 +35,53 @@ import org.apache.isis.schema.common.v1.ValueType;
 import org.apache.isis.schema.utils.CommonDtoUtils;
 
 /**
- * TODO was referenced from CommandExecutorServiceDefault  
+ * TODO [2033] was referenced from CommandExecutorServiceDefault, is this obsolete?
  */
 final class ObjectAdapterLegacy {
 
-	public static ObjectAdapter adapterFor(Object targetObject) {
-		if(targetObject instanceof OidDto) {
-			final OidDto oidDto = (OidDto) targetObject;
-			return adapterFor(oidDto);
-		}
-		if(targetObject instanceof CollectionDto) {
-			final CollectionDto collectionDto = (CollectionDto) targetObject;
-			final List<ValueDto> valueDtoList = collectionDto.getValue();
-			final List<Object> pojoList = _Lists.newArrayList();
-			for (final ValueDto valueDto : valueDtoList) {
-				ValueType valueType = collectionDto.getType();
-				final Object valueOrOidDto = CommonDtoUtils.getValue(valueDto, valueType);
-				// converting from adapter and back means we handle both
-				// collections of references and of values
-				final ObjectAdapter objectAdapter = adapterFor(valueOrOidDto);
-				Object pojo = objectAdapter != null ? objectAdapter.getPojo() : null;
-				pojoList.add(pojo);
-			}
-			return adapterFor(pojoList);
-		}
-		if(targetObject instanceof Bookmark) {
-			final Bookmark bookmark = (Bookmark) targetObject;
-			return adapterFor(bookmark);
-		}
-		return getPersistenceSession().adapterFor(targetObject);
-	}
-
-	private static ObjectAdapter adapterFor(final OidDto oidDto) {
-		final Bookmark bookmark = Bookmark.from(oidDto);
-		return adapterFor(bookmark);
-	}
-
-	private static ObjectAdapter adapterFor(final Bookmark bookmark) {
-		final RootOid rootOid = Factory.ofBookmark(bookmark);
-		return adapterFor(rootOid);
-	}
-
-	private static ObjectAdapter adapterFor(final RootOid rootOid) {
-		return getPersistenceSession().adapterFor(rootOid);
-	}
-
-	private static PersistenceSession getPersistenceSession() {
-		return IsisContext.getPersistenceSession().orElseThrow(_Exceptions::unexpectedCodeReach);
-	}
+//	private static ObjectAdapter adapterFor(Object targetObject) {
+//		if(targetObject instanceof OidDto) {
+//			final OidDto oidDto = (OidDto) targetObject;
+//			return adapterFor(oidDto);
+//		}
+//		if(targetObject instanceof CollectionDto) {
+//			final CollectionDto collectionDto = (CollectionDto) targetObject;
+//			final List<ValueDto> valueDtoList = collectionDto.getValue();
+//			final List<Object> pojoList = _Lists.newArrayList();
+//			for (final ValueDto valueDto : valueDtoList) {
+//				ValueType valueType = collectionDto.getType();
+//				final Object valueOrOidDto = CommonDtoUtils.getValue(valueDto, valueType);
+//				// converting from adapter and back means we handle both
+//				// collections of references and of values
+//				final ObjectAdapter objectAdapter = adapterFor(valueOrOidDto);
+//				Object pojo = objectAdapter != null ? objectAdapter.getPojo() : null;
+//				pojoList.add(pojo);
+//			}
+//			return adapterFor(pojoList);
+//		}
+//		if(targetObject instanceof Bookmark) {
+//			final Bookmark bookmark = (Bookmark) targetObject;
+//			return adapterFor(bookmark);
+//		}
+//		return getPersistenceSession().adapterFor(targetObject);
+//	}
+//
+//	private static ObjectAdapter adapterFor(final OidDto oidDto) {
+//		final Bookmark bookmark = Bookmark.from(oidDto);
+//		return adapterFor(bookmark);
+//	}
+//
+//	private static ObjectAdapter adapterFor(final Bookmark bookmark) {
+//		final RootOid rootOid = Factory.ofBookmark(bookmark);
+//		return adapterFor(rootOid);
+//	}
+//
+//	private static ObjectAdapter adapterFor(final RootOid rootOid) {
+//		return getPersistenceSession().adapterFor(rootOid);
+//	}
+//
+//	private static PersistenceSession getPersistenceSession() {
+//		return IsisContext.getPersistenceSession().orElseThrow(_Exceptions::unexpectedCodeReach);
+//	}
 
 }

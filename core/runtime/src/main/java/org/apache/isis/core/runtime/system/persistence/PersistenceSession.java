@@ -24,7 +24,6 @@ import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterByIdProvider;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.spec.ManagedObjectState;
@@ -38,7 +37,7 @@ import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 
 public interface PersistenceSession 
 extends 
-    ObjectAdapterProvider.Delegating, //TODO [2033] remove this interface
+    //ObjectAdapterProvider.Delegating, //TODO [2033] remove this interface
     ObjectAdapterByIdProvider.Delegating, //TODO [2033] remove this interface
     TransactionalResource { //TODO [2033] remove this interface
 

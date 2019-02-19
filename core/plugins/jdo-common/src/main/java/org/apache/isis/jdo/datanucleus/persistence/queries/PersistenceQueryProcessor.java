@@ -26,5 +26,3 @@ import org.apache.isis.jdo.datanucleus.persistence.PersistenceQuery;
 public interface PersistenceQueryProcessor<T extends PersistenceQuery> {
     List<ObjectAdapter> process(T query);
 }
-
-// Copyright (c) Naked Objects Group Ltd.

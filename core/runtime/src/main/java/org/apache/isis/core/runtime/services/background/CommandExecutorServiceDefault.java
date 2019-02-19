@@ -70,13 +70,13 @@ import org.apache.isis.schema.utils.CommonDtoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Singleton
+@Slf4j
 public class CommandExecutorServiceDefault implements CommandExecutorService {
 
-    private final static Logger LOG = LoggerFactory.getLogger(CommandExecutorServiceDefault.class);
-
     @Override
-    @Programmatic
     public void executeCommand(
             final CommandExecutorService.SudoPolicy sudoPolicy,
             final CommandWithDto commandWithDto) {
@@ -133,7 +133,7 @@ public class CommandExecutorServiceDefault implements CommandExecutorService {
 
         org.apache.isis.applib.annotation.CommandExecuteIn executeIn = commandWithDto.getExecuteIn();
 
-        LOG.info("Executing: {} {} {} {}", executeIn, commandWithDto.getMemberIdentifier(), commandWithDto.getTimestamp(), commandWithDto.getUniqueId());
+        log.info("Executing: {} {} {} {}", executeIn, commandWithDto.getMemberIdentifier(), commandWithDto.getTimestamp(), commandWithDto.getUniqueId());
 
         RuntimeException exceptionIfAny = null;
 
@@ -218,7 +218,7 @@ public class CommandExecutorServiceDefault implements CommandExecutorService {
 
         } catch (RuntimeException ex) {
 
-            LOG.warn("Exception when executing : {} {}", executeIn, commandWithDto.getMemberIdentifier(), ex);
+            log.warn("Exception when executing : {} {}", executeIn, commandWithDto.getMemberIdentifier(), ex);
 
             exceptionIfAny = ex;
         }
@@ -228,7 +228,7 @@ public class CommandExecutorServiceDefault implements CommandExecutorService {
             transactionService.nextTransaction(TransactionService.Policy.ALWAYS);
         } catch(RuntimeException ex) {
 
-            LOG.warn("Exception when committing : {} {}", executeIn, commandWithDto.getMemberIdentifier(), ex);
+            log.warn("Exception when committing : {} {}", executeIn, commandWithDto.getMemberIdentifier(), ex);
 
             if(exceptionIfAny == null) {
                 exceptionIfAny = ex;
