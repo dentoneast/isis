@@ -16,7 +16,9 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.apache.isis.core.runtime.system.persistence;
+package org.apache.isis.jdo.metamodel;
+
+import javax.ejb.Stateless;
 
 import org.apache.isis.core.metamodel.facetapi.MetaModelRefiner;
 import org.apache.isis.core.metamodel.progmodel.ProgrammingModel;
@@ -35,6 +37,7 @@ import org.apache.isis.objectstore.jdo.metamodel.facets.prop.notpersistent.JdoNo
 import org.apache.isis.objectstore.jdo.metamodel.facets.prop.primarykey.JdoPrimaryKeyAnnotationFacetFactory;
 import org.apache.isis.objectstore.jdo.metamodel.specloader.validator.JdoMetaModelValidator;
 
+@Stateless
 public class PersistenceSessionFactoryMetamodelRefiner implements MetaModelRefiner {
 
     @Override
@@ -59,8 +62,7 @@ public class PersistenceSessionFactoryMetamodelRefiner implements MetaModelRefin
     }
 
     @Override
-    public void refineMetaModelValidator(
-            MetaModelValidatorComposite metaModelValidator) {
+    public void refineMetaModelValidator(MetaModelValidatorComposite metaModelValidator) {
         metaModelValidator.add(new JdoMetaModelValidator());
         metaModelValidator.add(new MetaModelValidatorToCheckObjectSpecIdsUnique());
         metaModelValidator.add(new MetaModelValidatorToCheckModuleExtent());
