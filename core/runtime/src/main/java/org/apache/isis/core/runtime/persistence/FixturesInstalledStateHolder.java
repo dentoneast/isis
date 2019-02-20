@@ -19,13 +19,9 @@
 
 package org.apache.isis.core.runtime.persistence;
 
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-
 /**
- * For {@link org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory} 
- * implementations that can cache the
- * {@link PersistenceSession#getFixturesInstalledState()} so is only called once per
- * application scope.
+ * Implementing classes must cache the FixturesInstalledState, so fixtures are installed (run) 
+ * only once per application life-cycle.
  */
 public interface FixturesInstalledStateHolder {
 

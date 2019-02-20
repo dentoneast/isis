@@ -25,7 +25,6 @@ import org.apache.isis.applib.annotation.PromptStyle;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.facets.object.promptStyle.PromptStyleConfiguration;
 import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
 
 @Singleton
@@ -35,10 +34,6 @@ public class WicketViewerSettingsDefault implements WicketViewerSettings {
 
     IsisConfiguration getConfiguration() {
         return IsisContext.getConfiguration();
-    }
-
-    IsisSessionFactory getIsisSessionFactory() {
-        return IsisContext.getSessionFactory();
     }
 
     @Override

@@ -28,7 +28,7 @@ import lombok.val;
  *
  */
 @RequiredArgsConstructor
-public abstract class ManagedObjectContextBase implements ManagedObjectContext {
+public abstract class RuntimeContextBase implements RuntimeContext {
 
 	// -- FINAL FIELDS
 	
@@ -41,7 +41,7 @@ public abstract class ManagedObjectContextBase implements ManagedObjectContext {
     
     // -- NO ARG CONSTRUCTOR
     
-    protected ManagedObjectContextBase() {
+    protected RuntimeContextBase() {
     	configuration = IsisContext.getConfiguration();
         serviceInjector = IsisContext.getServiceInjector();
         serviceRegistry = IsisContext.getServiceRegistry();
@@ -73,7 +73,7 @@ public abstract class ManagedObjectContextBase implements ManagedObjectContext {
     
     @Override
     public Tuple2<ObjectAdapter, ObjectAction> findHomePageAction() {
-    	val finderMixin = new ManagedObjectContextBase_findHomepage(this);
+    	val finderMixin = new RuntimeContextBase_findHomepage(this);
     	return finderMixin.findHomePageAction();
     }
     

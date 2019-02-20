@@ -26,7 +26,6 @@ import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory;
 
 /**
  * @deprecated TODO [2033] convert ...
@@ -51,11 +50,6 @@ public class IsisSessionProducerBean {
 	@Produces @Singleton //XXX note: the resulting singleton is not life-cycle managed by CDI, nor are InjectionPoints resolved by CDI
 	public SpecificationLoader produceSpecificationLoader() {
 		return produceIsisSessionFactory().getSpecificationLoader();
-	}
-	
-	@Produces @Singleton //XXX note: the resulting singleton is not life-cycle managed by CDI, nor are InjectionPoints resolved by CDI
-	public PersistenceSessionFactory producePersistenceSessionFactory() {
-		return produceIsisSessionFactory().getPersistenceSessionFactory();
 	}
 	
 	// -- HELPER

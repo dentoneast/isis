@@ -40,8 +40,8 @@ import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.fixtures.FixturesInstallerFromConfiguration;
 import org.apache.isis.core.runtime.system.MessageRegistry;
 import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.context.session.RuntimeEventService;
 import org.apache.isis.core.runtime.system.internal.InitialisationSession;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManagerException;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -68,13 +68,13 @@ import lombok.val;
 public class IsisSessionFactoryDefault implements IsisSessionFactory {
 
     private IsisConfiguration configuration;
-    private PersistenceSessionFactory persistenceSessionFactory;
     private ServiceInjector serviceInjector;
     private ServiceRegistry serviceRegistry;
     private SpecificationLoader specificationLoader;
     private AuthenticationManager authenticationManager;
     private AuthorizationManager authorizationManager;
     private ServiceInitializer serviceInitializer;
+	private RuntimeEventService runtimeEventService;
 
 //    private final static _Probe probe = _Probe.maxCallsThenExitWithStacktrace(1).label("IsisSessionFactoryDefault");  
 //    
@@ -103,16 +103,14 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
 //    }
 
     // called by builder
-    void initDependencies(
-    		PersistenceSessionFactory persistenceSessionFactory, 
-    		SpecificationLoader specificationLoader) {
+    void initDependencies(SpecificationLoader specificationLoader) {
     	this.configuration = IsisContext.getConfiguration();
         this.serviceInjector = IsisContext.getServiceInjector();
         this.serviceRegistry = IsisContext.getServiceRegistry();
         this.authorizationManager = IsisContext.getAuthorizationManager();
         this.authenticationManager = IsisContext.getAuthenticationManager();
         this.specificationLoader = specificationLoader;
-        this.persistenceSessionFactory = persistenceSessionFactory;
+        this.runtimeEventService = serviceRegistry.lookupServiceElseFail(RuntimeEventService.class);
     }
 
     // called by builder
@@ -214,7 +212,7 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
     }
 
     private void shutdown() {
-        persistenceSessionFactory.shutdown();
+    	runtimeEventService.fireAppPreDestroy();
         authenticationManager.shutdown();
         specificationLoader.shutdown();
     }
@@ -226,7 +224,7 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
 
         closeSession();
 
-        val isisSession = new IsisSession(authenticationSession, persistenceSessionFactory);
+        val isisSession = new IsisSession(runtimeEventService, authenticationSession);
         isisSession.open();
         return isisSession;
     }
@@ -304,11 +302,6 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
     @Override
     public AuthorizationManager getAuthorizationManager() {
         return authorizationManager;
-    }
-
-    @Override
-    public PersistenceSessionFactory getPersistenceSessionFactory() {
-        return persistenceSessionFactory;
     }
 
 

@@ -14,20 +14,30 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.isis.core.runtime.system.persistence;
+package org.apache.isis.jdo;
 
-import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-import org.apache.isis.core.security.authentication.AuthenticationSession;
+import org.apache.isis.commons.internal.context._Plugin;
+import org.apache.isis.jdo.persistence.PersistenceSessionFactory;
 
-public interface PersistenceSessionFactory {
+@Deprecated //TODO [2033] could simply use a CDI producer instead 
+public interface IsisJdoRuntimePlugin {
 
-    public void init();
-    public boolean isInitialized();
-    
-    public PersistenceSession createPersistenceSession(AuthenticationSession authenticationSession);
-    
-    public void catalogNamedQueries(final SpecificationLoader specificationLoader);
+    // -- INTERFACE
 
-    public void shutdown();
+    public PersistenceSessionFactory getPersistenceSessionFactory(/*ConfigurationServiceInternal configuration*/);
+
+    // -- LOOKUP
+
+    public static IsisJdoRuntimePlugin get() {
+        return _Plugin.getOrElse(IsisJdoRuntimePlugin.class,
+                ambiguousPlugins->{
+                    throw _Plugin.ambiguityNonRecoverable(IsisJdoRuntimePlugin.class, ambiguousPlugins);
+                },
+                ()->{
+                    throw _Plugin.absenceNonRecoverable(IsisJdoRuntimePlugin.class);
+                });
+    }
+
+
 
 }

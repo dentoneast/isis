@@ -24,9 +24,9 @@ import java.util.Optional;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.core.commons.util.ToString;
 import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.context.session.ManagedObjectContextBase;
+import org.apache.isis.core.runtime.system.context.session.RuntimeContextBase;
+import org.apache.isis.core.runtime.system.context.session.RuntimeEventService;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory;
 import org.apache.isis.core.runtime.system.transaction.IsisTransaction;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -42,14 +42,16 @@ import lombok.Getter;
  *
  * @see IsisSessionFactory
  */
-public class IsisSession extends ManagedObjectContextBase {
+public class IsisSession extends RuntimeContextBase {
 
+	private RuntimeEventService runtimeEventService;
+	
     @Deprecated //TODO [2033] avoid extensions to ManagedObjectContext 
-    @Getter private final PersistenceSession persistenceSession;
+    @Getter private PersistenceSession persistenceSession;
     
 	public IsisSession(
-			final AuthenticationSession authenticationSession,
-			final PersistenceSessionFactory persistenceSessionFactory) {
+			final RuntimeEventService runtimeEventService,
+			final AuthenticationSession authenticationSession) {
 		
 		super(IsisContext.getConfiguration(),
 				IsisContext.getServiceInjector(),
@@ -58,9 +60,7 @@ public class IsisSession extends ManagedObjectContextBase {
 				authenticationSession,
 				IsisContext.getObjectAdapterProvider());
 		
-		this.persistenceSession =
-                persistenceSessionFactory.createPersistenceSession(authenticationSession);
-        
+		this.runtimeEventService = runtimeEventService;
         
 	}
 	
@@ -83,7 +83,8 @@ public class IsisSession extends ManagedObjectContextBase {
     
     void open() {
     	_Context.threadLocalPut(IsisSession.class, this);
-        persistenceSession.open();
+    	runtimeEventService.fireSessionOpened(this);
+    	persistenceSession = _Context.threadLocalGetIfAny(PersistenceSession.class);
     }
 
     // -- CLOSE
@@ -92,9 +93,7 @@ public class IsisSession extends ManagedObjectContextBase {
      * Closes session.
      */
     void close() {
-        if(persistenceSession != null) {
-            persistenceSession.close();
-        }
+        runtimeEventService.fireSessionClosing(this);
         _Context.threadLocalCleanup();
     }
 

@@ -26,8 +26,6 @@ import javax.inject.Inject;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.internal.InitialisationSession;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
 import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
@@ -138,13 +136,13 @@ public interface IsisSessionFactory {
      */
     public AuthorizationManager getAuthorizationManager();
 
-    /**
-     * The {@link org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory} that will be used to create
-     * {@link PersistenceSession} {@link IsisSession#getPersistenceSession()
-     * within} the {@link IsisSession}.
-     * @deprecated use IsisContext instead
-     */
-    public PersistenceSessionFactory getPersistenceSessionFactory();
+//    /**
+//     * The {@link org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory} that will be used to create
+//     * {@link PersistenceSession} {@link IsisSession#getPersistenceSession()
+//     * within} the {@link IsisSession}.
+//     * @deprecated use IsisContext instead
+//     */
+//    public PersistenceSessionFactory getPersistenceSessionFactory();
 
 
 }

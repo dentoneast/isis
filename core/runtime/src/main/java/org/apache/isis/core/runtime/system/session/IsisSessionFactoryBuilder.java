@@ -33,14 +33,13 @@ import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.commons.lang.ListExtensions;
-import org.apache.isis.core.metamodel.IsisJdoRuntimePlugin;
 import org.apache.isis.core.metamodel.facetapi.MetaModelRefiner;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.IsisSystemException;
 import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.context.session.RuntimeEventService;
 import org.apache.isis.core.runtime.system.internal.IsisLocaleInitializer;
 import org.apache.isis.core.runtime.system.internal.IsisTimeZoneInitializer;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactoryMetamodelRefiner;
 import org.apache.isis.core.runtime.threadpool.ThreadPoolSupport;
 import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
@@ -90,9 +89,10 @@ class IsisSessionFactoryBuilder {
         IsisSessionFactoryDefault isisSessionFactory;
         try {
 
-            final ServiceRegistry servicesRegistry = IsisContext.getServiceRegistry();
+            final ServiceRegistry serviceRegistry = IsisContext.getServiceRegistry();
             final AuthenticationManager authenticationManager = IsisContext.getAuthenticationManager();
             final AuthorizationManager authorizationManager = IsisContext.getAuthorizationManager();
+            final RuntimeEventService runtimeEventService = serviceRegistry.lookupServiceElseFail(RuntimeEventService.class);
 
             // specificationLoader
             final Collection<MetaModelRefiner> metaModelRefiners = refiners(
@@ -103,32 +103,20 @@ class IsisSessionFactoryBuilder {
             final SpecificationLoader specificationLoader =
                     componentProvider.createSpecificationLoader(metaModelRefiners);
 
-            // persistenceSessionFactory
-            final PersistenceSessionFactory persistenceSessionFactory = 
-                    IsisJdoRuntimePlugin.get().getPersistenceSessionFactory();
-
-            servicesRegistry.validateServices();
+            serviceRegistry.validateServices();
 
             // instantiate the IsisSessionFactory
             isisSessionFactory = new IsisSessionFactoryDefault();
-            isisSessionFactory.initDependencies(
-            		persistenceSessionFactory,
-            		specificationLoader
-            		);
-
-            // now, add the IsisSessionFactory itself into ServicesInjector, so it can be @javax.inject.Inject'd
-            // into any internal domain services
-//            servicesInjector.addFallbackIfRequired(IsisSessionFactory.class, isisSessionFactory);
-
-            // finally, wire up components and components into services...
-//            servicesInjector.autowire();
+            isisSessionFactory.initDependencies(specificationLoader);
 
             // ... and make IsisSessionFactory available via the IsisContext static for those places where we cannot
             // yet inject.
 
             _Context.putSingleton(IsisSessionFactory.class, isisSessionFactory);
+            
+            runtimeEventService.fireAppPreMetamodel();
 
-            // execute tasks using a threadpool
+            // execute tasks using a thread-pool
             final List<Future<Object>> futures = ThreadPoolSupport.getInstance().invokeAll(Arrays.asList(
                     callableOf("SpecificationLoader.init()", ()->{
                     	// time to initialize...
@@ -154,7 +142,7 @@ class IsisSessionFactoryBuilder {
                         authenticationManager.init();
                         authorizationManager.init();
                     }),
-                    callableOf("PersistenceSessionFactory.init()", persistenceSessionFactory::init),
+                    //callableOf("PersistenceSessionFactory.init()", persistenceSessionFactory::init),
                     callableOf("ChangesDtoUtils.init()", ChangesDtoUtils::init),
                     callableOf("InteractionDtoUtils.init()", InteractionDtoUtils::init),
                     callableOf("CommandDtoUtils.init()", CommandDtoUtils::init)
@@ -164,9 +152,8 @@ class IsisSessionFactoryBuilder {
             // wait on this thread for tasks to complete
             ThreadPoolSupport.getInstance().joinGatherFailures(futures);
 
-
-            persistenceSessionFactory.catalogNamedQueries(specificationLoader);
-
+            runtimeEventService.fireAppPostMetamodel();
+            
             isisSessionFactory.constructServices();
 
 //FIXME [2033] skipping mm validation for now ...            

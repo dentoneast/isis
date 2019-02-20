@@ -21,7 +21,7 @@ import org.apache.isis.core.security.authentication.AuthenticationSession;
  * @since 2.0.0-M3
  * 
  */
-public interface ManagedObjectContext {
+public interface RuntimeContext {
 
 	AuthenticationSession getAuthenticationSession();
     IsisConfiguration getConfiguration();

@@ -27,6 +27,7 @@ import static org.apache.isis.commons.internal.base._With.requires;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -180,14 +181,28 @@ public final class _Context {
      * @return
      * @throws Exception
      */
-    public static <T, E extends Exception> T getOrThrow(
+    public static <T, E extends Exception> T getElseThrow (
             Class<? super T> type,
             Supplier<E> onNotFound)
                     throws E {
+    	
+    	requires(type, "type");
         requires(onNotFound, "onNotFound");
         return ifPresentElseThrow(getIfAny(type), onNotFound);
     }
 
+    /**
+     * Gets a singleton instance of {@code type} if there is any,
+     * otherwise throws a NoSuchElementException.
+     * @param type non-null
+     * @return
+     */
+    public static <T> T getElseFail(Class<? super T> type) {
+        return ifPresentElseThrow(getIfAny(type), ()-> 
+        new NoSuchElementException(String.format("Could not resolve an instance of type '%s'", type.getName())));
+    }
+    
+    
     // -- REMOVAL
     
     public static void remove(Class<?> type) {

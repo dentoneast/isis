@@ -35,7 +35,6 @@ import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledState;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledStateHolder;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.jdo.service.RegisterEntities;
 import org.apache.isis.objectstore.jdo.datanucleus.JDOStateManagerForIsis;
@@ -72,7 +71,6 @@ implements PersistenceSessionFactory, FixturesInstalledStateHolder {
     @Setter(onMethod=@__({@Override})) 
     FixturesInstalledState fixturesInstalledState;
     
-    @Programmatic
     @Override
     public void init() {
         this.configuration = _Config.getConfiguration();
@@ -82,7 +80,6 @@ implements PersistenceSessionFactory, FixturesInstalledStateHolder {
         createDataNucleusApplicationComponents();
     }
 
-    @Programmatic
     @Override
     public boolean isInitialized() {
         return this.configuration != null;
@@ -105,7 +102,6 @@ implements PersistenceSessionFactory, FixturesInstalledStateHolder {
     }
 
     @Override
-    @Programmatic
     public void catalogNamedQueries(final SpecificationLoader specificationLoader) {
         final RegisterEntities registerEntities = new RegisterEntities();
         final Set<String> classesToBePersisted = registerEntities.getEntityTypes();
@@ -169,7 +165,6 @@ implements PersistenceSessionFactory, FixturesInstalledStateHolder {
         }
     }
 
-    @Programmatic
     @Override
     public final void shutdown() {
         if(!isInitialized()) {
@@ -185,7 +180,6 @@ implements PersistenceSessionFactory, FixturesInstalledStateHolder {
     /**
      * Called by {@link org.apache.isis.core.runtime.system.session.IsisSessionFactory#openSession(AuthenticationSession)}.
      */
-    @Programmatic
     @Override
     public PersistenceSession5 createPersistenceSession(
             final AuthenticationSession authenticationSession) {

@@ -163,9 +163,7 @@ extends TransactionalResource { //TODO [2033] remove this interface
      * initialise the persistor.
      *
      * <p>
-     * Returns the cached value of {@link #getFixturesInstalledState()
-     * whether fixtures are installed} from the
-     * {@link PersistenceSessionFactory}.
+     * Returns whether fixtures are installed.
      * <p>
      * This caching is important because if we've determined, for a given run,
      * that fixtures are not installed, then we don't want to change our mind by

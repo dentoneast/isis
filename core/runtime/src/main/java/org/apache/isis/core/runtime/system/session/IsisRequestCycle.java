@@ -6,7 +6,7 @@ import org.apache.isis.core.security.authentication.AuthenticationSession;
 import lombok.val;
 
 /**
- * TODO [2033] indent is to remove direct dependencies upon Persistence/Transaction for the viewer-modules.   
+ * TODO [2033] intent is to remove direct dependencies upon Persistence/Transaction for the viewer-modules.   
  * 
  * @since 2.0.0-M3
  */

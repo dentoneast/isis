@@ -45,8 +45,8 @@ import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelDeficiencies;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelInvalidException;
 import org.apache.isis.core.plugins.environment.IsisSystemEnvironment;
-import org.apache.isis.core.runtime.system.context.session.ManagedObjectContext;
-import org.apache.isis.core.runtime.system.context.session.ManagedObjectContextBase;
+import org.apache.isis.core.runtime.system.context.session.RuntimeContext;
+import org.apache.isis.core.runtime.system.context.session.RuntimeContextBase;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
@@ -127,8 +127,8 @@ public interface IsisContext {
     /**
      * @return new instance of ManagedObjectContext
      */
-    public static ManagedObjectContext newManagedObjectContext() {
-        return new ManagedObjectContextBase() {}; 
+    public static RuntimeContext newManagedObjectContext() {
+        return new RuntimeContextBase() {}; 
     }
     
     /**

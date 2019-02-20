@@ -210,8 +210,7 @@ public final class _CDI {
     
     private static <T> T getMockedSingleton(Class<T> type) {
         requires(type, "type");        
-        return _Context.getOrThrow(type, ()-> 
-            new NoSuchElementException(String.format("Could not resolve an instance of type '%s'", type.getName())));
+        return _Context.getElseFail(type);
     }
     
     // -- ENUMERATE BEANS

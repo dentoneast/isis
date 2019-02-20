@@ -35,7 +35,6 @@ import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledState;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledStateHolder;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.jdo.service.RegisterEntities;
 import org.apache.isis.objectstore.jdo.datanucleus.JDOStateManagerForIsis;

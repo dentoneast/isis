@@ -25,9 +25,9 @@ import lombok.var;
  * @since 2.0.0-M3
  */
 @RequiredArgsConstructor
-final class ManagedObjectContextBase_findHomepage {
+final class RuntimeContextBase_findHomepage {
 
-	private final ManagedObjectContextBase holder;
+	private final RuntimeContextBase holder;
 
 	public Tuple2<ObjectAdapter, ObjectAction> findHomePageAction() {
 		
