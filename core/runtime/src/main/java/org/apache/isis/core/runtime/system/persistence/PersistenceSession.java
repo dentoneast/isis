@@ -23,7 +23,6 @@ import org.apache.isis.applib.query.Query;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapterByIdProvider;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.spec.ManagedObjectState;
@@ -36,10 +35,7 @@ import org.apache.isis.core.runtime.persistence.transaction.TransactionalResourc
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 
 public interface PersistenceSession 
-extends 
-    //ObjectAdapterProvider.Delegating, //TODO [2033] remove this interface
-    ObjectAdapterByIdProvider.Delegating, //TODO [2033] remove this interface
-    TransactionalResource { //TODO [2033] remove this interface
+extends TransactionalResource { //TODO [2033] remove this interface
 
     // -------------------------------------------------------------------------------------------------
     // -- STABLE API (DRAFT)
@@ -184,6 +180,8 @@ extends
     ObjectAdapter adapterOfMemento(ObjectSpecification spec, Oid oid, Data data);
     
     // -- TODO remove ObjectAdapter references from API
+
+    ObjectAdapter adapterFor(RootOid rootOid);
     
     <T> List<ObjectAdapter> allMatchingQuery(final Query<T> query);
     <T> ObjectAdapter firstMatchingQuery(final Query<T> query);
@@ -196,6 +194,7 @@ extends
     void execute(List<PersistenceCommand> persistenceCommandList);
     
     long getLifecycleStartedAtSystemNanos();
+	
     
 
 }

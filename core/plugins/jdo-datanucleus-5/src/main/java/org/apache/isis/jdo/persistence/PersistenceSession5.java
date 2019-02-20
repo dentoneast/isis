@@ -45,8 +45,6 @@ import org.apache.isis.applib.services.iactn.Interaction;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapterByIdProvider;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
 import org.apache.isis.core.metamodel.adapter.version.Version;
@@ -86,9 +84,6 @@ import org.apache.isis.jdo.datanucleus.persistence.PersistenceQuery;
 import org.apache.isis.jdo.datanucleus.persistence.commands.DataNucleusCreateObjectCommand;
 import org.apache.isis.jdo.datanucleus.persistence.commands.DataNucleusDeleteObjectCommand;
 import org.apache.isis.jdo.datanucleus.persistence.queries.PersistenceQueryProcessor;
-import org.apache.isis.jdo.persistence.NotPersistableException;
-import org.apache.isis.jdo.persistence.PersistenceSessionBase;
-import org.apache.isis.jdo.persistence.UnsupportedFindException;
 import org.apache.isis.jdo.persistence.adaptermanager.ObjectAdapterContext;
 import org.apache.isis.jdo.persistence.query.PersistenceQueryFindAllInstances;
 import org.apache.isis.jdo.persistence.query.PersistenceQueryFindUsingApplibQueryDefault;
@@ -906,8 +901,8 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
     }
 
     @Override
-    public ObjectAdapterByIdProvider getObjectAdapterByIdProvider() {
-        return objectAdapterContext.getObjectAdapterByIdProvider();
+    public ObjectAdapter adapterFor(final RootOid rootOid) {
+    	return objectAdapterContext.getObjectAdapterByIdProvider().adapterFor(rootOid);
     }
     
     // -- MEMENTO SUPPORT

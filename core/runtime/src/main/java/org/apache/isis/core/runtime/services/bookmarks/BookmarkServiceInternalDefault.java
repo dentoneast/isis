@@ -246,7 +246,7 @@ public class BookmarkServiceInternalDefault implements BookmarkService, Serializ
         final boolean denyRefresh = fieldResetPolicy == BookmarkService.FieldResetPolicy.DONT_REFRESH; 
                         
         if(rootOid.isViewModel()) {
-            final ObjectAdapter adapter = ps.adapterFor(rootOid, ConcurrencyChecking.NO_CHECK);
+            final ObjectAdapter adapter = ps.adapterFor(rootOid);
             final Object pojo = mapIfPresentElse(adapter, ObjectAdapter::getPojo, null);
             
             return pojo;
@@ -257,7 +257,7 @@ public class BookmarkServiceInternalDefault implements BookmarkService, Serializ
             return pojo;            
             
         } else {
-            final ObjectAdapter adapter = ps.adapterFor(rootOid, ConcurrencyChecking.NO_CHECK);
+            final ObjectAdapter adapter = ps.adapterFor(rootOid);
             
             final Object pojo = mapIfPresentElse(adapter, ObjectAdapter::getPojo, null);
             acceptIfPresent(pojo, ps::refreshRootInTransaction);
