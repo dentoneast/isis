@@ -14,7 +14,6 @@ import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.commons.internal.uri._URI.ContainerType;
 import org.apache.isis.commons.internal.uri._URI.ContextType;
-import org.apache.isis.core.metamodel.IsisJdoMetamodelPlugin;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ManagedObject.SimpleManagedObject;
@@ -25,6 +24,7 @@ import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.managers.AuthorityDescriptor;
 import org.apache.isis.core.runtime.system.context.managers.ContextHandler;
 import org.apache.isis.core.runtime.system.session.IsisSession;
+import org.apache.isis.jdo.IsisJdoRuntimePlugin;
 
 import lombok.val;
 
@@ -40,11 +40,11 @@ public class IsisLegacyJdoContextHandler implements ContextHandler {
 	
 	@Inject SpecificationLoader specLoader;
 	
-	private IsisJdoMetamodelPlugin isisJdoMetamodelPlugin;
+	private IsisJdoRuntimePlugin jdoRuntimePlugin;
 	
 	@PostConstruct
 	public void init() {
-		isisJdoMetamodelPlugin = IsisJdoMetamodelPlugin.get();
+		jdoRuntimePlugin = IsisJdoRuntimePlugin.get();
 	}
 	
 	@Override
@@ -97,7 +97,7 @@ public class IsisLegacyJdoContextHandler implements ContextHandler {
 
 	@Override
 	public boolean recognizes(ObjectSpecification spec) {
-		return isisJdoMetamodelPlugin.isPersistenceEnhanced(spec.getCorrespondingClass());
+		return jdoRuntimePlugin.isPersistenceEnhanced(spec.getCorrespondingClass());
 	}
 
 	@Override

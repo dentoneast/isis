@@ -56,7 +56,6 @@ import org.apache.isis.core.metamodel.facets.all.describedas.DescribedAsFacet;
 import org.apache.isis.core.metamodel.facets.all.help.HelpFacet;
 import org.apache.isis.core.metamodel.facets.all.hide.HiddenFacet;
 import org.apache.isis.core.metamodel.facets.all.named.NamedFacet;
-import org.apache.isis.core.metamodel.facets.collections.modify.CollectionFacet;
 import org.apache.isis.core.metamodel.facets.members.cssclass.CssClassFacet;
 import org.apache.isis.core.metamodel.facets.object.encodeable.EncodableFacet;
 import org.apache.isis.core.metamodel.facets.object.icon.IconFacet;
@@ -64,11 +63,9 @@ import org.apache.isis.core.metamodel.facets.object.immutable.ImmutableFacet;
 import org.apache.isis.core.metamodel.facets.object.mixin.MixinFacet;
 import org.apache.isis.core.metamodel.facets.object.navparent.NavigableParentFacet;
 import org.apache.isis.core.metamodel.facets.object.objectspecid.ObjectSpecIdFacet;
-import org.apache.isis.core.metamodel.facets.object.parented.ParentedCollectionFacet;
 import org.apache.isis.core.metamodel.facets.object.parseable.ParseableFacet;
 import org.apache.isis.core.metamodel.facets.object.plural.PluralFacet;
 import org.apache.isis.core.metamodel.facets.object.title.TitleFacet;
-import org.apache.isis.core.metamodel.facets.object.value.ValueFacet;
 import org.apache.isis.core.metamodel.interactions.InteractionContext;
 import org.apache.isis.core.metamodel.interactions.InteractionUtils;
 import org.apache.isis.core.metamodel.interactions.ObjectTitleContext;
@@ -76,7 +73,6 @@ import org.apache.isis.core.metamodel.interactions.ObjectValidityContext;
 import org.apache.isis.core.metamodel.layout.DeweyOrderSet;
 import org.apache.isis.core.metamodel.spec.ActionType;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
-import org.apache.isis.core.metamodel.spec.ManagedObjectType;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.ObjectSpecificationException;
@@ -91,9 +87,10 @@ import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.facetprocessor.FacetProcessor;
 import org.apache.isis.core.metamodel.specloader.postprocessor.PostProcessor;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
-import org.apache.isis.objectstore.jdo.metamodel.facets.object.persistencecapable.JdoPersistenceCapableFacet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import lombok.val;
 
 public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implements ObjectSpecification {
 
@@ -1121,16 +1118,6 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
         return new ObjectValidityContext(targetAdapter, getIdentifier(), interactionInitiatedBy);
     }
     
-    private ManagedObjectType managedObjectType; 
-    
-    @Override
-    public ManagedObjectType getManagedObjectType() {
-    	if(managedObjectType==null) {
-    		managedObjectType = ManagedObjectType.valueOf(this);
-    	}
-    	return managedObjectType;
-    }
-
     // -- convenience isXxx (looked up from facets)
     @Override
     public boolean isImmutable() {
@@ -1150,41 +1137,6 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
     @Override
     public boolean isEncodeable() {
         return containsFacet(EncodableFacet.class);
-    }
-
-    @Override
-    public boolean isValue() {
-        return containsFacet(ValueFacet.class);
-    }
-
-    @Override
-    public boolean isParented() {
-        return containsFacet(ParentedCollectionFacet.class);
-    }
-
-    @Override
-    public boolean isParentedOrFreeCollection() {
-        return containsFacet(CollectionFacet.class);
-    }
-
-    @Override
-    public boolean isNotCollection() {
-        return !isParentedOrFreeCollection();
-    }
-
-    @Override
-    public boolean isValueOrIsParented() {
-        return isValue() || isParented();
-    }
-
-    @Override
-    public boolean isPersistenceCapable() {
-        return containsFacet(JdoPersistenceCapableFacet.class);
-    }
-
-    @Override
-    public boolean isPersistenceCapableOrViewModel() {
-        return isViewModel() || isPersistenceCapable();
     }
 
     // -- toString
@@ -1209,7 +1161,8 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
         if(contributed.isIncluded() && !contributeeAndMixedInActionsAdded) {
             synchronized (this.objectActions) {
                 final List<ObjectAction> actions = _Lists.newArrayList(this.objectActions);
-                if (isPersistenceCapableOrViewModel()) {
+                val type = getManagedObjectType();
+                if (type.isViewModel() || type.isEntity()) {
                     actions.addAll(createContributeeActions());
                     actions.addAll(createMixedInActions());
                 }
@@ -1225,9 +1178,10 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
         if(contributed.isIncluded() && !contributeeAndMixedInAssociationsAdded) {
             synchronized (this.associations) {
                 List<ObjectAssociation> associations = _Lists.newArrayList(this.associations);
-                if(isPersistenceCapableOrViewModel()) {
-                associations.addAll(createContributeeAssociations());
-                associations.addAll(createMixedInAssociations());
+                val type = getManagedObjectType();
+                if (type.isViewModel() || type.isEntity()) {
+	                associations.addAll(createContributeeAssociations());
+	                associations.addAll(createMixedInAssociations());
                 }
                 sortAndUpdateAssociations(associations);
                 contributeeAndMixedInAssociationsAdded = true;

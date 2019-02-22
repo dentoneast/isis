@@ -32,9 +32,9 @@ import org.apache.isis.applib.services.xactn.TransactionService;
 import org.apache.isis.applib.services.xactn.TransactionState;
 import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.commons.internal.cdi._CDI;
+import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
-import org.apache.isis.core.commons.ensure.Assert;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.services.ServiceUtil;
@@ -150,7 +150,11 @@ public final class MetaModelContexts {
             return getServiceRegistry().streamServices()
             .map(objectAdapterProvider::adapterFor) 
             .peek(serviceAdapter->{
-                Assert.assertFalse("expected to not be 'transient'", serviceAdapter.getOid().isTransient());
+            	if(serviceAdapter.getOid().isTransient()) {
+            		val msg = String.format("Service Adapters are expected not to be 'transient': oid='%s'", 
+            				serviceAdapter.getOid());
+            		throw _Exceptions.unrecoverable(msg);
+            	}
             })
             .collect(Collectors.toMap(ServiceUtil::idOfAdapter, v->v, (o,n)->n, LinkedHashMap::new));
         }

@@ -68,7 +68,6 @@ import org.apache.isis.core.metamodel.facets.object.domainobject.domainevents.Co
 import org.apache.isis.core.metamodel.facets.object.domainobject.domainevents.PropertyDomainEventDefaultFacetForDomainObjectAnnotation;
 import org.apache.isis.core.metamodel.facets.object.domainobject.editing.ImmutableFacetForDomainObjectAnnotation;
 import org.apache.isis.core.metamodel.facets.object.domainobject.objectspecid.ObjectSpecIdFacetForDomainObjectAnnotation;
-import org.apache.isis.core.metamodel.facets.object.domainobject.objectspecid.ObjectSpecIdFacetForJdoPersistenceCapableAnnotation;
 import org.apache.isis.core.metamodel.facets.object.domainobject.publishing.PublishedObjectFacetForDomainObjectAnnotation;
 import org.apache.isis.core.metamodel.facets.object.domainobject.recreatable.RecreatableObjectFacetForDomainObjectAnnotation;
 import org.apache.isis.core.metamodel.facets.object.immutable.ImmutableFacet;
@@ -84,7 +83,8 @@ import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidatorFor
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidatorVisiting;
 import org.apache.isis.core.metamodel.specloader.validator.ValidationFailures;
 import org.apache.isis.core.metamodel.util.EventUtil;
-import org.apache.isis.objectstore.jdo.metamodel.facets.object.persistencecapable.JdoPersistenceCapableFacet;
+
+import lombok.val;
 
 
 public class DomainObjectAnnotationFacetFactory extends FacetFactoryAbstract
@@ -261,13 +261,14 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache, ObjectSpecIdFace
         // check from @DomainObject(objectType=...)
         Facet facet = ObjectSpecIdFacetForDomainObjectAnnotation.create(domainObjects, facetHolder);
 
-        // else check for @PersistenceCapable(schema=...)
-        if(facet == null) {
-            final JdoPersistenceCapableFacet jdoPersistenceCapableFacet = facetHolder.getFacet(JdoPersistenceCapableFacet.class);
-            if(jdoPersistenceCapableFacet != null) {
-                facet = ObjectSpecIdFacetForJdoPersistenceCapableAnnotation.create(jdoPersistenceCapableFacet, facetHolder);
-            }
-        }
+//TODO [2033] remove        
+//        // else check for @PersistenceCapable(schema=...)
+//        if(facet == null) {
+//            final JdoPersistenceCapableFacet jdoPersistenceCapableFacet = facetHolder.getFacet(JdoPersistenceCapableFacet.class);
+//            if(jdoPersistenceCapableFacet != null) {
+//                facet = ObjectSpecIdFacetForJdoPersistenceCapableAnnotation.create(jdoPersistenceCapableFacet, facetHolder);
+//            }
+//        }
 
         // then add
         FacetUtil.addFacet(facet);
@@ -511,7 +512,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache, ObjectSpecIdFace
             }
 
             private void validate(final ObjectSpecification thisSpec, final ValidationFailures validationFailures) {
-                if(!thisSpec.isPersistenceCapableOrViewModel()) {
+                if(!isEntityOrViewModel(thisSpec)) {
                     return;
                 }
 
@@ -522,7 +523,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache, ObjectSpecIdFace
                         continue;
                     }
 
-                    if(!otherSpec.isPersistenceCapableOrViewModel()) {
+                    if(!isEntityOrViewModel(otherSpec)) {
                         continue;
                     }
 
@@ -570,5 +571,13 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache, ObjectSpecIdFace
     public Method postConstructMethodFor(final Object pojo) {
         return MethodFinderUtils.findAnnotatedMethod(pojo, PostConstruct.class, postConstructMethods);
     }
+    
+    // -- HELPER
+    
+    private boolean isEntityOrViewModel(ObjectSpecification spec) {
+    	val type = spec.getManagedObjectType();
+    	return type.isEntity() || type.isViewModel();
+    }
+    
 
 }

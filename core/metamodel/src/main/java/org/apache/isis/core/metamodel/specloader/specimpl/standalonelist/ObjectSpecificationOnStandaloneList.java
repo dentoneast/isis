@@ -32,6 +32,7 @@ import org.apache.isis.core.metamodel.spec.ActionType;
 import org.apache.isis.core.metamodel.spec.ElementSpecificationProvider;
 import org.apache.isis.core.metamodel.spec.FreeStandingList;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
+import org.apache.isis.core.metamodel.spec.ManagedObjectType;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
@@ -87,22 +88,12 @@ public class ObjectSpecificationOnStandaloneList extends ObjectSpecificationAbst
         // no-op.
     }
 
+	@Override
+	public ManagedObjectType getManagedObjectType() {
+		return ManagedObjectType.Collection;
+	}
 
-    // -- isXxx
-
-    @Override
-    public boolean isService() {
-        return false;
-    }
-    @Override
-    public boolean isViewModel() {
-        return false;
-    }
-
-    @Override
-    public boolean isMixin() {
-        return false;
-    }
+    // -- PREDICATES
 
     @Override
     public boolean isViewModelCloneable(ManagedObject targetAdapter) {
@@ -114,7 +105,10 @@ public class ObjectSpecificationOnStandaloneList extends ObjectSpecificationAbst
         return false;
     }
 
-
+	@Override
+	public boolean isParented() {
+		return false;
+	}
 
     // -- Associations
     /**
@@ -178,6 +172,9 @@ public class ObjectSpecificationOnStandaloneList extends ObjectSpecificationAbst
                 typeOfFacet -> ElementSpecificationProvider.of(typeOfFacet).getElementType(), 
                 null);
     }
+
+
+
     
     // --
 

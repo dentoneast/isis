@@ -16,14 +16,22 @@
  */
 package org.apache.isis.jdo;
 
+import javax.annotation.Nullable;
+
 import org.apache.isis.commons.internal.context._Plugin;
 import org.apache.isis.jdo.persistence.PersistenceSessionFactory;
 
-@Deprecated //TODO [2033] could simply use a CDI producer instead 
 public interface IsisJdoRuntimePlugin {
 
     // -- INTERFACE
 
+    /**
+     * Equivalent to org.datanucleus.enhancement.Persistable.class.isAssignableFrom(cls).
+     * @param cls
+     * @return
+     */
+    public boolean isPersistenceEnhanced(@Nullable Class<?> cls);
+	
     public PersistenceSessionFactory getPersistenceSessionFactory(/*ConfigurationServiceInternal configuration*/);
 
     // -- LOOKUP

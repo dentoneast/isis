@@ -45,7 +45,6 @@ import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.metamodel.spec.feature.OneToOneActionParameter;
 import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-import org.apache.isis.objectstore.jdo.metamodel.facets.object.query.JdoNamedQuery;
 import org.apache.isis.schema.metamodel.v1.Action;
 import org.apache.isis.schema.metamodel.v1.Collection;
 import org.apache.isis.schema.metamodel.v1.DomainClassDto;
@@ -57,13 +56,8 @@ import org.apache.isis.schema.metamodel.v1.Property;
 import org.apache.isis.schema.metamodel.v1.ScalarParam;
 import org.apache.isis.schema.metamodel.v1.VectorParam;
 import org.apache.isis.schema.utils.CommonDtoUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class MetaModelExporter {
-
-    @SuppressWarnings("unused")
-    private final static Logger LOG = LoggerFactory.getLogger(MetaModelExporter.class);
 
     SpecificationLoader specificationLoader;
 
@@ -472,8 +466,8 @@ class MetaModelExporter {
             str = asStr((Specification) attributeObj);
         } else if(attributeObj instanceof Facet) {
             str = asStr((Facet) attributeObj);
-        } else if(attributeObj instanceof JdoNamedQuery) {
-            str = asStr((JdoNamedQuery) attributeObj);
+        } else if(attributeObj instanceof MetaModelExportSupport) {
+            str = asStr((MetaModelExportSupport) attributeObj);
         } else if(attributeObj instanceof Pattern) {
             str = asStr((Pattern) attributeObj);
         } else if(attributeObj instanceof CommandDtoProcessor) {
@@ -504,8 +498,8 @@ class MetaModelExporter {
         return attributeObj.getFullIdentifier();
     }
 
-    private String asStr(final JdoNamedQuery attributeObj) {
-        return attributeObj.getName();
+    private String asStr(final MetaModelExportSupport attributeObj) {
+        return attributeObj.asString();
     }
 
     private String asStr(final CommandDtoProcessor attributeObj) {
