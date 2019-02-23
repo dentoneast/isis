@@ -107,6 +107,11 @@ public class ObjectSpecificationStub extends FacetHolderImpl implements ObjectSp
     }
 
     @Override
+    public boolean isService() {
+        return false;
+    }
+
+    @Override
     public ObjectAssociation getAssociation(final String name) {
         for (int i = 0; i < fields.size(); i++) {
             if (fields.get(i).getId().equals(name)) {
@@ -232,6 +237,16 @@ public class ObjectSpecificationStub extends FacetHolderImpl implements ObjectSp
     }
 
     @Override
+    public boolean isValueOrIsParented() {
+        return false;
+    }
+
+    @Override
+    public boolean isValue() {
+        return false;
+    }
+
+    @Override
     public boolean isParented() {
         return false;
     }
@@ -267,8 +282,18 @@ public class ObjectSpecificationStub extends FacetHolderImpl implements ObjectSp
     }
 
     @Override
+    public boolean isParentedOrFreeCollection() {
+        return false;
+    }
+
+    @Override
     public boolean isHidden() {
         return false;
+    }
+
+    @Override
+    public boolean isNotCollection() {
+        return !isParentedOrFreeCollection();
     }
 
     @Override
@@ -313,12 +338,32 @@ public class ObjectSpecificationStub extends FacetHolderImpl implements ObjectSp
     // /////////////////////////////////////////////////////////
 
     @Override
+    public boolean isViewModel() {
+        return false;
+    }
+
+    @Override
     public boolean isViewModelCloneable(final ManagedObject targetAdapter) {
         return false;
     }
 
     @Override
     public boolean isWizard() {
+        return false;
+    }
+
+    @Override
+    public boolean isMixin() {
+        return false;
+    }
+
+    @Override
+    public boolean isPersistenceCapable() {
+        return false;
+    }
+
+    @Override
+    public boolean isPersistenceCapableOrViewModel() {
         return false;
     }
 
@@ -332,9 +377,9 @@ public class ObjectSpecificationStub extends FacetHolderImpl implements ObjectSp
         return elementSpecification;
     }
 
-	@Override // override for testing
+	@Override
 	public ManagedObjectType getManagedObjectType() {
-		return ManagedObjectType.Other; 
+		return ManagedObjectType.valueOf(this);
 	}
 
 }

@@ -280,9 +280,7 @@ ObjectAssociationContainer, Hierarchical,  DefaultProvider {
      *
      * @see #isParentedOrFreeCollection().
      */
-    default boolean isNotCollection() {
-    	return !isParentedOrFreeCollection();
-    }
+    boolean isNotCollection();
 
     /**
      * Determines if objects of this type are a parented (internal) or free-standing (external) collection.
@@ -293,9 +291,7 @@ ObjectAssociationContainer, Hierarchical,  DefaultProvider {
      *
      * @see #isNotCollection()
      */
-    default boolean isParentedOrFreeCollection() {
-        return getManagedObjectType().isCollection();
-    }
+    boolean isParentedOrFreeCollection();
 
     /**
      * Determines if objects of this type are values.
@@ -303,9 +299,7 @@ ObjectAssociationContainer, Hierarchical,  DefaultProvider {
      * <p>
      * In effect, means has got {@link ValueFacet}.
      */
-    default boolean isValue() {
-        return getManagedObjectType().isValue();
-    }
+    boolean isValue();
 
     /**
      * Determines if objects of this type are parented (a parented collection, or an aggregated entity).
@@ -321,9 +315,7 @@ ObjectAssociationContainer, Hierarchical,  DefaultProvider {
      * @see #isValue()
      * @see #isParented()
      */
-    default boolean isValueOrIsParented() {
-    	return isValue() || isParented();
-    }
+    boolean isValueOrIsParented();
 
     /**
      * Determines if objects of this type can be set up from a text entry
@@ -353,6 +345,11 @@ ObjectAssociationContainer, Hierarchical,  DefaultProvider {
     boolean isHidden();
 
 
+
+    // //////////////////////////////////////////////////////////////
+    // Service
+    // //////////////////////////////////////////////////////////////
+
     /**
      * Whether or not this specification represents a domain service (as opposed
      * to a domain entity or a value etc).
@@ -362,25 +359,21 @@ ObjectAssociationContainer, Hierarchical,  DefaultProvider {
      * fully built, and a <tt>PersistenceSession</tt> has been opened.  This should
      * probably be improved upon; for now, beware...
      */
-    default boolean isService() {
-    	return getManagedObjectType().isDomainService();
-    }
-    
-    default boolean isViewModel() {
-    	return getManagedObjectType().isViewModel();
-    }
-    
-    default boolean isMixin() {
-    	return getManagedObjectType().isMixin();
-    }
-    
-    default boolean isEntity() {
-    	return getManagedObjectType().isEntity();
-    }
-    
-    
+    boolean isService();
+
+
+
+    // //////////////////////////////////////////////////////////////
+    // view models and wizards
+    // //////////////////////////////////////////////////////////////
+
+    boolean isViewModel();
+    boolean isMixin();
     boolean isViewModelCloneable(ManagedObject targetAdapter);
     boolean isWizard();
+
+    boolean isPersistenceCapable();
+    boolean isPersistenceCapableOrViewModel();
 
     /**
      * 
@@ -406,8 +399,6 @@ ObjectAssociationContainer, Hierarchical,  DefaultProvider {
         
         return newInstance; 
 	}
-
-	
     
 
 }

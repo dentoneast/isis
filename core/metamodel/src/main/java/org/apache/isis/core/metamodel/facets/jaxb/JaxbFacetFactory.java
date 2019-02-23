@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
+import org.apache.isis.core.metamodel.JdoMetamodelUtil;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facetapi.FacetUtil;
 import org.apache.isis.core.metamodel.facetapi.FeatureType;
@@ -275,10 +276,10 @@ implements MetaModelValidatorRefiner {
                 final ValidationFailures validationFailures) {
 
             final ObjectSpecification propertyTypeSpec = property.getSpecification();
-            if(!propertyTypeSpec.isEntity()) {
-            	return;
-            }
             final Class<?> propertyType = propertyTypeSpec.getCorrespondingClass();
+            if (!JdoMetamodelUtil.isPersistenceEnhanced(propertyType)) {
+                return;
+            }
 
             final XmlJavaTypeAdapterFacet xmlJavaTypeAdapterFacet =
                     propertyTypeSpec.getFacet(XmlJavaTypeAdapterFacet.class);

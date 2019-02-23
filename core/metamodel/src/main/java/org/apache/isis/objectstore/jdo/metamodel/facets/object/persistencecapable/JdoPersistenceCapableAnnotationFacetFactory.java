@@ -23,13 +23,13 @@ import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
 
 import org.apache.isis.commons.internal.base._Strings;
+import org.apache.isis.core.metamodel.JdoMetamodelUtil;
 import org.apache.isis.core.metamodel.facetapi.FacetUtil;
 import org.apache.isis.core.metamodel.facetapi.FeatureType;
 import org.apache.isis.core.metamodel.facets.Annotations;
 import org.apache.isis.core.metamodel.facets.FacetFactoryAbstract;
 import org.apache.isis.core.metamodel.facets.ObjectSpecIdFacetFactory;
 import org.apache.isis.core.metamodel.facets.object.domainobject.DomainObjectAnnotationFacetFactory;
-import org.apache.isis.jdo.persistence.JdoMetamodelUtil;
 
 /**
  * Implements {@link ObjectSpecIdFacetFactory} only because is a prereq of {@link DomainObjectAnnotationFacetFactory}.
@@ -69,10 +69,8 @@ public class JdoPersistenceCapableAnnotationFacetFactory
         FacetUtil.addFacet(new JdoPersistenceCapableFacetAnnotation(
                 annotationSchemaAttribute,
                 annotationTableAttribute, annotationIdentityType, processClassContext.getFacetHolder()));
-        
         return;
     }
 
-    
 
 }

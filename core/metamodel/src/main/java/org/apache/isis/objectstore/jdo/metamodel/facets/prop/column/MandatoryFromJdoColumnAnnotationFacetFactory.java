@@ -25,6 +25,7 @@ import javax.jdo.annotations.Column;
 import javax.jdo.annotations.IdentityType;
 
 import org.apache.isis.commons.internal.base._Strings;
+import org.apache.isis.core.metamodel.JdoMetamodelUtil;
 import org.apache.isis.core.metamodel.facetapi.FacetUtil;
 import org.apache.isis.core.metamodel.facetapi.FeatureType;
 import org.apache.isis.core.metamodel.facetapi.MetaModelValidatorRefiner;
@@ -40,7 +41,6 @@ import org.apache.isis.core.metamodel.spec.feature.ObjectAssociation;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidatorComposite;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidatorVisiting;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidatorVisiting.Visitor;
-import org.apache.isis.jdo.persistence.JdoMetamodelUtil;
 import org.apache.isis.core.metamodel.specloader.validator.ValidationFailures;
 import org.apache.isis.objectstore.jdo.metamodel.facets.object.persistencecapable.JdoPersistenceCapableFacet;
 import org.apache.isis.objectstore.jdo.metamodel.facets.prop.notpersistent.JdoNotPersistentFacet;

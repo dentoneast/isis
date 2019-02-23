@@ -45,8 +45,6 @@ import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidatorCom
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidatorVisiting;
 import org.apache.isis.core.metamodel.specloader.validator.ValidationFailures;
 
-import lombok.val;
-
 public class ObjectSpecIdFacetDerivedFromClassNameFactory
         extends FacetFactoryAbstract
         implements MetaModelValidatorRefiner, ObjectSpecIdFacetFactory {
@@ -153,13 +151,10 @@ public class ObjectSpecIdFacetDerivedFromClassNameFactory
         if(objectSpec.isAbstract()) {
             return false;
         }
-        
-        val managedObjectType = objectSpec.getManagedObjectType();
-        
-        if (managedObjectType.isEntity()) {
+        if (objectSpec.isPersistenceCapable()) {
             return true;
         }
-        if (managedObjectType.isViewModel()) {
+        if (objectSpec.isViewModel()) {
             final ViewModelFacet viewModelFacet = objectSpec.getFacet(ViewModelFacet.class);
             // don't check JAXB DTOs
             final XmlType xmlType = objectSpec.getCorrespondingClass().getAnnotation(XmlType.class);
@@ -168,10 +163,10 @@ public class ObjectSpecIdFacetDerivedFromClassNameFactory
             }
             return true;
         }
-        if(managedObjectType.isMixin()) {
+        if(objectSpec.isMixin()) {
             return false;
         }
-        if (objectSpec.isService()) { //TODO [2033] we need a clear distinction between service and bean
+        if (objectSpec.isService()) {
             // don't check if domain service isn't a target in public API (UI/REST)
             final DomainServiceFacet domainServiceFacet = objectSpec.getFacet(DomainServiceFacet.class);
             if(domainServiceFacet != null) {

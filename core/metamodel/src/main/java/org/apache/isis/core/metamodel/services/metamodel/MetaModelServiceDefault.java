@@ -38,6 +38,7 @@ import org.apache.isis.applib.services.metamodel.MetaModelService;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.config.internal._Config;
+import org.apache.isis.core.metamodel.JdoMetamodelUtil;
 import org.apache.isis.core.metamodel.facets.actions.command.CommandFacet;
 import org.apache.isis.core.metamodel.facets.object.objectspecid.ObjectSpecIdFacet;
 import org.apache.isis.core.metamodel.services.appfeat.ApplicationFeatureId;
@@ -52,8 +53,6 @@ import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.schema.metamodel.v1.MetamodelDto;
-
-import lombok.val;
 
 @Singleton
 public class MetaModelServiceDefault implements MetaModelService {
@@ -178,19 +177,34 @@ public class MetaModelServiceDefault implements MetaModelService {
         if(domainType == null) {
             return null;
         }
-        val spec = specificationLoader.loadSpecification(domainType);
-        val type = spec.getManagedObjectType();
-        
-        if(type.isOther() && mode == Mode.STRICT) {
-        	throw new IllegalArgumentException(String.format(
-                    "Unable to determine what sort of domain object this is: '%s'. Originating domainType: '%s'",
-                    spec.getFullIdentifier(),
-                    domainType.getName()
-                    ));	
+        final ObjectSpecification objectSpec = specificationLoader.loadSpecification(domainType);
+        if(objectSpec.isService()) {
+            return Sort.DOMAIN_SERVICE;
         }
-        
-        return type.toSort();
-        
+        if(objectSpec.isViewModel()) {
+            return Sort.VIEW_MODEL;
+        }
+        if(objectSpec.isValue()) {
+            return Sort.VALUE;
+        }
+        if(objectSpec.isMixin()) {
+            return Sort.VALUE;
+        }
+        if(objectSpec.isParentedOrFreeCollection()) {
+            return Sort.COLLECTION;
+        }
+        final Class<?> correspondingClass = objectSpec.getCorrespondingClass();
+        if(JdoMetamodelUtil.isPersistenceEnhanced(correspondingClass)) {
+            return Sort.JDO_ENTITY;
+        }
+        if(mode == Mode.RELAXED) {
+            return Sort.UNKNOWN;
+        }
+        throw new IllegalArgumentException(String.format(
+                "Unable to determine what sort of domain object this is: '%s'. Originating domainType: '%s'",
+                objectSpec.getFullIdentifier(),
+                domainType.getName()
+                ));
     }
 
     @Override

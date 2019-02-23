@@ -30,7 +30,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.commons.internal.collections._Lists;
-import org.apache.isis.jdo.persistence.JdoMetamodelUtil;
+import org.apache.isis.core.metamodel.JdoMetamodelUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

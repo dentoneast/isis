@@ -21,6 +21,7 @@ package org.apache.isis.objectstore.jdo.metamodel.facets.object.version;
 
 import javax.jdo.annotations.Version;
 
+import org.apache.isis.core.metamodel.JdoMetamodelUtil;
 import org.apache.isis.core.metamodel.facetapi.FacetUtil;
 import org.apache.isis.core.metamodel.facetapi.FeatureType;
 import org.apache.isis.core.metamodel.facetapi.MetaModelValidatorRefiner;
@@ -30,7 +31,6 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidatorComposite;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidatorVisiting;
 import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidatorVisiting.Visitor;
-import org.apache.isis.jdo.persistence.JdoMetamodelUtil;
 import org.apache.isis.core.metamodel.specloader.validator.ValidationFailures;
 
 public class JdoVersionAnnotationFacetFactory extends FacetFactoryAbstract implements MetaModelValidatorRefiner {

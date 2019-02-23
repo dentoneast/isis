@@ -35,8 +35,6 @@ import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.core.commons.lang.StringExtensions;
 import org.apache.isis.core.commons.util.ToString;
-import org.apache.isis.core.metamodel.facetapi.BeanFacet;
-import org.apache.isis.core.metamodel.facetapi.EntityFacet;
 import org.apache.isis.core.metamodel.facetapi.Facet;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.FacetedMethod;
@@ -46,10 +44,8 @@ import org.apache.isis.core.metamodel.facets.all.i18n.NamedFacetTranslated;
 import org.apache.isis.core.metamodel.facets.all.i18n.PluralFacetTranslated;
 import org.apache.isis.core.metamodel.facets.all.named.NamedFacet;
 import org.apache.isis.core.metamodel.facets.all.named.NamedFacetInferred;
-import org.apache.isis.core.metamodel.facets.collections.modify.CollectionFacet;
 import org.apache.isis.core.metamodel.facets.object.domainservice.DomainServiceFacet;
 import org.apache.isis.core.metamodel.facets.object.mixin.MixinFacet;
-import org.apache.isis.core.metamodel.facets.object.parented.ParentedCollectionFacet;
 import org.apache.isis.core.metamodel.facets.object.plural.PluralFacet;
 import org.apache.isis.core.metamodel.facets.object.plural.inferred.PluralFacetInferred;
 import org.apache.isis.core.metamodel.facets.object.value.ValueFacet;
@@ -58,7 +54,6 @@ import org.apache.isis.core.metamodel.facets.object.wizard.WizardFacet;
 import org.apache.isis.core.metamodel.spec.ActionType;
 import org.apache.isis.core.metamodel.spec.ElementSpecificationProvider;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
-import org.apache.isis.core.metamodel.spec.ManagedObjectType;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.Contributed;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
@@ -75,402 +70,384 @@ import org.apache.isis.core.metamodel.specloader.specimpl.ObjectActionDefault;
 import org.apache.isis.core.metamodel.specloader.specimpl.ObjectSpecificationAbstract;
 import org.apache.isis.core.metamodel.specloader.specimpl.OneToManyAssociationDefault;
 import org.apache.isis.core.metamodel.specloader.specimpl.OneToOneAssociationDefault;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class ObjectSpecificationDefault extends ObjectSpecificationAbstract implements FacetHolder {
 
-	private static final ClassSubstitutor classSubstitutor = new ClassSubstitutor();
+    private final static Logger LOG = LoggerFactory.getLogger(ObjectSpecificationDefault.class);
 
-	private static String determineShortName(final Class<?> introspectedClass) {
-		final String name = introspectedClass.getName();
-		return name.substring(name.lastIndexOf('.') + 1);
-	}
+    private static final ClassSubstitutor classSubstitutor = new ClassSubstitutor();
 
-	// -- constructor, fields
-
-	/**
-	 * Lazily built by {@link #getMember(Method)}.
-	 */
-	private Map<Method, ObjectMember> membersByMethod = null;
-
-	private final FacetedMethodsBuilder facetedMethodsBuilder;
-
-	public ObjectSpecificationDefault(
-			final Class<?> correspondingClass,
-			final FacetedMethodsBuilderContext facetedMethodsBuilderContext,
-			final FacetProcessor facetProcessor,
-			final NatureOfService natureOfServiceIfAny,
-			final PostProcessor postProcessor) {
-		super(correspondingClass, determineShortName(correspondingClass), facetProcessor, postProcessor);
-
-		if(natureOfServiceIfAny != null) {
-			managedObjectType = ManagedObjectType.DomainService; // priming already known type
-		}
-		this.facetedMethodsBuilder = new FacetedMethodsBuilder(this, facetedMethodsBuilderContext);
-
-		facetProcessor.processObjectSpecId(correspondingClass, this);
-	}
-
-	@Override
-	protected void introspectTypeHierarchy() {
-
-		facetedMethodsBuilder.introspectClass();
-
-		// name
-		addNamedFacetAndPluralFacetIfRequired();
-
-		// go no further if a value
-		if(this.containsFacet(ValueFacet.class)) {
-			if (log.isDebugEnabled()) {
-				log.debug("skipping type hierarchy introspection for value type {}", getFullIdentifier());
-			}
-			return;
-		}
-
-		final DomainServiceFacet facet = getFacet(DomainServiceFacet.class);
-		final boolean serviceWithNatureOfDomain = facet != null && facet.getNatureOfService() == NatureOfService.DOMAIN;
-		if (serviceWithNatureOfDomain) {
-			if (log.isDebugEnabled()) {
-				log.debug("skipping type hierarchy introspection for domain service with natureOfService = DOMAIN {}", getFullIdentifier());
-			}
-			return;
-		}
-
-		// superclass
-		final Class<?> superclass = getCorrespondingClass().getSuperclass();
-		loadSpecOfSuperclass(superclass);
-
-		// walk superinterfaces
-
-		//
-		// REVIEW: the processing here isn't quite the same as with
-		// superclasses, in that with superclasses the superclass adds this type as its
-		// subclass, whereas here this type defines itself as the subtype.
-		//
-		// it'd be nice to push the responsibility for adding subclasses to
-		// the interface type... needs some tests around it, though, before
-		// making that refactoring.
-		//
-		final Class<?>[] interfaceTypes = getCorrespondingClass().getInterfaces();
-		final List<ObjectSpecification> interfaceSpecList = _Lists.newArrayList();
-		for (final Class<?> interfaceType : interfaceTypes) {
-			final Class<?> substitutedInterfaceType = classSubstitutor.getClass(interfaceType);
-			if (substitutedInterfaceType != null) {
-				final ObjectSpecification interfaceSpec = getSpecificationLoader().loadSpecification(substitutedInterfaceType);
-				interfaceSpecList.add(interfaceSpec);
-			}
-		}
-
-		updateAsSubclassTo(interfaceSpecList);
-		updateInterfaces(interfaceSpecList);
-	}
-
-	protected synchronized void introspectMembers() {
-
-		if(this.containsFacet(ValueFacet.class)) {
-			if (log.isDebugEnabled()) {
-				log.debug("skipping full introspection for value type {}", getFullIdentifier());
-			}
-			return;
-		}
-
-		// associations and actions
-		final List<ObjectAssociation> associations = createAssociations();
-		sortAndUpdateAssociations(associations);
-
-		final List<ObjectAction> actions = createActions();
-		sortCacheAndUpdateActions(actions);
-
-		postProcess();
-	}
-
-	private void addNamedFacetAndPluralFacetIfRequired() {
-		NamedFacet namedFacet = getFacet(NamedFacet.class);
-		if (namedFacet == null) {
-			namedFacet = new NamedFacetInferred(StringExtensions.asNaturalName2(getShortIdentifier()), this);
-			addFacet(namedFacet);
-		}
-
-		PluralFacet pluralFacet = getFacet(PluralFacet.class);
-		if (pluralFacet == null) {
-			if(namedFacet instanceof NamedFacetTranslated) {
-				final NamedFacetTranslated facet = (NamedFacetTranslated) namedFacet;
-				pluralFacet = new PluralFacetTranslated(facet, this);
-			} else {
-				pluralFacet = new PluralFacetInferred(StringExtensions.asPluralName(namedFacet.value()), this);
-			}
-			addFacet(pluralFacet);
-		}
-	}
-
-
-	// -- create associations and actions
-	private List<ObjectAssociation> createAssociations() {
-		final List<ObjectAssociation> associations = _Lists.newArrayList();
-		if(skipAssociationsAndActions()) {
-			// add no associations
-		} else {
-			final List<FacetedMethod> associationFacetedMethods = facetedMethodsBuilder.getAssociationFacetedMethods();
-			for (FacetedMethod facetedMethod : associationFacetedMethods) {
-				final ObjectAssociation association = createAssociation(facetedMethod);
-				if(association != null) {
-					associations.add(association);
-				}
-			}
-		}
-		return associations;
-	}
-
-	private ObjectAssociation createAssociation(final FacetedMethod facetMethod) {
-		if (facetMethod.getFeatureType().isCollection()) {
-			return new OneToManyAssociationDefault(facetMethod);
-		} else if (facetMethod.getFeatureType().isProperty()) {
-			return new OneToOneAssociationDefault(facetMethod);
-		} else {
-			return null;
-		}
-	}
-
-	private List<ObjectAction> createActions() {
-		final List<ObjectAction> actions = _Lists.newArrayList();
-		if(skipAssociationsAndActions()) {
-			// create no actions
-		} else {
-			final List<FacetedMethod> actionFacetedMethods = facetedMethodsBuilder.getActionFacetedMethods();
-			for (FacetedMethod facetedMethod : actionFacetedMethods) {
-				final ObjectAction action = createAction(facetedMethod);
-				if(action != null) {
-					actions.add(action);
-				}
-			}
-		}
-		return actions;
-	}
-
-
-	private ObjectAction createAction(final FacetedMethod facetedMethod) {
-		if (facetedMethod.getFeatureType().isAction()) {
-			return new ObjectActionDefault(facetedMethod);
-		} else {
-			return null;
-		}
-	}
-
-	private boolean skipAssociationsAndActions() {
-		return isFixtureScript();
-	}
-
-	private boolean isFixtureScript() {
-		return FixtureScript.class.isAssignableFrom(getCorrespondingClass());
-	}
-	
-	// -- OBJECT TYPE
-
-	private ManagedObjectType managedObjectType;
-	
-    private ManagedObjectType initManagedObjectType() {
-    	
-		if(containsFacet(CollectionFacet.class)) {
-			return ManagedObjectType.Collection;
-    	} else if(containsFacet(ValueFacet.class)) {
-    		return ManagedObjectType.Value;
-    	} else if(containsFacet(ViewModelFacet.class)) {
-    		return ManagedObjectType.ViewModel;
-    	} else if(containsFacet(MixinFacet.class)) {
-    		return ManagedObjectType.Mixin;
-    	} else if(containsFacet(EntityFacet.class)) {
-    		return ManagedObjectType.Entity;
-    	} else if(containsFacet(BeanFacet.class)) {
-    		return ManagedObjectType.Bean;
-    	}  
-    	return ManagedObjectType.Other;
+    private static String determineShortName(final Class<?> introspectedClass) {
+        final String name = introspectedClass.getName();
+        return name.substring(name.lastIndexOf('.') + 1);
     }
 
+    // -- constructor, fields
+
+    /**
+     * Lazily built by {@link #getMember(Method)}.
+     */
+    private Map<Method, ObjectMember> membersByMethod = null;
+
+    private final FacetedMethodsBuilder facetedMethodsBuilder;
+    private final boolean isService;
+
+    public ObjectSpecificationDefault(
+            final Class<?> correspondingClass,
+            final FacetedMethodsBuilderContext facetedMethodsBuilderContext,
+            final FacetProcessor facetProcessor,
+            final NatureOfService natureOfServiceIfAny,
+            final PostProcessor postProcessor) {
+        super(correspondingClass, determineShortName(correspondingClass), facetProcessor, postProcessor);
+
+        this.isService = natureOfServiceIfAny != null;
+        this.facetedMethodsBuilder = new FacetedMethodsBuilder(this, facetedMethodsBuilderContext);
+
+        facetProcessor.processObjectSpecId(correspondingClass, this);
+    }
+
+    @Override
+    protected void introspectTypeHierarchy() {
+
+            facetedMethodsBuilder.introspectClass();
+
+        // name
+            addNamedFacetAndPluralFacetIfRequired();
+
+        // go no further if a value
+        if(this.containsFacet(ValueFacet.class)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("skipping type hierarchy introspection for value type {}", getFullIdentifier());
+            }
+            return;
+        }
+
+        final DomainServiceFacet facet = getFacet(DomainServiceFacet.class);
+        final boolean serviceWithNatureOfDomain = facet != null && facet.getNatureOfService() == NatureOfService.DOMAIN;
+        if (serviceWithNatureOfDomain) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("skipping type hierarchy introspection for domain service with natureOfService = DOMAIN {}", getFullIdentifier());
+            }
+            return;
+        }
+
+        // superclass
+            final Class<?> superclass = getCorrespondingClass().getSuperclass();
+        loadSpecOfSuperclass(superclass);
+
+        // walk superinterfaces
+
+        //
+        // REVIEW: the processing here isn't quite the same as with
+        // superclasses, in that with superclasses the superclass adds this type as its
+        // subclass, whereas here this type defines itself as the subtype.
+        //
+        // it'd be nice to push the responsibility for adding subclasses to
+        // the interface type... needs some tests around it, though, before
+        // making that refactoring.
+        //
+        final Class<?>[] interfaceTypes = getCorrespondingClass().getInterfaces();
+        final List<ObjectSpecification> interfaceSpecList = _Lists.newArrayList();
+        for (final Class<?> interfaceType : interfaceTypes) {
+            final Class<?> substitutedInterfaceType = classSubstitutor.getClass(interfaceType);
+            if (substitutedInterfaceType != null) {
+                final ObjectSpecification interfaceSpec = getSpecificationLoader().loadSpecification(substitutedInterfaceType);
+                interfaceSpecList.add(interfaceSpec);
+            }
+        }
+
+            updateAsSubclassTo(interfaceSpecList);
+            updateInterfaces(interfaceSpecList);
+        }
+
+    protected synchronized void introspectMembers() {
+
+        if(this.containsFacet(ValueFacet.class)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("skipping full introspection for value type {}", getFullIdentifier());
+            }
+            return;
+    }
+
+        // associations and actions
+            final List<ObjectAssociation> associations = createAssociations();
+            sortAndUpdateAssociations(associations);
+
+            final List<ObjectAction> actions = createActions();
+            sortCacheAndUpdateActions(actions);
+
+        postProcess();
+    }
+
+    private void addNamedFacetAndPluralFacetIfRequired() {
+        NamedFacet namedFacet = getFacet(NamedFacet.class);
+        if (namedFacet == null) {
+            namedFacet = new NamedFacetInferred(StringExtensions.asNaturalName2(getShortIdentifier()), this);
+            addFacet(namedFacet);
+        }
+
+        PluralFacet pluralFacet = getFacet(PluralFacet.class);
+        if (pluralFacet == null) {
+            if(namedFacet instanceof NamedFacetTranslated) {
+                final NamedFacetTranslated facet = (NamedFacetTranslated) namedFacet;
+                pluralFacet = new PluralFacetTranslated(facet, this);
+            } else {
+                pluralFacet = new PluralFacetInferred(StringExtensions.asPluralName(namedFacet.value()), this);
+            }
+            addFacet(pluralFacet);
+        }
+    }
+
+
+    // -- create associations and actions
+    private List<ObjectAssociation> createAssociations() {
+        final List<ObjectAssociation> associations = _Lists.newArrayList();
+        if(skipAssociationsAndActions()) {
+            // add no associations
+        } else {
+            final List<FacetedMethod> associationFacetedMethods = facetedMethodsBuilder.getAssociationFacetedMethods();
+            for (FacetedMethod facetedMethod : associationFacetedMethods) {
+                final ObjectAssociation association = createAssociation(facetedMethod);
+                if(association != null) {
+                    associations.add(association);
+                }
+            }
+        }
+        return associations;
+    }
+
+    private ObjectAssociation createAssociation(final FacetedMethod facetMethod) {
+        if (facetMethod.getFeatureType().isCollection()) {
+            return new OneToManyAssociationDefault(facetMethod);
+        } else if (facetMethod.getFeatureType().isProperty()) {
+            return new OneToOneAssociationDefault(facetMethod);
+        } else {
+            return null;
+        }
+    }
+
+    private List<ObjectAction> createActions() {
+        final List<ObjectAction> actions = _Lists.newArrayList();
+        if(skipAssociationsAndActions()) {
+            // create no actions
+        } else {
+            final List<FacetedMethod> actionFacetedMethods = facetedMethodsBuilder.getActionFacetedMethods();
+            for (FacetedMethod facetedMethod : actionFacetedMethods) {
+                final ObjectAction action = createAction(facetedMethod);
+                if(action != null) {
+                    actions.add(action);
+                }
+            }
+        }
+        return actions;
+    }
+
+
+    private ObjectAction createAction(final FacetedMethod facetedMethod) {
+        if (facetedMethod.getFeatureType().isAction()) {
+            return new ObjectActionDefault(facetedMethod);
+        } else {
+            return null;
+        }
+    }
+
+    private boolean skipAssociationsAndActions() {
+        return isFixtureScript();
+    }
+
+    private boolean isFixtureScript() {
+        return FixtureScript.class.isAssignableFrom(getCorrespondingClass());
+    }
+
+    //endregion
+
+
+    // -- isXxx
+
+    @Override
+    public boolean isViewModel() {
+        return containsFacet(ViewModelFacet.class);
+    }
+
+    @Override
+    public boolean isViewModelCloneable(ManagedObject targetAdapter) {
+        final ViewModelFacet facet = getFacet(ViewModelFacet.class);
+        if(facet == null) {
+            return false;
+        }
+        final Object pojo = targetAdapter.getPojo();
+        return facet.isCloneable(pojo);
+    }
+
+    @Override
+    public boolean isMixin() {
+        return containsFacet(MixinFacet.class);
+    }
+
+    @Override
+    public boolean isWizard() {
+        return containsFacet(WizardFacet.class);
+    }
+
+    @Override
+    public boolean isService() {
+        return isService;
+    }
+
+
+
+    // -- getObjectAction
+
+    @Override
+    public ObjectAction getObjectAction(final ActionType type, final String id, final List<ObjectSpecification> parameters) {
+        introspectUpTo(IntrospectionState.TYPE_AND_MEMBERS_INTROSPECTED);
+        final Stream<ObjectAction> actions =
+                streamObjectActions(type, Contributed.INCLUDED);
+        return firstAction(actions, id, parameters);
+    }
+
+    @Override
+    public ObjectAction getObjectAction(final ActionType type, final String id) {
+        introspectUpTo(IntrospectionState.TYPE_AND_MEMBERS_INTROSPECTED);
+
+        final Stream<ObjectAction> actions =
+                streamObjectActions(type, Contributed.INCLUDED);
+        return firstAction(actions, id);
+    }
+
+    @Override
+    public ObjectAction getObjectAction(final String id) {
+        introspectUpTo(IntrospectionState.TYPE_AND_MEMBERS_INTROSPECTED);
+
+        final Stream<ObjectAction> actions =
+                streamObjectActions(ActionType.ALL, Contributed.INCLUDED);
+        return firstAction(actions, id);
+    }
+
+    private static ObjectAction firstAction(
+            final Stream<ObjectAction> candidateActions,
+            final String actionName,
+            final List<ObjectSpecification> parameters) {
+        
+        return candidateActions
+            .filter(action->actionName == null || actionName.equals(action.getId()))
+            .filter(action->isMatchingSignature(parameters, action.getParameters()))
+            .findAny()
+            .orElse(null);
+    }
+    
+    private static  boolean isMatchingSignature(
+            final List<ObjectSpecification> a,
+            final List<ObjectActionParameter> b) {
+        
+        if(a.size() != b.size()) {
+            return false;
+        }
+        for (int j = 0; j < a.size(); j++) {
+            if (!a.get(j).isOfType(b.get(j).getSpecification())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static ObjectAction firstAction(
+            final Stream<ObjectAction> candidateActions,
+            final String id) {
+        
+        if (id == null) {
+            return null;
+        }
+        
+        return candidateActions
+                .filter(action->{
+                    final Identifier identifier = action.getIdentifier();
+
+                    if (id.equals(identifier.toNameParmsIdentityString())) {
+                        return true;
+                    }
+                    if (id.equals(identifier.toNameIdentityString())) {
+                        return true;
+                    }
+                    return false;
+                })
+                .findFirst()
+                .orElse(null);
+    }
+
+    // -- getMember, catalog... (not API)
+
+    public ObjectMember getMember(final Method method) {
+        introspectUpTo(IntrospectionState.TYPE_AND_MEMBERS_INTROSPECTED);
+
+        if (membersByMethod == null) {
+            this.membersByMethod = catalogueMembers();
+        }
+        return membersByMethod.get(method);
+    }
+
+    private HashMap<Method, ObjectMember> catalogueMembers() {
+        final HashMap<Method, ObjectMember> membersByMethod = _Maps.newHashMap();
+        cataloguePropertiesAndCollections(membersByMethod);
+        catalogueActions(membersByMethod);
+        return membersByMethod;
+    }
+
+    private void cataloguePropertiesAndCollections(final Map<Method, ObjectMember> membersByMethod) {
+        final Stream<ObjectAssociation> fields = streamAssociations(Contributed.EXCLUDED);
+        fields.forEach(field->{
+            final Stream<Facet> facets = field.streamFacets().filter(ImperativeFacet.PREDICATE);
+            facets.forEach(facet->{
+                final ImperativeFacet imperativeFacet = ImperativeFacet.Util.getImperativeFacet(facet);
+                for (final Method imperativeFacetMethod : imperativeFacet.getMethods()) {
+                    membersByMethod.put(imperativeFacetMethod, field);
+                }
+            });
+        });
+    }
+
+    private void catalogueActions(final Map<Method, ObjectMember> membersByMethod) {
+        final Stream<ObjectAction> userActions = streamObjectActions(Contributed.INCLUDED);
+        userActions.forEach(userAction->{
+            final Stream<Facet> facets = userAction.streamFacets().filter(ImperativeFacet.PREDICATE);
+            facets.forEach(facet->{
+                final ImperativeFacet imperativeFacet = ImperativeFacet.Util.getImperativeFacet(facet);
+                for (final Method imperativeFacetMethod : imperativeFacet.getMethods()) {
+                    membersByMethod.put(imperativeFacetMethod, userAction);
+                }
+            });
+        });
+    }
+    
+    // -- toString
     
     @Override
-    public ManagedObjectType getManagedObjectType() {
-    	if(managedObjectType==null) {
-    		managedObjectType = initManagedObjectType();
-    	}
-    	return managedObjectType;
+    public String toString() {
+        final ToString str = new ToString(this);
+        str.append("class", getFullIdentifier());
+        str.append("type", getManagedObjectType().name());
+        str.append("superclass", superclass() == null ? "Object" : superclass().getFullIdentifier());
+        return str.toString();
     }
-	
-	// -- PREDICATES
+
+    // -- ELEMENT SPECIFICATION
     
-	@Override
-	public boolean isParented() {
-		return containsFacet(ParentedCollectionFacet.class);
-	}
-
-	@Override
-	public boolean isViewModelCloneable(ManagedObject targetAdapter) {
-		final ViewModelFacet facet = getFacet(ViewModelFacet.class);
-		if(facet == null) {
-			return false;
-		}
-		final Object pojo = targetAdapter.getPojo();
-		return facet.isCloneable(pojo);
-	}
-
-	@Override
-	public boolean isWizard() {
-		return containsFacet(WizardFacet.class);
-	}
-
-	// -- getObjectAction
-
-	@Override
-	public ObjectAction getObjectAction(final ActionType type, final String id, final List<ObjectSpecification> parameters) {
-		introspectUpTo(IntrospectionState.TYPE_AND_MEMBERS_INTROSPECTED);
-		final Stream<ObjectAction> actions =
-				streamObjectActions(type, Contributed.INCLUDED);
-		return firstAction(actions, id, parameters);
-	}
-
-	@Override
-	public ObjectAction getObjectAction(final ActionType type, final String id) {
-		introspectUpTo(IntrospectionState.TYPE_AND_MEMBERS_INTROSPECTED);
-
-		final Stream<ObjectAction> actions =
-				streamObjectActions(type, Contributed.INCLUDED);
-		return firstAction(actions, id);
-	}
-
-	@Override
-	public ObjectAction getObjectAction(final String id) {
-		introspectUpTo(IntrospectionState.TYPE_AND_MEMBERS_INTROSPECTED);
-
-		final Stream<ObjectAction> actions =
-				streamObjectActions(ActionType.ALL, Contributed.INCLUDED);
-		return firstAction(actions, id);
-	}
-
-	private static ObjectAction firstAction(
-			final Stream<ObjectAction> candidateActions,
-			final String actionName,
-			final List<ObjectSpecification> parameters) {
-
-		return candidateActions
-				.filter(action->actionName == null || actionName.equals(action.getId()))
-				.filter(action->isMatchingSignature(parameters, action.getParameters()))
-				.findAny()
-				.orElse(null);
-	}
-
-	private static  boolean isMatchingSignature(
-			final List<ObjectSpecification> a,
-			final List<ObjectActionParameter> b) {
-
-		if(a.size() != b.size()) {
-			return false;
-		}
-		for (int j = 0; j < a.size(); j++) {
-			if (!a.get(j).isOfType(b.get(j).getSpecification())) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private static ObjectAction firstAction(
-			final Stream<ObjectAction> candidateActions,
-			final String id) {
-
-		if (id == null) {
-			return null;
-		}
-
-		return candidateActions
-				.filter(action->{
-					final Identifier identifier = action.getIdentifier();
-
-					if (id.equals(identifier.toNameParmsIdentityString())) {
-						return true;
-					}
-					if (id.equals(identifier.toNameIdentityString())) {
-						return true;
-					}
-					return false;
-				})
-				.findFirst()
-				.orElse(null);
-	}
-
-	// -- getMember, catalog... (not API)
-
-	public ObjectMember getMember(final Method method) {
-		introspectUpTo(IntrospectionState.TYPE_AND_MEMBERS_INTROSPECTED);
-
-		if (membersByMethod == null) {
-			this.membersByMethod = catalogueMembers();
-		}
-		return membersByMethod.get(method);
-	}
-
-	private HashMap<Method, ObjectMember> catalogueMembers() {
-		final HashMap<Method, ObjectMember> membersByMethod = _Maps.newHashMap();
-		cataloguePropertiesAndCollections(membersByMethod);
-		catalogueActions(membersByMethod);
-		return membersByMethod;
-	}
-
-	private void cataloguePropertiesAndCollections(final Map<Method, ObjectMember> membersByMethod) {
-		final Stream<ObjectAssociation> fields = streamAssociations(Contributed.EXCLUDED);
-		fields.forEach(field->{
-			final Stream<Facet> facets = field.streamFacets().filter(ImperativeFacet.PREDICATE);
-			facets.forEach(facet->{
-				final ImperativeFacet imperativeFacet = ImperativeFacet.Util.getImperativeFacet(facet);
-				for (final Method imperativeFacetMethod : imperativeFacet.getMethods()) {
-					membersByMethod.put(imperativeFacetMethod, field);
-				}
-			});
-		});
-	}
-
-	private void catalogueActions(final Map<Method, ObjectMember> membersByMethod) {
-		final Stream<ObjectAction> userActions = streamObjectActions(Contributed.INCLUDED);
-		userActions.forEach(userAction->{
-			final Stream<Facet> facets = userAction.streamFacets().filter(ImperativeFacet.PREDICATE);
-			facets.forEach(facet->{
-				final ImperativeFacet imperativeFacet = ImperativeFacet.Util.getImperativeFacet(facet);
-				for (final Method imperativeFacetMethod : imperativeFacet.getMethods()) {
-					membersByMethod.put(imperativeFacetMethod, userAction);
-				}
-			});
-		});
-	}
-
-	// -- toString
-
-	@Override
-	public String toString() {
-		final ToString str = new ToString(this);
-		str.append("class", getFullIdentifier());
-		str.append("type", getManagedObjectType().name());
-		str.append("superclass", superclass() == null ? "Object" : superclass().getFullIdentifier());
-		return str.toString();
-	}
-
-	// -- ELEMENT SPECIFICATION
-
-	private final _Lazy<ObjectSpecification> elementSpecification = _Lazy.of(this::lookupElementSpecification); 
-
-	@Override
-	public ObjectSpecification getElementSpecification() {
-		return elementSpecification.get();
-	}
-
-	private ObjectSpecification lookupElementSpecification() {
-		return mapIfPresentElse(
-				getFacet(TypeOfFacet.class), 
-				typeOfFacet -> ElementSpecificationProvider.of(typeOfFacet).getElementType(), 
-				null);
-	}
-
-
-
-	// --
+    private final _Lazy<ObjectSpecification> elementSpecification = _Lazy.of(this::lookupElementSpecification); 
+    
+    @Override
+    public ObjectSpecification getElementSpecification() {
+        return elementSpecification.get();
+    }
+    
+    private ObjectSpecification lookupElementSpecification() {
+        return mapIfPresentElse(
+                getFacet(TypeOfFacet.class), 
+                typeOfFacet -> ElementSpecificationProvider.of(typeOfFacet).getElementType(), 
+                null);
+    }
+    
+    // --
 
 }

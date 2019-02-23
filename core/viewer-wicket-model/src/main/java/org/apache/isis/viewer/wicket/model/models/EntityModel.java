@@ -335,7 +335,7 @@ implements ObjectAdapterModel, UiHintContainer {
     	
     	if(concurrencyChecking==ConcurrencyChecking.CHECK && adapterMemento!=null) {
     		val spec = IsisContext.getSpecificationLoader().lookupBySpecId(adapterMemento.getObjectSpecId());
-    		if(spec.getManagedObjectType().isEntity()) {
+    		if(spec.isPersistenceCapable()) {
         		val info = "adapterMemento '"+adapterMemento+"'";
         		probe.warnNotImplementedYet("[2033] ConcurrencyChecking no longer supported!? "+info);    			
     		}

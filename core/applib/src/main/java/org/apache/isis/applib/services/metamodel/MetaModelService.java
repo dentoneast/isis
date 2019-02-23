@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.AppManifest2;
 import org.apache.isis.applib.annotation.DomainObject;
+import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.bookmark.Bookmark;
 import org.apache.isis.applib.services.command.CommandDtoProcessor;
 import org.apache.isis.commons.internal.collections._Lists;
@@ -41,14 +42,17 @@ public interface MetaModelService {
     /**
      * Provides a reverse lookup of a domain class' object type, as defined by {@link DomainObject#objectType()} (or any other mechanism that corresponds to Isis' <code>ObjectSpecIdFacet</code>).
      */
+    @Programmatic
     Class<?> fromObjectType(final String objectType);
 
     /**
      * Provides a lookup of a domain class' object type, as defined by {@link DomainObject#objectType()} (or any other mechanism that corresponds to Isis' <code>ObjectSpecIdFacet</code>).
      */
+    @Programmatic
     String toObjectType(final Class<?> domainType);
 
 
+    @Programmatic
     void rebuild(final Class<?> domainType);
 
     /**
@@ -64,15 +68,18 @@ public interface MetaModelService {
      *
      * @see MetaModelService6
      */
+    @Programmatic
     DomainModel getDomainModel();
 
+    @Programmatic
     Sort sortOf(Class<?> domainType, Mode mode);
 
+    @Programmatic
     Sort sortOf(Bookmark bookmark, Mode mode);
 
-    enum Sort { //TODO [2033] duplicate of ManagedObjectType
+    enum Sort {
         VIEW_MODEL,
-        ENTITY,
+        JDO_ENTITY,
         DOMAIN_SERVICE,
         MIXIN,
         VALUE,
@@ -99,8 +106,8 @@ public interface MetaModelService {
             return this == COLLECTION;
         }
 
-        public boolean isEntity() {
-            return this == ENTITY;
+        public boolean isJdoEntity() {
+            return this == JDO_ENTITY;
         }
 
         public boolean isUnknown() {
@@ -123,13 +130,16 @@ public interface MetaModelService {
     /**
      * @return as {@link #getAppManifest()}, downcasted (else null).
      */
+    @Programmatic
     AppManifest2 getAppManifest2();
 
     /**
      * @return the {@link AppManifest} used to bootstrap the application.
      */
+    @Programmatic
     AppManifest getAppManifest();
 
+    @Programmatic
     CommandDtoProcessor commandDtoProcessorFor(String memberIdentifier);
 
     public static class Config {
@@ -206,6 +216,7 @@ public interface MetaModelService {
 
     }
 
+    @Programmatic
     MetamodelDto exportMetaModel(final Config config);
 
 }

@@ -22,6 +22,7 @@ package org.apache.isis.objectstore.jdo.metamodel.facets.object.discriminator;
 import javax.jdo.annotations.Discriminator;
 
 import org.apache.isis.commons.internal.base._Strings;
+import org.apache.isis.core.metamodel.JdoMetamodelUtil;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facetapi.FacetUtil;
 import org.apache.isis.core.metamodel.facetapi.FeatureType;
@@ -31,7 +32,6 @@ import org.apache.isis.core.metamodel.facets.ObjectSpecIdFacetFactory;
 import org.apache.isis.core.metamodel.facets.object.objectspecid.ObjectSpecIdFacet;
 import org.apache.isis.core.metamodel.facets.object.objectspecid.classname.ObjectSpecIdFacetDerivedFromClassName;
 import org.apache.isis.core.metamodel.specloader.classsubstitutor.ClassSubstitutor;
-import org.apache.isis.jdo.persistence.JdoMetamodelUtil;
 
 public class JdoDiscriminatorAnnotationFacetFactory
         extends FacetFactoryAbstract

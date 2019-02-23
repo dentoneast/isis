@@ -16,15 +16,30 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.apache.isis.jdo.persistence;
+package org.apache.isis.objectstore.jdo.metamodel.facets.object.persistencecapable;
 
-import org.apache.isis.jdo.IsisJdoRuntimePlugin;
 
-public class JdoMetamodelUtil {
+import javax.jdo.annotations.IdentityType;
 
-    public static boolean isPersistenceEnhanced(Class<?> cls) {
+import org.apache.isis.core.metamodel.facetapi.Facet;
 
-        return IsisJdoRuntimePlugin.get().isPersistenceEnhanced(cls);
-    }
+
+/**
+ * Corresponds to annotating the class with the {@link javax.jdo.annotations.PersistenceCapable} annotation.
+ */
+public interface JdoPersistenceCapableFacet extends Facet {
+
+    IdentityType getIdentityType();
+
+    /**
+     * Corresponds to {@link javax.jdo.annotations.PersistenceCapable#schema()}, or null if not specified.
+     */
+    String getSchema();
+
+    /**
+     * Corresponds to {@link javax.jdo.annotations.PersistenceCapable#table()}, or to the
+     * class' {@link Class#getSimpleName() simple name} if no table specified.
+     */
+    String getTable();
 
 }

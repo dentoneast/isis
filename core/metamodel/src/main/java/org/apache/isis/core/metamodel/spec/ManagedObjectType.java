@@ -19,8 +19,6 @@
 
 package org.apache.isis.core.metamodel.spec;
 
-import org.apache.isis.applib.services.metamodel.MetaModelService.Sort;
-
 /**
  * 
  * @since 2.0.0-M3
@@ -29,14 +27,13 @@ import org.apache.isis.applib.services.metamodel.MetaModelService.Sort;
 public enum ManagedObjectType {
 	
 	Other,
-	DomainService,
     Value, 
     Collection,
     ViewModel,
     Mixin,
     Bean,
     Entity,
-    
+    Wizard
     ;
     
     public boolean isOther() {
@@ -59,10 +56,6 @@ public enum ManagedObjectType {
         return this == Mixin;
     }
 
-    public boolean isDomainService() {
-        return this == DomainService;
-    }
-    
     public boolean isBean() {
         return this == Bean;
     }
@@ -70,27 +63,31 @@ public enum ManagedObjectType {
     public boolean isEntity() {
         return this == Entity;
     }
+    
+    public boolean isWizard() {
+        return this == Wizard;
+    }
 
-    @Deprecated //TODO [2033] unify these 2 enums
-	public Sort toSort() {
+	public static ManagedObjectType valueOf(ObjectSpecification spec) {
 		
-		if(isDomainService()) {
-            return Sort.DOMAIN_SERVICE;
-        }
-        if(isViewModel()) {
-            return Sort.VIEW_MODEL;
-        }
-        if(isValue()) {
-            return Sort.VALUE;
-        }
-        if(isMixin()) {
-            return Sort.MIXIN;
-        }
-        if(isCollection()) {
-            return Sort.COLLECTION;
-        }
-		return Sort.UNKNOWN;
+		if(spec.isParentedOrFreeCollection()) {
+			return ManagedObjectType.Collection;
+    	} else if(spec.isValue()) {
+    		return ManagedObjectType.Value;
+    	} else if(spec.isViewModel()) {
+    		return ManagedObjectType.ViewModel;
+    	} else if(spec.isMixin()) {
+    		return ManagedObjectType.Mixin;
+    	} else if(spec.isService()) {
+    		return ManagedObjectType.Bean;
+//    	} else if(isPersistenceCapable()) {
+//    		return ManagedObjectType.Entity;
+    	} else if(spec.isWizard()) {
+    		return ManagedObjectType.Wizard;
+    	} else {
+    		return ManagedObjectType.Entity;
+    	}
+
 	}
-	
     
 }

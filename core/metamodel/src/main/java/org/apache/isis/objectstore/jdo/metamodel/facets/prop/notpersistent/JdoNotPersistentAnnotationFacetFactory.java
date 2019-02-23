@@ -16,44 +16,40 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.apache.isis.objectstore.jdo.metamodel.facets.object.datastoreidentity;
+package org.apache.isis.objectstore.jdo.metamodel.facets.prop.notpersistent;
 
+import javax.jdo.annotations.NotPersistent;
 
-import javax.jdo.annotations.DatastoreIdentity;
-import javax.jdo.annotations.IdGeneratorStrategy;
-
+import org.apache.isis.core.metamodel.JdoMetamodelUtil;
 import org.apache.isis.core.metamodel.facetapi.FacetUtil;
 import org.apache.isis.core.metamodel.facetapi.FeatureType;
 import org.apache.isis.core.metamodel.facets.Annotations;
 import org.apache.isis.core.metamodel.facets.FacetFactoryAbstract;
-import org.apache.isis.jdo.persistence.JdoMetamodelUtil;
+import org.apache.isis.core.metamodel.facets.FacetedMethod;
 
 
-public class JdoDatastoreIdentityAnnotationFacetFactory extends FacetFactoryAbstract {
+public class JdoNotPersistentAnnotationFacetFactory extends FacetFactoryAbstract {
 
-    public JdoDatastoreIdentityAnnotationFacetFactory() {
-        super(FeatureType.OBJECTS_ONLY);
+    public JdoNotPersistentAnnotationFacetFactory() {
+        super(FeatureType.PROPERTIES_ONLY);
     }
 
     @Override
-    public void process(ProcessClassContext processClassContext) {
-        final Class<?> cls = processClassContext.getCls();
+    public void process(ProcessMethodContext processMethodContext) {
 
         // only applies to JDO entities; ignore any view models
+        final Class<?> cls = processMethodContext.getCls();
         if(!JdoMetamodelUtil.isPersistenceEnhanced(cls)) {
             return;
         }
 
-        final DatastoreIdentity annotation = Annotations.getAnnotation(cls, DatastoreIdentity.class);
+        final NotPersistent annotation = Annotations.getAnnotation(processMethodContext.getMethod(), NotPersistent.class);
         if (annotation == null) {
             return;
         }
-        IdGeneratorStrategy strategyAttribute = annotation.strategy();
 
-        FacetUtil.addFacet(new JdoDatastoreIdentityFacetAnnotation(
-                strategyAttribute, processClassContext.getFacetHolder()));
-        return;
+        final FacetedMethod holder = processMethodContext.getFacetHolder();
+        FacetUtil.addFacet(new JdoNotPersistentFacetAnnotation(holder));
+        FacetUtil.addFacet(new NotPersistedFacetDerivedFromJdoNotPersistentAnnotation(holder));
     }
-
-
 }

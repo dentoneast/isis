@@ -30,6 +30,7 @@ import javax.inject.Singleton;
 import javax.xml.bind.Marshaller;
 
 import org.apache.isis.applib.FatalException;
+import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.layout.grid.Grid;
 import org.apache.isis.applib.layout.menubars.MenuBars;
 import org.apache.isis.applib.services.grid.GridService;
@@ -38,14 +39,16 @@ import org.apache.isis.applib.services.layout.LayoutService2;
 import org.apache.isis.applib.services.menu.MenuBarsService;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
-import org.apache.isis.core.metamodel.facetapi.EntityFacet;
 import org.apache.isis.core.metamodel.facets.object.grid.GridFacet;
 import org.apache.isis.core.metamodel.facets.object.viewmodel.ViewModelFacet;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
+import org.apache.isis.objectstore.jdo.metamodel.facets.object.persistencecapable.JdoPersistenceCapableFacet;
 
 @Singleton
 public class LayoutServiceDefault implements LayoutService2 {
+
+    //private static final Logger LOG = LoggerFactory.getLogger(LayoutServiceDefault.class);
 
     @Override
     public String toXml(final Class<?> domainClass, final Style style) {
@@ -85,13 +88,14 @@ public class LayoutServiceDefault implements LayoutService2 {
 
 
     @Override
+    @Programmatic
     public byte[] toZip(final Style style) {
         final Collection<ObjectSpecification> allSpecs = specificationLoader.allSpecifications();
         final List<ObjectSpecification> domainObjectSpecs = _Lists
-                .filter(allSpecs, spec ->
-                        !spec.isAbstract() &&
-                                (spec.containsDoOpFacet(EntityFacet.class) ||
-                                		spec.containsDoOpFacet(ViewModelFacet.class))
+                .filter(allSpecs,(final ObjectSpecification input) ->
+                        !input.isAbstract() &&
+                                (input.containsDoOpFacet(JdoPersistenceCapableFacet.class) ||
+                                        input.containsDoOpFacet(ViewModelFacet.class))
                     );
         final byte[] bytes;
         try {
@@ -126,6 +130,8 @@ public class LayoutServiceDefault implements LayoutService2 {
         return fqn.replace(".", File.separator)+".layout.xml";
     }
 
+
+    @Programmatic
     @Override
     public String toMenuBarsXml(final MenuBarsService.Type type) {
         final MenuBars menuBars = menuBarsService.menuBars(type);

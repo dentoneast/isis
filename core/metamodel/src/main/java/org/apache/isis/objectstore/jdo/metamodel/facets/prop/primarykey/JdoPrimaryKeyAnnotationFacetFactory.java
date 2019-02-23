@@ -16,40 +16,41 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.apache.isis.objectstore.jdo.metamodel.facets.prop.notpersistent;
+package org.apache.isis.objectstore.jdo.metamodel.facets.prop.primarykey;
 
-import javax.jdo.annotations.NotPersistent;
+import javax.jdo.annotations.PrimaryKey;
 
+import org.apache.isis.core.metamodel.JdoMetamodelUtil;
 import org.apache.isis.core.metamodel.facetapi.FacetUtil;
 import org.apache.isis.core.metamodel.facetapi.FeatureType;
 import org.apache.isis.core.metamodel.facets.Annotations;
 import org.apache.isis.core.metamodel.facets.FacetFactoryAbstract;
 import org.apache.isis.core.metamodel.facets.FacetedMethod;
-import org.apache.isis.jdo.persistence.JdoMetamodelUtil;
 
 
-public class JdoNotPersistentAnnotationFacetFactory extends FacetFactoryAbstract {
+public class JdoPrimaryKeyAnnotationFacetFactory extends FacetFactoryAbstract {
 
-    public JdoNotPersistentAnnotationFacetFactory() {
+    public JdoPrimaryKeyAnnotationFacetFactory() {
         super(FeatureType.PROPERTIES_ONLY);
     }
 
     @Override
     public void process(ProcessMethodContext processMethodContext) {
 
-        // only applies to JDO entities; ignore any view models
+        // ignore any view models
         final Class<?> cls = processMethodContext.getCls();
         if(!JdoMetamodelUtil.isPersistenceEnhanced(cls)) {
             return;
         }
 
-        final NotPersistent annotation = Annotations.getAnnotation(processMethodContext.getMethod(), NotPersistent.class);
+        final PrimaryKey annotation = Annotations.getAnnotation(processMethodContext.getMethod(), PrimaryKey.class);
         if (annotation == null) {
             return;
         }
 
         final FacetedMethod holder = processMethodContext.getFacetHolder();
-        FacetUtil.addFacet(new JdoNotPersistentFacetAnnotation(holder));
-        FacetUtil.addFacet(new NotPersistedFacetDerivedFromJdoNotPersistentAnnotation(holder));
+        FacetUtil.addFacet(new JdoPrimaryKeyFacetAnnotation(holder));
+        FacetUtil.addFacet(new OptionalFacetDerivedFromJdoPrimaryKeyAnnotation(holder));
+        FacetUtil.addFacet(new DisabledFacetDerivedFromJdoPrimaryKeyAnnotation(holder));
     }
 }
