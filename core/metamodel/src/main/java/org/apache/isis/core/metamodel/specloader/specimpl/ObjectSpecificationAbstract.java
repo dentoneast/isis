@@ -1160,16 +1160,6 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
     }
 
     @Override
-    public boolean isNotCollection() {
-        return !isParentedOrFreeCollection();
-    }
-
-    @Override
-    public boolean isValueOrIsParented() {
-        return isValue() || isParented();
-    }
-
-    @Override
     public String toString() {
         final ToString str = new ToString(this);
         str.append("class", getFullIdentifier());

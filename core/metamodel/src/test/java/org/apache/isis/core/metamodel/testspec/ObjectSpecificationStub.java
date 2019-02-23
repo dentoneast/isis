@@ -232,11 +232,6 @@ public class ObjectSpecificationStub extends FacetHolderImpl implements ObjectSp
     }
 
     @Override
-    public boolean isValueOrIsParented() {
-        return false;
-    }
-
-    @Override
     public boolean isParented() {
         return false;
     }
@@ -274,11 +269,6 @@ public class ObjectSpecificationStub extends FacetHolderImpl implements ObjectSp
     @Override
     public boolean isHidden() {
         return false;
-    }
-
-    @Override
-    public boolean isNotCollection() {
-        return !isParentedOrFreeCollection();
     }
 
     @Override

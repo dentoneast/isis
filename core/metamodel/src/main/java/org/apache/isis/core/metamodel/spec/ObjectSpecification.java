@@ -281,7 +281,9 @@ ObjectAssociationContainer, Hierarchical,  DefaultProvider {
      *
      * @see #isParentedOrFreeCollection().
      */
-    boolean isNotCollection();
+    default boolean isNotCollection() {
+        return !isParentedOrFreeCollection();
+    }
 
     /**
      * Determines if objects of this type are a parented (internal) or free-standing (external) collection.
@@ -320,7 +322,9 @@ ObjectAssociationContainer, Hierarchical,  DefaultProvider {
      * @see #isValue()
      * @see #isParented()
      */
-    boolean isValueOrIsParented();
+    default boolean isValueOrIsParented() {
+        return isValue() || isParented();
+    }
 
     /**
      * Determines if objects of this type can be set up from a text entry
@@ -356,11 +360,6 @@ ObjectAssociationContainer, Hierarchical,  DefaultProvider {
     /**
      * Whether or not this specification represents a domain service (as opposed
      * to a domain entity or a value etc).
-     *
-     * <p>
-     * <b>WARNING</b>: this only returns <tt>true</tt> once the metamodel has been
-     * fully built, and a <tt>PersistenceSession</tt> has been opened.  This should
-     * probably be improved upon; for now, beware...
      */
     default boolean isService() {
         return getManagedObjectSort().isDomainService();
