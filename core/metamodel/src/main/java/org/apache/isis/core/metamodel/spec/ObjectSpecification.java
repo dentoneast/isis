@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import org.apache.isis.applib.annotation.DomainObject;
+import org.apache.isis.applib.metamodel.ManagedObjectSort;
 import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.metamodel.JdoMetamodelUtil;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
@@ -231,7 +232,7 @@ ObjectAssociationContainer, Hierarchical,  DefaultProvider {
      * 
      * @since 2.0.0-M3
      */
-    ManagedObjectType getManagedObjectType();
+    ManagedObjectSort getManagedObjectSort();
 
     // //////////////////////////////////////////////////////////////
     // TitleContext

@@ -24,7 +24,7 @@ package org.apache.isis.core.metamodel.spec;
  * @since 2.0.0-M3
  *
  */
-public enum ManagedObjectType {
+enum ManagedObjectType {
 	
 	Other,
     Value, 

@@ -35,6 +35,7 @@ import javax.enterprise.inject.Vetoed;
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.Identifier;
 import org.apache.isis.applib.annotation.Where;
+import org.apache.isis.applib.metamodel.ManagedObjectSort;
 import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.collections._Lists;
@@ -76,7 +77,6 @@ import org.apache.isis.core.metamodel.interactions.ObjectValidityContext;
 import org.apache.isis.core.metamodel.layout.DeweyOrderSet;
 import org.apache.isis.core.metamodel.spec.ActionType;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
-import org.apache.isis.core.metamodel.spec.ManagedObjectType;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.ObjectSpecificationException;
@@ -1121,14 +1121,14 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
         return new ObjectValidityContext(targetAdapter, getIdentifier(), interactionInitiatedBy);
     }
     
-    private ManagedObjectType managedObjectType; 
+    private ManagedObjectSort managedObjectSort; 
     
     @Override
-    public ManagedObjectType getManagedObjectType() {
-    	if(managedObjectType==null) {
-    		managedObjectType = ManagedObjectType.valueOf(this);
+    public ManagedObjectSort getManagedObjectSort() {
+    	if(managedObjectSort==null) {
+    		managedObjectSort = sortOf(this);
     	}
-    	return managedObjectType;
+    	return managedObjectSort;
     }
 
     // -- convenience isXxx (looked up from facets)
@@ -1187,8 +1187,6 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
         return isViewModel() || isPersistenceCapable();
     }
 
-    // -- toString
-
     @Override
     public String toString() {
         final ToString str = new ToString(this);
@@ -1237,6 +1235,29 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
 
     protected SpecificationLoader getSpecificationLoader() {
         return specificationLoader;
+    }
+    
+    protected ManagedObjectSort sortOf(ObjectSpecification spec) {
+        if(spec.isValue()) {
+            return ManagedObjectSort.VALUE;
+        }
+        if(spec.isViewModel()) {
+            return ManagedObjectSort.VIEW_MODEL;
+        }
+        if(spec.isMixin()) {
+            return ManagedObjectSort.MIXIN;
+        }
+        if(spec.isParentedOrFreeCollection()) {
+            return ManagedObjectSort.COLLECTION;
+        }
+        if(spec.isService()) {
+            return ManagedObjectSort.DOMAIN_SERVICE;
+        }
+        if(spec.isPersistenceCapable()) {
+            return ManagedObjectSort.ENTITY;
+        }
+        
+        return ManagedObjectSort.UNKNOWN;
     }
 
 }

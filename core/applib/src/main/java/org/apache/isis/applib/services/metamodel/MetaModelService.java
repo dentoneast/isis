@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.AppManifest2;
 import org.apache.isis.applib.annotation.DomainObject;
+import org.apache.isis.applib.metamodel.ManagedObjectSort;
 import org.apache.isis.applib.services.bookmark.Bookmark;
 import org.apache.isis.applib.services.command.CommandDtoProcessor;
 import org.apache.isis.commons.internal.collections._Lists;
@@ -66,48 +67,9 @@ public interface MetaModelService {
      */
     DomainModel getDomainModel();
 
-    Sort sortOf(Class<?> domainType, Mode mode);
+    ManagedObjectSort sortOf(Class<?> domainType, Mode mode);
 
-    Sort sortOf(Bookmark bookmark, Mode mode);
-
-    enum Sort { //TODO [2033] duplicate of ManagedObjectType
-        VIEW_MODEL,
-        ENTITY,
-        DOMAIN_SERVICE,
-        MIXIN,
-        VALUE,
-        COLLECTION,
-        UNKNOWN;
-
-        public boolean isDomainService() {
-            return this == DOMAIN_SERVICE;
-        }
-
-        public boolean isMixin() {
-            return this == MIXIN;
-        }
-
-        public boolean isViewModel() {
-            return this == VIEW_MODEL;
-        }
-
-        public boolean isValue() {
-            return this == VALUE;
-        }
-
-        public boolean isCollection() {
-            return this == COLLECTION;
-        }
-
-        public boolean isEntity() {
-            return this == ENTITY;
-        }
-
-        public boolean isUnknown() {
-            return this == UNKNOWN;
-        }
-
-    }
+    ManagedObjectSort sortOf(Bookmark bookmark, Mode mode);
 
     enum Mode {
         /**

@@ -17,7 +17,8 @@
 package org.apache.isis.viewer.wicket.model.models;
 
 import org.apache.isis.applib.annotation.PromptStyle;
-import org.apache.isis.applib.services.metamodel.MetaModelService;
+import org.apache.isis.applib.metamodel.ManagedObjectSort;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -46,6 +47,6 @@ public interface ActionPromptProvider {
 
     public ActionPrompt getActionPrompt(
             final PromptStyle promptStyle,
-            final MetaModelService.Sort sort);
+            final ManagedObjectSort sort);
     void closePrompt(final AjaxRequestTarget target);
 }

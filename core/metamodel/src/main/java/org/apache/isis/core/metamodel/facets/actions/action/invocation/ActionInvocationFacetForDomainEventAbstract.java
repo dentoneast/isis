@@ -38,6 +38,7 @@ import org.apache.isis.applib.NonRecoverableException;
 import org.apache.isis.applib.RecoverableException;
 import org.apache.isis.applib.events.domain.AbstractDomainEvent;
 import org.apache.isis.applib.events.domain.ActionDomainEvent;
+import org.apache.isis.applib.metamodel.ManagedObjectSort;
 import org.apache.isis.applib.services.bookmark.Bookmark;
 import org.apache.isis.applib.services.bookmark.BookmarkService;
 import org.apache.isis.applib.services.clock.ClockService;
@@ -398,7 +399,7 @@ implements ImperativeFacet {
         }
 
         final Class<?> domainType = resultAdapter.getSpecification().getCorrespondingClass();
-        final MetaModelService.Sort sort = getMetaModelService().sortOf(domainType, Mode.STRICT);
+        final ManagedObjectSort sort = getMetaModelService().sortOf(domainType, Mode.STRICT);
         switch (sort) {
         case ENTITY:
             final Object domainObject = resultAdapter.getPojo();

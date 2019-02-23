@@ -29,10 +29,10 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 
 import org.apache.isis.applib.annotation.PromptStyle;
+import org.apache.isis.applib.metamodel.ManagedObjectSort;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizerComposite;
 import org.apache.isis.applib.services.inject.ServiceInjector;
-import org.apache.isis.applib.services.metamodel.MetaModelService;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.beans.WebAppConfigBean;
@@ -463,7 +463,7 @@ public abstract class PageAbstract extends WebPage implements ActionPromptProvid
 
     public ActionPrompt getActionPrompt(
             final PromptStyle promptStyle,
-            final MetaModelService.Sort sort) {
+            final ManagedObjectSort sort) {
 
         switch (promptStyle) {
         case AS_CONFIGURED:
@@ -472,7 +472,7 @@ public abstract class PageAbstract extends WebPage implements ActionPromptProvid
         case INLINE_AS_IF_EDIT:
         default:
             final ConfigPropertyEnum<DialogMode> configProp =
-                    sort == MetaModelService.Sort.DOMAIN_SERVICE
+                    sort == ManagedObjectSort.DOMAIN_SERVICE
                             ? CONFIG_DIALOG_MODE_FOR_MENUS
                             : CONFIG_DIALOG_MODE;
             final DialogMode dialogMode = configProp.from(getConfiguration());

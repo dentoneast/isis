@@ -23,6 +23,7 @@ import java.util.concurrent.Callable;
 import javax.annotation.Nullable;
 
 import org.apache.isis.applib.annotation.PromptStyle;
+import org.apache.isis.applib.metamodel.ManagedObjectSort;
 import org.apache.isis.applib.services.metamodel.MetaModelService;
 import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.commons.internal.collections._Lists;
@@ -161,7 +162,7 @@ public abstract class ActionLinkFactoryAbstract implements ActionLinkFactory {
 
             final MetaModelService metaModelService = getIsisSessionFactory().getServiceInjector()
                     .lookupServiceElseFail(MetaModelService.class);
-            final MetaModelService.Sort sort = metaModelService.sortOf(specification.getCorrespondingClass(), MetaModelService.Mode.RELAXED);
+            final ManagedObjectSort sort = metaModelService.sortOf(specification.getCorrespondingClass(), MetaModelService.Mode.RELAXED);
             final ActionPrompt prompt = promptProvider.getActionPrompt(promptStyle, sort);
 
 

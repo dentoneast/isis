@@ -29,6 +29,7 @@ import javax.inject.Singleton;
 
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.AppManifest2;
+import org.apache.isis.applib.metamodel.ManagedObjectSort;
 import org.apache.isis.applib.services.bookmark.Bookmark;
 import org.apache.isis.applib.services.command.CommandDtoProcessor;
 import org.apache.isis.applib.services.grid.GridService;
@@ -171,32 +172,32 @@ public class MetaModelServiceDefault implements MetaModelService {
     // //////////////////////////////////////
 
     @Override
-    public Sort sortOf(
+    public ManagedObjectSort sortOf(
             final Class<?> domainType, final Mode mode) {
         if(domainType == null) {
             return null;
         }
         final ObjectSpecification objectSpec = specificationLoader.loadSpecification(domainType);
         if(objectSpec.isService()) {
-            return Sort.DOMAIN_SERVICE;
+            return ManagedObjectSort.DOMAIN_SERVICE;
         }
         if(objectSpec.isViewModel()) {
-            return Sort.VIEW_MODEL;
+            return ManagedObjectSort.VIEW_MODEL;
         }
         if(objectSpec.isValue()) {
-            return Sort.VALUE;
+            return ManagedObjectSort.VALUE;
         }
         if(objectSpec.isMixin()) {
-            return Sort.MIXIN;
+            return ManagedObjectSort.MIXIN;
         }
         if(objectSpec.isParentedOrFreeCollection()) {
-            return Sort.COLLECTION;
+            return ManagedObjectSort.COLLECTION;
         }
         if(objectSpec.isEntity()) {
-            return Sort.ENTITY;
+            return ManagedObjectSort.ENTITY;
         }
         if(mode == Mode.RELAXED) {
-            return Sort.UNKNOWN;
+            return ManagedObjectSort.UNKNOWN;
         }
         throw new IllegalArgumentException(String.format(
                 "Unable to determine what sort of domain object this is: '%s'. Originating domainType: '%s'",
@@ -206,7 +207,7 @@ public class MetaModelServiceDefault implements MetaModelService {
     }
 
     @Override
-    public Sort sortOf(final Bookmark bookmark, final Mode mode) {
+    public ManagedObjectSort sortOf(final Bookmark bookmark, final Mode mode) {
         if(bookmark == null) {
             return null;
         }
@@ -217,7 +218,7 @@ public class MetaModelServiceDefault implements MetaModelService {
             try {
                 domainType = this.fromObjectType(bookmark.getObjectType());
             } catch (Exception e) {
-                return Sort.UNKNOWN;
+                return ManagedObjectSort.UNKNOWN;
             }
             break;
 
