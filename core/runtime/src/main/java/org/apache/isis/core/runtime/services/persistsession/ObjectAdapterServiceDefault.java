@@ -70,10 +70,14 @@ public class ObjectAdapterServiceDefault implements ObjectAdapterService {
 			throw _Exceptions.unexpectedCodeReach();
 //			val fallback = ps().adapterFor(pojo);
 //			return fallback;
-		default:
+		case MIXIN:
+		case COLLECTION:
 			return PojoAdapter.ofTransient(pojo, spec.getSpecId());
+        case UNKNOWN:
+            break;
+            
 		}
-
+		throw _Exceptions.unexpectedCodeReach();
 	}
 
 	@Override

@@ -23,6 +23,7 @@ import static org.apache.isis.commons.internal.base._With.mapIfPresentElse;
 
 import java.util.List;
 
+import org.apache.isis.applib.metamodel.ManagedObjectSort;
 import org.apache.isis.commons.internal.base._Lazy;
 import org.apache.isis.core.metamodel.facetapi.FacetUtil;
 import org.apache.isis.core.metamodel.facets.actcoll.typeof.TypeOfFacet;
@@ -87,22 +88,12 @@ public class ObjectSpecificationOnStandaloneList extends ObjectSpecificationAbst
         // no-op.
     }
 
-
-    // -- isXxx
-
     @Override
-    public boolean isService() {
-        return false;
+    public ManagedObjectSort getManagedObjectSort() {
+        return ManagedObjectSort.COLLECTION;
     }
-    @Override
-    public boolean isViewModel() {
-        return false;
-    }
-
-    @Override
-    public boolean isMixin() {
-        return false;
-    }
+    
+    // -- PREDICTATES
 
     @Override
     public boolean isViewModelCloneable(ManagedObject targetAdapter) {

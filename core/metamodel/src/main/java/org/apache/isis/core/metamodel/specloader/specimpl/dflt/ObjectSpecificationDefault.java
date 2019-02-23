@@ -261,15 +261,7 @@ public class ObjectSpecificationDefault extends ObjectSpecificationAbstract impl
         return FixtureScript.class.isAssignableFrom(getCorrespondingClass());
     }
 
-    //endregion
-
-
-    // -- isXxx
-
-    @Override
-    public boolean isViewModel() {
-        return containsFacet(ViewModelFacet.class);
-    }
+    // -- PREDICATES
 
     @Override
     public boolean isViewModelCloneable(ManagedObject targetAdapter) {
@@ -282,11 +274,6 @@ public class ObjectSpecificationDefault extends ObjectSpecificationAbstract impl
     }
 
     @Override
-    public boolean isMixin() {
-        return containsFacet(MixinFacet.class);
-    }
-
-    @Override
     public boolean isWizard() {
         return containsFacet(WizardFacet.class);
     }
@@ -295,8 +282,6 @@ public class ObjectSpecificationDefault extends ObjectSpecificationAbstract impl
     public boolean isService() {
         return isService;
     }
-
-
 
     // -- getObjectAction
 

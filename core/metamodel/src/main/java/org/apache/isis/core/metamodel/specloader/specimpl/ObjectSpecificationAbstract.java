@@ -32,6 +32,9 @@ import java.util.stream.Stream;
 
 import javax.enterprise.inject.Vetoed;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.Identifier;
 import org.apache.isis.applib.annotation.Where;
@@ -70,6 +73,7 @@ import org.apache.isis.core.metamodel.facets.object.parseable.ParseableFacet;
 import org.apache.isis.core.metamodel.facets.object.plural.PluralFacet;
 import org.apache.isis.core.metamodel.facets.object.title.TitleFacet;
 import org.apache.isis.core.metamodel.facets.object.value.ValueFacet;
+import org.apache.isis.core.metamodel.facets.object.viewmodel.ViewModelFacet;
 import org.apache.isis.core.metamodel.interactions.InteractionContext;
 import org.apache.isis.core.metamodel.interactions.InteractionUtils;
 import org.apache.isis.core.metamodel.interactions.ObjectTitleContext;
@@ -92,8 +96,6 @@ import org.apache.isis.core.metamodel.specloader.facetprocessor.FacetProcessor;
 import org.apache.isis.core.metamodel.specloader.postprocessor.PostProcessor;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.objectstore.jdo.metamodel.facets.object.persistencecapable.JdoPersistenceCapableFacet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implements ObjectSpecification {
 
@@ -1121,7 +1123,7 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
         return new ObjectValidityContext(targetAdapter, getIdentifier(), interactionInitiatedBy);
     }
     
-    private ManagedObjectSort managedObjectSort; 
+    protected ManagedObjectSort managedObjectSort; 
     
     @Override
     public ManagedObjectSort getManagedObjectSort() {
@@ -1153,18 +1155,8 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
     }
 
     @Override
-    public boolean isValue() {
-        return containsFacet(ValueFacet.class);
-    }
-
-    @Override
     public boolean isParented() {
         return containsFacet(ParentedCollectionFacet.class);
-    }
-
-    @Override
-    public boolean isParentedOrFreeCollection() {
-        return containsFacet(CollectionFacet.class);
     }
 
     @Override
@@ -1175,16 +1167,6 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
     @Override
     public boolean isValueOrIsParented() {
         return isValue() || isParented();
-    }
-
-    @Override
-    public boolean isPersistenceCapable() {
-        return containsFacet(JdoPersistenceCapableFacet.class);
-    }
-
-    @Override
-    public boolean isPersistenceCapableOrViewModel() {
-        return isViewModel() || isPersistenceCapable();
     }
 
     @Override
@@ -1207,7 +1189,7 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
         if(contributed.isIncluded() && !contributeeAndMixedInActionsAdded) {
             synchronized (this.objectActions) {
                 final List<ObjectAction> actions = _Lists.newArrayList(this.objectActions);
-                if (isPersistenceCapableOrViewModel()) {
+                if (isEntityOrViewModel()) {
                     actions.addAll(createContributeeActions());
                     actions.addAll(createMixedInActions());
                 }
@@ -1223,7 +1205,7 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
         if(contributed.isIncluded() && !contributeeAndMixedInAssociationsAdded) {
             synchronized (this.associations) {
                 List<ObjectAssociation> associations = _Lists.newArrayList(this.associations);
-                if(isPersistenceCapableOrViewModel()) {
+                if(isEntityOrViewModel()) {
                 associations.addAll(createContributeeAssociations());
                 associations.addAll(createMixedInAssociations());
                 }
@@ -1238,24 +1220,34 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
     }
     
     protected ManagedObjectSort sortOf(ObjectSpecification spec) {
-        if(spec.isValue()) {
-            return ManagedObjectSort.VALUE;
-        }
-        if(spec.isViewModel()) {
-            return ManagedObjectSort.VIEW_MODEL;
-        }
-        if(spec.isMixin()) {
-            return ManagedObjectSort.MIXIN;
-        }
-        if(spec.isParentedOrFreeCollection()) {
-            return ManagedObjectSort.COLLECTION;
-        }
-        if(spec.isService()) {
+//TODO [2033] this is the way we want it to work in the future; by now we do prime the #managedObjectSort in case its a service in the default service implementataion        
+//        if(containsFacet(BeanFacet.class)) {
+//            return ManagedObjectSort.DOMAIN_SERVICE;
+//        }
+        if(isService()) {
             return ManagedObjectSort.DOMAIN_SERVICE;
         }
-        if(spec.isPersistenceCapable()) {
+//
+        
+        if(containsFacet(ValueFacet.class)) {
+            return ManagedObjectSort.VALUE;
+        }
+        if(containsFacet(ViewModelFacet.class)) {
+            return ManagedObjectSort.VIEW_MODEL;
+        }
+        if(containsFacet(MixinFacet.class)) {
+            return ManagedObjectSort.MIXIN;
+        }
+        if(containsFacet(CollectionFacet.class)) {
+            return ManagedObjectSort.COLLECTION;
+        }
+        if(containsFacet(JdoPersistenceCapableFacet.class)) {
             return ManagedObjectSort.ENTITY;
         }
+//        val correspondingClass = getCorrespondingClass();
+//        if(JdoMetamodelUtil.isPersistenceEnhanced(correspondingClass)) {
+//            return ManagedObjectSort.ENTITY;
+//        }
         
         return ManagedObjectSort.UNKNOWN;
     }

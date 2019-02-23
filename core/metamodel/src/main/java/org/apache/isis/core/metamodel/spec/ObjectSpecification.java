@@ -30,7 +30,6 @@ import java.util.function.Function;
 import org.apache.isis.applib.annotation.DomainObject;
 import org.apache.isis.applib.metamodel.ManagedObjectSort;
 import org.apache.isis.core.commons.exceptions.IsisException;
-import org.apache.isis.core.metamodel.JdoMetamodelUtil;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.consent.Consent;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
@@ -60,8 +59,6 @@ import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.classsubstitutor.ClassSubstitutor;
 import org.apache.isis.core.metamodel.specloader.specimpl.MixedInMember;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
-
-import lombok.val;
 
 /**
  * Represents an entity or value (cf {@link java.lang.Class}) within the
@@ -295,7 +292,9 @@ ObjectAssociationContainer, Hierarchical,  DefaultProvider {
      *
      * @see #isNotCollection()
      */
-    boolean isParentedOrFreeCollection();
+    default boolean isParentedOrFreeCollection() {
+        return getManagedObjectSort().isCollection();
+    }
 
     /**
      * Determines if objects of this type are values.
@@ -303,7 +302,9 @@ ObjectAssociationContainer, Hierarchical,  DefaultProvider {
      * <p>
      * In effect, means has got {@link ValueFacet}.
      */
-    boolean isValue();
+    default boolean isValue() {
+        return getManagedObjectSort().isValue();
+    }
 
     /**
      * Determines if objects of this type are parented (a parented collection, or an aggregated entity).
@@ -348,8 +349,6 @@ ObjectAssociationContainer, Hierarchical,  DefaultProvider {
      */
     boolean isHidden();
 
-
-
     // //////////////////////////////////////////////////////////////
     // Service
     // //////////////////////////////////////////////////////////////
@@ -363,25 +362,31 @@ ObjectAssociationContainer, Hierarchical,  DefaultProvider {
      * fully built, and a <tt>PersistenceSession</tt> has been opened.  This should
      * probably be improved upon; for now, beware...
      */
-    boolean isService();
-
-
+    default boolean isService() {
+        return getManagedObjectSort().isDomainService();
+    }
 
     // //////////////////////////////////////////////////////////////
     // view models and wizards
     // //////////////////////////////////////////////////////////////
 
-    boolean isViewModel();
-    boolean isMixin();
+    default boolean isViewModel() {
+        return getManagedObjectSort().isViewModel();
+    }
+    
+    default boolean isMixin() {
+        return getManagedObjectSort().isMixin();
+    }
+    
     boolean isViewModelCloneable(ManagedObject targetAdapter);
     boolean isWizard();
 
-    boolean isPersistenceCapable();
-    boolean isPersistenceCapableOrViewModel();
+    default boolean isEntityOrViewModel() {
+        return isViewModel() || isEntity();
+    }
     
     default boolean isEntity() {
-        val correspondingClass = getCorrespondingClass();
-        return JdoMetamodelUtil.isPersistenceEnhanced(correspondingClass);
+        return getManagedObjectSort().isEntity();
     }
 
     /**

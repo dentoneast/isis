@@ -107,11 +107,6 @@ public class ObjectSpecificationStub extends FacetHolderImpl implements ObjectSp
     }
 
     @Override
-    public boolean isService() {
-        return false;
-    }
-
-    @Override
     public ObjectAssociation getAssociation(final String name) {
         for (int i = 0; i < fields.size(); i++) {
             if (fields.get(i).getId().equals(name)) {
@@ -242,11 +237,6 @@ public class ObjectSpecificationStub extends FacetHolderImpl implements ObjectSp
     }
 
     @Override
-    public boolean isValue() {
-        return false;
-    }
-
-    @Override
     public boolean isParented() {
         return false;
     }
@@ -279,11 +269,6 @@ public class ObjectSpecificationStub extends FacetHolderImpl implements ObjectSp
     @Override
     public Identifier getIdentifier() {
         return Identifier.classIdentifier(name);
-    }
-
-    @Override
-    public boolean isParentedOrFreeCollection() {
-        return false;
     }
 
     @Override
@@ -338,32 +323,12 @@ public class ObjectSpecificationStub extends FacetHolderImpl implements ObjectSp
     // /////////////////////////////////////////////////////////
 
     @Override
-    public boolean isViewModel() {
-        return false;
-    }
-
-    @Override
     public boolean isViewModelCloneable(final ManagedObject targetAdapter) {
         return false;
     }
 
     @Override
     public boolean isWizard() {
-        return false;
-    }
-
-    @Override
-    public boolean isMixin() {
-        return false;
-    }
-
-    @Override
-    public boolean isPersistenceCapable() {
-        return false;
-    }
-
-    @Override
-    public boolean isPersistenceCapableOrViewModel() {
         return false;
     }
 
@@ -379,7 +344,7 @@ public class ObjectSpecificationStub extends FacetHolderImpl implements ObjectSp
 
 	@Override
 	public ManagedObjectSort getManagedObjectSort() {
-		return null; // [2033] not implemented yet
+		return ManagedObjectSort.UNKNOWN; // [2033] not implemented yet
 	}
 
 }

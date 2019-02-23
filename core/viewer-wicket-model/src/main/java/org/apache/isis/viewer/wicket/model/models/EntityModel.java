@@ -22,6 +22,10 @@ package org.apache.isis.viewer.wicket.model.models;
 import java.io.Serializable;
 import java.util.Map;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
+
 import org.apache.isis.applib.annotation.BookmarkPolicy;
 import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.layout.component.CollectionLayoutData;
@@ -44,9 +48,6 @@ import org.apache.isis.viewer.wicket.model.mementos.ObjectAdapterMemento;
 import org.apache.isis.viewer.wicket.model.mementos.PageParameterNames;
 import org.apache.isis.viewer.wicket.model.mementos.PropertyMemento;
 import org.apache.isis.viewer.wicket.model.util.ComponentHintKey;
-import org.apache.wicket.Component;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.request.mapper.parameter.PageParameters;
 
 import lombok.val;
 
@@ -335,7 +336,7 @@ implements ObjectAdapterModel, UiHintContainer {
     	
     	if(concurrencyChecking==ConcurrencyChecking.CHECK && adapterMemento!=null) {
     		val spec = IsisContext.getSpecificationLoader().lookupBySpecId(adapterMemento.getObjectSpecId());
-    		if(spec.isPersistenceCapable()) {
+    		if(spec.isEntity()) {
         		val info = "adapterMemento '"+adapterMemento+"'";
         		probe.warnNotImplementedYet("[2033] ConcurrencyChecking no longer supported!? "+info);    			
     		}

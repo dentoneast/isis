@@ -151,7 +151,7 @@ public class ObjectSpecIdFacetDerivedFromClassNameFactory
         if(objectSpec.isAbstract()) {
             return false;
         }
-        if (objectSpec.isPersistenceCapable()) {
+        if (objectSpec.isEntity()) {
             return true;
         }
         if (objectSpec.isViewModel()) {
