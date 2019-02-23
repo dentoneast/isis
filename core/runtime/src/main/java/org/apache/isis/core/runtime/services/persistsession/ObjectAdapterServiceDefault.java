@@ -60,7 +60,7 @@ public class ObjectAdapterServiceDefault implements ObjectAdapterService {
 		case VALUE:
 			return PojoAdapter.ofValue((Serializable) pojo);
 		case VIEW_MODEL:
-		case DOMAIN_SERVICE:
+		case BEAN:
 		case ENTITY:
 			val managedObject = SimpleManagedObject.of(spec, pojo);
 			val resolver = resolverFor(managedObject);

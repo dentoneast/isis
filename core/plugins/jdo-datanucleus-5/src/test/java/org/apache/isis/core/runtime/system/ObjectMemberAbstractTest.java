@@ -143,7 +143,7 @@ public class ObjectMemberAbstractTest {
             allowing(mockSpecificationLoader).loadSpecification(with(any(Class.class)));
             will(returnValue(mockSpecForCustomer));
 
-            allowing(mockSpecForCustomer).isService();
+            allowing(mockSpecForCustomer).isBean();
             will(returnValue(false));
 
             allowing(mockSpecForCustomer).isViewModel();

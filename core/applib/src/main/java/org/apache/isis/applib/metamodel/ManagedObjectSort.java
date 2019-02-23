@@ -1,16 +1,43 @@
 package org.apache.isis.applib.metamodel;
 
-public enum ManagedObjectSort { 
+public enum ManagedObjectSort {
+    
+    /**
+     * Stateful object, with a state that can be marshaled and unmarshaled.  
+     */
     VIEW_MODEL,
+    
+    /**
+     * Persistable object, associated with a persistence layer/context. 
+     */
     ENTITY,
-    DOMAIN_SERVICE, //TODO [2033] this includes BEANS, shall we add 'BEAN' as separate option, or rename? 
+    
+    /**
+     * Injectable object, associated with a lifecycle context 
+     * (application-scoped, request-scoped, ...).
+     */
+    BEAN, 
+    
+    /**
+     * Object associated with an 'entity' or 'bean' to act as contributer of 
+     * domain actions or properties.  
+     */
     MIXIN,
+    
+    /**
+     * Immutable, serializable object.
+     */
     VALUE,
+    
+    /**
+     * Container of objects.
+     */
     COLLECTION,
+    
     UNKNOWN;
 
-    public boolean isDomainService() {
-        return this == DOMAIN_SERVICE;
+    public boolean isBean() {
+        return this == BEAN;
     }
 
     public boolean isMixin() {

@@ -179,7 +179,7 @@ public class DomainTypeReprRenderer extends ReprRendererAbstract<DomainTypeReprR
     }
 
     protected void putExtensionsIfService() {
-        getExtensions().mapPut("isService", objectSpecification.isService());
+        getExtensions().mapPut("isService", objectSpecification.isBean());
     }
 
 }

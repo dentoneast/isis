@@ -178,8 +178,8 @@ public class MetaModelServiceDefault implements MetaModelService {
             return null;
         }
         final ObjectSpecification objectSpec = specificationLoader.loadSpecification(domainType);
-        if(objectSpec.isService()) {
-            return ManagedObjectSort.DOMAIN_SERVICE;
+        if(objectSpec.isBean()) {
+            return ManagedObjectSort.BEAN;
         }
         if(objectSpec.isViewModel()) {
             return ManagedObjectSort.VIEW_MODEL;

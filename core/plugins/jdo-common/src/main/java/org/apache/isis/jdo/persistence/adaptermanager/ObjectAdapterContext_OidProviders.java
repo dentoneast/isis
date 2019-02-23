@@ -58,7 +58,7 @@ class ObjectAdapterContext_OidProviders {
 
         @Override
         public boolean isHandling(ManagedObject managedObject) {
-            return managedObject.getSpecification().isService();
+            return managedObject.getSpecification().isBean();
         }
 
         @Override

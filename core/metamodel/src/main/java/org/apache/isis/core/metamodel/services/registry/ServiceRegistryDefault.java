@@ -19,9 +19,6 @@
 
 package org.apache.isis.core.metamodel.services.registry;
 
-import static org.apache.isis.commons.internal.base._NullSafe.stream;
-
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -39,15 +36,12 @@ import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.base._Lazy;
-import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.collections._Multimaps;
-import org.apache.isis.commons.internal.collections._Multimaps.ListMultimap;
 import org.apache.isis.commons.internal.collections._Multimaps.SetMultimap;
 import org.apache.isis.commons.internal.collections._Sets;
-import org.apache.isis.core.metamodel.services.ServiceUtil;
 
 import lombok.val;
 import lombok.extern.slf4j.Slf4j;
@@ -78,13 +72,7 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
         		.orElse(_CDI.InstanceFactory.empty());
     }
     
-//    @Override
-//    public <T> Optional<T> lookupResolvableService(Class<T> serviceClass) {
-//        return _CDI.getInstance(serviceClass, _Lists.of(_CDI.QUALIFIER_ANY))
-//        		.filter(Instance::isResolvable)
-//                .map(Instance::get);
-//    }
-   
+
     
     /**
      * @deprecated TODO [2033] don't register concrete instances, registering Beans should be sufficient!
@@ -162,9 +150,8 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
     
     @Override
     public void validateServices() {
-        validate(streamServiceBeans());
+        ServiceRegistryDefault_validateUniqueId.validateUniqueId(streamServiceBeans());
     }
-
     
     // -- HELPER - FILTER
     
@@ -183,6 +170,8 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
     	return false;
     }
     
+    // -- HELPER - STREAM ALL
+    
     private Stream<Bean<?>> streamServiceBeans() {
         
     	if(registeredServiceBeans.isEmpty()) {
@@ -198,39 +187,6 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
         return registeredServiceBeans.stream();
     }        
     
-    // -- HELPER - VALIDATE
-        
-    private static void validate(final Stream<Bean<?>> serviceBeans) {
-
-        final ListMultimap<String, Bean<?>> servicesById = _Multimaps.newListMultimap();
-        serviceBeans.forEach(serviceBean->{
-            String id = ServiceUtil.idOfBean(serviceBean);
-            servicesById.putElement(id, serviceBean);
-        });
-
-        final String errorMsg = servicesById.entrySet().stream()
-                .filter(entry->entry.getValue().size()>1) // filter for duplicates
-                .map(entry->{
-                    String serviceId = entry.getKey();
-                    List<Bean<?>> duplicateServiceEntries = entry.getValue();
-                    return String.format("serviceId '%s' is declared by domain services %s",
-                            serviceId, classNamesFor(duplicateServiceEntries));
-                })
-                .collect(Collectors.joining(", "));
-
-        if(_Strings.isNotEmpty(errorMsg)) {
-            throw new IllegalStateException("Service ids must be unique! "+errorMsg);
-        }
-    }
-    
-    private static String classNamesFor(Collection<Bean<?>> serviceBeans) {
-        return stream(serviceBeans)
-                .map(Bean::getBeanClass)
-                .map(Class::getName)
-                .collect(Collectors.joining(", "));
-    }
-
-        
     // -- HELPER - LOOKUP SERVICE(S)
 
     private <T> Set<Object> locateMatchingServices(final Class<T> serviceClass) {

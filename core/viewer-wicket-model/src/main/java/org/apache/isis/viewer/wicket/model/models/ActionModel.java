@@ -673,7 +673,7 @@ public class ActionModel extends BookmarkableModel<ObjectAdapter> implements For
     public PromptStyle getPromptStyle() {
         final ObjectAction objectAction = getAction();
         final ObjectSpecification objectActionOwner = objectAction.getOnType();
-        if(objectActionOwner.isService()) {
+        if(objectActionOwner.isBean()) {
             // tried to move this test into PromptStyleFacetFallback,
             // however it's not that easy to lookup the owning type
             final PromptStyleFacet facet = getFacet(PromptStyleFacet.class);

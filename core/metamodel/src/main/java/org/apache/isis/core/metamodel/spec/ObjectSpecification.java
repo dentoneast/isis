@@ -353,21 +353,13 @@ ObjectAssociationContainer, Hierarchical,  DefaultProvider {
      */
     boolean isHidden();
 
-    // //////////////////////////////////////////////////////////////
-    // Service
-    // //////////////////////////////////////////////////////////////
-
     /**
-     * Whether or not this specification represents a domain service (as opposed
-     * to a domain entity or a value etc).
+     * Whether this specification represents a bean, that is a managed object
+     * with scoped life-cycle, available for dependency injection. 
      */
-    default boolean isService() {
-        return getManagedObjectSort().isDomainService();
+    default boolean isBean() {
+        return getManagedObjectSort().isBean();
     }
-
-    // //////////////////////////////////////////////////////////////
-    // view models and wizards
-    // //////////////////////////////////////////////////////////////
 
     default boolean isViewModel() {
         return getManagedObjectSort().isViewModel();

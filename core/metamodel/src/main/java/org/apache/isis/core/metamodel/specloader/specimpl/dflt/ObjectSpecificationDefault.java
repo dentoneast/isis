@@ -279,7 +279,7 @@ public class ObjectSpecificationDefault extends ObjectSpecificationAbstract impl
     }
 
     @Override
-    public boolean isService() {
+    public boolean isBean() {
         return isService;
     }
 
