@@ -150,7 +150,9 @@ public final class MetaModelContexts {
             return getServiceRegistry().streamServices()
             .map(objectAdapterProvider::adapterFor) 
             .peek(serviceAdapter->{
-                Assert.assertFalse("expected to not be 'transient'", serviceAdapter.getOid().isTransient());
+                val oid = serviceAdapter.getOid();
+                Assert.assertFalse("Service Adapter expected to not be 'transient' " + oid, 
+                        oid.isTransient());
             })
             .collect(Collectors.toMap(ServiceUtil::idOfAdapter, v->v, (o,n)->n, LinkedHashMap::new));
         }

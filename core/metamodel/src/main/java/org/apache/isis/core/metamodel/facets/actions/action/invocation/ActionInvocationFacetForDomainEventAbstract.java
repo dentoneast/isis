@@ -400,7 +400,7 @@ implements ImperativeFacet {
         final Class<?> domainType = resultAdapter.getSpecification().getCorrespondingClass();
         final MetaModelService.Sort sort = getMetaModelService().sortOf(domainType, Mode.STRICT);
         switch (sort) {
-        case JDO_ENTITY:
+        case ENTITY:
             final Object domainObject = resultAdapter.getPojo();
             // ensure that any still-to-be-persisted adapters get persisted to DB.
             if(!getRepositoryService().isPersistent(domainObject)) {

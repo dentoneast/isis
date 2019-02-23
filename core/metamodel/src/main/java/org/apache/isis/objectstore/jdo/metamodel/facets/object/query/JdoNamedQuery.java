@@ -20,6 +20,7 @@ package org.apache.isis.objectstore.jdo.metamodel.facets.object.query;
 
 import javax.jdo.annotations.Query;
 
+import org.apache.isis.core.metamodel.services.metamodel.MetaModelExportSupport;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 
 /**
@@ -28,7 +29,8 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
  *
  * @see {@link JdoQueryFacet}.
  */
-public final class JdoNamedQuery {
+public final class JdoNamedQuery 
+implements MetaModelExportSupport /* to support MetaModelExportService */ {
 
     private final String name;
     private final String query;
@@ -73,6 +75,11 @@ public final class JdoNamedQuery {
         return objSpec;
     }
 
+    @Override
+    public String asString() {
+        return getName();
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;

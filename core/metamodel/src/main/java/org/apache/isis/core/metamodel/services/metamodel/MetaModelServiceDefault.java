@@ -38,7 +38,6 @@ import org.apache.isis.applib.services.metamodel.MetaModelService;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.config.internal._Config;
-import org.apache.isis.core.metamodel.JdoMetamodelUtil;
 import org.apache.isis.core.metamodel.facets.actions.command.CommandFacet;
 import org.apache.isis.core.metamodel.facets.object.objectspecid.ObjectSpecIdFacet;
 import org.apache.isis.core.metamodel.services.appfeat.ApplicationFeatureId;
@@ -188,14 +187,13 @@ public class MetaModelServiceDefault implements MetaModelService {
             return Sort.VALUE;
         }
         if(objectSpec.isMixin()) {
-            return Sort.VALUE;
+            return Sort.MIXIN;
         }
         if(objectSpec.isParentedOrFreeCollection()) {
             return Sort.COLLECTION;
         }
-        final Class<?> correspondingClass = objectSpec.getCorrespondingClass();
-        if(JdoMetamodelUtil.isPersistenceEnhanced(correspondingClass)) {
-            return Sort.JDO_ENTITY;
+        if(objectSpec.isEntity()) {
+            return Sort.ENTITY;
         }
         if(mode == Mode.RELAXED) {
             return Sort.UNKNOWN;

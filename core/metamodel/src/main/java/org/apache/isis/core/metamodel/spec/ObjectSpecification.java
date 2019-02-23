@@ -29,6 +29,7 @@ import java.util.function.Function;
 
 import org.apache.isis.applib.annotation.DomainObject;
 import org.apache.isis.core.commons.exceptions.IsisException;
+import org.apache.isis.core.metamodel.JdoMetamodelUtil;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.consent.Consent;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
@@ -58,6 +59,8 @@ import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.classsubstitutor.ClassSubstitutor;
 import org.apache.isis.core.metamodel.specloader.specimpl.MixedInMember;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
+
+import lombok.val;
 
 /**
  * Represents an entity or value (cf {@link java.lang.Class}) within the
@@ -374,6 +377,11 @@ ObjectAssociationContainer, Hierarchical,  DefaultProvider {
 
     boolean isPersistenceCapable();
     boolean isPersistenceCapableOrViewModel();
+    
+    default boolean isEntity() {
+        val correspondingClass = getCorrespondingClass();
+        return JdoMetamodelUtil.isPersistenceEnhanced(correspondingClass);
+    }
 
     /**
      * 
@@ -399,6 +407,8 @@ ObjectAssociationContainer, Hierarchical,  DefaultProvider {
         
         return newInstance; 
 	}
+
+    
     
 
 }

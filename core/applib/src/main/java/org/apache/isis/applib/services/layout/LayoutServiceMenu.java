@@ -118,13 +118,8 @@ public class LayoutServiceMenu {
         return MenuBarsService.Type.DEFAULT;
     }
 
+    // --
 
-    // //////////////////////////////////////
-
-
-    @Inject LayoutService2 layoutService;
-
-
-
+    @Inject LayoutService layoutService;
 
 }

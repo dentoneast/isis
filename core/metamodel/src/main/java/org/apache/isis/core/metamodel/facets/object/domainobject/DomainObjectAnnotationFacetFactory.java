@@ -86,6 +86,8 @@ import org.apache.isis.core.metamodel.specloader.validator.ValidationFailures;
 import org.apache.isis.core.metamodel.util.EventUtil;
 import org.apache.isis.objectstore.jdo.metamodel.facets.object.persistencecapable.JdoPersistenceCapableFacet;
 
+import lombok.val;
+
 
 public class DomainObjectAnnotationFacetFactory extends FacetFactoryAbstract
 implements MetaModelValidatorRefiner, PostConstructMethodCache, ObjectSpecIdFacetFactory {
@@ -511,7 +513,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache, ObjectSpecIdFace
             }
 
             private void validate(final ObjectSpecification thisSpec, final ValidationFailures validationFailures) {
-                if(!thisSpec.isPersistenceCapableOrViewModel()) {
+                if(!isEntityOrViewModel(thisSpec)) {
                     return;
                 }
 
@@ -522,7 +524,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache, ObjectSpecIdFace
                         continue;
                     }
 
-                    if(!otherSpec.isPersistenceCapableOrViewModel()) {
+                    if(!isEntityOrViewModel(otherSpec)) {
                         continue;
                     }
 
@@ -570,5 +572,13 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache, ObjectSpecIdFace
     public Method postConstructMethodFor(final Object pojo) {
         return MethodFinderUtils.findAnnotatedMethod(pojo, PostConstruct.class, postConstructMethods);
     }
+    
+    // -- HELPER
+    
+    private boolean isEntityOrViewModel(ObjectSpecification spec) {
+    	val type = spec.getManagedObjectType();
+    	return type.isEntity() || type.isViewModel();
+    }
+    
 
 }
