@@ -19,9 +19,10 @@
 
 package org.apache.isis.core.metamodel.facets.value.datetimejoda;
 
+import org.joda.time.DateTime;
+
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facets.object.value.vsp.ValueFacetUsingSemanticsProviderFactory;
-import org.joda.time.DateTime;
 
 public class JodaDateTimeValueFacetUsingSemanticsProviderFactory extends ValueFacetUsingSemanticsProviderFactory<DateTime> {
 

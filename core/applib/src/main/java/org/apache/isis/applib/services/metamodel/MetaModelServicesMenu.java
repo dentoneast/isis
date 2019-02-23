@@ -95,7 +95,7 @@ public class MetaModelServicesMenu {
         final StringBuilder buf = asBuf(list);
 
         return new Clob(
-                Util.withSuffix(csvFileName, "csv"),
+                _Strings.asFileNameWithExtension(csvFileName, "csv"),
                     mimeTypeTextCsv, buf.toString().toCharArray());
     }
 

@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.isis.applib.Identifier;
 import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.fixturescripts.FixtureScript;
@@ -45,7 +48,6 @@ import org.apache.isis.core.metamodel.facets.all.i18n.PluralFacetTranslated;
 import org.apache.isis.core.metamodel.facets.all.named.NamedFacet;
 import org.apache.isis.core.metamodel.facets.all.named.NamedFacetInferred;
 import org.apache.isis.core.metamodel.facets.object.domainservice.DomainServiceFacet;
-import org.apache.isis.core.metamodel.facets.object.mixin.MixinFacet;
 import org.apache.isis.core.metamodel.facets.object.plural.PluralFacet;
 import org.apache.isis.core.metamodel.facets.object.plural.inferred.PluralFacetInferred;
 import org.apache.isis.core.metamodel.facets.object.value.ValueFacet;
@@ -70,8 +72,6 @@ import org.apache.isis.core.metamodel.specloader.specimpl.ObjectActionDefault;
 import org.apache.isis.core.metamodel.specloader.specimpl.ObjectSpecificationAbstract;
 import org.apache.isis.core.metamodel.specloader.specimpl.OneToManyAssociationDefault;
 import org.apache.isis.core.metamodel.specloader.specimpl.OneToOneAssociationDefault;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ObjectSpecificationDefault extends ObjectSpecificationAbstract implements FacetHolder {
 

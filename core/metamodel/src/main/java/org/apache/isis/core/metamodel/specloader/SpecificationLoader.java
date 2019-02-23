@@ -25,6 +25,9 @@ import java.util.stream.Stream;
 
 import javax.enterprise.inject.Vetoed;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.NatureOfService;
@@ -67,8 +70,6 @@ import org.apache.isis.core.runtime.threadpool.ThreadPoolExecutionMode;
 import org.apache.isis.core.runtime.threadpool.ThreadPoolSupport;
 import org.apache.isis.progmodels.dflt.ProgrammingModelFacetsJava5;
 import org.apache.isis.schema.utils.CommonDtoUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import lombok.val;
 

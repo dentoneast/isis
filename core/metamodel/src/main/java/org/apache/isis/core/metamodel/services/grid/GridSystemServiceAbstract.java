@@ -25,6 +25,9 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.isis.applib.annotation.ActionLayout;
 import org.apache.isis.applib.annotation.BookmarkPolicy;
 import org.apache.isis.applib.annotation.LabelPosition;
@@ -113,8 +116,6 @@ import org.apache.isis.core.metamodel.spec.feature.ObjectMember;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class GridSystemServiceAbstract<G extends org.apache.isis.applib.layout.grid.Grid> implements GridSystemService<G> {
 

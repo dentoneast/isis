@@ -27,6 +27,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.isis.applib.annotation.Action;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.config.internal._Config;
@@ -50,8 +53,6 @@ import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.classsubstitutor.ClassSubstitutor;
 import org.apache.isis.core.metamodel.specloader.facetprocessor.FacetProcessor;
 import org.apache.isis.core.metamodel.specloader.traverser.SpecificationTraverser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FacetedMethodsBuilder {
 
