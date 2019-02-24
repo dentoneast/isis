@@ -29,8 +29,6 @@ import org.apache.isis.core.metamodel.specloader.validator.MetaModelValidatorCom
 
 public final class JavaReflectorHelper  {
     
-    //private static final Logger LOG = LoggerFactory.getLogger(JavaReflectorHelper.class);
-
     private JavaReflectorHelper(){}
 
     public static SpecificationLoader createSpecificationLoader(

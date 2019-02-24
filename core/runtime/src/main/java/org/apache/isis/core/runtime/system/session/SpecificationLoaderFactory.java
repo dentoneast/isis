@@ -21,8 +21,6 @@ package org.apache.isis.core.runtime.system.session;
 
 import static org.apache.isis.config.internal._Config.getConfiguration;
 
-import java.util.Collection;
-
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.commons.factory.InstanceUtil;
 import org.apache.isis.core.metamodel.facetapi.MetaModelRefiner;
@@ -35,6 +33,8 @@ import org.apache.isis.core.runtime.system.IsisSystemException;
 import org.apache.isis.progmodels.dflt.JavaReflectorHelper;
 import org.apache.isis.progmodels.dflt.ProgrammingModelFacetsJava5;
 
+import lombok.val;
+
 /**
  * 
  */
@@ -42,13 +42,13 @@ final class SpecificationLoaderFactory {
     
     // -- CREATE SPECIFICATION LOADER
 
-    public SpecificationLoader createSpecificationLoader(
-            final Collection<MetaModelRefiner> metaModelRefiners)  throws IsisSystemException {
+    public SpecificationLoader createSpecificationLoader() 
+            throws IsisSystemException {
 
-        final IsisConfiguration configuration = getConfiguration();
-        
-        final ProgrammingModel programmingModel = createProgrammingModel(configuration);
-        final MetaModelValidator mmValidator = createMetaModelValidator(configuration);
+        val metaModelRefiners = MetaModelRefiner.getAll();
+        val configuration = getConfiguration();
+        val programmingModel = createProgrammingModel(configuration);
+        val mmValidator = createMetaModelValidator(configuration);
 
         return JavaReflectorHelper.createSpecificationLoader(
                 programmingModel, metaModelRefiners, mmValidator);

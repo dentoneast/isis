@@ -67,33 +67,22 @@ public class CDIContextManager implements ContextHandler {
 		
 		val spec = specLoader.lookupBySpecId(specId);
 		val id = objectUri.getQuery(); 
-		//TODO [2033] future extension ... to refine, convert id to array of Annotations
+		//TODO [2033] future extension ... to refine, convert id to qualifiers
 		val qualifiers = _Constants.emptyAnnotations;
 		
-		val beanOptional = serviceRegistry.getManagedBean(spec.getCorrespondingClass(), qualifiers);
+		val instance = serviceRegistry.getInstance(spec.getCorrespondingClass(), qualifiers);
 		
 		probe.println("resolve spec='%s' -> '%s'", 
         		spec.getSpecId().asString(),
-        		beanOptional);
+        		instance);
 		
-		if(beanOptional.isPresent()) {
-		
-			val beanPojo = beanOptional.get();
-			val managedObject = SimpleManagedObject.of(spec, beanPojo);
-			
-			return _CDI.InstanceFactory.singleton(managedObject);
-			
-		}
-		
-		// empty result
-		
-		return _CDI.InstanceFactory.empty();
-		
+		return _CDI.InstanceFactory.mapElements(instance, 
+		        beanPojo->SimpleManagedObject.of(spec, beanPojo));
 	}
 
 	@Override
 	public boolean recognizes(ObjectSpecification spec) {
-		return serviceRegistry.isRegisteredService(spec.getCorrespondingClass());
+		return serviceRegistry.isRegisteredBean(spec.getCorrespondingClass());
 	}
 
 	@Override

@@ -94,17 +94,9 @@ class IsisSessionFactoryBuilder {
             final AuthorizationManager authorizationManager = IsisContext.getAuthorizationManager();
             final RuntimeEventService runtimeEventService = serviceRegistry.lookupServiceElseFail(RuntimeEventService.class);
 
-//            // specificationLoader
-//            final Collection<MetaModelRefiner> metaModelRefiners = refiners(
-//                    authenticationManager, 
-//                    authorizationManager, 
-//                    new PersistenceSessionFactoryMetamodelRefiner());
-            
-            val metaModelRefiners = MetaModelRefiner.getAll();
-            
             final SpecificationLoader specificationLoader =
-                    componentProvider.createSpecificationLoader(metaModelRefiners);
-
+                    componentProvider.createSpecificationLoader();
+            
             serviceRegistry.validateServices();
 
             // instantiate the IsisSessionFactory

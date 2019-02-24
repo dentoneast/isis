@@ -18,9 +18,7 @@ package org.apache.isis.jdo.persistence;
 
 import static org.apache.isis.commons.internal.base._With.mapIfPresentElse;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 import javax.jdo.PersistenceManager;
@@ -259,19 +257,7 @@ abstract class PersistenceSessionBase implements PersistenceSession {
     // -- HELPERS - SERVICE LOOKUP
 
     private <T> T lookupService(Class<T> serviceType) {
-        T service = lookupServiceIfAny(serviceType);
-        if(service == null) {
-            throw new IllegalStateException("Could not locate service of type '" + serviceType + "'");
-        }
-        return service;
-    }
-
-    private <T> T lookupServiceIfAny(final Class<T> serviceType) {
-        return serviceRegistry.lookupService(serviceType).orElse(null);
-    }
-
-    protected <T> List<T> lookupServices(final Class<T> serviceClass) {
-        return serviceRegistry.streamServices(serviceClass).collect(Collectors.toList());
+        return serviceRegistry.lookupServiceElseFail(serviceType);
     }
 
     /**

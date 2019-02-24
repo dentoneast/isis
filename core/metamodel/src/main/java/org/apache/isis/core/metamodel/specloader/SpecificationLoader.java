@@ -33,10 +33,11 @@ import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.inject.ServiceInjector;
-import org.apache.isis.applib.services.jaxb.JaxbService;
-import org.apache.isis.applib.services.metamodel.MetaModelService;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
-import org.apache.isis.commons.internal.cdi._CDI;
+import org.apache.isis.applib.services.registry.ServiceRegistry.BeanAdapter;
+import org.apache.isis.applib.services.registry.ServiceRegistry.LifecycleContext;
+import org.apache.isis.commons.internal.base._NullSafe;
+import org.apache.isis.commons.internal.base._Tuples.Tuple2;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.debug._Probe;
@@ -49,7 +50,6 @@ import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.commons.lang.ClassUtil;
 import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.facetapi.Facet;
-import org.apache.isis.core.metamodel.facets.object.domainservice.DomainServiceFacet;
 import org.apache.isis.core.metamodel.facets.object.objectspecid.ObjectSpecIdFacet;
 import org.apache.isis.core.metamodel.progmodel.ProgrammingModel;
 import org.apache.isis.core.metamodel.spec.FreeStandingList;
@@ -70,8 +70,6 @@ import org.apache.isis.core.runtime.threadpool.ThreadPoolExecutionMode;
 import org.apache.isis.core.runtime.threadpool.ThreadPoolSupport;
 import org.apache.isis.progmodels.dflt.ProgrammingModelFacetsJava5;
 import org.apache.isis.schema.utils.CommonDtoUtils;
-
-import lombok.val;
 
 /**
  * Builds the meta-model.
@@ -165,29 +163,29 @@ public class SpecificationLoader {
         // AppManifest.Registry.instance().getDomainServiceTypes(), because the former also has the fallback
         // services set up in IsisSessionFactoryBuilder beforehand.
         final List<ObjectSpecification> domainServiceSpecs =
-        loadSpecificationsFor(
-                streamServiceClasses().collect(Collectors.toList()), NatureOfService.DOMAIN,
+        loadSpecificationsForBeans(
+                streamBeans(), NatureOfService.DOMAIN,
                 specificationsFromRegistry, IntrospectionState.NOT_INTROSPECTED
         );
         final List<ObjectSpecification> mixinSpecs =
         loadSpecificationsFor(
-                AppManifest.Registry.instance().getMixinTypes(), null,
+                AppManifest.Registry.instance().getMixinTypes().stream(), null,
                 specificationsFromRegistry, IntrospectionState.NOT_INTROSPECTED
         );
         loadSpecificationsFor(
-                CommonDtoUtils.VALUE_TYPES, null,
+                CommonDtoUtils.VALUE_TYPES.stream(), null,
                 specificationsFromRegistry, IntrospectionState.NOT_INTROSPECTED
         );
         loadSpecificationsFor(
-                AppManifest.Registry.instance().getDomainObjectTypes(), null,
+                AppManifest.Registry.instance().getDomainObjectTypes().stream(), null,
                 specificationsFromRegistry, IntrospectionState.NOT_INTROSPECTED
         );
         loadSpecificationsFor(
-                AppManifest.Registry.instance().getViewModelTypes(), null,
+                AppManifest.Registry.instance().getViewModelTypes().stream(), null,
                 specificationsFromRegistry, IntrospectionState.NOT_INTROSPECTED
         );
         loadSpecificationsFor(
-                AppManifest.Registry.instance().getXmlElementTypes(), null,
+                AppManifest.Registry.instance().getXmlElementTypes().stream(), null,
                 specificationsFromRegistry, IntrospectionState.NOT_INTROSPECTED
         );
 
@@ -217,27 +215,27 @@ public class SpecificationLoader {
         LOG.info("init() - done");
         
         //FIXME [2033] remove debug code ...
-        {
-        	streamServiceClasses()
-        	.forEach(service->probe.println("using service %s", service));
-        	
-        	
-        	val metaModelService = _CDI.getSingleton(MetaModelService.class);
-        	val jaxbService = _CDI.getSingleton(JaxbService.class);
-        	
-        	val metamodelDto =
-        			metaModelService.exportMetaModel(
-        					new MetaModelService.Config()
-        							.withIgnoreNoop()
-        							.withIgnoreAbstractClasses()
-        							.withIgnoreBuiltInValueTypes()
-        							.withIgnoreInterfaces()
-        							.withPackagePrefix("domainapp")
-        			);
-			
-			final String xml = jaxbService.toXml(metamodelDto);
-			//probe.println(xml);
-        }
+        //{
+//        	streamServiceClasses()
+//        	.forEach(service->probe.println("using service %s", service));
+//        	
+//        	
+//        	val metaModelService = _CDI.getSingleton(MetaModelService.class);
+//        	val jaxbService = _CDI.getSingleton(JaxbService.class);
+//        	
+//        	val metamodelDto =
+//        			metaModelService.exportMetaModel(
+//        					new MetaModelService.Config()
+//        							.withIgnoreNoop()
+//        							.withIgnoreAbstractClasses()
+//        							.withIgnoreBuiltInValueTypes()
+//        							.withIgnoreInterfaces()
+//        							.withPackagePrefix("domainapp")
+//        			);
+//			
+//			final String xml = jaxbService.toXml(metamodelDto);
+//			//probe.println(xml);
+//        }
     }
     
     private final static _Probe probe = _Probe.unlimited().label("SpecificationLoader");
@@ -315,27 +313,32 @@ public class SpecificationLoader {
     }
 
     private List<ObjectSpecification> loadSpecificationsFor(
-            final Collection<Class<?>> domainTypes,
+            final Stream<Class<?>> domainTypes,
             final NatureOfService natureOfServiceFallback,
             final List<ObjectSpecification> appendTo,
             final IntrospectionState upTo) {
 
-        final List<ObjectSpecification> specs = _Lists.newArrayList();
-        for (final Class<?> domainType : domainTypes) {
-
-            ObjectSpecification objectSpecification =
-                internalLoadSpecification(domainType, natureOfServiceFallback, upTo);
-
-            if(objectSpecification != null) {
-                specs.add(objectSpecification);
-            }
-        }
-        appendTo.addAll(specs);
-
-        return specs;
+        return domainTypes
+        .map(domainType->internalLoadSpecification(domainType, natureOfServiceFallback, upTo))
+        .filter(_NullSafe::isPresent)
+        .peek(appendTo::add)
+        .collect(Collectors.toList());
     }
 
+    private List<ObjectSpecification> loadSpecificationsForBeans (
+            final Stream<BeanAdapter> beans,
+            final NatureOfService natureOfServiceFallback,
+            final List<ObjectSpecification> appendTo,
+            final IntrospectionState upTo) {
 
+        return beans
+        .filter(bean->bean.isDomainService())
+        .map(bean->bean.getBean().getBeanClass())    
+        .map(domainType->internalLoadSpecification(domainType, natureOfServiceFallback, upTo))
+        .filter(_NullSafe::isPresent)
+        .peek(appendTo::add)
+        .collect(Collectors.toList());
+    }
 
     // -- shutdown
 
@@ -592,15 +595,9 @@ public class SpecificationLoader {
         return cache.allSpecifications();
     }
 
-
-    public Stream<Class<?>> streamServiceClasses() {
+    private Stream<BeanAdapter> streamBeans() {
         final ServiceRegistry registry = MetaModelContext.current().getServiceRegistry();
-        return registry.streamServiceTypes();
-    }
-
-    public boolean isServiceClass(Class<?> cls) {
-        final ObjectSpecification objectSpecification = peekSpecification(cls);
-        return objectSpecification != null && objectSpecification.containsDoOpFacet(DomainServiceFacet.class);
+        return registry.streamRegisteredBeans();
     }
 
     // -- loaded

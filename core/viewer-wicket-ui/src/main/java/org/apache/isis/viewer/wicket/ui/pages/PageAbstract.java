@@ -208,8 +208,10 @@ public abstract class PageAbstract extends WebPage implements ActionPromptProvid
             LOG.error("Failed to construct page, going back to sign in page", ex);
 
             // REVIEW: similar code in WebRequestCycleForIsis
-            final Stream<ExceptionRecognizer> exceptionRecognizers = getServiceInjector()
-                    .streamServices(ExceptionRecognizer.class);
+            final Stream<ExceptionRecognizer> exceptionRecognizers = getServiceRegistry()
+                    .getInstance(ExceptionRecognizer.class)
+                    .stream();
+                    
             final String recognizedMessageIfAny = new ExceptionRecognizerComposite(exceptionRecognizers).recognize(ex);
             final ExceptionModel exceptionModel = ExceptionModel.create(recognizedMessageIfAny, ex);
 

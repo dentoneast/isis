@@ -17,7 +17,6 @@
 package org.apache.isis.applib.services.inject;
 
 import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * The repository of services, also able to inject into any object.
@@ -32,12 +31,6 @@ public interface ServiceInjector {
     <T> T injectServicesInto(final T domainObject);
 
     // -- DEPRECATIONS
-    
-    @Deprecated // use ServiceRegistry instead
-    Stream<Object> streamServices();
-
-    @Deprecated // use ServiceRegistry instead
-    <T> Stream<T> streamServices(Class<T> serviceClass);
     
     @Deprecated // use ServiceRegistry instead
     <T> Optional<T> lookupService(final Class<T> serviceClass);

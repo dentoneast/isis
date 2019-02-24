@@ -60,7 +60,7 @@ public abstract class EventBusServiceDefault extends EventBusService {
      */
     @Override
     public void register(final Object domainService) {
-        if(domainService instanceof RequestScopedService) {
+        if(false/*domainService instanceof RequestScopedService*/) {
             // ok; allow to be registered multiple times (each xactn) since stored in a set.
         } else {
             if (Annotations.getAnnotation(domainService.getClass(), RequestScoped.class) != null) {

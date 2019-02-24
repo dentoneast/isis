@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
@@ -77,7 +78,11 @@ public class ObjectAdapterServiceDefault implements ObjectAdapterService {
             break;
             
 		}
-		throw _Exceptions.unexpectedCodeReach();
+		
+		_Probe.errOut("UNKNOWN ManagedObject type: '%s'", pojo.getClass());
+		
+		return null;
+		//throw _Exceptions.unmatchedCase("UNKNOWN ManagedObject type: " + pojo.getClass());
 	}
 
 	@Override

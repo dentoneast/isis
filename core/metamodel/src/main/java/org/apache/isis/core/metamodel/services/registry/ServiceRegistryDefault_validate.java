@@ -28,29 +28,31 @@ import java.util.stream.Stream;
 
 import javax.enterprise.inject.spi.Bean;
 
+import org.apache.isis.applib.services.registry.ServiceRegistry.BeanAdapter;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.collections._Multimaps;
 import org.apache.isis.commons.internal.collections._Multimaps.ListMultimap;
-import org.apache.isis.core.metamodel.services.ServiceUtil;
 
 /**
  * @since 2.0.0-M3
  */
-final class ServiceRegistryDefault_validateUniqueId  {
+final class ServiceRegistryDefault_validate  {
     
-    static void validateUniqueId(final Stream<Bean<?>> serviceBeans) {
+    static void validateUniqueDomainServiceId(final Stream<BeanAdapter> domainServiceAdapters) {
 
-        final ListMultimap<String, Bean<?>> servicesById = _Multimaps.newListMultimap();
-        serviceBeans.forEach(serviceBean->{
-            String id = ServiceUtil.idOfBean(serviceBean);
-            servicesById.putElement(id, serviceBean);
+        final ListMultimap<String, BeanAdapter> servicesById = _Multimaps.newListMultimap();
+        
+        domainServiceAdapters.forEach(serviceBeanAdapter->{
+            String id = serviceBeanAdapter.getId();
+            servicesById.putElement(id, serviceBeanAdapter);
         });
+        
 
         final String errorMsg = servicesById.entrySet().stream()
                 .filter(entry->entry.getValue().size()>1) // filter for duplicates
                 .map(entry->{
                     String serviceId = entry.getKey();
-                    List<Bean<?>> duplicateServiceEntries = entry.getValue();
+                    List<BeanAdapter> duplicateServiceEntries = entry.getValue();
                     return String.format("serviceId '%s' is declared by domain services %s",
                             serviceId, classNamesFor(duplicateServiceEntries));
                 })
@@ -63,8 +65,9 @@ final class ServiceRegistryDefault_validateUniqueId  {
     
     // -- HELPER - VALIDATE
     
-    private static String classNamesFor(Collection<Bean<?>> serviceBeans) {
+    private static String classNamesFor(Collection<BeanAdapter> serviceBeans) {
         return stream(serviceBeans)
+                .map(BeanAdapter::getBean)
                 .map(Bean::getBeanClass)
                 .map(Class::getName)
                 .collect(Collectors.joining(", "));

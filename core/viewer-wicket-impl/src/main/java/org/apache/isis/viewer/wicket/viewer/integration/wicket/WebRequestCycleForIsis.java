@@ -241,8 +241,10 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
 
 
             // handle recognized exceptions gracefully also
-            final Stream<ExceptionRecognizer> exceptionRecognizers =
-            		getServiceRegistry().streamServices(ExceptionRecognizer.class);
+            final Stream<ExceptionRecognizer> exceptionRecognizers = getServiceRegistry()
+                    .getInstance(ExceptionRecognizer.class)
+                    .stream();
+            
             String recognizedMessageIfAny = new ExceptionRecognizerComposite(exceptionRecognizers).recognize(ex);
             if(recognizedMessageIfAny != null) {
                 return respondGracefully(cycle);
@@ -321,8 +323,10 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
         exceptionRecognizers.add(pageExpiredExceptionRecognizer);
 
         if(inIsisSession()) {
-            getServiceRegistry().streamServices(ExceptionRecognizer.class)
-            .forEach(exceptionRecognizers::add);
+            getServiceRegistry()
+                    .getInstance(ExceptionRecognizer.class)
+                    .stream()
+                    .forEach(exceptionRecognizers::add);
         } else {
             val metaModelDeficiencies = IsisContext.getMetaModelDeficienciesIfAny();
             if(metaModelDeficiencies != null) {

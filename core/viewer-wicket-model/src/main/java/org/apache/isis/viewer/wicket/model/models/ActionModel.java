@@ -470,7 +470,10 @@ public class ActionModel extends BookmarkableModel<ObjectAdapter> implements For
         
         PersistableTypeGuard2.instate(resultAdapter);
         
-        final Stream<RoutingService> routingServices = getServiceRegistry().streamServices(RoutingService.class);
+        final Stream<RoutingService> routingServices = getServiceRegistry()
+                .getInstance(RoutingService.class)
+                .stream();
+        
         final Object resultPojo = resultAdapter != null ? resultAdapter.getPojo() : null;
         
         val pojoToAdapter = IsisContext.pojoToAdapter();

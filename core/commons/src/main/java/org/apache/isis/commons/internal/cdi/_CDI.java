@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -254,6 +255,21 @@ public final class _CDI {
 			}
 			return _CDI_AmbiguousInstance.of(collection);
 		}
+
+        public static <T, R> Instance<R> mapElements(Instance<T> instance, Function<T, R> elementMapper) {
+            
+            if(instance.isUnsatisfied()) {
+                return empty();
+            }
+            if(instance.isResolvable()) {
+                val element = instance.get();
+                return singleton(elementMapper.apply(element));
+            }
+            val elements = instance.stream()
+            .map(elementMapper)
+            .collect(Collectors.toList());
+            return _CDI_AmbiguousInstance.of(elements);
+        }
 		
 	}
         

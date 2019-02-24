@@ -19,17 +19,21 @@
 
 package org.apache.isis.core.runtime.system.session;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.PreDestroy;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Vetoed;
 import javax.inject.Inject;
 
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
+import org.apache.isis.applib.services.registry.ServiceRegistry.BeanAdapter;
 import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.commons.internal.base._Blackhole;
 import org.apache.isis.commons.internal.context._Context;
@@ -118,7 +122,11 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
 
         // do postConstruct.  We store the initializer to do preDestroy on shutdown
         serviceInitializer = new ServiceInitializer(configuration, 
-                serviceRegistry.streamServices().collect(Collectors.toList()));
+                Collections.emptyList()
+//TODO [2033] remove initializer, CDI takes over 
+//                serviceRegistry.streamServices().collect(Collectors.toList())
+                );
+        
         serviceInitializer.validate();
 
         openSession(new InitialisationSession());
@@ -142,12 +150,20 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
             // translateServicesAndEnumConstants
             //
 
-            final List<Object> services = serviceRegistry.streamServices().collect(Collectors.toList());
-            final TitleService titleService = serviceRegistry.lookupServiceElseFail(TitleService.class);
-            for (Object service : services) {
-                final String unused = titleService.titleOf(service);
+            val titleService = serviceRegistry.lookupServiceElseFail(TitleService.class);
+            
+            final Stream<Object> domainServices = serviceRegistry.streamRegisteredBeans()
+                    .filter(BeanAdapter::isDomainService)
+                    .map(BeanAdapter::getInstance)
+                    .filter(Instance::isResolvable)
+                    .map(Instance::get)
+                    ;
+            
+            domainServices.forEach(domainService->{
+                final String unused = titleService.titleOf(domainService);
                 _Blackhole.consume(unused);
-            }
+            });
+
 
             // (previously we took a protective copy to avoid a concurrent modification exception,
             // but this is now done by SpecificationLoader itself)

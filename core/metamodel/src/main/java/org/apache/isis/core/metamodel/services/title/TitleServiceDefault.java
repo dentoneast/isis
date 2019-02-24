@@ -24,17 +24,18 @@ import javax.inject.Singleton;
 
 import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.applib.services.wrapper.WrapperFactory;
-import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterService;
+
+import lombok.val;
 
 @Singleton
 public class TitleServiceDefault implements TitleService {
 
     @Override
     public String titleOf(final Object domainObject) {
-        final ObjectAdapter objectAdapter = getObjectAdapterProvider().adapterFor(unwrapped(domainObject));
-        final boolean destroyed = objectAdapter.isDestroyed();
+        val objectAdapter = getObjectAdapterProvider().adapterFor(unwrapped(domainObject));
+        val destroyed = objectAdapter.isDestroyed();
         if(!destroyed) {
             return objectAdapter.getSpecification().getTitle(null, objectAdapter);
         } else {
@@ -44,7 +45,7 @@ public class TitleServiceDefault implements TitleService {
 
     @Override
     public String iconNameOf(final Object domainObject) {
-        final ObjectAdapter objectAdapter = getObjectAdapterProvider().adapterFor(unwrapped(domainObject));
+        val objectAdapter = getObjectAdapterProvider().adapterFor(unwrapped(domainObject));
         return objectAdapter.getSpecification().getIconName(objectAdapter);
     }
 
@@ -57,10 +58,10 @@ public class TitleServiceDefault implements TitleService {
     // //////////////////////////////////////
 
     private ObjectAdapterProvider getObjectAdapterProvider() {
-        return sessionServiceInternal;
+        return objectAdapterProvider;
     }
     
-    @Inject ObjectAdapterService sessionServiceInternal;
+    @Inject ObjectAdapterService objectAdapterProvider;
     @Inject WrapperFactory wrapperFactory;
 
 }

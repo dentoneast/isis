@@ -31,12 +31,17 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
+import javax.enterprise.inject.Instance;
 import javax.jdo.FetchGroup;
 import javax.jdo.FetchPlan;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.identity.SingleFieldIdentity;
 import javax.jdo.listener.InstanceLifecycleListener;
+
+import org.datanucleus.enhancement.Persistable;
+import org.datanucleus.exceptions.NucleusObjectNotFoundException;
+import org.datanucleus.identity.DatastoreIdImpl;
 
 import org.apache.isis.applib.query.Query;
 import org.apache.isis.applib.services.command.Command;
@@ -75,7 +80,6 @@ import org.apache.isis.core.runtime.persistence.FixturesInstalledStateHolder;
 import org.apache.isis.core.runtime.persistence.transaction.CreateObjectCommand;
 import org.apache.isis.core.runtime.persistence.transaction.DestroyObjectCommand;
 import org.apache.isis.core.runtime.persistence.transaction.PersistenceCommand;
-import org.apache.isis.core.runtime.services.RequestScopedService;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.transaction.IsisTransaction;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
@@ -90,9 +94,6 @@ import org.apache.isis.jdo.persistence.query.PersistenceQueryFindUsingApplibQuer
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.PersistenceQueryFindAllInstancesProcessor;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.PersistenceQueryFindUsingApplibQueryProcessor;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.spi.JdoObjectIdSerializer;
-import org.datanucleus.enhancement.Persistable;
-import org.datanucleus.exceptions.NucleusObjectNotFoundException;
-import org.datanucleus.identity.DatastoreIdImpl;
 
 import lombok.val;
 import lombok.extern.slf4j.Slf4j;
@@ -186,21 +187,23 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
     }
 
     private void postConstructOnRequestScopedServices() {
-        serviceInjector.streamServices()
-        .forEach(service->{
-            if(service instanceof RequestScopedService) {
-                ((RequestScopedService)service).__isis_postConstruct();
-            }
-        });
+//[2033] remove
+//        serviceInjector.streamServices()
+//        .forEach(service->{
+//            if(service instanceof RequestScopedService) {
+//                ((RequestScopedService)service).__isis_postConstruct();
+//            }
+//        });
     }
 
     private void startRequestOnRequestScopedServices() {
-        serviceInjector.streamServices()
-        .forEach(service->{
-            if(service instanceof RequestScopedService) {
-                ((RequestScopedService)service).__isis_startRequest(serviceInjector);
-            }
-        });
+      //[2033] remove        
+//        serviceInjector.streamServices()
+//        .forEach(service->{
+//            if(service instanceof RequestScopedService) {
+//                ((RequestScopedService)service).__isis_startRequest(serviceInjector);
+//            }
+//        });
     }
 
     private Command createCommand() {
@@ -271,21 +274,23 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
     }
 
     private void endRequestOnRequestScopeServices() {
-        serviceInjector.streamServices()
-        .forEach(service->{
-            if(service instanceof RequestScopedService) {
-                ((RequestScopedService)service).__isis_endRequest();
-            }
-        });
+      //[2033] remove
+//        serviceInjector.streamServices()
+//        .forEach(service->{
+//            if(service instanceof RequestScopedService) {
+//                ((RequestScopedService)service).__isis_endRequest();
+//            }
+//        });
     }
 
     private void preDestroyOnRequestScopedServices() {
-        serviceInjector.streamServices()
-        .forEach(service->{
-            if(service instanceof RequestScopedService) {
-                ((RequestScopedService)service).__isis_preDestroy();
-            }
-        });
+      //[2033] remove
+//        serviceInjector.streamServices()
+//        .forEach(service->{
+//            if(service instanceof RequestScopedService) {
+//                ((RequestScopedService)service).__isis_preDestroy();
+//            }
+//        });
     }
 
     private void completeCommandFromInteractionAndClearDomainEvents() {
@@ -461,8 +466,9 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
             result = persistenceManager.getObjectById(cls, jdoObjectId);
         } catch (final RuntimeException e) {
 
-            Class<ExceptionRecognizer> serviceClass = ExceptionRecognizer.class;
-            final List<ExceptionRecognizer> exceptionRecognizers = lookupServices(serviceClass);
+            final Instance<ExceptionRecognizer> exceptionRecognizers = 
+                    serviceRegistry.getInstance(ExceptionRecognizer.class);
+            
             for (ExceptionRecognizer exceptionRecognizer : exceptionRecognizers) {
                 final ExceptionRecognizer.Recognition recognition =
                         exceptionRecognizer.recognize2(e);

@@ -548,7 +548,7 @@ implements MetaModelValidatorRefiner, PostConstructMethodCache, ObjectSpecIdFace
                 if(autoCompleteFacet != null && !autoCompleteFacet.isNoop() && autoCompleteFacet instanceof AutoCompleteFacetAbstract) {
                     final AutoCompleteFacetAbstract facet = (AutoCompleteFacetForDomainObjectAnnotation) autoCompleteFacet;
                     final Class<?> repositoryClass = facet.getRepositoryClass();
-                    final boolean isRegistered = getServiceRegistry().isRegisteredService(repositoryClass);
+                    final boolean isRegistered = getServiceRegistry().isRegisteredBean(repositoryClass);
                     if(!isRegistered) {
                         validationFailures.add(
                                 "@DomainObject annotation on %s specifies unknown repository '%s'",

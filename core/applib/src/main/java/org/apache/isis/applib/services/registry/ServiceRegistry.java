@@ -27,12 +27,14 @@ import java.util.stream.Stream;
 
 import javax.annotation.Priority;
 import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.spi.Bean;
 
-import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
+import org.apache.isis.commons.internal._Constants;
 import org.apache.isis.commons.internal.base._Reduction;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.reflection._Reflect;
 
+import lombok.Value;
 import lombok.val;
 
 /**
@@ -42,66 +44,44 @@ import lombok.val;
  */
 public interface ServiceRegistry {
 
+
     /**
-     * Whether or not the given type is a application-scoped singleton, that
-     * qualifies as a service to be managed by the framework. 
+     * Whether or not the given type is annotated @DomainService.
      * @param cls
      * @return
      */
-    boolean isServiceType(Class<?> cls);
+    boolean isDomainServiceType(Class<?> cls);
     
     /**
      * Obtains a child Instance for the given required type and additional required qualifiers. 
      * @param type
-     * @param annotations
+     * @param qualifiers
      * @return an optional, empty if passed two instances of the same qualifier type, or an 
      * instance of an annotation that is not a qualifier type
      */
-    default public <T> Optional<Instance<T>> getInstance(
-            final Class<T> type, Annotation[] annotations){
-        return annotations!=null
-                ? _CDI.getInstance(type, _CDI.filterQualifiers(annotations))
+    default public <T> Instance<T> getInstance(
+            final Class<T> type, Annotation[] qualifiers){
+        
+        val optionalInstance = qualifiers!=null
+                ? _CDI.getInstance(type, _CDI.filterQualifiers(qualifiers))
                     : _CDI.getInstance(type);
+                
+        return optionalInstance.orElse(_CDI.InstanceFactory.empty());
+    }
+    
+    default public <T> Instance<T> getInstance(final Class<T> type){
+        return getInstance(type, _Constants.emptyAnnotations);
     }
     
     /**
-     * Obtains a managed bean for the given required type and additional required qualifiers. 
-     * @param type
-     * @param annotations
-     * @return an optional, empty if passed two instances of the same qualifier type, or an 
-     * instance of an annotation that is not a qualifier type
+     * Returns all bean adapters implementing the requested type.
      */
-    default public <T> Optional<T> getManagedBean(
-            final Class<T> type, Annotation[] annotations){
-        return annotations!=null
-                ? _CDI.getManagedBean(type, _CDI.filterQualifiers(annotations))
-                    : _CDI.getManagedBean(type);
+    default Stream<BeanAdapter> streamRegisteredBeansOfType(Class<?> requiredType) {
+        return streamRegisteredBeans()
+        .filter(beanAdapter->beanAdapter.isCandidateFor(requiredType));
     }
     
-    
-    /**
-     * @return Stream of all currently registered service instances.
-     */
-    Stream<Object> streamServices();
-
-    /**
-     * Returns all domain services implementing the requested type, in the order
-     * that they were registered in <tt>isis.properties</tt>.
-     *
-     * <p>
-     * Typically there will only ever be one domain service implementing a given type,
-     * (eg {@link PublishingService}), but for some services there can be more than one
-     * (eg {@link ExceptionRecognizer}).
-     *
-     * @see #lookupService(Class)
-     */
-    <T> Stream<T> streamServices(Class<T> serviceClass);
-
-    public default Stream<Class<?>> streamServiceTypes() {
-        return streamServices().map(Object::getClass);
-    }
-    
-    public <T> Instance<T> lookupServices(Class<T> serviceClass);
+    public Stream<BeanAdapter> streamRegisteredBeans();
     
     /**
      * Returns a domain service implementing the requested type.
@@ -111,7 +91,7 @@ public interface ServiceRegistry {
      */
     default public <T> Optional<T> lookupService(final Class<T> serviceClass) {
     	
-    	val instance = lookupServices(serviceClass);
+    	val instance = getInstance(serviceClass);
     	if(instance.isUnsatisfied()) {
     		return Optional.empty();
     	}
@@ -136,23 +116,68 @@ public interface ServiceRegistry {
                 new NoSuchElementException("Could not locate service of type '" + serviceClass + "'"));
     }
     
+    Stream<Object> streamServices();
+    
     /**
      * @param cls
      * @return whether the exact type is registered as service
      */
-    boolean isRegisteredService(Class<?> cls);
+    @Deprecated
+    boolean isRegisteredBean(Class<?> cls);
     
-    /**
-     * @param pojo
-     * @return whether the pojo equals one of the registered service instances
-     */
-    boolean isRegisteredServiceInstance(Object pojo);
-
     /**
      * Verify domain service Ids are unique.
      * @throws IllegalStateException - if validation fails
      */
     void validateServices();
+    
+    // -- BEAN ADAPTER
+    
+    public static enum LifecycleContext {
+        ApplicationScoped,
+        Singleton,
+        SessionScoped,
+        RequestScoped,
+        ConversationScoped,
+        Dependent,
+        ;
+
+        public boolean isApplicationScoped() {
+            return this == ApplicationScoped;
+        }
+        
+        public boolean isSingleton() {
+            return this == Singleton;
+        }
+        
+        public boolean isRequestScoped() {
+            return this == RequestScoped;
+        }
+    }
+    
+    @Value(staticConstructor="of")
+    public static final class BeanAdapter {
+
+        private final String id;
+        private final LifecycleContext lifecycleContext;
+        private final Bean<?> bean;
+        private final boolean domainService;
+        
+        public Instance<?> getInstance() {
+            val type = bean.getBeanClass();
+            val instance = _CDI.getInstance(type, bean.getQualifiers())
+                    .orElse(_CDI.InstanceFactory.empty());
+            return instance;
+        }
+        
+        public boolean isCandidateFor(Class<?> requiredType) {
+            return bean.getTypes().stream()
+            .filter(type -> type instanceof Class)
+            .map(type->(Class<?>)type)
+            .anyMatch(type->requiredType.isAssignableFrom(type));
+        }
+        
+    }
 
     // -- PRIORITY ANNOTATION HANDLING
 	
@@ -191,8 +216,6 @@ public interface ServiceRegistry {
 		}
     	
     }
-
-
 
     
 }

@@ -45,6 +45,7 @@ import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.repository.RepositoryService;
 import org.apache.isis.core.metamodel.BeansForTesting;
 
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -137,9 +138,11 @@ class ServicesInjectorDefaultTest {
     
     @Test
     public void shouldStreamRegisteredServices() {
-        List<Class<?>> registeredServices = registry.streamServiceTypes()
-                .collect(Collectors.toList());
-        Assertions.assertTrue(registeredServices.size()>=3);
+        fail("[2033] test not migrated");
+        
+//        List<Class<?>> registeredServices = registry.streamServiceTypes()
+//                .collect(Collectors.toList());
+//        Assertions.assertTrue(registeredServices.size()>=3);
     }
 
 }

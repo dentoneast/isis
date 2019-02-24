@@ -25,10 +25,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -44,6 +42,8 @@ import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.commons.util.ToString;
 import org.apache.isis.core.metamodel.exceptions.MetaModelException;
 import org.apache.isis.core.metamodel.spec.InjectorMethodEvaluator;
+
+import lombok.val;
 
 @Singleton
 public class ServiceInjectorDefault implements ServiceInjector {
@@ -120,8 +120,11 @@ public class ServiceInjectorDefault implements ServiceInjector {
             return;
         }
         
-        serviceRegistry.getManagedBean(typeToBeInjected, field.getAnnotations())
-        .ifPresent(bean->invokeInjectorField(field, targetPojo, bean));
+        val instance = serviceRegistry.getInstance(typeToBeInjected, field.getAnnotations());
+        if(instance.isResolvable()) {
+            val bean = instance.get();
+            invokeInjectorField(field, targetPojo, bean);    
+        }
 
     }
     
@@ -134,19 +137,14 @@ public class ServiceInjectorDefault implements ServiceInjector {
         final Class<? extends Collection<Object>> collectionTypeToBeInjected =
                 (Class<? extends Collection<Object>>) field.getType();
         
-        serviceRegistry.getInstance(elementType, field.getAnnotations())
-        
-        // explicit cast required by OpenJDK complier, not eclipse
-        .map((Instance<?> instance)->((Instance<Object>)instance))
-        
-        .ifPresent(instance->{
+        val instance = serviceRegistry.getInstance(elementType, field.getAnnotations());
+        if(!instance.isUnsatisfied()) {
             final Collection<Object> collectionOfServices = instance.stream()
                     .filter(isOfType(elementType))
                     .collect(_Collections.toUnmodifiableOfType(collectionTypeToBeInjected));
 
             invokeInjectorField(field, targetPojo, collectionOfServices);
-            
-        });
+        }
         
     }
 
@@ -169,8 +167,12 @@ public class ServiceInjectorDefault implements ServiceInjector {
             return;
         }
         
-        serviceRegistry.getManagedBean(typeToBeInjected, setter.getAnnotations())
-        .ifPresent(bean->invokeInjectorMethod(setter, targetPojo, bean));
+        val instance = serviceRegistry.getInstance(typeToBeInjected, setter.getAnnotations());
+        if(instance.isResolvable()) {
+            val bean = instance.get();
+            invokeInjectorMethod(setter, targetPojo, bean);    
+        } 
+        
     }
 
     private static void invokeMethod(final Method method, final Object target, final Object[] parameters) {
@@ -228,16 +230,6 @@ public class ServiceInjectorDefault implements ServiceInjector {
 
     // -- DELEGATIONS
     
-    @Override
-    public Stream<Object> streamServices() {
-        return serviceRegistry.streamServices();
-    }
-
-    @Override
-    public <T> Stream<T> streamServices(Class<T> serviceClass) {
-        return serviceRegistry.streamServices(serviceClass);
-    }
-
     @Override
     public <T> Optional<T> lookupService(Class<T> serviceClass) {
         return serviceRegistry.lookupService(serviceClass);

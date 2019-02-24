@@ -23,8 +23,6 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import lombok.val;
-
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.commons.ensure.Assert;
 import org.apache.isis.core.commons.ensure.IsisAssertException;
@@ -42,11 +40,12 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.memento.Data;
-import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.context.managers.ContextManager;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
+
+import lombok.val;
 
 /**
  * Encapsulate ObjectAdpater life-cycling.  
@@ -92,10 +91,10 @@ final public class ObjectAdapterContext {
 
         this.objectAdapterProviderMixin = new ObjectAdapterContext_ObjectAdapterProvider(this, metaModelContext, persistenceSession);
         this.mementoSupportMixin = new ObjectAdapterContext_MementoSupport(this, persistenceSession);
-        this.serviceLookupMixin = new ObjectAdapterContext_ServiceLookup(this, servicesInjector);
+        this.serviceLookupMixin = new ObjectAdapterContext_ServiceLookup(this, metaModelContext.getServiceRegistry());
         this.newIdentifierMixin = new ObjectAdapterContext_NewIdentifier(this, metaModelContext, persistenceSession);
         
-        this.contextManager = IsisContext.getServiceRegistry().lookupServiceElseFail(ContextManager.class);
+        this.contextManager = metaModelContext.getServiceRegistry().lookupServiceElseFail(ContextManager.class);
         
         this.objectAdapterByIdProviderMixin = new ObjectAdapterContext_ObjectAdapterByIdProvider(this, contextManager, metaModelContext, persistenceSession, authenticationSession);
         this.dependencyInjectionMixin = new ObjectAdapterContext_DependencyInjection(this, persistenceSession);

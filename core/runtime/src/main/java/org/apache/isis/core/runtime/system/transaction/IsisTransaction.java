@@ -22,7 +22,11 @@ package org.apache.isis.core.runtime.system.transaction;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
-import java.util.stream.Collectors;
+
+import javax.enterprise.inject.Instance;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.WithTransactionScope;
@@ -39,8 +43,6 @@ import org.apache.isis.core.runtime.persistence.transaction.CreateObjectCommand;
 import org.apache.isis.core.runtime.persistence.transaction.DestroyObjectCommand;
 import org.apache.isis.core.runtime.persistence.transaction.PersistenceCommand;
 import org.apache.isis.core.runtime.services.auditing.AuditingServiceInternal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import lombok.val;
 
@@ -169,7 +171,7 @@ public class IsisTransaction implements TransactionScopedComponent, Transaction 
     private final PublishingServiceInternal publishingServiceInternal;
     private final AuditingServiceInternal auditingServiceInternal;
 
-    private final List<WithTransactionScope> withTransactionScopes;
+    private final Instance<WithTransactionScope> withTransactionScopes;
 
     private IsisException abortCause;
 
@@ -190,8 +192,8 @@ public class IsisTransaction implements TransactionScopedComponent, Transaction 
         this.publishingServiceInternal = serviceRegistry.lookupServiceElseFail(PublishingServiceInternal.class);
         this.auditingServiceInternal = serviceRegistry.lookupServiceElseFail(AuditingServiceInternal.class);
 
-        withTransactionScopes = serviceRegistry.streamServices(WithTransactionScope.class)
-                .collect(Collectors.toList());
+        withTransactionScopes = serviceRegistry
+                .getInstance(WithTransactionScope.class);
 
         this.state = State.IN_PROGRESS;
 

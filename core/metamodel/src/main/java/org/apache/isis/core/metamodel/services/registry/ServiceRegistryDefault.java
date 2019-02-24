@@ -19,13 +19,7 @@
 
 package org.apache.isis.core.metamodel.services.registry;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.enterprise.inject.Instance;
@@ -34,183 +28,120 @@ import javax.inject.Singleton;
 
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
-import org.apache.isis.commons.internal.base._Casts;
-import org.apache.isis.commons.internal.base._Lazy;
+import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.commons.internal.cdi._CDI;
-import org.apache.isis.commons.internal.collections._Lists;
-import org.apache.isis.commons.internal.collections._Maps;
-import org.apache.isis.commons.internal.collections._Multimaps;
-import org.apache.isis.commons.internal.collections._Multimaps.SetMultimap;
 import org.apache.isis.commons.internal.collections._Sets;
+import org.apache.isis.core.metamodel.services.ServiceUtil;
 
 import lombok.val;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @since 2.0.0-M2
  */
-@Singleton @Slf4j
+@Singleton
 public final class ServiceRegistryDefault implements ServiceRegistry {
-    
-    /**
-     * This is mutable internally, but only ever exposed (in {@link #streamRegisteredServices()}).
-     */
-    private final Set<Bean<?>> registeredServiceBeans = _Sets.newHashSet();
-    private final Set<Object> registeredServiceInstances = _Sets.newHashSet();
 
-    /**
-     * If no key, not yet searched for type; otherwise the corresponding value is a {@link List} of all
-     * services that are assignable to the type.  It's possible that this is an empty list.
-     */
-    private final SetMultimap<Class<?>, Object> servicesAssignableToType = _Multimaps.newSetMultimap();
-    private final _Lazy<Map<Class<?>, Object>> serviceByConcreteType = _Lazy.of(this::initServiceByConcreteType);
+    private final Set<BeanAdapter> registeredBeans = _Sets.newHashSet();
+    private final Set<Object> serviceCache = _Sets.newHashSet();
 
-    
-    @Override
-    public <T> Instance<T> lookupServices(Class<T> serviceClass) {
-        return _CDI.getInstance(serviceClass, _Lists.of(_CDI.QUALIFIER_ANY))
-        		.orElse(_CDI.InstanceFactory.empty());
-    }
-    
+    //    @Override 
+    //    public Stream<Object> streamServices() {
+    //        
+    //        if(registeredServiceInstances.isEmpty()) {
+    //         
+    //            registeredBeans.stream()
+    //            .forEach(beanAdapter->{
+    //                
+    //            	val scope = bean.getScope().getSimpleName();
+    //                val type = bean.getBeanClass();
+    //                if("RequestScoped".equals(scope)) {
+    //                    log.info("skipping registering {}-scoped service {}", scope, type);
+    //                    return;
+    //                }
+    //                
+    //                Optional<?> managedObject = 
+    //                        _CDI.getManagedBean(type, bean.getQualifiers());
+    //                
+    //                if(managedObject.isPresent()) {
+    //                    registeredServiceInstances.add(managedObject.get());
+    //                    
+    //                    log.info("registering as a {}-scoped service {}", scope, managedObject.get());
+    //                    
+    //                } else {
+    //                    
+    //                    log.warn("failed to register bean {}-scoped as a service {}", scope, bean);
+    //                    
+    //                }
+    //            });
+    //        }
+    //        
+    //        return registeredServiceInstances.stream();
+    //    }
 
-    
-    /**
-     * @deprecated TODO [2033] don't register concrete instances, registering Beans should be sufficient!
-     */
-    @Override 
-    public Stream<Object> streamServices() {
-        
-        if(registeredServiceInstances.isEmpty()) {
-         
-            registeredServiceBeans.stream()
-            .forEach(bean->{
-                
-            	//FIXME [2033] properly filter those services we want the service registry to know about, 
-            	// or categorize them ?
-            	val scope = bean.getScope().getSimpleName();
-                val type = bean.getBeanClass();
-                if("RequestScoped".equals(scope)) {
-                    log.info("skipping registering {}-scoped service {}", scope, type);
-                    return;
-                }
-                
-                Optional<?> managedObject = 
-                        _CDI.getManagedBean(type, bean.getQualifiers());
-                
-                if(managedObject.isPresent()) {
-                    registeredServiceInstances.add(managedObject.get());
-                    
-                    log.info("registering as a {}-scoped service {}", scope, managedObject.get());
-                    
-                } else {
-                    
-                    log.warn("failed to register bean {}-scoped as a service {}", scope, bean);
-                    
-                }
-            });
-        }
-        
-        return registeredServiceInstances.stream();
-    }
-    
-    // --
 
     @Override
-    public <T> Stream<T> streamServices(final Class<T> serviceClass) {
-        return servicesAssignableToType
-                .computeIfAbsent(serviceClass, this::locateMatchingServices)
-                .stream()
-                .map(x->_Casts.uncheckedCast(x));
-    }
-
-    @Override
-    public boolean isServiceType(Class<?> cls) {
-        if(cls.isAnnotationPresent(Singleton.class) ||
-                cls.isAnnotationPresent(DomainService.class)) {
+    public boolean isDomainServiceType(Class<?> cls) {
+        if(cls.isAnnotationPresent(DomainService.class)) {
             return true;
         }
         return false;
     }
-    
+
     @Override
-    public boolean isRegisteredService(final Class<?> cls) {
-        return serviceByConcreteType.get().containsKey(cls);
+    public Stream<BeanAdapter> streamRegisteredBeans() {
+        if(registeredBeans.isEmpty()) {
+            _CDI.streamAllBeans()
+            .map(this::beanToAdapterIfToBeAcceptedForRegistration)
+            .filter(_NullSafe::isPresent)
+            .forEach(registeredBeans::add);
+        }
+        return registeredBeans.stream();
+    }  
+
+    @Override  
+    @Deprecated //FIXME [2033] this is bad, we should not even need to do this; root problem are ObjectAdapters requiring pojos
+    public Stream<Object> streamServices() {
+        if(serviceCache.isEmpty()) {
+            streamRegisteredBeans()
+            .filter(BeanAdapter::isDomainService)
+            .map(BeanAdapter::getInstance)
+            .filter(Instance::isResolvable)
+            .map(Instance::get)
+            .forEach(serviceCache::add);
+        }
+        return serviceCache.stream();
     }
 
     @Override
-    public boolean isRegisteredServiceInstance(final Object pojo) {
-        if(pojo==null) {
-            return false;
-        }
-        final Class<?> key = pojo.getClass();
-        final Object serviceInstance = serviceByConcreteType.get().get(key);
-        return Objects.equals(pojo, serviceInstance);
+    public boolean isRegisteredBean(Class<?> cls) {
+        //FIXME [2033] this is poorly implemented, should not require service objects.
+        return streamServices()
+        .anyMatch(obj->obj.getClass().equals(cls));
     }
-    
     
     @Override
     public void validateServices() {
-        ServiceRegistryDefault_validateUniqueId.validateUniqueId(streamServiceBeans());
+        ServiceRegistryDefault_validate.validateUniqueDomainServiceId(
+                streamRegisteredBeans()
+                .filter(BeanAdapter::isDomainService)
+                );
     }
-    
+
     // -- HELPER - FILTER
-    
-    private boolean isBeanToBeAcceptedForRegistration(Bean<?> bean) {
-    	val scope = bean.getScope().getSimpleName();
-    	if("Singleton".equals(scope)) { //this is to also accept producer methods, that produce singletons
-    		return true;
-    	}
-    	val type = bean.getBeanClass();
-		if(isServiceType(type)) {
-			return true;
-		}
-    	
-    	//debug log.warn("not a singleton: {} {}", scope, bean);
-    	
-    	return false;
-    }
-    
-    // -- HELPER - STREAM ALL
-    
-    private Stream<Bean<?>> streamServiceBeans() {
-        
-    	if(registeredServiceBeans.isEmpty()) {
 
-    		_CDI.streamAllBeans()
-    		.filter(this::isBeanToBeAcceptedForRegistration)
-    		.forEach(bean->{
-    			registeredServiceBeans.add(bean);
-    		});
-            
-        }
-        
-        return registeredServiceBeans.stream();
-    }        
-    
-    // -- HELPER - LOOKUP SERVICE(S)
+    private BeanAdapter beanToAdapterIfToBeAcceptedForRegistration(Bean<?> bean) {
 
-    private <T> Set<Object> locateMatchingServices(final Class<T> serviceClass) {
-        final Set<Object> matchingServices = streamServices()
-                .filter(isOfType(serviceClass))
-                .collect(Collectors.toSet());
-        return matchingServices;
-    }
-    
-    // -- LAZY INIT
+        val scope = bean.getScope().getSimpleName(); // also works for produced beans
+        val lifecycleContext = LifecycleContext.valueOf(scope);
 
-    private Map<Class<?>, Object> initServiceByConcreteType(){
-        final Map<Class<?>, Object> map = _Maps.newHashMap();
-        for (Object service : registeredServiceInstances) {
-            final Class<?> concreteType = service.getClass();
-            map.put(concreteType, service);
-        }
-        return map;
-    }
-    
-    // -- REFLECTIVE PREDICATES
+        // getBeanClass() does not work for produced beans as intended here! 
+        // (we do get the producer's class instead)
+        val type = bean.getBeanClass(); 
+        val isDomainService = isDomainServiceType(type);
 
-    private static final Predicate<Object> isOfType(final Class<?> cls) {
-        return obj->cls.isAssignableFrom(obj.getClass());
+        val id = ServiceUtil.idOfBean(bean);
+        val beanAdapter = BeanAdapter.of(id, lifecycleContext, bean, isDomainService);
+        return beanAdapter;
     }
-    
+
 }

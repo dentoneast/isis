@@ -21,6 +21,19 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
+import com.google.common.base.Throwables;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.Page;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.request.cycle.RequestCycle;
+import org.apache.wicket.util.visit.IVisit;
+import org.apache.wicket.util.visit.IVisitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.isis.applib.RecoverableException;
 import org.apache.isis.applib.services.bookmark.Bookmark;
 import org.apache.isis.applib.services.command.Command;
@@ -56,18 +69,6 @@ import org.apache.isis.viewer.wicket.model.models.ScalarModel;
 import org.apache.isis.viewer.wicket.ui.components.scalars.isisapplib.IsisBlobOrClobPanelAbstract;
 import org.apache.isis.viewer.wicket.ui.errors.JGrowlUtil;
 import org.apache.isis.viewer.wicket.ui.pages.entity.EntityPage;
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.Page;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.request.cycle.RequestCycle;
-import org.apache.wicket.util.visit.IVisit;
-import org.apache.wicket.util.visit.IVisitor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Throwables;
 
 import lombok.val;
 
@@ -484,7 +485,8 @@ implements FormExecutor {
         // see if the exception is recognized as being a non-serious error
         // (nb: similar code in WebRequestCycleForIsis, as a fallback)
         final Stream<ExceptionRecognizer> exceptionRecognizers = getServiceRegistry()
-                .streamServices(ExceptionRecognizer.class);
+                .getInstance(ExceptionRecognizer.class)
+                .stream();
         String recognizedErrorIfAny = new ExceptionRecognizerComposite(exceptionRecognizers).recognize(ex);
         if (recognizedErrorIfAny != null) {
 

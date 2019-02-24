@@ -25,9 +25,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import javax.annotation.Priority;
 import javax.inject.Inject;
@@ -41,11 +39,10 @@ import org.apache.isis.applib.services.wrapper.WrapperFactory;
 import org.apache.isis.applib.tree.TreeState;
 import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.collections._Lists;
-import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.collections._Sets;
+import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.memento._Mementos.SerializingAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
-import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.Oid.Factory;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
@@ -55,6 +52,8 @@ import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
+
+import lombok.val;
 
 /**
  * This service enables a serializable 'bookmark' to be created for an entity.
@@ -96,11 +95,24 @@ public class BookmarkServiceInternalDefault implements BookmarkService, Serializ
         if(bookmark == null) {
             return null;
         }
-        final String objectType = bookmark.getObjectType();
-        final Object service = lookupService(objectType);
-        if(service != null) {
-            return service;
+        final String objectClassName = bookmark.getObjectType();
+        
+        try {
+            val objectClass = _Context.loadClass(objectClassName);
+            val serviceObject = serviceRegistry.lookupService(objectClass);
+            if(serviceObject.isPresent()) {
+                return serviceObject.get();
+            }
+        } catch (Exception e) {
+            // ignore, fall through
         }
+        
+        
+//        final Object service = lookupService(objectClassName);
+//        if(service != null) {
+//            return service;
+//        }
+        
         return lookupInternal(bookmark, fieldResetPolicy);
     }
 
@@ -144,23 +156,23 @@ public class BookmarkServiceInternalDefault implements BookmarkService, Serializ
         return new Bookmark(objectType, identifier);
     }
 
-    private Map<String,Object> servicesByClassName;
-    private Object lookupService(final String className) {
-        cacheServicesByClassNameIfNecessary();
-        return servicesByClassName.get(className);
-    }
-
-    private void cacheServicesByClassNameIfNecessary() {
-        if (servicesByClassName == null) {
-            final Map<String,Object> servicesByClassName = _Maps.newHashMap();
-            final Stream<Object> registeredServices = serviceRegistry.streamServices();
-            registeredServices.forEach(registeredService->{
-                final String serviceClassName = registeredService.getClass().getName();
-                servicesByClassName.put(serviceClassName, registeredService);
-            });
-            this.servicesByClassName = servicesByClassName;
-        }
-    }
+//    private Map<String,Object> servicesByClassName;
+//    private Object lookupService(final String className) {
+//        cacheServicesByClassNameIfNecessary();
+//        return servicesByClassName.get(className);
+//    }
+//
+//    private void cacheServicesByClassNameIfNecessary() {
+//        if (servicesByClassName == null) {
+//            final Map<String,Object> servicesByClassName = _Maps.newHashMap();
+//            final Stream<Object> registeredServices = serviceRegistry.streamServices();
+//            registeredServices.forEach(registeredService->{
+//                final String serviceClassName = registeredService.getClass().getName();
+//                servicesByClassName.put(serviceClassName, registeredService);
+//            });
+//            this.servicesByClassName = servicesByClassName;
+//        }
+//    }
 
     // -- SERIALIZING ADAPTER IMPLEMENTATION
 
