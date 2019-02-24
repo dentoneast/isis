@@ -81,6 +81,9 @@ public interface ServiceRegistry {
         .filter(beanAdapter->beanAdapter.isCandidateFor(requiredType));
     }
     
+    /**
+     * Returns all bean adapters that have been registered.
+     */
     public Stream<BeanAdapter> streamRegisteredBeans();
     
     /**
@@ -116,13 +119,16 @@ public interface ServiceRegistry {
                 new NoSuchElementException("Could not locate service of type '" + serviceClass + "'"));
     }
     
+    @Deprecated //TODO [2033] as long as services are wrapped into ObjectAdapters that require a 
+    // pojo, this is still required
     Stream<Object> streamServices();
     
     /**
      * @param cls
      * @return whether the exact type is registered as service
      */
-    @Deprecated
+    @Deprecated //TODO [2033] marked deprecated, because this should not be required by the 
+    // framework at all, its also hard to implement correctly
     boolean isRegisteredBean(Class<?> cls);
     
     /**

@@ -44,41 +44,6 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
     private final Set<BeanAdapter> registeredBeans = _Sets.newHashSet();
     private final Set<Object> serviceCache = _Sets.newHashSet();
 
-    //    @Override 
-    //    public Stream<Object> streamServices() {
-    //        
-    //        if(registeredServiceInstances.isEmpty()) {
-    //         
-    //            registeredBeans.stream()
-    //            .forEach(beanAdapter->{
-    //                
-    //            	val scope = bean.getScope().getSimpleName();
-    //                val type = bean.getBeanClass();
-    //                if("RequestScoped".equals(scope)) {
-    //                    log.info("skipping registering {}-scoped service {}", scope, type);
-    //                    return;
-    //                }
-    //                
-    //                Optional<?> managedObject = 
-    //                        _CDI.getManagedBean(type, bean.getQualifiers());
-    //                
-    //                if(managedObject.isPresent()) {
-    //                    registeredServiceInstances.add(managedObject.get());
-    //                    
-    //                    log.info("registering as a {}-scoped service {}", scope, managedObject.get());
-    //                    
-    //                } else {
-    //                    
-    //                    log.warn("failed to register bean {}-scoped as a service {}", scope, bean);
-    //                    
-    //                }
-    //            });
-    //        }
-    //        
-    //        return registeredServiceInstances.stream();
-    //    }
-
-
     @Override
     public boolean isDomainServiceType(Class<?> cls) {
         if(cls.isAnnotationPresent(DomainService.class)) {
