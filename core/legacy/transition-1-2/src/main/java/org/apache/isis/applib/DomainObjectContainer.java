@@ -18,14 +18,13 @@
  */
 package org.apache.isis.applib;
 
+import static org.apache.isis.commons.internal.collections._Lists.lastElementIfAny;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-
-import com.google.common.base.Predicate;
 
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.NatureOfService;
@@ -47,7 +46,7 @@ import org.apache.isis.applib.services.xactn.TransactionService;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 
-import static org.apache.isis.commons.internal.collections._Lists.lastElementIfAny;
+import com.google.common.base.Predicate;
 
 @DomainService(nature=NatureOfService.DOMAIN)
 @Deprecated
@@ -277,8 +276,7 @@ public class DomainObjectContainer {
     @Deprecated
     @Programmatic
     public <T> Iterable<T> lookupServices(Class<T> service){
-    	return serviceRegistry.streamServices(service)
-    	        .collect(Collectors.toList());	
+    	return serviceRegistry.getInstance(service);
     }
 
     /**
