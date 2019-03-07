@@ -83,6 +83,12 @@
 			<scope>compile</scope>
 		</dependency>
 		
+		<dependency>
+			<groupId>org.apache.isis.core</groupId>
+			<artifactId>isis-core-plugins-jdo-common</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		
 		
 		<!-- TEST DEPENDENCY -->
 		

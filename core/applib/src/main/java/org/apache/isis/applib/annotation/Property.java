@@ -25,8 +25,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.jdo.annotations.NotPersistent;
-
 import org.apache.isis.applib.conmap.ContentMappingServiceForCommandDto;
 import org.apache.isis.applib.conmap.ContentMappingServiceForCommandsDto;
 import org.apache.isis.applib.events.domain.PropertyDomainEvent;

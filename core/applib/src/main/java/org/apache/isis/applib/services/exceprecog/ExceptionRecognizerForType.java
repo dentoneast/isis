@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import javax.jdo.JDODataStoreException;
-
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 
 /**
@@ -67,16 +65,17 @@ public class ExceptionRecognizerForType extends ExceptionRecognizerAbstract {
                     if(throwableMessage != null && throwableMessage.contains(message)) {
                         return false;
                     }
-                    if(throwable instanceof JDODataStoreException) {
-                        final JDODataStoreException jdoDataStoreException = (JDODataStoreException) throwable;
-                        final Throwable[] nestedExceptions = jdoDataStoreException.getNestedExceptions();
-                        for (Throwable nestedException : nestedExceptions) {
-                            final String nestedThrowableMessage = nestedException.getMessage();
-                            if(nestedThrowableMessage != null && nestedThrowableMessage.contains(message)) {
-                                return false;
-                            }
-                        }
-                    }
+//FIXME [2033] removed here, should be in 'jdo-common'                    
+//                    if(throwable instanceof JDODataStoreException) {
+//                        final JDODataStoreException jdoDataStoreException = (JDODataStoreException) throwable;
+//                        final Throwable[] nestedExceptions = jdoDataStoreException.getNestedExceptions();
+//                        for (Throwable nestedException : nestedExceptions) {
+//                            final String nestedThrowableMessage = nestedException.getMessage();
+//                            if(nestedThrowableMessage != null && nestedThrowableMessage.contains(message)) {
+//                                return false;
+//                            }
+//                        }
+//                    }
                 }
             }
             return true;
