@@ -32,9 +32,6 @@ import java.util.stream.Stream;
 
 import javax.enterprise.inject.Vetoed;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.Identifier;
 import org.apache.isis.applib.annotation.Where;
@@ -63,6 +60,7 @@ import org.apache.isis.core.metamodel.facets.all.named.NamedFacet;
 import org.apache.isis.core.metamodel.facets.collections.modify.CollectionFacet;
 import org.apache.isis.core.metamodel.facets.members.cssclass.CssClassFacet;
 import org.apache.isis.core.metamodel.facets.object.encodeable.EncodableFacet;
+import org.apache.isis.core.metamodel.facets.object.entity.EntityFacet;
 import org.apache.isis.core.metamodel.facets.object.icon.IconFacet;
 import org.apache.isis.core.metamodel.facets.object.immutable.ImmutableFacet;
 import org.apache.isis.core.metamodel.facets.object.mixin.MixinFacet;
@@ -95,7 +93,8 @@ import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.facetprocessor.FacetProcessor;
 import org.apache.isis.core.metamodel.specloader.postprocessor.PostProcessor;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
-import org.apache.isis.objectstore.jdo.metamodel.facets.object.persistencecapable.JdoPersistenceCapableFacet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implements ObjectSpecification {
 
@@ -1231,9 +1230,12 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
         if(containsFacet(CollectionFacet.class)) {
             return ManagedObjectSort.COLLECTION;
         }
-        if(containsFacet(JdoPersistenceCapableFacet.class)) {
+        if(containsFacet(EntityFacet.class)) {
             return ManagedObjectSort.ENTITY;
         }
+//        if(containsFacet(JdoPersistenceCapableFacet.class)) {
+//            return ManagedObjectSort.ENTITY;
+//        }
 //        val correspondingClass = getCorrespondingClass();
 //        if(JdoMetamodelUtil.isPersistenceEnhanced(correspondingClass)) {
 //            return ManagedObjectSort.ENTITY;

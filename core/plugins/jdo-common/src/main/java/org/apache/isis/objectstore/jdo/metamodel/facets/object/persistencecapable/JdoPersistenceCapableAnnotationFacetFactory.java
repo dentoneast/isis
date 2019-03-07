@@ -30,6 +30,9 @@ import org.apache.isis.core.metamodel.facets.Annotations;
 import org.apache.isis.core.metamodel.facets.FacetFactoryAbstract;
 import org.apache.isis.core.metamodel.facets.ObjectSpecIdFacetFactory;
 import org.apache.isis.core.metamodel.facets.object.domainobject.DomainObjectAnnotationFacetFactory;
+import org.apache.isis.core.metamodel.facets.object.entity.EntityFacet;
+
+import lombok.val;
 
 /**
  * Implements {@link ObjectSpecIdFacetFactory} only because is a prereq of {@link DomainObjectAnnotationFacetFactory}.
@@ -66,9 +69,17 @@ public class JdoPersistenceCapableAnnotationFacetFactory
 
         final IdentityType annotationIdentityType = annotation.identityType();
 
+        val facetHolder = processClassContext.getFacetHolder(); 
+        
         FacetUtil.addFacet(new JdoPersistenceCapableFacetAnnotation(
                 annotationSchemaAttribute,
-                annotationTableAttribute, annotationIdentityType, processClassContext.getFacetHolder()));
+                annotationTableAttribute, 
+                annotationIdentityType,
+                facetHolder
+                ));
+        
+        FacetUtil.addFacet(EntityFacet.create(facetHolder));
+        
         return;
     }
 
