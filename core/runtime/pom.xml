@@ -60,11 +60,12 @@
     <dependencies>
 	
 	<!-- JDO API (non transient, provided by plugin) -->
+	<!-- [2033] goal is to not depend on JDO any longer, meaning we want abstract away if possible -->
         <dependency>
             <groupId>javax.jdo</groupId>
             <artifactId>jdo-api</artifactId>
             <version>${jdo-api.version}</version>
-            <!-- provided by plugins -->
+            provided by plugins
             <scope>provided</scope>
         </dependency>
 	

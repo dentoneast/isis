@@ -56,6 +56,7 @@
     <dependencies>
     
         <!-- JDO API (non transient, provided by plugin) -->
+        <!-- [2033] only remaining usage is in Annotations to check for javax.jdo.annotations.Column.class  -->
         <dependency>
             <groupId>javax.jdo</groupId>
             <artifactId>jdo-api</artifactId>

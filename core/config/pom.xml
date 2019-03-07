@@ -66,6 +66,8 @@
         
         <!-- [2039] only to discover persistence capable classes, not required if every 
         	relevant entity is annotated with @DomainObject-->
+        <!-- [2033] as soon as we leave bean/type discovery to the CDI container, 
+        	we can intercept type scanning an register on the fly -->
 		<dependency>
         	<groupId>javax.jdo</groupId>
         	<artifactId>jdo-api</artifactId>
