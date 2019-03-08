@@ -2573,6 +2573,7 @@ ${license.additional-notes}
         <module>log4j</module>
         <module>metamodel</module>
         <module>runtime</module>
+        <module>runtime-mod-1</module>
         <module>runtime-extensions</module>
         <module>webserver</module>
 
