@@ -58,7 +58,6 @@ import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.Contributed;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAction;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -391,17 +390,9 @@ public class MenuBarsServiceBS3 implements MenuBarsService {
     }
 
 
-    @Inject
-    IsisSessionFactory isisSessionFactory;
-
-    @Inject
-    MenuBarsLoaderService menuBarsLoaderService;
-
-    @javax.inject.Inject
-    MessageService messageService;
-
-    @javax.inject.Inject
-    JaxbService jaxbService;
+    @Inject MenuBarsLoaderService menuBarsLoaderService;
+    @Inject MessageService messageService;
+    @Inject JaxbService jaxbService;
 
 }
 

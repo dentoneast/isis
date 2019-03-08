@@ -31,6 +31,7 @@ import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.annotation.PublishingChangeKind;
 import org.apache.isis.applib.services.HasUniqueId;
 import org.apache.isis.applib.services.WithTransactionScope;
+import org.apache.isis.applib.services.xactn.Transaction;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.collections._Sets;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
@@ -38,7 +39,6 @@ import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.Contributed;
 import org.apache.isis.core.metamodel.spec.feature.ObjectAssociation;
-import org.apache.isis.core.runtime.system.transaction.IsisTransaction;
 
 @RequestScoped
 public class ChangedObjectsServiceInternal implements WithTransactionScope {
@@ -95,7 +95,7 @@ public class ChangedObjectsServiceInternal implements WithTransactionScope {
                 .streamAssociations(Contributed.EXCLUDED)
                 .filter(ObjectAssociation.Predicates.PROPERTIES);
         
-        enlist(adapter, properties, aap->PreAndPostValues.pre(IsisTransaction.Placeholder.NEW));
+        enlist(adapter, properties, aap->PreAndPostValues.pre(Transaction.Placeholder.NEW));
     }
 
 
@@ -217,7 +217,7 @@ public class ChangedObjectsServiceInternal implements WithTransactionScope {
                     if(adapter.isDestroyed()) {
                         // don't touch the object!
                         // JDO, for example, will complain otherwise...
-                        papv.setPost(IsisTransaction.Placeholder.DELETED);
+                        papv.setPost(Transaction.Placeholder.DELETED);
                     } else {
                         papv.setPost(aap.getPropertyValue());
                     }

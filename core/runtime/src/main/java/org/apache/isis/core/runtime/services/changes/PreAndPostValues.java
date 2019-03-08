@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import org.apache.isis.core.runtime.system.transaction.IsisTransaction;
+import org.apache.isis.applib.services.xactn.Transaction;
 
 public class PreAndPostValues {
 
@@ -94,11 +94,13 @@ public class PreAndPostValues {
 
     public boolean shouldAudit() {
         // don't audit objects that were created and then immediately deleted within the same xactn
-        if (getPre() == IsisTransaction.Placeholder.NEW && getPost() == IsisTransaction.Placeholder.DELETED) {
+        if (getPre() == Transaction.Placeholder.NEW 
+        		&& getPost() == Transaction.Placeholder.DELETED) {
             return false;
         }
         // but do always audit objects that have just been created or deleted
-        if (getPre() == IsisTransaction.Placeholder.NEW || getPost() == IsisTransaction.Placeholder.DELETED) {
+        if (getPre() == Transaction.Placeholder.NEW 
+        		|| getPost() == Transaction.Placeholder.DELETED) {
             return true;
         }
         // else - for updated objects - audit only if the property value has changed

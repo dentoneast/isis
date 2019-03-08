@@ -19,7 +19,6 @@
 
 package org.apache.isis.applib.services.xactn;
 
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.HasUniqueId;
 
 /**
@@ -27,13 +26,26 @@ import org.apache.isis.applib.services.HasUniqueId;
  */
 public interface Transaction extends HasUniqueId {
 
+	public static enum Placeholder {
+        NEW("[NEW]"),
+        DELETED("[DELETED]")
+        ;
+        private final String str;
+        private Placeholder(String str) {
+            this.str = str;
+        }
+        @Override
+        public String toString() {
+            return str;
+        }
+    }
+	
 
     /**
      * The {@link HasUniqueId#getUniqueId()} is (as of 1.13.0) actually an identifier for the request/
      * interaction, and there can actually be multiple transactions within such a request/interaction.  The sequence
      * (0-based) is used to distinguish such.
      */
-    @Programmatic
     int getSequence();
 
     /**
@@ -48,10 +60,8 @@ public interface Transaction extends HasUniqueId {
      *     Equivalent to {@link TransactionService#flushTransaction()}.
      * </p>
      */
-    @Programmatic
     void flush();
 
-    @Programmatic
     TransactionState getTransactionState();
 
 }

@@ -25,15 +25,14 @@ import org.apache.isis.applib.RecoverableException;
 import org.apache.isis.applib.services.i18n.TranslatableString;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.message.MessageService;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-import org.apache.isis.core.security.authentication.MessageBroker;
+import org.apache.isis.core.runtime.system.session.IsisSession;
 
 @Singleton
 public class MessageServiceDefault implements MessageService {
 
     @Override
     public void informUser(final String message) {
-        getMessageBroker().addMessage(message);
+        IsisSession.messageBroker().ifPresent(broker->broker.addMessage(message));
     }
 
     @Override
@@ -55,7 +54,7 @@ public class MessageServiceDefault implements MessageService {
 
     @Override
     public void warnUser(final String message) {
-        getMessageBroker().addWarning(message);
+    	IsisSession.messageBroker().ifPresent(broker->broker.addWarning(message));
     }
 
     @Override
@@ -100,12 +99,7 @@ public class MessageServiceDefault implements MessageService {
     private static String context(final Class<?> contextClass, final String contextMethod) {
         return contextClass.getName()+"#"+contextMethod;
     }
-
-    private MessageBroker getMessageBroker() {
-        return isisSessionFactory.getCurrentSession().getAuthenticationSession().getMessageBroker();
-    }
-
-    @Inject IsisSessionFactory isisSessionFactory;
+    
     @Inject TranslationService translationService;
 
 }

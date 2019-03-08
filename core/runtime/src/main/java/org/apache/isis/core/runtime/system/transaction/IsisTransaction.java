@@ -60,19 +60,6 @@ import lombok.val;
  */
 public class IsisTransaction implements TransactionScopedComponent, Transaction {
 
-    public static class Placeholder {
-        public static Placeholder NEW = new Placeholder("[NEW]");
-        public static Placeholder DELETED = new Placeholder("[DELETED]");
-        private final String str;
-        public Placeholder(String str) {
-            this.str = str;
-        }
-        @Override
-        public String toString() {
-            return str;
-        }
-    }
-
     public enum State {
         /**
          * Started, still in progress.

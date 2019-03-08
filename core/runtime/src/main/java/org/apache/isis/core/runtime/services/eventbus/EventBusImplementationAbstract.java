@@ -16,11 +16,13 @@
  */
 package org.apache.isis.core.runtime.services.eventbus;
 
+import java.util.Optional;
+
 import org.apache.isis.applib.events.domain.AbstractDomainEvent;
 import org.apache.isis.core.commons.exceptions.IsisApplicationException;
 import org.apache.isis.core.plugins.eventbus.EventBusPlugin;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
+import org.apache.isis.core.runtime.system.session.IsisSession;
+import org.apache.isis.core.runtime.system.transaction.IsisTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,14 +91,14 @@ public abstract class EventBusImplementationAbstract implements EventBusPlugin {
 
 
     private void abortTransaction(final Throwable exception) {
-        getTransactionManager().getCurrentTransaction().setAbortCause(new IsisApplicationException(exception));
+        getCurrentTransaction()
+        .ifPresent(tx->tx.setAbortCause(new IsisApplicationException(exception)));
     }
 
-    private IsisTransactionManager getTransactionManager() {
-        return isisSessionFactory.getCurrentSession().getPersistenceSession().getTransactionManager();
+    private Optional<IsisTransaction> getCurrentTransaction() {
+        return IsisSession.current()
+        		.map(IsisSession::getCurrentTransaction);
     }
-
-    @javax.inject.Inject
-    IsisSessionFactory isisSessionFactory;
+   
 
 }

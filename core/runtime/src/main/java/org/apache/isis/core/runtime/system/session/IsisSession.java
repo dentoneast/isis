@@ -30,12 +30,12 @@ import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.transaction.IsisTransaction;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
+import org.apache.isis.core.security.authentication.MessageBroker;
 
 import lombok.Getter;
 
 /**
- * Analogous to (and in essence a wrapper for) a JDO <code>PersistenceManager</code>;
- * holds the current set of components for a specific execution context (such as on a thread).
+ * Holds the current set of components for a specific execution context (such as on a thread).
  *
  * <p>
  * The <code>IsisContext</code> class is responsible for locating the current execution context.
@@ -78,6 +78,23 @@ public class IsisSession extends RuntimeContextBase {
 		return currentIfAny() != null;
 	}
 	
+	// -- SHORTCUTS
+	
+	public static Optional<AuthenticationSession> authenticationSession() {
+		return current()
+				.map(IsisSession::getAuthenticationSession);
+	}
+	
+	public static Optional<MessageBroker> messageBroker() {
+		return authenticationSession()
+				.map(AuthenticationSession::getMessageBroker);
+	}
+	
+	public static Optional<IsisTransactionManager> transactionManager() {
+		return current()
+				.map(IsisSession::getTransactionManager);
+	}
+	
 	// -- OPEN
     
     
@@ -97,7 +114,7 @@ public class IsisSession extends RuntimeContextBase {
         _Context.threadLocalCleanup();
     }
 
-    // -- transaction
+    // -- TRANSACTION
 
     /**
      * Convenience method that returns the {@link IsisTransaction} of the
