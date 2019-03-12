@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 
 import org.apache.isis.applib.events.domain.AbstractDomainEvent;
 import org.apache.isis.core.plugins.eventbus.EventBusPlugin;
-import org.apache.isis.core.runtime.services.eventbus.EventBusImplementationAbstract;
+import org.apache.isis.jdo.services.eventbus.EventBusImplementationAbstract;
 
 import com.google.common.eventbus.SubscriberExceptionContext;
 import com.google.common.eventbus.SubscriberExceptionHandler;

@@ -48,6 +48,12 @@
             </activation>
         
             <dependencies>
+		        <!-- TODO [2033] version should be managed -->
+				<dependency>
+		            <groupId>org.apache.isis.core</groupId>
+		            <artifactId>isis-core-runtime-services</artifactId>
+		            <version>2.0.0-M3-SNAPSHOT</version> 
+		        </dependency>
             	<dependency>
                     <groupId>org.apache.isis.core</groupId>
                     <artifactId>isis-core-runtime-extensions</artifactId>

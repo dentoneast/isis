@@ -25,9 +25,6 @@ import java.util.concurrent.CountDownLatch;
 
 import javax.enterprise.inject.Instance;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.WithTransactionScope;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
@@ -42,7 +39,8 @@ import org.apache.isis.core.metamodel.services.publishing.PublishingServiceInter
 import org.apache.isis.core.runtime.persistence.transaction.CreateObjectCommand;
 import org.apache.isis.core.runtime.persistence.transaction.DestroyObjectCommand;
 import org.apache.isis.core.runtime.persistence.transaction.PersistenceCommand;
-import org.apache.isis.core.runtime.services.auditing.AuditingServiceInternal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import lombok.val;
 

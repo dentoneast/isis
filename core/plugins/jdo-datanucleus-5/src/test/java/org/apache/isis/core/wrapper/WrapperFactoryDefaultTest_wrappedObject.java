@@ -19,17 +19,14 @@
 
 package org.apache.isis.core.wrapper;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
-import org.jmock.Expectations;
-import org.jmock.auto.Mock;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.command.CommandContext;
@@ -63,7 +60,6 @@ import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.specimpl.OneToOneAssociationDefault;
 import org.apache.isis.core.metamodel.specloader.specimpl.dflt.ObjectSpecificationDefault;
-import org.apache.isis.core.runtime.services.command.CommandDtoServiceInternalDefault;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 import org.apache.isis.core.security.authentication.standard.SimpleSession;
@@ -73,10 +69,12 @@ import org.apache.isis.progmodel.wrapper.dom.employees.Employee;
 import org.apache.isis.progmodel.wrapper.dom.employees.EmployeeRepository;
 import org.apache.isis.progmodel.wrapper.dom.employees.EmployeeRepositoryImpl;
 import org.apache.isis.schema.cmd.v1.CommandDto;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import org.jmock.Expectations;
+import org.jmock.auto.Mock;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class WrapperFactoryDefaultTest_wrappedObject {
 
@@ -189,7 +187,7 @@ public class WrapperFactoryDefaultTest_wrappedObject {
                 will(returnValue(mockCommand));
 
                 allowing(mockServicesInjector).lookupServiceElseFail(CommandDtoServiceInternal.class);
-                will(returnValue(new CommandDtoServiceInternalDefault()));
+                will(returnValue(mockCommandDtoServiceInternal));
 
                 allowing(mockServicesInjector).lookupServiceElseFail(AuthenticationSessionProvider.class);
                 will(returnValue(mockAuthenticationSessionProvider));

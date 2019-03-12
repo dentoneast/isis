@@ -175,6 +175,7 @@ public interface AppManifest {
                 "org.apache.isis.core.wrapper.WrapperFactoryDefault",
                 "org.apache.isis.core.metamodel.MetamodelModule",
                 "org.apache.isis.core.runtime.RuntimeModule",
+                "org.apache.isis.core.runtime.services.RuntimeServicesModule",
                 "org.apache.isis.jdo.JdoModule",
                 "org.apache.isis.viewer.restfulobjects.rendering.RendererContext"
                 

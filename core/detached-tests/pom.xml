@@ -54,6 +54,13 @@
 			<scope>test</scope>
 		</dependency>
         
+		<dependency>
+			<groupId>org.apache.isis.core</groupId>
+			<artifactId>isis-core-runtime-services</artifactId>
+			<version>${revision}</version>
+			<scope>test</scope>
+		</dependency>
+        
         <dependency>
 			<groupId>org.apache.isis.core</groupId>
 			<artifactId>isis-core-runtime-extensions</artifactId>

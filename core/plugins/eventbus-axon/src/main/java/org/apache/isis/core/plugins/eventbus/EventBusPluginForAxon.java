@@ -33,7 +33,7 @@ import org.axonframework.eventhandling.SimpleEventBus;
 
 import org.apache.isis.applib.events.domain.AbstractDomainEvent;
 import org.apache.isis.commons.internal.base._NullSafe;
-import org.apache.isis.core.runtime.services.eventbus.EventBusImplementationAbstract;
+import org.apache.isis.jdo.services.eventbus.EventBusImplementationAbstract;
 
 
 /**

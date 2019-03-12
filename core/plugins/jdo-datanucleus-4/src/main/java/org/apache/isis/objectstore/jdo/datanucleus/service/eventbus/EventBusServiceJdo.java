@@ -20,7 +20,7 @@ import javax.inject.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.isis.applib.annotation.Programmatic;
-import org.apache.isis.core.runtime.services.eventbus.EventBusServiceDefault;
+import org.apache.isis.jdo.services.eventbus.EventBusServiceBase;
 import org.apache.isis.objectstore.jdo.datanucleus.JDOStateManagerForIsis;
 import org.apache.isis.objectstore.jdo.datanucleus.JDOStateManagerForIsis.Hint;
 
@@ -41,7 +41,7 @@ import org.apache.isis.objectstore.jdo.datanucleus.JDOStateManagerForIsis.Hint;
  * that it is automatically registered and available for use; no further configuration is required.
  */
 @Singleton
-public class EventBusServiceJdo extends EventBusServiceDefault {
+public class EventBusServiceJdo extends EventBusServiceBase {
 
     /**
      * skip if called in any way by way of the {@link JDOStateManagerForIsis5}.

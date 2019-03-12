@@ -2575,6 +2575,7 @@ ${license.additional-notes}
         <module>runtime</module>
         <module>runtime-mod-1</module>
         <module>runtime-extensions</module>
+        <module>runtime-services</module>
         <module>webserver</module>
 
         <module>security</module>

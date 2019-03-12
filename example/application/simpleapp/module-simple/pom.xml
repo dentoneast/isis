@@ -145,12 +145,11 @@
             <artifactId>isis-core-plugins-jdo-datanucleus-5</artifactId>
         </dependency>
         
-
     	<dependency>
             <groupId>org.apache.isis.core</groupId>
             <artifactId>isis-core-plugins-jaxrs-resteasy-4</artifactId>
         </dependency>
-
+        
         <!-- TESTS -->
 
         <dependency>
