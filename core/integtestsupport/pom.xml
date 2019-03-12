@@ -103,6 +103,11 @@
 
         <dependency>
             <groupId>org.apache.isis.core</groupId>
+            <artifactId>isis-core-runtime-extensions</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.isis.core</groupId>
             <artifactId>isis-core-runtime-mod-1</artifactId>
             <version>${revision}</version>
         </dependency>
