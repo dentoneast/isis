@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
-import org.apache.isis.core.webapp.IsisSessionFilter;
 
 /**
  * Decouples the {@link IsisSessionFilter} from the mechanism of obtaining the

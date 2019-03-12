@@ -16,7 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.apache.isis.viewer.restfulobjects.server.authentication;
+package org.apache.isis.core.webapp.auth;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -31,7 +31,6 @@ import org.apache.isis.commons.internal.base._Bytes;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.core.security.authentication.AuthenticationRequestPassword;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
-import org.apache.isis.core.webapp.auth.AuthenticationSessionStrategyAbstract;
 
 /**
  * Implements the HTTP Basic Auth protocol; does not bind the

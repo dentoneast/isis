@@ -16,7 +16,7 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.apache.isis.viewer.restfulobjects.server.authentication;
+package org.apache.isis.core.webapp.auth;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +29,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.standard.SimpleSession;
-import org.apache.isis.core.webapp.auth.AuthenticationSessionStrategyAbstract;
 
 /**
  * Implements a home-grown protocol, whereby the user id and roles are passed

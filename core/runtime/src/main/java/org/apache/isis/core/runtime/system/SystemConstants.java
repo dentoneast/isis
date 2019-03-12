@@ -51,6 +51,11 @@ public final class SystemConstants {
     // -- SERVICE ID SUPPORT
 
     public static final String SERVICE_IDENTIFIER = "1";
+    
+    /**
+     * Somewhat hacky, add this to the query
+     */
+    public static final String ISIS_SESSION_FILTER_QUERY_STRING_FORCE_LOGOUT = "__isis_force_logout";
 
     private SystemConstants() {
     }

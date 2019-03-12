@@ -43,6 +43,7 @@ import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.commons.factory.InstanceUtil;
 import org.apache.isis.core.commons.lang.StringExtensions;
+import org.apache.isis.core.runtime.system.SystemConstants;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -65,7 +66,7 @@ import lombok.val;
 //        initParams={
 //        @WebInitParam(
 //                name="authenticationSessionStrategy", 
-//                value="org.apache.isis.viewer.restfulobjects.server.authentication.AuthenticationSessionStrategyBasicAuth"), // authentication required for REST
+//                value="org.apache.isis.core.webapp.auth.AuthenticationSessionStrategyBasicAuth"), // authentication required for REST
 //        @WebInitParam(
 //                name="whenNoSession", // what to do if no session was found ...
 //                value="auto"), // ... 401 and a basic authentication challenge if request originates from web browser
@@ -146,11 +147,6 @@ public class IsisSessionFilter implements Filter {
     private static final Function<String, Pattern> STRING_TO_PATTERN = (final String input) -> {
             return Pattern.compile(".*\\." + input);
     };
-
-    /**
-     * Somewhat hacky, add this to the query
-     */
-    public static final String QUERY_STRING_FORCE_LOGOUT = "__isis_force_logout";
 
     private List<String> passThruList = Collections.emptyList();
 
@@ -340,7 +336,8 @@ public class IsisSessionFilter implements Filter {
         final IsisSessionFactory sessionFactory = isisSessionFactoryFrom(httpServletRequest);
         try {
             final String queryString = httpServletRequest.getQueryString();
-            if (queryString != null && queryString.contains(QUERY_STRING_FORCE_LOGOUT)) {
+            if (queryString != null && queryString
+            		.contains(SystemConstants.ISIS_SESSION_FILTER_QUERY_STRING_FORCE_LOGOUT)) {
 
                 authSessionStrategy.invalidate(httpServletRequest, httpServletResponse);
                 return;

@@ -32,6 +32,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 
 import org.apache.isis.core.webapp.IsisSessionFilter;
+import org.apache.isis.core.webapp.auth.AuthenticationSessionStrategyBasicAuth;
 
 /**
  * Package private mixin for WebModule implementing WebModule.
@@ -90,8 +91,8 @@ final class WebModule_RestEasy implements WebModule  {
             filter.addMappingForServletNames(null, true, RESTEASY_DISPATCHER); 
             
             filter.setInitParameter(
-                    "authenticationSessionStrategy", 
-                    "org.apache.isis.viewer.restfulobjects.server.authentication.AuthenticationSessionStrategyBasicAuth");
+                    "authenticationSessionStrategy",
+                    AuthenticationSessionStrategyBasicAuth.class.getName());
             filter.setInitParameter(
                     "whenNoSession", // what to do if no session was found ...
                     "auto"); // ... 401 and a basic authentication challenge if request originates from web browser
