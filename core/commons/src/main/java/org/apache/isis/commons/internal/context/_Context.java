@@ -24,15 +24,16 @@ import static org.apache.isis.commons.internal.base._With.ifPresentElseGet;
 import static org.apache.isis.commons.internal.base._With.ifPresentElseThrow;
 import static org.apache.isis.commons.internal.base._With.requires;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.collections._Lists;
+import org.apache.isis.core.commons.collections.Bin;
 import org.apache.isis.core.plugins.environment.IsisSystemEnvironment;
 import org.apache.isis.core.plugins.environment.IsisSystemEnvironmentPlugin;
 
@@ -59,8 +60,9 @@ public final class _Context {
      * the first one wins.<br/>
      * If synchronization is required it should happen elsewhere, not here!<br/>
      */
-    private final static Map<String, Object> singletonMap = new HashMap<>();
+    private final static Map<Class<?>, Object> singletonMap = new ConcurrentHashMap<>();
     
+    private final static Object $LOCK = new Object[0];
     
 
     /**
@@ -75,11 +77,11 @@ public final class _Context {
         requires(singleton, "singleton");
 
         // let writes to the map be atomic
-        synchronized (singletonMap) {
-            if(singletonMap.containsKey(toKey(type)))
+        synchronized ($LOCK) {
+            if(singletonMap.containsKey(type))
                 throw new IllegalStateException(
                         "there is already a singleton of type '"+type+"' on this context.");
-            singletonMap.put(toKey(type), singleton);
+            singletonMap.put(type, singleton);
         }
     }
 
@@ -96,12 +98,12 @@ public final class _Context {
         requires(singleton, "singleton");
 
         // let writes to the map be atomic
-        synchronized (singletonMap) {
-            if(singletonMap.containsKey(toKey(type))) {
+        synchronized ($LOCK) {
+            if(singletonMap.containsKey(type)) {
                 if(!override)
                     return false;
             }
-            singletonMap.put(toKey(type), singleton);
+            singletonMap.put(type, singleton);
             return true;
         }
     }
@@ -113,7 +115,7 @@ public final class _Context {
      * @return null, if there is no such instance
      */
     public static <T> T getIfAny(Class<? super T> type) {
-        return _Casts.uncheckedCast(singletonMap.get(toKey(type)));
+        return _Casts.uncheckedCast(singletonMap.get(type));
     }
 
     /**
@@ -127,20 +129,27 @@ public final class _Context {
         requires(type, "type");
         requires(factory, "factory");
 
-        final String key = toKey(type);
+        final T existingIfAny = _Casts.uncheckedCast(singletonMap.get(type));
+        if(existingIfAny!=null) {
+            return existingIfAny;
+        }
+        
+        // Note: we don't want to to this inside the synchronized block
+        final T t = factory.apply(type);
         
         // let writes to the map be atomic
-        synchronized (singletonMap) {
+        synchronized ($LOCK) {
             
             // Note: cannot just use 'singletonMap.computeIfAbsent(toKey(type), __->factory.apply(type));'
             // here because it does not allow for modification of singletonMap inside the factory call
+        	// Also we do need a second check for existing key, since it might have been changed by another
+        	// thread since.
+        	final T existingIfAny2 = _Casts.uncheckedCast(singletonMap.get(type));
+            if(existingIfAny2!=null) {
+                return existingIfAny2;
+            }        	
             
-            final T existingIfAny =  _Casts.uncheckedCast(singletonMap.get(key));
-            if(existingIfAny!=null) {
-                return existingIfAny;
-            }
-            final T t = factory.apply(type);
-            singletonMap.put(key, t);
+            singletonMap.put(type, t);
             return t;
         }
     }
@@ -207,8 +216,8 @@ public final class _Context {
     
     public static void remove(Class<?> type) {
         // let writes to the map be atomic
-        synchronized (singletonMap) {
-            singletonMap.remove(toKey(type));
+        synchronized ($LOCK) {
+            singletonMap.remove(type);
         }
         tryClose(type);
     }
@@ -222,7 +231,7 @@ public final class _Context {
     public static void clear() {
 
         // let writes to the map be atomic
-        synchronized (singletonMap) {
+        synchronized ($LOCK) {
 
             closeAnyClosables(_Lists.newArrayList(singletonMap.values()));
 
@@ -239,31 +248,45 @@ public final class _Context {
 
     /**
      * Puts {@code payload} onto the current thread's map.
-     * @param type
+     * @param type - the key into the thread-local store
      * @param payload
      */
 	public static <T> void threadLocalPut(Class<? super T> type, T payload) {
-		_Context_ThreadLocal.put(toKey(type), payload);
+		_Context_ThreadLocal.put(type, payload);
 	}
-	
-	/**
-	 * Puts {@code payload} onto the current thread's map. The provided {@code onCleanup} is called whenever
-	 * {@code threadLocalCleanup()} is called.  
-	 * @param type
-	 * @param payload
-	 * @param onCleanup
-	 */
-	public static <T> void threadLocalPut(Class<? super T> type, T payload, Runnable onCleanup) {
-		_Context_ThreadLocal.put(toKey(type), payload, onCleanup);
-	}
+
+//TODO [2033] cleanup comments	
+//	/**
+//	 * Puts {@code payload} onto the current thread's map. The provided {@code onCleanup} is called whenever
+//	 * {@code threadLocalCleanup()} is called.  
+//	 * @param type
+//	 * @param payload
+//	 * @param onCleanup
+//	 */
+//	public static <T> void threadLocalPut(Class<? super T> type, T payload, Runnable onCleanup) {
+//		_Context_ThreadLocal.put(type, payload, onCleanup);
+//	}
+
     
     /**
-     * Looks up current thread's value as previously stored with {@link _Context#threadLocalPut(Class, Object)}.
-     * @param type
+     * Looks up current thread's values for any instances that match the given type, as previously stored 
+     * with {@link _Context#threadLocalPut(Class, Object)}.
+     * @param type - the key into the thread-local store
      * @return
      */
-    public static <T> T threadLocalGetIfAny(Class<? super T> type) {
-		return _Casts.uncheckedCast(_Context_ThreadLocal.get(toKey(type)));
+	public static <T> Bin<T> threadLocalGet(Class<? super T> type) {
+		return _Context_ThreadLocal.get(type);
+	}
+	
+    /**
+     * Looks up current thread's values for any instances that match the given type, as previously stored 
+     * with {@link _Context#threadLocalPut(Class, Object)}.
+     * @param type - the key into the thread-local store
+     * @param requiredType - the required type of the elements in the returned bin
+     * @return
+     */
+	public static <T> Bin<T> threadLocalSelect(Class<? super T> type, Class<? super T> requiredType) {
+		return _Context_ThreadLocal.select(type, requiredType);
 	}
 
 	/**
@@ -296,8 +319,8 @@ public final class _Context {
         final boolean alreadyRegistered = _Context.getIfAny(ClassLoader.class)!=null;
         if(!alreadyRegistered || override) {
             // let writes to the map be atomic
-            synchronized (singletonMap) {
-                singletonMap.put(toKey(ClassLoader.class), requires(classLoader, "classLoader"));
+            synchronized ($LOCK) {
+                singletonMap.put(ClassLoader.class, requires(classLoader, "classLoader"));
             }
         }
     }
@@ -345,10 +368,6 @@ public final class _Context {
     }
 
     // -- HELPER
-
-    private static String toKey(Class<?> type) {
-        return type.getName();
-    }
     
     private static void tryClose(Object singleton) {
         if(singleton==null) {
@@ -362,6 +381,8 @@ public final class _Context {
             }
         }
     }
+
+
 
 	
 

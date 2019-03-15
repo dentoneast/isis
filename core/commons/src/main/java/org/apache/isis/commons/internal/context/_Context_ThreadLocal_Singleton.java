@@ -25,8 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.isis.commons.internal.base._Casts;
-import org.apache.isis.core.commons.collections.Bin;
 
+import lombok.Value;
 import lombok.val;
 
 /**
@@ -41,71 +41,57 @@ import lombok.val;
  * </p>
  * @since 2.0.0-M3
  */
-final class _Context_ThreadLocal {
+@Deprecated //TODO [2033] superseded by _Context_ThreadLocal 
+final class _Context_ThreadLocal_Singleton {
 
-	//TODO [2033] cleanup comments ...
-	
     // -- MIXINS
     
-	static <T> void put(Class<? super T> type, T variant) {
+	static <T> void put(Class<? super T> type, T payload) {
 		requires(type, "type");
-    	requires(variant, "variant");
-    	THREAD_LOCAL_MAP.get()
-    	.compute(type, (k, v) -> v == null 
-    		? Bin.<T>ofSingleton(variant)
-    				: Bin.<T>concat(_Casts.uncheckedCast(v), variant));
+    	requires(payload, "payload");
+    	THREAD_LOCAL_MAP.get().put(type, Payload.of(payload, null));
     }
 	
-//    static <T> void put(Class<? super T> type, Object payload, Runnable onCleanup) {
-//    	requires(type, "type");
-//    	requires(payload, "payload");
-//    	requires(onCleanup, "onCleanup");
-//    	THREAD_LOCAL_MAP.get().put(type, Payload.of(payload, onCleanup));
-//    }
-	
-	static <T> Bin<T> select(Class<? super T> type, Class<? super T> instanceOf) {
-		val bin = _Context_ThreadLocal.<T>get(type);
-		return bin.filter(t -> isInstanceOf(t, instanceOf));
-	}
-	
-	private static boolean isInstanceOf(Object obj, Class<?> type) {
-		return type.isAssignableFrom(obj.getClass());
-	}
+    static <T> void put(Class<? super T> type, Object payload, Runnable onCleanup) {
+    	requires(type, "type");
+    	requires(payload, "payload");
+    	requires(onCleanup, "onCleanup");
+    	THREAD_LOCAL_MAP.get().put(type, Payload.of(payload, onCleanup));
+    }
     
-    static <T> Bin<T> get(Class<? super T> type) {
-    	val bin = THREAD_LOCAL_MAP.get().get(type);
-    	if(bin!=null) {
-    		return _Casts.uncheckedCast(bin);
+    static <T> T get(Class<? super T> type) {
+    	val payload = THREAD_LOCAL_MAP.get().get(type);
+    	if(payload!=null) {
+    		return _Casts.uncheckedCast(payload.pojo);
     	}
-    	return Bin.empty();
+    	return null;
     }
     
     static void cleanupThread() {
-//    	THREAD_LOCAL_MAP.get().forEach((key, payload)->payload.cleanUp());
+    	THREAD_LOCAL_MAP.get().forEach((key, payload)->payload.cleanUp());
     	THREAD_LOCAL_MAP.remove();
     }
     
     // -- HELPER
     
-    private _Context_ThreadLocal(){}
+    private _Context_ThreadLocal_Singleton(){}
+    
+    @Value(staticConstructor="of")
+    private final static class Payload {
+		final Object pojo;
+    	final Runnable onCleanup;
+    	void cleanUp() {
+			if(onCleanup!=null) {
+				onCleanup.run();
+			}
+		}
+    }
 
 	/**
 	 * Inheritable... allows to have concurrent computations utilizing the ForkJoinPool.
 	 */
-    private final static ThreadLocal<Map<Class<?>, Bin<?>>> THREAD_LOCAL_MAP = 
+    private final static ThreadLocal<Map<Class<?>, Payload>> THREAD_LOCAL_MAP = 
     		InheritableThreadLocal.withInitial(HashMap::new);
-
-
-//  @Value(staticConstructor="of")
-//  private final static class Payload<T> {
-//		final Instance<T> instance;
-//  	final Runnable onCleanup;
-//  	void cleanUp() {
-//			if(onCleanup!=null) {
-//				onCleanup.run();
-//			}
-//		}
-//  }
 
 
     
