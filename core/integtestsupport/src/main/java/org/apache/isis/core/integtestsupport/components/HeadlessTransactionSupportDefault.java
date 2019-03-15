@@ -31,6 +31,7 @@ import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.runtime.system.transaction.IsisTransaction;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.runtime.system.transaction.IsisTransaction.State;
+import org.apache.isis.jdo.persistence.PersistenceSessionJdo;
 
 @DomainService(nature=NatureOfService.DOMAIN)
 public class HeadlessTransactionSupportDefault implements HeadlessTransactionSupport {
@@ -167,7 +168,7 @@ public class HeadlessTransactionSupportDefault implements HeadlessTransactionSup
     }
 
     private PersistenceSession getPersistenceSession() {
-        return isisSessionFactory().getCurrentSession().getPersistenceSession();
+        return PersistenceSessionJdo.current(); //FIXME [2033] too narrow
     }
 
     private IsisSessionFactory isisSessionFactory() {

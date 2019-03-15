@@ -21,7 +21,9 @@ import java.util.Map;
 
 import org.apache.isis.applib.query.Query;
 import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.core.commons.collections.Bin;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.oid.Oid;
 import org.apache.isis.core.metamodel.adapter.oid.RootOid;
@@ -47,10 +49,8 @@ extends TransactionalResource { //TODO [2033] remove this interface
     
     void open();
     void close();
-    
-    default boolean flush() {
-        return getTransactionManager().flushTransaction();
-    }
+    void flush();
+        
 
     /**
      * Forces a reload (refresh in JDO terminology) of the domain object
@@ -95,50 +95,6 @@ extends TransactionalResource { //TODO [2033] remove this interface
     /**@since 2.0.0-M2*/
     Map<RootOid, Object> fetchPersistentPojos(List<RootOid> rootOids);
 
-
-
-
-    // -------------------------------------------------------------------------------------------------
-    // -- JDO SPECIFIC
-    // -------------------------------------------------------------------------------------------------
-    
-    javax.jdo.PersistenceManager getJDOPersistenceManager();
-    /**
-     * Convenient equivalent to {@code getPersistenceManager()}.
-     * @return
-     */
-    default javax.jdo.PersistenceManager pm() {
-        return getJDOPersistenceManager();
-    }
-    
-    /**
-     * Not type safe. For type-safe queries use <br/><br/> {@code pm().newNamedQuery(cls, queryName)}
-     * @param cls
-     * @param queryName
-     * @return
-     */
-    default <T> javax.jdo.Query newJdoNamedQuery(Class<T> cls, String queryName){
-        return pm().newNamedQuery(cls, queryName);
-    }
-
-    /**
-     * Not type safe. For type-safe queries use <br/><br/> {@code pm().newQuery(cls, queryName)}
-     * @param cls
-     * @return
-     */
-    default <T> javax.jdo.Query newJdoQuery(Class<T> cls){
-        return pm().newQuery(cls);
-    }
-
-    /**
-     * Not type safe. For type-safe queries use <br/><br/> {@code pm().newQuery(cls, filter)}
-     * @param cls
-     * @param filter
-     * @return
-     */
-    default <T> javax.jdo.Query newJdoQuery(Class<T> cls, String filter){
-        return pm().newQuery(cls, filter);
-    }
     
     // -------------------------------------------------------------------------------------------------
     // -- API NOT STABLE YET - SUBJECT TO REFACTORING
@@ -191,7 +147,11 @@ extends TransactionalResource { //TODO [2033] remove this interface
     
     void execute(List<PersistenceCommand> persistenceCommandList);
     
-    long getLifecycleStartedAtSystemNanos();
+    // -- LOOKUP
+    
+	static <T extends PersistenceSession> Bin<T> current(Class<T> requiredType) {
+		return _Context.threadLocalSelect(PersistenceSession.class, requiredType);
+	}
 	
     
 

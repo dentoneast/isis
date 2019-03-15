@@ -56,7 +56,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j @Vetoed // has a producer
 public class PersistenceSessionFactory4 implements
-PersistenceSessionFactory, FixturesInstalledStateHolder {
+PersistenceSessionJdoFactory, FixturesInstalledStateHolder {
 
     public static final String JDO_OBJECTSTORE_CONFIG_PREFIX = "isis.persistor.datanucleus";  // specific to the JDO objectstore
     public static final String DATANUCLEUS_CONFIG_PREFIX = "isis.persistor.datanucleus.impl"; // reserved for datanucleus' own config props

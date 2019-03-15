@@ -20,9 +20,6 @@ package org.apache.isis.jdo.persistence.adaptermanager;
 
 import java.util.Objects;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.core.commons.ensure.Assert;
 import org.apache.isis.core.commons.ensure.IsisAssertException;
@@ -44,6 +41,9 @@ import org.apache.isis.core.runtime.system.context.managers.ContextManager;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
+import org.apache.isis.jdo.persistence.PersistenceSessionJdo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import lombok.val;
 
@@ -60,7 +60,7 @@ final public class ObjectAdapterContext {
             ServiceInjector servicesInjector, 
             AuthenticationSession authenticationSession, 
             SpecificationLoader specificationLoader, 
-            PersistenceSession persistenceSession) {
+            PersistenceSessionJdo persistenceSession) {
         final ObjectAdapterContext objectAdapterContext = 
                 new ObjectAdapterContext(servicesInjector, authenticationSession, 
                         specificationLoader, persistenceSession);
@@ -68,7 +68,7 @@ final public class ObjectAdapterContext {
         return objectAdapterContext;
     }
 
-    private final PersistenceSession persistenceSession; 
+    private final PersistenceSessionJdo persistenceSession; 
     private final SpecificationLoader specificationLoader;
     private final ObjectAdapterContext_ObjectAdapterProvider objectAdapterProviderMixin;
     private final ObjectAdapterContext_MementoSupport mementoSupportMixin;
@@ -85,7 +85,7 @@ final public class ObjectAdapterContext {
             ServiceInjector servicesInjector, 
             AuthenticationSession authenticationSession, 
             SpecificationLoader specificationLoader, 
-            PersistenceSession persistenceSession) {
+            PersistenceSessionJdo persistenceSession) {
         
         final MetaModelContext metaModelContext = MetaModelContext.current();
 
@@ -197,7 +197,7 @@ final public class ObjectAdapterContext {
     // -- ADAPTER MANAGER LEGACY
 
     public ObjectAdapter fetchPersistent(final Object pojo) {
-        if (persistenceSession.getJDOPersistenceManager().getObjectId(pojo) == null) {
+        if (persistenceSession.getPersistenceManagerJdo().getObjectId(pojo) == null) {
             return null;
         }
         final RootOid oid = createPersistentOrViewModelOid(pojo);

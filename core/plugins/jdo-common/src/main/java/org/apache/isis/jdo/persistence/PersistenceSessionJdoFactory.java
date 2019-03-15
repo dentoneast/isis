@@ -17,15 +17,14 @@
 package org.apache.isis.jdo.persistence;
 
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 
-public interface PersistenceSessionFactory {
+public interface PersistenceSessionJdoFactory {
 
     public void init();
     public boolean isInitialized();
     
-    public PersistenceSession createPersistenceSession(AuthenticationSession authenticationSession);
+    public PersistenceSessionJdo createPersistenceSession(AuthenticationSession authenticationSession);
     
     public void catalogNamedQueries(final SpecificationLoader specificationLoader);
 

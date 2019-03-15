@@ -12,6 +12,7 @@ public class SessionLifecycleEvent {
 		
 		sessionOpened,
 		sessionClosing,
+		//sessionFlushing,
 	}
 	
 	@Getter IsisSession session;

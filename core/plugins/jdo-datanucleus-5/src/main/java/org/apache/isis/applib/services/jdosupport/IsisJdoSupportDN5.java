@@ -48,8 +48,7 @@ import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.exceptions.persistence.ObjectPersistenceException;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import org.apache.isis.jdo.persistence.PersistenceSessionJdo;
 
 
 /**
@@ -67,14 +66,14 @@ public class IsisJdoSupportDN5 implements IsisJdoSupport_v3_2 {
     @Override
     public <T> T refresh(final T domainObject) {
         final ObjectAdapter adapter = objectAdapterProvider.adapterFor(domainObject);
-        getPersistenceSession().refreshRoot(adapter); //TODO [2033] we can do this without resorting to an adapter
+        getPersistenceSessionJdo().refreshRoot(adapter); //TODO [2033] we can do this without resorting to an adapter
         return domainObject;
     }
 
     @Programmatic
     @Override
     public void ensureLoaded(final Collection<?> domainObjects) {
-        getPersistenceSession().getJDOPersistenceManager().retrieveAll(domainObjects);
+    	getPersistenceSessionJdo().getPersistenceManagerJdo().retrieveAll(domainObjects);
     }
 
     // //////////////////////////////////////
@@ -214,20 +213,17 @@ public class IsisJdoSupportDN5 implements IsisJdoSupport_v3_2 {
 
     // //////////////////////////////////////
 
-    @Inject IsisSessionFactory isisSessionFactory;
+    @Inject ServiceInjector serviceInjector;
     @Inject ObjectAdapterProvider objectAdapterProvider;
 
-    protected PersistenceSession getPersistenceSession() {
-        return isisSessionFactory.getCurrentSession().getPersistenceSession();
+    protected PersistenceSessionJdo getPersistenceSessionJdo() {
+        return PersistenceSessionJdo.current();
     }
 
-    protected ServiceInjector getServicesInjector() {
-        return isisSessionFactory.getServiceInjector();
-    }
 
     @Programmatic
     @Override
     public PersistenceManager getJdoPersistenceManager() {
-        return getPersistenceSession().getJDOPersistenceManager();
+        return getPersistenceSessionJdo().getPersistenceManagerJdo();
     }
 }

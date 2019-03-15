@@ -39,10 +39,6 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.identity.SingleFieldIdentity;
 import javax.jdo.listener.InstanceLifecycleListener;
 
-import org.datanucleus.enhancement.Persistable;
-import org.datanucleus.exceptions.NucleusObjectNotFoundException;
-import org.datanucleus.identity.DatastoreIdImpl;
-
 import org.apache.isis.applib.query.Query;
 import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.exceprecog.ExceptionRecognizer;
@@ -94,6 +90,9 @@ import org.apache.isis.jdo.persistence.query.PersistenceQueryFindUsingApplibQuer
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.PersistenceQueryFindAllInstancesProcessor;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.queries.PersistenceQueryFindUsingApplibQueryProcessor;
 import org.apache.isis.objectstore.jdo.datanucleus.persistence.spi.JdoObjectIdSerializer;
+import org.datanucleus.enhancement.Persistable;
+import org.datanucleus.exceptions.NucleusObjectNotFoundException;
+import org.datanucleus.identity.DatastoreIdImpl;
 
 import lombok.val;
 import lombok.extern.slf4j.Slf4j;
@@ -104,7 +103,7 @@ import lombok.extern.slf4j.Slf4j;
  * identities} for each and every POJO that is being used by the framework.
  */
 @Slf4j
-public class PersistenceSession5 extends PersistenceSessionBase
+public class PersistenceSession5 extends PersistenceSessionJdoBase
 implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
 
     private ObjectAdapterContext objectAdapterContext;
@@ -132,8 +131,6 @@ implements IsisLifecycleListener.PersistenceSessionLifecycleManagement {
     public void open() {
         ensureNotOpened();
         
-        openedAtSystemNanos = System.nanoTime();
-
         if (log.isDebugEnabled()) {
             log.debug("opening {}", this);
         }

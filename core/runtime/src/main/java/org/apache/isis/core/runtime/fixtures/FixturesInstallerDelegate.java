@@ -166,12 +166,8 @@ public class FixturesInstallerDelegate {
         return IsisContext.getServiceRegistry().lookupServiceElseFail(EventBusService.class);
     }
 
-    private PersistenceSession getPersistenceSession() {
-        return IsisSession.currentIfAny().getPersistenceSession();
-    }
-
     private IsisTransactionManager getTransactionManager() {
-        return getPersistenceSession().getTransactionManager();
+        return IsisContext.getTransactionManager().orElse(null);
     }
 
 

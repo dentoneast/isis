@@ -28,7 +28,6 @@ import org.apache.isis.applib.services.wrapper.events.InteractionEvent;
 import org.apache.isis.commons.internal._Constants;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.session.IsisSession;
 
 public class DelegatingInvocationHandlerDefault<T> implements DelegatingInvocationHandler<T> {
 
@@ -80,8 +79,9 @@ public class DelegatingInvocationHandlerDefault<T> implements DelegatingInvocati
 
     protected void resolveIfRequired(final Object domainObject) {
         if (resolveObjectChangedEnabled) {
-        	IsisSession.currentIfAny()
-        	.getPersistenceSession().refreshRootInTransaction(domainObject);
+        	
+        	IsisContext.getPersistenceSession()
+        	.ifPresent(ps->ps.refreshRootInTransaction(domainObject));
         }
     }
 

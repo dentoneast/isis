@@ -45,7 +45,6 @@ import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.plugins.ioc.RequestContextService;
 import org.apache.isis.core.runtime.persistence.FixturesInstalledStateHolder;
 import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.transaction.ChangedObjectsServiceInternal;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -54,7 +53,7 @@ import org.apache.isis.jdo.datanucleus.persistence.queries.PersistenceQueryProce
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-abstract class PersistenceSessionBase implements PersistenceSession {
+abstract class PersistenceSessionJdoBase implements PersistenceSessionJdo {
 
     // -- FIELDS
 
@@ -82,11 +81,6 @@ abstract class PersistenceSessionBase implements PersistenceSession {
     
     
     /**
-     * Set to System.nanoTime() when session opens.
-     */
-    protected long openedAtSystemNanos = -1L;
-    
-    /**
      * Used to create the {@link #persistenceManager} when {@link #open()}ed.
      */
     protected final PersistenceManagerFactory jdoPersistenceManagerFactory;
@@ -112,7 +106,7 @@ abstract class PersistenceSessionBase implements PersistenceSession {
      * Initialize the object store so that calls to this object store access
      * persisted objects and persist changes to the object that are saved.
      */
-    protected PersistenceSessionBase(
+    protected PersistenceSessionJdoBase(
             final AuthenticationSession authenticationSession,
             final PersistenceManagerFactory jdoPersistenceManagerFactory,
             final FixturesInstalledStateHolder fixturesInstalledFlag) {
@@ -180,7 +174,7 @@ abstract class PersistenceSessionBase implements PersistenceSession {
      * Only populated once {@link #open()}'d
      */
     @Override
-    public PersistenceManager getJDOPersistenceManager() {
+    public PersistenceManager getPersistenceManagerJdo() {
         return persistenceManager;
     }
 
@@ -188,11 +182,6 @@ abstract class PersistenceSessionBase implements PersistenceSession {
     @Override
     public IsisConfiguration getConfiguration() {
         return configuration;
-    }
-    
-    @Override
-    public long getLifecycleStartedAtSystemNanos() {
-        return openedAtSystemNanos;
     }
 
     // -- ENUMS
@@ -252,6 +241,12 @@ abstract class PersistenceSessionBase implements PersistenceSession {
         if (transaction.isActive()) {
             transaction.rollback();
         }
+    }
+    
+    @Override
+    public void flush() {
+    	getTransactionManager().flushTransaction();
+		getPersistenceManagerJdo().flush();
     }
 
     // -- HELPERS - SERVICE LOOKUP

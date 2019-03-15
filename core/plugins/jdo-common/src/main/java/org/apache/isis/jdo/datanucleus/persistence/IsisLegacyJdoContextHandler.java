@@ -25,6 +25,7 @@ import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.managers.AuthorityDescriptor;
 import org.apache.isis.core.runtime.system.context.managers.ContextHandler;
 import org.apache.isis.core.runtime.system.session.IsisSession;
+import org.apache.isis.jdo.persistence.PersistenceSessionJdo;
 
 import lombok.val;
 
@@ -49,7 +50,7 @@ public class IsisLegacyJdoContextHandler implements ContextHandler {
 	
 	@Override
 	public ManagedObjectState stateOf(ManagedObject managedObject) {
-		val persistenceSession = IsisSession.currentIfAny().getPersistenceSession();
+		val persistenceSession = PersistenceSessionJdo.current();
 		val state = persistenceSession.stateOf(managedObject.getPojo());
 		return state;
 	}
@@ -82,7 +83,7 @@ public class IsisLegacyJdoContextHandler implements ContextHandler {
 		
 		probe.println("resolve '%s' rootOid.id='%s'", objectUri, rootOid.getIdentifier());
 
-		val persistenceSession = IsisSession.currentIfAny().getPersistenceSession();
+		val persistenceSession = PersistenceSessionJdo.current();
 		val pojo = persistenceSession.fetchPersistentPojo(rootOid);
 
 //TODO [2033] remove, this was the old way of doing it ...		
@@ -123,7 +124,7 @@ public class IsisLegacyJdoContextHandler implements ContextHandler {
     		throws NoSuchMethodException, SecurityException, IllegalAccessException, 
     		IllegalArgumentException, InvocationTargetException {
 		
-		val persistenceSession = IsisSession.currentIfAny().getPersistenceSession();
+		val persistenceSession = PersistenceSessionJdo.current();
 		
         val isRecognized = persistenceSession.isRecognized(persistable);
         

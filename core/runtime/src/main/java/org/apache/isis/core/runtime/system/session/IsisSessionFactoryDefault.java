@@ -22,7 +22,6 @@ package org.apache.isis.core.runtime.system.session;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.PreDestroy;
@@ -256,8 +255,12 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
     }
 
     private IsisTransactionManager getCurrentSessionTransactionManager() {
-        final IsisSession currentSession = getCurrentSession();
-        return currentSession.getPersistenceSession().getTransactionManager();
+    	return IsisContext.getTransactionManager().get();
+    	
+//        final IsisSession currentSession = getCurrentSession();
+//        Objects.requireNonNull(currentSession);
+//        Objects.requireNonNull(currentSession.getPersistenceSession());
+//        return currentSession.getPersistenceSession().getTransactionManager();
     }
 
     @Override

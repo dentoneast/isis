@@ -17,14 +17,14 @@
 package org.apache.isis.jdo;
 
 import org.apache.isis.commons.internal.context._Plugin;
-import org.apache.isis.jdo.persistence.PersistenceSessionFactory;
+import org.apache.isis.jdo.persistence.PersistenceSessionJdoFactory;
 
 @Deprecated //TODO [2033] could simply use a CDI producer instead 
 public interface IsisJdoRuntimePlugin {
 
     // -- INTERFACE
 
-    public PersistenceSessionFactory getPersistenceSessionFactory(/*ConfigurationServiceInternal configuration*/);
+    public PersistenceSessionJdoFactory getPersistenceSessionFactory(/*ConfigurationServiceInternal configuration*/);
 
     // -- LOOKUP
 

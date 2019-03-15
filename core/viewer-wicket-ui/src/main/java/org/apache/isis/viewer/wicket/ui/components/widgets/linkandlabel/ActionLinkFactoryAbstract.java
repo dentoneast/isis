@@ -67,6 +67,8 @@ import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 
+import lombok.val;
+
 public abstract class ActionLinkFactoryAbstract implements ActionLinkFactory {
 
     private static final long serialVersionUID = 1L;
@@ -237,7 +239,8 @@ public abstract class ActionLinkFactoryAbstract implements ActionLinkFactory {
                                     }
                                     );
 
-                    getIsisSessionFactory().getCurrentSession().getPersistenceSession().getTransactionManager().flushTransaction();
+                    val txManager = IsisContext.getTransactionManager().get();
+                    txManager.flushTransaction();
 
                     // "redirect-after-post"
                     final RequestCycle requestCycle = RequestCycle.get();

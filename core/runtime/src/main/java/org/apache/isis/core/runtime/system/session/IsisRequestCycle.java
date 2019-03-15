@@ -1,6 +1,7 @@
 package org.apache.isis.core.runtime.system.session;
 
 import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 
 import lombok.val;
@@ -64,8 +65,8 @@ public class IsisRequestCycle implements AutoCloseable {
 		val isisSessionFactory = IsisContext.getSessionFactory();
 		isisSessionFactory.openSession(authenticationSession);
 		
-		val isisTransactionManager = IsisContext.getTransactionManager().orElse(null);
-		isisTransactionManager.startTransaction();
+		IsisContext.getTransactionManager()
+				.ifPresent(txMan->txMan.startTransaction());
 	}
 
 	public static void onRequestHandlerExecuted() {
@@ -116,9 +117,12 @@ public class IsisRequestCycle implements AutoCloseable {
 		if (isisSession==null) {
 			return;
 		}
-		val ps = isisSession.getPersistenceSession();
-		ps.getTransactionManager().flushTransaction();
-        ps.getJDOPersistenceManager().flush();
+		
+		PersistenceSession.current(PersistenceSession.class)
+		.stream()
+		.forEach(ps->ps.flush());
+		
+		//isisSession.flush();
 	}
 
 

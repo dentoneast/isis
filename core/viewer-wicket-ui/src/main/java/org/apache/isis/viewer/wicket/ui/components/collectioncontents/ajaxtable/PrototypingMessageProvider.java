@@ -23,9 +23,11 @@ import java.util.Locale;
 import org.apache.isis.commons.internal.base._Timing;
 import org.apache.isis.commons.internal.base._Timing.StopWatch;
 import org.apache.isis.commons.internal.context._Context;
-import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+
+import lombok.val;
 
 /**
  * Responsibility: produce additional info when in prototyping mode 
@@ -59,12 +61,13 @@ class PrototypingMessageProvider {
             return "";
         }
         
-        final StringBuilder tookTimingMessage = new StringBuilder();
+        val tookTimingMessage = new StringBuilder();
+        val session = IsisSession.currentIfAny();
         
-        IsisContext.getPersistenceSession().ifPresent(session->{
-            StopWatch stopWatch = _Timing.atSystemNanos(session.getLifecycleStartedAtSystemNanos());    
+        if(session!=null) {
+        	StopWatch stopWatch = _Timing.atSystemNanos(session.getOpenedAtSystemNanos());    
             tookTimingMessage.append(String.format(Locale.US, "... took %.2f seconds", stopWatch.getSeconds()));
-        });
+        }
 
         return tookTimingMessage.toString();
     }

@@ -184,27 +184,26 @@ public interface IsisContext {
      * @throws IllegalStateException - if IsisSessionFactory not resolvable
      */
     public static Optional<IsisSession> getCurrentIsisSession() {
-        return Optional.ofNullable(IsisSession.currentIfAny());
+        return IsisSession.current();
     }
 
     /**
-     * TODO [2033] decouple from JDO
-     * @return framework's current PersistenceSession (if any)
-     * @throws IllegalStateException - if IsisSessionFactory not resolvable
+     * TODO [2033] its unclear whether there is only one or multiple
+     * @return framework's one of framework's current PersistenceSessions
      */
     public static Optional<PersistenceSession> getPersistenceSession() {
-        return getCurrentIsisSession()
-                .map(IsisSession::getPersistenceSession);
+    	return PersistenceSession.current(PersistenceSession.class)
+    	.getFirst();
     }
     
     /**
-     * TODO [2033] decouple from JDO
+     * TODO [2033] its unclear whether there is only one or multiple
      * @return framework's current IsisTransactionManager (if any)
      * @throws IllegalStateException - if IsisSessionFactory not resolvable
      */
     public static Optional<IsisTransactionManager> getTransactionManager() {
-        return getPersistenceSession()
-        	    .map(PersistenceSession::getTransactionManager);
+    	return getPersistenceSession()
+    			.map(PersistenceSession::getTransactionManager);
     }
     
     /**

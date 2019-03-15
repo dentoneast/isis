@@ -124,7 +124,7 @@ public abstract class AbstractIsisSessionTemplate {
     }
 
     protected PersistenceSession getPersistenceSession() {
-        return getIsisSessionFactory().getCurrentSession().getPersistenceSession();
+        return IsisContext.getPersistenceSession().orElse(null);
     }
 
     protected IsisTransactionManager getTransactionManager(PersistenceSession persistenceSession) {

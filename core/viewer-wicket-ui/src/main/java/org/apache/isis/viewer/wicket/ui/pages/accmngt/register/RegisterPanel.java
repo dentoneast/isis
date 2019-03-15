@@ -40,6 +40,8 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 
+import lombok.val;
+
 /**
  * A panel with a form for self-registration of a user
  */
@@ -125,11 +127,11 @@ public abstract class RegisterPanel extends GenericPanel<UserDetails> {
             getIsisSessionFactory().doInSession(new Runnable() {
                 @Override
                 public void run() {
-                    final UserRegistrationService userRegistrationService = getIsisSessionFactory()
-                            .getServiceInjector().lookupServiceElseFail(UserRegistrationService.class);
+                    val userRegistrationService = IsisContext.getServiceRegistry()
+                    		.lookupServiceElseFail(UserRegistrationService.class);
 
-                    getIsisSessionFactory().getCurrentSession().getPersistenceSession().getTransactionManager()
-                    .executeWithinTransaction(() -> {
+                    val txManager = IsisContext.getTransactionManager().get();
+                    txManager.executeWithinTransaction(() -> {
                             userRegistrationService.registerUser(userDetails);
                             removeAccountConfirmation();
                     });

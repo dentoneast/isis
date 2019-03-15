@@ -256,7 +256,7 @@ public class IsisTransactionManager {
 
 
     // -- flushTransaction
-    public boolean flushTransaction() {
+    public void flushTransaction() {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("flushTransaction");
@@ -265,7 +265,7 @@ public class IsisTransactionManager {
         if (getCurrentTransaction() != null) {
             getCurrentTransaction().flush();
         }
-        return false;
+        
     }
 
 

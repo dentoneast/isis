@@ -25,7 +25,6 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.bookmark.Bookmark;
 import org.apache.isis.applib.services.bookmark.BookmarkService;
 import org.apache.isis.applib.services.bookmark.BookmarkService.FieldResetPolicy;
@@ -52,9 +51,7 @@ import org.apache.isis.core.metamodel.spec.feature.ObjectAssociation;
 import org.apache.isis.core.metamodel.spec.feature.OneToOneAssociation;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
-import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.schema.cmd.v1.ActionDto;
 import org.apache.isis.schema.cmd.v1.CommandDto;
 import org.apache.isis.schema.cmd.v1.MemberDto;
@@ -67,8 +64,6 @@ import org.apache.isis.schema.common.v1.OidsDto;
 import org.apache.isis.schema.common.v1.ValueWithTypeDto;
 import org.apache.isis.schema.utils.CommandDtoUtils;
 import org.apache.isis.schema.utils.CommonDtoUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -358,14 +353,6 @@ public class CommandExecutorServiceDefault implements CommandExecutorService {
 
     protected IsisSessionFactory getIsisSessionFactory() {
         return IsisContext.getSessionFactory();
-    }
-
-    protected PersistenceSession getPersistenceSession() {
-        return getIsisSessionFactory().getCurrentSession().getPersistenceSession();
-    }
-
-    protected IsisTransactionManager getTransactionManager(PersistenceSession persistenceSession) {
-        return persistenceSession.getTransactionManager();
     }
 
     protected SpecificationLoader getSpecificationLoader() {

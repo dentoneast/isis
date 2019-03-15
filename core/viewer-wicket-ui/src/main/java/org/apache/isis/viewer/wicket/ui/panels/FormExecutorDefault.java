@@ -380,7 +380,8 @@ implements FormExecutor {
         // force any changes in state etc to happen now prior to the redirect;
         // in the case of an object being returned, this should cause our page mementos
         // (eg EntityModel) to hold the correct state.  I hope.
-        getIsisSessionFactory().getCurrentSession().getPersistenceSession().getTransactionManager().flushTransaction();
+        val txManager = IsisContext.getTransactionManager().get();
+        txManager.flushTransaction();
 
         // "redirect-after-post"
         final RequestCycle requestCycle = RequestCycle.get();

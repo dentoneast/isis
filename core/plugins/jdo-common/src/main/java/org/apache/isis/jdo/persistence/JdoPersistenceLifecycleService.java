@@ -19,7 +19,7 @@ import lombok.val;
 @Singleton
 public class JdoPersistenceLifecycleService {
 
-	private PersistenceSessionFactory persistenceSessionFactory;
+	private PersistenceSessionJdoFactory persistenceSessionFactory;
 
 	public void onAppLifecycleEvent(@Observes AppLifecycleEvent event) {
 
@@ -53,7 +53,10 @@ public class JdoPersistenceLifecycleService {
 		case sessionClosing:
 			closeSession();
 			break;
-
+//		case sessionFlushing:
+//			flushSession();
+//			break;
+			
 		default:
 			throw _Exceptions.unmatchedCase(eventType);
 		}
@@ -61,7 +64,7 @@ public class JdoPersistenceLifecycleService {
 	}
 	
 	@Produces @Singleton //XXX note: the resulting singleton is not life-cycle managed by CDI, nor are InjectionPoints resolved by CDI
-	public PersistenceSessionFactory producePersistenceSessionFactory() {
+	public PersistenceSessionJdoFactory producePersistenceSessionFactory() {
 		return persistenceSessionFactory;
 	}
 
@@ -78,12 +81,20 @@ public class JdoPersistenceLifecycleService {
 	}
 
 	private void closeSession() {
-		val persistenceSession = _Context.threadLocalGetIfAny(PersistenceSession.class);
+		val persistenceSession = PersistenceSessionJdo.current();
 
 		if(persistenceSession != null) {
 			persistenceSession.close();
 		}		
 	}
+	
+//	private void flushSession() {
+//		val persistenceSession = PersistenceSessionJdo.current();
+//		
+//		if(persistenceSession != null) {
+//			persistenceSession.flush();
+//		}
+//	}
 
 	private void create() {
 		persistenceSessionFactory = 

@@ -44,6 +44,11 @@ public class RuntimeEventService {
 		sessionLifecycleEvent.fire(SessionLifecycleEvent.of(session, SessionLifecycleEvent.EventType.sessionClosing));
 	}
 	
+//	public void fireSessionFlushing(IsisSession session) {
+//		sessionLifecycleEvent.fire(SessionLifecycleEvent.of(session, SessionLifecycleEvent.EventType.sessionClosing));
+//	}
+
+	
 	// -- EVENT CLASSES
 	
 	@Value(staticConstructor="of")
@@ -59,6 +64,7 @@ public class RuntimeEventService {
 		
 	}
 
+	
 	
 	
 

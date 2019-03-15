@@ -92,8 +92,8 @@ public abstract class ResourceContext_ensureCompatibleAcceptHeader_ContractTest 
                 will(returnValue(mockAuthenticationSession));
                 allowing(mockIsisSessionFactory).getSpecificationLoader();
                 will(returnValue(mockSpecificationLoader));
-                allowing(mockIsisSession).getPersistenceSession();
-                will(returnValue(mockPersistenceSession));
+//                allowing(mockIsisSession).getPersistenceSession();
+//                will(returnValue(mockPersistenceSession));
             }
         });
     }

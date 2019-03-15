@@ -65,7 +65,7 @@ public final class AppConfigLocator {
     		"org.apache.isis.core.security.authentication.AuthenticationSessionProvider",
     		
     		"org.apache.isis.core.metamodel.specloader.SpecificationLoader",
-    		"org.apache.isis.jdo.persistence.PersistenceSessionFactory",
+    		"org.apache.isis.jdo.persistence.PersistenceSessionJdoFactory",
     		
     		"org.apache.isis.applib.services.eventbus.EventBusService",
     		"org.apache.isis.applib.services.factory.FactoryService",

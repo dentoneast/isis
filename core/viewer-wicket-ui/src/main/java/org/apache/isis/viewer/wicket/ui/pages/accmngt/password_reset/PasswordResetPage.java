@@ -22,6 +22,7 @@ package org.apache.isis.viewer.wicket.ui.pages.accmngt.password_reset;
 import java.util.concurrent.Callable;
 
 import org.apache.isis.applib.services.userreg.UserRegistrationService;
+import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.viewer.wicket.ui.errors.ExceptionModel;
 import org.apache.isis.viewer.wicket.ui.pages.accmngt.AccountConfirmationMap;
 import org.apache.isis.viewer.wicket.ui.pages.accmngt.AccountManagementPageAbstract;
@@ -32,6 +33,7 @@ import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.string.Strings;
 
 import de.agilecoders.wicket.core.markup.html.bootstrap.common.NotificationPanel;
+import lombok.val;
 
 /**
  * A page used for resetting the password of an user.
@@ -76,8 +78,9 @@ public class PasswordResetPage extends AccountManagementPageAbstract {
                 Boolean emailExists = getIsisSessionFactory().doInSession(new Callable<Boolean>() {
                     @Override
                     public Boolean call() throws Exception {
-                        UserRegistrationService userRegistrationService = getIsisSessionFactory()
-                                .getCurrentSession().getPersistenceSession().getServiceInjector()
+                    	
+                        val serviceRegistry = IsisContext.getServiceRegistry();
+                        val userRegistrationService = serviceRegistry
                                 .lookupServiceElseFail(UserRegistrationService.class);
                         return userRegistrationService.emailExists(email);
                     }

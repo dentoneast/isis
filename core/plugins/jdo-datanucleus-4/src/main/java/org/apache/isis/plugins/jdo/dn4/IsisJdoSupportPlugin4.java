@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 
 import org.apache.isis.core.metamodel.IsisJdoMetamodelPlugin;
 import org.apache.isis.jdo.IsisJdoRuntimePlugin;
-import org.apache.isis.jdo.persistence.PersistenceSessionFactory;
+import org.apache.isis.jdo.persistence.PersistenceSessionJdoFactory;
 import org.apache.isis.jdo.persistence.PersistenceSessionFactory4;
 
 public class IsisJdoSupportPlugin4 implements IsisJdoMetamodelPlugin, IsisJdoRuntimePlugin {
@@ -41,7 +41,7 @@ public class IsisJdoSupportPlugin4 implements IsisJdoMetamodelPlugin, IsisJdoRun
     }
 
     @Override
-    public PersistenceSessionFactory getPersistenceSessionFactory(/*ConfigurationServiceInternal isisConfiguration*/) {
+    public PersistenceSessionJdoFactory getPersistenceSessionFactory(/*ConfigurationServiceInternal isisConfiguration*/) {
         return new PersistenceSessionFactory4(/*isisConfiguration*/);
     }
 

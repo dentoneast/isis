@@ -46,8 +46,10 @@ public class IsisSession extends RuntimeContextBase {
 
 	private RuntimeEventService runtimeEventService;
 	
-    @Deprecated //TODO [2033] avoid extensions to ManagedObjectContext 
-    @Getter private PersistenceSession persistenceSession;
+	/**
+     * Set to System.nanoTime() when session opens.
+     */
+	@Getter private long openedAtSystemNanos = -1L;
     
 	public IsisSession(
 			final RuntimeEventService runtimeEventService,
@@ -67,11 +69,12 @@ public class IsisSession extends RuntimeContextBase {
 	// -- CURRENT
 	
 	public static IsisSession currentIfAny() {
-		return _Context.threadLocalGetIfAny(IsisSession.class);
+		return current().orElse(null);
 	}
 	
 	public static Optional<IsisSession> current() {
-		return Optional.ofNullable(currentIfAny());
+		return _Context.threadLocalGet(IsisSession.class)
+				.getSingleton();
 	}
 	
 	public static boolean isInSession() {
@@ -97,11 +100,10 @@ public class IsisSession extends RuntimeContextBase {
 	
 	// -- OPEN
     
-    
     void open() {
+    	openedAtSystemNanos = System.nanoTime();
     	_Context.threadLocalPut(IsisSession.class, this);
     	runtimeEventService.fireSessionOpened(this);
-    	persistenceSession = _Context.threadLocalGetIfAny(PersistenceSession.class);
     }
 
     // -- CLOSE
@@ -114,6 +116,11 @@ public class IsisSession extends RuntimeContextBase {
         _Context.threadLocalCleanup();
     }
 
+    // -- FLUSH
+//    void flush() {
+//    	runtimeEventService.fireSessionFlushing(this);
+//    }
+    
     // -- TRANSACTION
 
     /**
@@ -124,6 +131,8 @@ public class IsisSession extends RuntimeContextBase {
         return getTransactionManager().getCurrentTransaction();
     }
 
+    
+    
 
 
     // -- toString
@@ -131,7 +140,7 @@ public class IsisSession extends RuntimeContextBase {
     public String toString() {
         final ToString asString = new ToString(this);
         asString.append("authenticationSession", getAuthenticationSession());
-        asString.append("persistenceSession", getPersistenceSession());
+        asString.append("persistenceSession", PersistenceSession.current(PersistenceSession.class));
         asString.append("transaction", getCurrentTransaction());
         return asString.toString();
     }
@@ -140,7 +149,7 @@ public class IsisSession extends RuntimeContextBase {
     // -- Dependencies (from constructor)
 
     private IsisTransactionManager getTransactionManager() {
-        return getPersistenceSession().getTransactionManager();
+        return IsisContext.getTransactionManager().get();
     }
 
 	
