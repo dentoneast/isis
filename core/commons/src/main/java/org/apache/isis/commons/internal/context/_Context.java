@@ -134,8 +134,15 @@ public final class _Context {
             return existingIfAny;
         }
         
-        // Note: we don't want to to this inside the synchronized block
+        // Note: we don't want to do this inside the synchronized block
         final T t = factory.apply(type);
+        
+        // we don't store null to the map
+        if(t==null) {
+        	return null;
+//        	throw _Exceptions.unrecoverable(String.format("factory to compute new value for type '%s' "
+//        			+ "returned 'null', which is not allowed", type));
+        }
         
         // let writes to the map be atomic
         synchronized ($LOCK) {

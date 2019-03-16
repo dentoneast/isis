@@ -27,8 +27,7 @@ import javax.enterprise.inject.Vetoed;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.apache.isis.applib.AppManifest;
+import org.apache.isis.applib.AppTypeRegistry;
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
@@ -169,7 +168,7 @@ public class SpecificationLoader {
         );
         final List<ObjectSpecification> mixinSpecs =
         loadSpecificationsFor(
-                AppManifest.Registry.instance().getMixinTypes().stream(), null,
+                AppTypeRegistry.instance().getMixinTypes().stream(), null,
                 specificationsFromRegistry, IntrospectionState.NOT_INTROSPECTED
         );
         loadSpecificationsFor(
@@ -177,15 +176,15 @@ public class SpecificationLoader {
                 specificationsFromRegistry, IntrospectionState.NOT_INTROSPECTED
         );
         loadSpecificationsFor(
-                AppManifest.Registry.instance().getDomainObjectTypes().stream(), null,
+                AppTypeRegistry.instance().getDomainObjectTypes().stream(), null,
                 specificationsFromRegistry, IntrospectionState.NOT_INTROSPECTED
         );
         loadSpecificationsFor(
-                AppManifest.Registry.instance().getViewModelTypes().stream(), null,
+                AppTypeRegistry.instance().getViewModelTypes().stream(), null,
                 specificationsFromRegistry, IntrospectionState.NOT_INTROSPECTED
         );
         loadSpecificationsFor(
-                AppManifest.Registry.instance().getXmlElementTypes().stream(), null,
+                AppTypeRegistry.instance().getXmlElementTypes().stream(), null,
                 specificationsFromRegistry, IntrospectionState.NOT_INTROSPECTED
         );
 

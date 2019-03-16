@@ -182,13 +182,18 @@ public final class AppConfigLocator {
             return appConfig;
         }
         
+        appConfig = AppConfig.empty();
+        // as we are in a non-managed environment, we need to bootstrap CDI ourself
+        //_CDI.init(onDiscover);
+        return appConfig;
+        
 //        appConfig = lookupAppConfig_UsingConfigProperties();
 //        if(appConfig!=null) {
 //            LOG.info(String.format("Located AppConfig '%s' using config properties.", appConfig.getClass().getName()));
 //            return appConfig;    
 //        }
         
-        throw new IsisException("Failed to locate the AppConfig");
+        //throw new IsisException("Failed to locate the AppConfig");
     }
     
     private static AppConfig lookupAppConfig_UsingCDI() {

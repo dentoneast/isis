@@ -16,21 +16,17 @@
  *  specific language governing permissions and limitations
  *  under the License.
  */
-package org.apache.isis.config;
+package springapp.dom;
 
+import javax.enterprise.inject.Vetoed;
 
-/**
- * Entry-point for Application Bootstrapping
- *
- * @since 2.0.0-M2
- */
-@FunctionalInterface
-public interface AppConfig {
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Configuration;
 
-    public IsisConfiguration isisConfiguration();
-
-	public static AppConfig empty() {
-		return new AppConfig_Empty();
-	}
+@Vetoed // must not be managed by CDI
+@Configuration
+//@ComponentScan(basePackages= {"domainapp.modules.spring"})
+@EnableAutoConfiguration
+public class DomainModule {
 
 }

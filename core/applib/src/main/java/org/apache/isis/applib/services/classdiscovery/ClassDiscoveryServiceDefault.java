@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.apache.isis.applib.AbstractService;
-import org.apache.isis.applib.AppManifest;
+import org.apache.isis.applib.AppTypeRegistry;
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
@@ -63,7 +63,7 @@ implements ClassDiscoveryService {
     // -- HELPER
 
     private static <T> Set<Class<? extends T>> getFixtureScriptTypes() {
-        Set<?> fixtureScriptTypes = AppManifest.Registry.instance().getFixtureScriptTypes();
+        Set<?> fixtureScriptTypes = AppTypeRegistry.instance().getFixtureScriptTypes();
         if (fixtureScriptTypes != null) {
             return _Casts.uncheckedCast(fixtureScriptTypes);
         }

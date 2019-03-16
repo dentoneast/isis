@@ -52,14 +52,14 @@
                     <groupId>org.apache.isis.core</groupId>
                     <artifactId>isis-core-unittestsupport</artifactId>
                 </dependency>
-                <dependency>
-                    <groupId>org.apache.isis.core</groupId>
-                    <artifactId>isis-core-integtestsupport</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.apache.isis.core</groupId>
-                    <artifactId>isis-core-specsupport</artifactId>
-                </dependency>
+<!--                 <dependency> -->
+<!--                     <groupId>org.apache.isis.core</groupId> -->
+<!--                     <artifactId>isis-core-integtestsupport</artifactId> -->
+<!--                 </dependency> -->
+<!--                 <dependency> -->
+<!--                     <groupId>org.apache.isis.core</groupId> -->
+<!--                     <artifactId>isis-core-specsupport</artifactId> -->
+<!--                 </dependency> -->
 
                 <dependency>
                     <groupId>org.hamcrest</groupId>

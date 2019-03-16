@@ -32,8 +32,8 @@ import java.util.stream.Stream;
 
 import javax.enterprise.inject.Vetoed;
 
-import org.apache.isis.applib.AppManifest;
 import org.apache.isis.applib.Identifier;
+import org.apache.isis.applib.AppTypeRegistry;
 import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.metamodel.ManagedObjectSort;
 import org.apache.isis.commons.internal.base._NullSafe;
@@ -850,7 +850,7 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
             return Collections.emptyList();
         }
 
-        final Set<Class<?>> mixinTypes = AppManifest.Registry.instance().getMixinTypes();
+        final Set<Class<?>> mixinTypes = AppTypeRegistry.instance().getMixinTypes();
         if(mixinTypes == null) {
             return Collections.emptyList();
         }
@@ -1034,7 +1034,7 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
         if (isBean() || isValue()) {
             return Collections.emptyList();
         }
-        final Set<Class<?>> mixinTypes = AppManifest.Registry.instance().getMixinTypes();
+        final Set<Class<?>> mixinTypes = AppTypeRegistry.instance().getMixinTypes();
         if(mixinTypes == null) {
             return Collections.emptyList();
         }

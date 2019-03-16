@@ -29,8 +29,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import org.apache.isis.applib.AppManifest;
+import org.apache.isis.applib.AppTypeRegistry;
 import org.apache.isis.applib.services.grid.GridService2;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.i18n.TranslationService.Mode;
@@ -128,13 +127,13 @@ abstract class SpecificationLoaderTestAbstract {
         
         // PRODUCTION
         
-        AppManifest.Registry.instance().setDomainServiceTypes(_Sets.newHashSet());
-        AppManifest.Registry.instance().setFixtureScriptTypes(_Sets.newHashSet());
-        AppManifest.Registry.instance().setDomainObjectTypes(_Sets.newHashSet());
-        AppManifest.Registry.instance().setMixinTypes(_Sets.newHashSet());
-        AppManifest.Registry.instance().setViewModelTypes(_Sets.newHashSet());
-        AppManifest.Registry.instance().setPersistenceCapableTypes(_Sets.newHashSet());
-        AppManifest.Registry.instance().setXmlElementTypes(_Sets.newHashSet());
+        AppTypeRegistry.instance().setDomainServiceTypes(_Sets.newHashSet());
+        AppTypeRegistry.instance().setFixtureScriptTypes(_Sets.newHashSet());
+        AppTypeRegistry.instance().setDomainObjectTypes(_Sets.newHashSet());
+        AppTypeRegistry.instance().setMixinTypes(_Sets.newHashSet());
+        AppTypeRegistry.instance().setViewModelTypes(_Sets.newHashSet());
+        AppTypeRegistry.instance().setPersistenceCapableTypes(_Sets.newHashSet());
+        AppTypeRegistry.instance().setXmlElementTypes(_Sets.newHashSet());
 
         _Timing.runVerbose("specificationLoader.init()", specificationLoader::init);
         
