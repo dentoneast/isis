@@ -21,7 +21,6 @@ package org.apache.isis.core.runtime.system.session;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -32,8 +31,6 @@ import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
-import org.apache.isis.core.commons.lang.ListExtensions;
-import org.apache.isis.core.metamodel.facetapi.MetaModelRefiner;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.IsisSystemException;
 import org.apache.isis.core.runtime.system.context.IsisContext;
@@ -47,7 +44,6 @@ import org.apache.isis.schema.utils.ChangesDtoUtils;
 import org.apache.isis.schema.utils.CommandDtoUtils;
 import org.apache.isis.schema.utils.InteractionDtoUtils;
 
-import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -55,12 +51,12 @@ class IsisSessionFactoryBuilder {
 
     // -- constructors, accessors
 
-    private final SpecificationLoaderFactory componentProvider;
+    private final SpecificationLoaderFactory specificationLoaderFactory;
     private final IsisLocaleInitializer localeInitializer;
     private final IsisTimeZoneInitializer timeZoneInitializer;
 
     public IsisSessionFactoryBuilder() {
-        this.componentProvider = new SpecificationLoaderFactory();
+        this.specificationLoaderFactory = new SpecificationLoaderFactory();
         this.localeInitializer = new IsisLocaleInitializer();
         this.timeZoneInitializer = new IsisTimeZoneInitializer();
     }
@@ -95,7 +91,7 @@ class IsisSessionFactoryBuilder {
             final RuntimeEventService runtimeEventService = serviceRegistry.lookupServiceElseFail(RuntimeEventService.class);
 
             final SpecificationLoader specificationLoader =
-                    componentProvider.createSpecificationLoader();
+                    specificationLoaderFactory.createSpecificationLoader();
             
             serviceRegistry.validateServices();
 
