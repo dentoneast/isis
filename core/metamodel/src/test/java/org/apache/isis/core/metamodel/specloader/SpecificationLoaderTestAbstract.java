@@ -29,13 +29,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.apache.isis.applib.AppTypeRegistry;
 import org.apache.isis.applib.services.grid.GridService2;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.i18n.TranslationService.Mode;
 import org.apache.isis.applib.services.message.MessageService;
 import org.apache.isis.commons.internal.base._Timing;
 import org.apache.isis.commons.internal.collections._Sets;
+import org.apache.isis.config.beans.BeanTypeRegistry;
 import org.apache.isis.core.metamodel.BeansForTesting;
 import org.apache.isis.core.metamodel.facetapi.Facet;
 import org.apache.isis.core.metamodel.facets.actcoll.typeof.TypeOfFacet;
@@ -127,13 +127,13 @@ abstract class SpecificationLoaderTestAbstract {
         
         // PRODUCTION
         
-        AppTypeRegistry.instance().setDomainServiceTypes(_Sets.newHashSet());
-        AppTypeRegistry.instance().setFixtureScriptTypes(_Sets.newHashSet());
-        AppTypeRegistry.instance().setDomainObjectTypes(_Sets.newHashSet());
-        AppTypeRegistry.instance().setMixinTypes(_Sets.newHashSet());
-        AppTypeRegistry.instance().setViewModelTypes(_Sets.newHashSet());
-        AppTypeRegistry.instance().setPersistenceCapableTypes(_Sets.newHashSet());
-        AppTypeRegistry.instance().setXmlElementTypes(_Sets.newHashSet());
+        BeanTypeRegistry.instance().setDomainServiceTypes(_Sets.newHashSet());
+        BeanTypeRegistry.instance().setFixtureScriptTypes(_Sets.newHashSet());
+        BeanTypeRegistry.instance().setDomainObjectTypes(_Sets.newHashSet());
+        BeanTypeRegistry.instance().setMixinTypes(_Sets.newHashSet());
+        BeanTypeRegistry.instance().setViewModelTypes(_Sets.newHashSet());
+        BeanTypeRegistry.instance().setPersistenceCapableTypes(_Sets.newHashSet());
+        BeanTypeRegistry.instance().setXmlElementTypes(_Sets.newHashSet());
 
         _Timing.runVerbose("specificationLoader.init()", specificationLoader::init);
         

@@ -25,22 +25,18 @@ import java.util.stream.Stream;
 
 import javax.enterprise.inject.Vetoed;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.isis.applib.AppTypeRegistry;
 import org.apache.isis.applib.annotation.DomainService;
 import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.registry.ServiceRegistry.BeanAdapter;
-import org.apache.isis.applib.services.registry.ServiceRegistry.LifecycleContext;
 import org.apache.isis.commons.internal.base._NullSafe;
-import org.apache.isis.commons.internal.base._Tuples.Tuple2;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.config.beans.BeanTypeRegistry;
 import org.apache.isis.config.internal._Config;
 import org.apache.isis.config.property.ConfigPropertyBoolean;
 import org.apache.isis.config.property.ConfigPropertyEnum;
@@ -69,6 +65,10 @@ import org.apache.isis.core.runtime.threadpool.ThreadPoolExecutionMode;
 import org.apache.isis.core.runtime.threadpool.ThreadPoolSupport;
 import org.apache.isis.progmodels.dflt.ProgrammingModelFacetsJava5;
 import org.apache.isis.schema.utils.CommonDtoUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import lombok.val;
 
 /**
  * Builds the meta-model.
@@ -156,6 +156,8 @@ public class SpecificationLoader {
         // need to completely load services and mixins (synchronously)
         LOG.info("Loading all specs (up to state of {})", IntrospectionState.NOT_INTROSPECTED);
 
+        val typeRegistry = BeanTypeRegistry.instance(); 
+        
         final List<ObjectSpecification> specificationsFromRegistry = _Lists.newArrayList();
 
         // we use allServiceClasses() - obtained from servicesInjector - rather than reading from the
@@ -168,7 +170,7 @@ public class SpecificationLoader {
         );
         final List<ObjectSpecification> mixinSpecs =
         loadSpecificationsFor(
-                AppTypeRegistry.instance().getMixinTypes().stream(), null,
+        		typeRegistry.getMixinTypes().stream(), null,
                 specificationsFromRegistry, IntrospectionState.NOT_INTROSPECTED
         );
         loadSpecificationsFor(
@@ -176,15 +178,15 @@ public class SpecificationLoader {
                 specificationsFromRegistry, IntrospectionState.NOT_INTROSPECTED
         );
         loadSpecificationsFor(
-                AppTypeRegistry.instance().getDomainObjectTypes().stream(), null,
+        		typeRegistry.getDomainObjectTypes().stream(), null,
                 specificationsFromRegistry, IntrospectionState.NOT_INTROSPECTED
         );
         loadSpecificationsFor(
-                AppTypeRegistry.instance().getViewModelTypes().stream(), null,
+        		typeRegistry.getViewModelTypes().stream(), null,
                 specificationsFromRegistry, IntrospectionState.NOT_INTROSPECTED
         );
         loadSpecificationsFor(
-                AppTypeRegistry.instance().getXmlElementTypes().stream(), null,
+        		typeRegistry.getXmlElementTypes().stream(), null,
                 specificationsFromRegistry, IntrospectionState.NOT_INTROSPECTED
         );
 

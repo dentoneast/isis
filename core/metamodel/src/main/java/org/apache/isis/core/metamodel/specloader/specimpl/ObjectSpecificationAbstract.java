@@ -33,7 +33,6 @@ import java.util.stream.Stream;
 import javax.enterprise.inject.Vetoed;
 
 import org.apache.isis.applib.Identifier;
-import org.apache.isis.applib.AppTypeRegistry;
 import org.apache.isis.applib.annotation.Where;
 import org.apache.isis.applib.metamodel.ManagedObjectSort;
 import org.apache.isis.commons.internal.base._NullSafe;
@@ -41,6 +40,7 @@ import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.context._Context;
+import org.apache.isis.config.beans.BeanTypeRegistry;
 import org.apache.isis.core.commons.exceptions.UnknownTypeException;
 import org.apache.isis.core.commons.lang.ClassExtensions;
 import org.apache.isis.core.commons.util.ToString;
@@ -850,7 +850,7 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
             return Collections.emptyList();
         }
 
-        final Set<Class<?>> mixinTypes = AppTypeRegistry.instance().getMixinTypes();
+        final Set<Class<?>> mixinTypes = BeanTypeRegistry.instance().getMixinTypes();
         if(mixinTypes == null) {
             return Collections.emptyList();
         }
@@ -1034,7 +1034,7 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
         if (isBean() || isValue()) {
             return Collections.emptyList();
         }
-        final Set<Class<?>> mixinTypes = AppTypeRegistry.instance().getMixinTypes();
+        final Set<Class<?>> mixinTypes = BeanTypeRegistry.instance().getMixinTypes();
         if(mixinTypes == null) {
             return Collections.emptyList();
         }

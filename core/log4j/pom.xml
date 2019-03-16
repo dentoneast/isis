@@ -36,14 +36,16 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
+            <scope>provided</scope>
         </dependency>
+        
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- JEE API -->
-        <!-- (replaces org.apache.geronimo.specs:geronimo-javamail_1.4_spec for javax.mail:mail) -->
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
