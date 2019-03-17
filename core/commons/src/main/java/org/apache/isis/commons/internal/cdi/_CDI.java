@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;

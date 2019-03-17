@@ -46,7 +46,7 @@ import org.apache.isis.commons.internal.collections._Sets;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.commons.internal.reflection._Reflect;
-import org.apache.isis.config.beans.BeanTypeRegistry;
+import org.apache.isis.config.registry.BeanTypeRegistry;
 import org.apache.isis.core.plugins.classdiscovery.ClassDiscovery;
 import org.apache.isis.core.plugins.classdiscovery.ClassDiscoveryPlugin;
 
@@ -114,9 +114,9 @@ class ModulePackageHelper {
         typesForScanning.add(appManifest.getClass());
         
         //FIXME [2033] at this point we should have all we need, let CDI take over
-        // and let then CDI Bean intercepter make entries into the registry 
+        // and let the CDI Bean intercepter make entries into the registry 
         
-        final BeanTypeRegistry registry = BeanTypeRegistry.instance();
+        final BeanTypeRegistry registry = BeanTypeRegistry.current();
 
         final Set<String> moduleAndFrameworkPackages = new HashSet<>();
         moduleAndFrameworkPackages.addAll(BeanTypeRegistry.FRAMEWORK_PROVIDED_SERVICE_PACKAGES);
@@ -180,13 +180,13 @@ class ModulePackageHelper {
                 .map(s -> s != null ? s + "." : null)
                 .collect(Collectors.toList());
 
-        registry.setDomainServiceTypes(withinPackageAndNotAnonymous(packagesWithDotSuffix, domainServiceTypes));
-        registry.setPersistenceCapableTypes(withinPackageAndNotAnonymous(packagesWithDotSuffix, persistenceCapableTypes));
-        registry.setFixtureScriptTypes(withinPackageAndNotAnonymous(packagesWithDotSuffix, fixtureScriptTypes));
-        registry.setMixinTypes(withinPackageAndNotAnonymous(packagesWithDotSuffix, mixinTypes));
-        registry.setDomainObjectTypes(withinPackageAndNotAnonymous(packagesWithDotSuffix, domainObjectTypes));
-        registry.setViewModelTypes(withinPackageAndNotAnonymous(packagesWithDotSuffix, viewModelTypes));
-        registry.setXmlElementTypes(withinPackageAndNotAnonymous(packagesWithDotSuffix, xmlElementTypes));
+        registry.getDomainServiceTypes().addAll(withinPackageAndNotAnonymous(packagesWithDotSuffix, domainServiceTypes));
+        registry.getEntityTypes().addAll(withinPackageAndNotAnonymous(packagesWithDotSuffix, persistenceCapableTypes));
+        registry.getFixtureScriptTypes().addAll(withinPackageAndNotAnonymous(packagesWithDotSuffix, fixtureScriptTypes));
+        registry.getMixinTypes().addAll(withinPackageAndNotAnonymous(packagesWithDotSuffix, mixinTypes));
+        registry.getDomainObjectTypes().addAll(withinPackageAndNotAnonymous(packagesWithDotSuffix, domainObjectTypes));
+        registry.getViewModelTypes().addAll(withinPackageAndNotAnonymous(packagesWithDotSuffix, viewModelTypes));
+        registry.getXmlElementTypes().addAll(withinPackageAndNotAnonymous(packagesWithDotSuffix, xmlElementTypes));
         
         typesForScanning.addAll(domainServiceTypes);
         typesForScanning.addAll(viewModelTypes);

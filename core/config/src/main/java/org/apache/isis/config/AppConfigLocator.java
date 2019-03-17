@@ -32,15 +32,16 @@ import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.context._Plugin;
 import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
+import org.apache.isis.config.registry.BeanTypeRegistry;
 import org.apache.isis.core.commons.exceptions.IsisException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import lombok.val;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public final class AppConfigLocator {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(AppConfigLocator.class);
     
     private AppConfigLocator() { }
     
@@ -156,9 +157,18 @@ public final class AppConfigLocator {
         
         AppConfig appConfig;
         
+        appConfig = lookupAppConfig_UsingFrameworkContext();
+        if(appConfig!=null) {
+            log.info(String.format("Located AppConfig on framework's context '%s'.", appConfig.getClass().getName()));
+            
+            // assuming, we need to bootstrap CDI ourself
+            _CDI.init(()->BeanTypeRegistry.current().streamInbox());
+            return appConfig;
+        }
+        
         appConfig = lookupAppConfig_UsingCDI();
         if(appConfig!=null) {
-            LOG.info(String.format("Located AppConfig '%s' via CDI.", appConfig.getClass().getName()));
+            log.info(String.format("Located AppConfig '%s' via CDI.", appConfig.getClass().getName()));
             
             return appConfig;
         }
@@ -169,7 +179,7 @@ public final class AppConfigLocator {
         	val appConfigImpl = appConfig;
         	val appConfigClass = appConfig.getClass();
         	
-            LOG.info(String.format("Located AppConfig '%s' via ServiceLoader.", appConfigClass.getName()));
+        	log.info(String.format("Located AppConfig '%s' via ServiceLoader.", appConfigClass.getName()));
             
             Supplier<Stream<Class<?>>> onDiscover = appConfigImpl.isisConfiguration()::streamClassesToDiscover;
             
@@ -182,18 +192,17 @@ public final class AppConfigLocator {
             return appConfig;
         }
         
-        appConfig = AppConfig.empty();
-        // as we are in a non-managed environment, we need to bootstrap CDI ourself
-        //_CDI.init(onDiscover);
-        return appConfig;
-        
 //        appConfig = lookupAppConfig_UsingConfigProperties();
 //        if(appConfig!=null) {
 //            LOG.info(String.format("Located AppConfig '%s' using config properties.", appConfig.getClass().getName()));
 //            return appConfig;    
 //        }
         
-        //throw new IsisException("Failed to locate the AppConfig");
+        throw new IsisException("Failed to locate the AppConfig");
+    }
+    
+    private static AppConfig lookupAppConfig_UsingFrameworkContext() {
+        return _Context.getIfAny(AppConfig.class);
     }
     
     private static AppConfig lookupAppConfig_UsingCDI() {

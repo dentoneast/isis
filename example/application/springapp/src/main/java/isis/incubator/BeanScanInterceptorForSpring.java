@@ -6,7 +6,9 @@ import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.core.type.filter.TypeFilter;
 
-import isis.incubator.BeanTypeRegistry2.TypeMetaData;
+import org.apache.isis.config.registry.BeanTypeRegistry;
+import org.apache.isis.config.registry.TypeMetaData;
+
 import lombok.Getter;
 import lombok.val;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BeanScanInterceptorForSpring implements TypeFilter {
 	
-	@Getter(lazy=true) private final BeanTypeRegistry2 typeRegistry = BeanTypeRegistry2.current();
+	@Getter(lazy=true) private final BeanTypeRegistry typeRegistry = BeanTypeRegistry.current();
 
 	@Override
 	public boolean match(
@@ -33,7 +35,7 @@ public class BeanScanInterceptorForSpring implements TypeFilter {
 		val annotationTypes = annotationMetadata.getAnnotationTypes();
 		val typeMetaData = TypeMetaData.of(classMetadata.getClassName(), annotationTypes);
 		
-		return getTypeRegistry().isDomainType(typeMetaData);
+		return getTypeRegistry().isManagedType(typeMetaData);
 	}
 
 }

@@ -40,7 +40,7 @@ import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.context._Context;
-import org.apache.isis.config.beans.BeanTypeRegistry;
+import org.apache.isis.config.registry.BeanTypeRegistry;
 import org.apache.isis.core.commons.exceptions.UnknownTypeException;
 import org.apache.isis.core.commons.lang.ClassExtensions;
 import org.apache.isis.core.commons.util.ToString;
@@ -93,6 +93,9 @@ import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.metamodel.specloader.facetprocessor.FacetProcessor;
 import org.apache.isis.core.metamodel.specloader.postprocessor.PostProcessor;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
+
+import lombok.val;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -850,12 +853,12 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
             return Collections.emptyList();
         }
 
-        final Set<Class<?>> mixinTypes = BeanTypeRegistry.instance().getMixinTypes();
-        if(mixinTypes == null) {
+        val mixinTypes = BeanTypeRegistry.current().getMixinTypes();
+        if(_NullSafe.isEmpty(mixinTypes)) {
             return Collections.emptyList();
         }
 
-        final List<ObjectAssociation> mixedInAssociations = _Lists.newArrayList();
+        val mixedInAssociations = _Lists.<ObjectAssociation>newArrayList();
 
         for (final Class<?> mixinType : mixinTypes) {
             addMixedInAssociationsIfAny(mixinType, mixedInAssociations);
@@ -864,7 +867,8 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
     }
 
     private void addMixedInAssociationsIfAny(
-            final Class<?> mixinType, final List<ObjectAssociation> toAppendTo) {
+            final Class<?> mixinType, 
+            final List<ObjectAssociation> toAppendTo) {
 
         final ObjectSpecification specification = getSpecificationLoader().loadSpecification(mixinType,
                 IntrospectionState.TYPE_AND_MEMBERS_INTROSPECTED);
@@ -1034,13 +1038,13 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
         if (isBean() || isValue()) {
             return Collections.emptyList();
         }
-        final Set<Class<?>> mixinTypes = BeanTypeRegistry.instance().getMixinTypes();
-        if(mixinTypes == null) {
+        
+        val mixinTypes = BeanTypeRegistry.current().getMixinTypes();
+        if(_NullSafe.isEmpty(mixinTypes)) {
             return Collections.emptyList();
         }
 
-        final List<ObjectAction> mixedInActions = _Lists.newArrayList();
-
+        val mixedInActions = _Lists.<ObjectAction>newArrayList();
         for (final Class<?> mixinType : mixinTypes) {
             addMixedInActionsIfAny(mixinType, mixedInActions);
         }

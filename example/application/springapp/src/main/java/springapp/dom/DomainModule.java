@@ -23,10 +23,12 @@ import javax.enterprise.inject.Vetoed;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Configuration;
 
+import org.apache.isis.applib.ModuleAbstract;
+
 @Vetoed // must not be managed by CDI
 @Configuration
 //@ComponentScan(basePackages= {"domainapp.modules.spring"})
 @EnableAutoConfiguration
-public class DomainModule {
+public class DomainModule extends ModuleAbstract {
 
 }
