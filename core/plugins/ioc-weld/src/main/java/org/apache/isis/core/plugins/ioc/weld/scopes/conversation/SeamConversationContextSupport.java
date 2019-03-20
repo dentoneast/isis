@@ -73,7 +73,7 @@ public class SeamConversationContextSupport implements SeamConversationContext<H
 	// -- HELPER
 	
 	private HttpConversationContext httpConversationContext() {
-		return _CDI.getManagedBean(HttpConversationContext.class).get();
+		return _CDI.select(HttpConversationContext.class).getSingleton().orElse(null);
 	}
 	
 	

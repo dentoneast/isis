@@ -39,7 +39,7 @@ import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
 import org.apache.isis.config.property.ConfigPropertyBoolean;
 import org.apache.isis.config.property.ConfigPropertyEnum;
-import org.apache.isis.config.registry.BeanTypeRegistry;
+import org.apache.isis.config.registry.IsisBeanTypeRegistry;
 import org.apache.isis.core.commons.ensure.Assert;
 import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.commons.lang.ClassUtil;
@@ -156,7 +156,7 @@ public class SpecificationLoader {
         // need to completely load services and mixins (synchronously)
         LOG.info("Loading all specs (up to state of {})", IntrospectionState.NOT_INTROSPECTED);
 
-        val typeRegistry = BeanTypeRegistry.current(); 
+        val typeRegistry = IsisBeanTypeRegistry.current(); 
         
         final List<ObjectSpecification> specificationsFromRegistry = _Lists.newArrayList();
 

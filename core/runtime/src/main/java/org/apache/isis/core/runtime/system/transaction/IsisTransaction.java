@@ -23,14 +23,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
-import javax.enterprise.inject.Instance;
-
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.WithTransactionScope;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.xactn.Transaction;
 import org.apache.isis.applib.services.xactn.TransactionState;
 import org.apache.isis.commons.internal.collections._Lists;
+import org.apache.isis.core.commons.collections.Bin;
 import org.apache.isis.core.commons.components.TransactionScopedComponent;
 import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.commons.util.ToString;
@@ -156,7 +155,7 @@ public class IsisTransaction implements TransactionScopedComponent, Transaction 
     private final PublishingServiceInternal publishingServiceInternal;
     private final AuditingServiceInternal auditingServiceInternal;
 
-    private final Instance<WithTransactionScope> withTransactionScopes;
+    private final Bin<WithTransactionScope> withTransactionScopes;
 
     private IsisException abortCause;
 
@@ -178,7 +177,7 @@ public class IsisTransaction implements TransactionScopedComponent, Transaction 
         this.auditingServiceInternal = serviceRegistry.lookupServiceElseFail(AuditingServiceInternal.class);
 
         withTransactionScopes = serviceRegistry
-                .getInstance(WithTransactionScope.class);
+                .select(WithTransactionScope.class);
 
         this.state = State.IN_PROGRESS;
 

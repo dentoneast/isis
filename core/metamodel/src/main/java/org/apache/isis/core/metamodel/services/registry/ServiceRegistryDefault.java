@@ -19,6 +19,7 @@
 
 package org.apache.isis.core.metamodel.services.registry;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -31,6 +32,7 @@ import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.collections._Sets;
+import org.apache.isis.core.commons.collections.Bin;
 import org.apache.isis.core.metamodel.services.ServiceUtil;
 
 import lombok.val;
@@ -70,8 +72,9 @@ public final class ServiceRegistryDefault implements ServiceRegistry {
             streamRegisteredBeans()
             .filter(BeanAdapter::isDomainService)
             .map(BeanAdapter::getInstance)
-            .filter(Instance::isResolvable)
-            .map(Instance::get)
+            .filter(Bin::isCardinalityOne)
+            .map(Bin::getSingleton)
+            .map(Optional::get)
             .forEach(serviceCache::add);
         }
         return serviceCache.stream();

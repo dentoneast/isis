@@ -5,20 +5,19 @@ import java.net.URI;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Vetoed;
 import javax.inject.Inject;
 
 import org.apache.isis.applib.services.urlencoding.UrlEncodingService;
 import org.apache.isis.applib.services.urlencoding.UrlEncodingServiceWithCompression;
 import org.apache.isis.commons.internal.base._Casts;
-import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.commons.internal.memento._Mementos;
 import org.apache.isis.commons.internal.memento._Mementos.SerializingAdapter;
 import org.apache.isis.commons.internal.uri._URI.ContainerType;
 import org.apache.isis.commons.internal.uri._URI.ContextType;
+import org.apache.isis.core.commons.collections.Bin;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ManagedObject.SimpleManagedObject;
 import org.apache.isis.core.metamodel.spec.ManagedObjectState;
@@ -74,7 +73,7 @@ public class ValueContextManager implements ContextHandler {
 	}
 
 	@Override
-	public Instance<ManagedObject> resolve(ObjectSpecId specId, URI objectUri) {
+	public Bin<ManagedObject> resolve(ObjectSpecId specId, URI objectUri) {
 		
 		val serialized = objectUri.getQuery();
 		val spec = specLoader.lookupBySpecId(specId);
@@ -98,7 +97,7 @@ public class ValueContextManager implements ContextHandler {
 		
 			val value = parseMemento(serialized).get("val", expectedType);
 			val managedObject = SimpleManagedObject.of(spec, value);
-			return _CDI.InstanceFactory.singleton(managedObject);
+			return Bin.ofSingleton(managedObject);
 			
 		} catch (Exception cause) {
 			val errMsg = String.format("Failed to deserialize memento (container) holding expected type '%s' <- '%s'.",

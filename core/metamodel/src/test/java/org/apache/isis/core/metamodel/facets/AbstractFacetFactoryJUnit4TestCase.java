@@ -23,17 +23,9 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 
-import org.jmock.Expectations;
-import org.jmock.auto.Mock;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-
 import org.apache.isis.applib.Identifier;
-import org.apache.isis.applib.services.eventbus.EventBusService;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
-import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facetapi.FeatureType;
@@ -49,6 +41,11 @@ import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2.Mode;
+import org.jmock.Expectations;
+import org.jmock.auto.Mock;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 
 public abstract class AbstractFacetFactoryJUnit4TestCase {
 
@@ -83,8 +80,8 @@ public abstract class AbstractFacetFactoryJUnit4TestCase {
     protected OneToManyAssociation mockOneToManyAssociation;
     @Mock
     protected OneToOneActionParameter mockOneToOneActionParameter;
-    @Mock
-    protected EventBusService mockEventBusService;
+//    @Mock
+//    protected EventBusService mockEventBusService;
     @Mock
     protected ObjectAdapterProvider mockObjectAdapterProvider;
     
@@ -117,8 +114,8 @@ public abstract class AbstractFacetFactoryJUnit4TestCase {
             allowing(mockServicesInjector).lookupService(AuthenticationSessionProvider.class);
             will(returnValue(mockAuthenticationSessionProvider));
 
-            allowing(mockServicesInjector).lookupServiceElseFail(EventBusService.class);
-            will(returnValue(mockEventBusService));
+//            allowing(mockServicesInjector).lookupServiceElseFail(EventBusService.class);
+//            will(returnValue(mockEventBusService));
 
         }});
 

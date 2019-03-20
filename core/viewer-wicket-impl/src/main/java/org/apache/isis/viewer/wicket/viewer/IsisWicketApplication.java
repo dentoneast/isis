@@ -41,10 +41,8 @@ import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.resources._Resources;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
-import org.apache.isis.core.commons.ensure.Ensure;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.runtime.threadpool.ThreadPoolSupport;
 import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettings;
 import org.apache.isis.viewer.wicket.model.isis.WicketViewerSettingsAccessor;
@@ -176,7 +174,7 @@ implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor, WicketVi
 //    @Inject private ImageResourceCache imageCache;
 //    @Inject private WicketViewerSettings wicketViewerSettings;
     @Inject private PageClassRegistry pageClassRegistry;
-    @Inject private IsisSessionFactory isisSessionFactory;
+//    @Inject private IsisSessionFactory isisSessionFactory;
     @Inject private WicketViewerSettings settings;
     
     private final IsisWicketApplication_Experimental experimental;
@@ -261,7 +259,7 @@ implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor, WicketVi
 //            initWicketComponentInjection(injector);
 //            
 //            injector.injectMembers(this); // populates this.isisSessionFactory
-            Ensure.ensure("IsisSessionFactory should have been injected.", this.isisSessionFactory != null);
+//            Ensure.ensure("IsisSessionFactory should have been injected.", this.isisSessionFactory != null);
             
             if (requestCycleListenerForIsis instanceof WebRequestCycleForIsis) {
                 WebRequestCycleForIsis webRequestCycleForIsis = (WebRequestCycleForIsis) requestCycleListenerForIsis;
@@ -628,9 +626,9 @@ implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor, WicketVi
     @Override
     protected void onDestroy() {
         try {
-            if (isisSessionFactory != null) {
-                isisSessionFactory.destroyServicesAndShutdown();
-            }
+//            if (isisSessionFactory != null) {
+//                isisSessionFactory.destroyServicesAndShutdown();
+//            }
             super.onDestroy();
             IsisContext.clear();
         } catch(final RuntimeException ex) {

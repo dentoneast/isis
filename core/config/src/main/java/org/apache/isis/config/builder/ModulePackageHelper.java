@@ -46,7 +46,7 @@ import org.apache.isis.commons.internal.collections._Sets;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.commons.internal.reflection._Reflect;
-import org.apache.isis.config.registry.BeanTypeRegistry;
+import org.apache.isis.config.registry.IsisBeanTypeRegistry;
 import org.apache.isis.core.plugins.classdiscovery.ClassDiscovery;
 import org.apache.isis.core.plugins.classdiscovery.ClassDiscoveryPlugin;
 
@@ -98,7 +98,7 @@ class ModulePackageHelper {
         
         
         val typesForScanning = new HashSet<Class<?>>();
-        BeanTypeRegistry.FRAMEWORK_PROVIDED_TYPES_FOR_SCANNING.stream()
+        IsisBeanTypeRegistry.FRAMEWORK_PROVIDED_TYPES_FOR_SCANNING.stream()
         .map(name -> {
 			try {
 				return _Context.loadClass(name);
@@ -116,10 +116,10 @@ class ModulePackageHelper {
         //FIXME [2033] at this point we should have all we need, let CDI take over
         // and let the CDI Bean intercepter make entries into the registry 
         
-        final BeanTypeRegistry registry = BeanTypeRegistry.current();
+        final IsisBeanTypeRegistry registry = IsisBeanTypeRegistry.current();
 
         final Set<String> moduleAndFrameworkPackages = new HashSet<>();
-        moduleAndFrameworkPackages.addAll(BeanTypeRegistry.FRAMEWORK_PROVIDED_SERVICE_PACKAGES);
+        moduleAndFrameworkPackages.addAll(IsisBeanTypeRegistry.FRAMEWORK_PROVIDED_SERVICE_PACKAGES);
         modulePackageNamesFrom(appManifest)
             .forEach(moduleAndFrameworkPackages::add);
         moduleAndFrameworkPackages.add(appManifest.getClass().getPackage().getName());

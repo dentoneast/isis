@@ -56,10 +56,11 @@ implements CollectionAddToFacet {
                     final CollectionDomainEventFacetAbstract collectionDomainEventFacet,
                     final ServiceRegistry serviceRegistry,
                     final FacetHolder holder) {
+    	
         super(type(), eventType, holder);
         this.getterFacet = getterFacet;
         this.collectionAddToFacet = collectionAddToFacet;
-        this.domainEventHelper = new DomainEventHelper(serviceRegistry);
+        this.domainEventHelper = DomainEventHelper.ofServiceRegistry(serviceRegistry);
     }
 
     @Override

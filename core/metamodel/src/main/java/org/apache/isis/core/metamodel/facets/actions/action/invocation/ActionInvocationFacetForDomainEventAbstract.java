@@ -98,7 +98,7 @@ implements ImperativeFacet {
         this.onType = onType;
         this.returnType = returnType;
         this.serviceRegistry = getServiceRegistry();
-        this.domainEventHelper = new DomainEventHelper(this.serviceRegistry);
+        this.domainEventHelper = DomainEventHelper.ofServiceRegistry(serviceRegistry);
     }
 
     /**

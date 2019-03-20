@@ -27,16 +27,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Queue;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
@@ -44,13 +41,11 @@ import javax.enterprise.inject.spi.CDIProvider;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Qualifier;
 
-import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.commons.internal.functions._Functions.CheckedRunnable;
+import org.apache.isis.core.commons.collections.Bin;
 import org.apache.isis.core.plugins.ioc.IocPlugin;
-
-import lombok.val;
 
 /**
  * <h1>- internal use only -</h1>
@@ -63,7 +58,7 @@ import lombok.val;
  * @since 2.0.0-M2
  */
 public final class _CDI {
-
+	
     /**
      * Bootstrap CDI if not already present.
      * @param onDiscover - Packages of the specified (stream of) classes will be scanned and found classes 
@@ -108,54 +103,31 @@ public final class _CDI {
      * Obtains a child Instance for the given required type and additional required qualifiers. 
      * @param subType
      * @param qualifiers
-     * @return an optional, empty if passed two instances of the same qualifier type, or an 
-     * instance of an annotation that is not a qualifier type
+     * @return non-null {@code Bin}
      */
-    public static <T> Optional<T> getManagedBean(final Class<T> subType, Collection<Annotation> qualifiers) {
-        return getInstance(subType, qualifiers)
-                .map(instance->tryGet(instance::get));
-    }
-
-    /**
-     * Obtains a child Instance for the given required type and additional required qualifiers. 
-     * @param subType
-     * @param qualifiers
-     * @return an optional, empty if passed two instances of the same qualifier type, or an 
-     * instance of an annotation that is not a qualifier type
-     */
-    public static <T> Optional<T> getManagedBean(final Class<T> subType) {
-        return getInstance(subType)
-                .map(instance->tryGet(instance::get));
-    }
-    
-    /**
-     * Obtains a child Instance for the given required type and additional required qualifiers. 
-     * @param subType
-     * @param qualifiers
-     * @return an optional, empty if passed two instances of the same qualifier type, or an 
-     * instance of an annotation that is not a qualifier type
-     */
-    public static <T> Optional<Instance<T>> getInstance(final Class<T> subType, Collection<Annotation> qualifiers) {
+    public static <T> Bin<T> select(final Class<T> subType, Collection<Annotation> qualifiers) {
         if(isEmpty(qualifiers)) {
-            return getInstance(subType);
+            return select(subType);
         }
         
         final Annotation[] _qualifiers = qualifiers.toArray(new Annotation[] {});
         
         return cdi()
-                .map(cdi->tryGet(()->cdi.select(subType, _qualifiers)));
+                .map(cdi->tryGet(()->cdi.select(subType, _qualifiers)))
+                .map(instance->Bin.ofInstance(instance))
+                .orElse(Bin.empty());
     }
     
     /**
      * Obtains a child Instance for the given required type and additional required qualifiers. 
      * @param subType
-     * @param qualifiers
-     * @return an optional, empty if passed two instances of the same qualifier type, or an 
-     * instance of an annotation that is not a qualifier type
+     * @return non-null {@code Bin}
      */
-    public static <T> Optional<Instance<T>> getInstance(final Class<T> subType) {
+    public static <T> Bin<T> select(final Class<T> subType) {
         return cdi()
-                .map(cdi->tryGet(()->cdi.select(subType)));
+                .map(cdi->tryGet(()->cdi.select(subType)))
+                .map(instance->Bin.ofInstance(instance))
+                .orElse(Bin.empty());
     }
     
     
@@ -185,34 +157,23 @@ public final class _CDI {
     // -- GENERIC SINGLETON RESOLVING
     
     /**
-     * @return framework's managed singleton
+     * @return CDI managed singleton wrapped in an Optional
+     */
+    public static <T> Optional<T> getSingleton(@Nullable Class<T> type) {
+    	if(type==null) {
+    		return Optional.empty();
+    	}
+        return _CDI.select(type).getSingleton();
+    }
+    
+    /**
+     * @return CDI managed singleton
      * @throws NoSuchElementException - if the singleton is not resolvable
      */
-    public static <T> T getSingleton(Class<T> type) {
-        // first lookup CDI, then lookup _Context; the latter to support unit testing 
-        return _CDI.getManagedBean(type)
-                .orElseGet(()->getMockedSingleton(type));
-    }
-        
-    // -- UNIT TESTING SUPPORT
-    
-//    public static void putMockedSingletons(Collection<?> mockedServices) {
-//        stream(mockedServices)
-//        .forEach(_CDI::putMockedSingleton);
-//    }
-//    
-//    public static <T> T putMockedSingleton(T mockedService) {
-//        return putMockedSingleton(_Casts.uncheckedCast(mockedService.getClass()), mockedService);
-//    }
-//    
-//    public static <T> T putMockedSingleton(Class<T> type, T mockedService) {
-//        _Context.putSingleton(type, mockedService);
-//        return mockedService;
-//    }
-    
-    private static <T> T getMockedSingleton(Class<T> type) {
-        requires(type, "type");        
-        return _Context.getElseFail(type);
+    public static <T> T getSingletonElseFail(@Nullable Class<T> type) {
+        return getSingleton(type)
+        		.orElseThrow(()->_Exceptions.noSuchElement("Cannot resolve singleton '%s'", type));
+        				
     }
     
     // -- ENUMERATE BEANS
@@ -225,53 +186,6 @@ public final class _CDI {
 		BeanManager beanManager = _CDI.getBeanManager();
         Set<Bean<?>> beans = beanManager.getBeans(Object.class, _CDI.QUALIFIER_ANY);
         return beans.stream();
-	}
-    
-    // -- FACTORIES
-    
-	public static class InstanceFactory {
-
-		public static <T> Instance<T> empty() {
-			return new _CDI_EmptyInstance<>();
-		}
-		
-		public static <T> Instance<T> singleton(@Nullable T pojo) {
-			if(pojo==null) {
-				return empty();
-			}
-			return _CDI_SingletonInstance.of(pojo);
-		}
-
-		public static <T> Instance<T> ambiguous(@Nullable Collection<T> collection) {
-			val size = _NullSafe.size(collection);
-			if(size==0) {
-				return empty();
-			} 
-			if(size==1) {
-				if(collection instanceof List) {
-					// just to reduce heap pollution when collection is a list
-					return singleton(((List<T>)collection).get(0));
-				} 
-				return singleton(collection.iterator().next());
-			}
-			return _CDI_AmbiguousInstance.of(collection);
-		}
-
-        public static <T, R> Instance<R> mapElements(Instance<T> instance, Function<T, R> elementMapper) {
-            
-            if(instance.isUnsatisfied()) {
-                return empty();
-            }
-            if(instance.isResolvable()) {
-                val element = instance.get();
-                return singleton(elementMapper.apply(element));
-            }
-            val elements = instance.stream()
-            .map(elementMapper)
-            .collect(Collectors.toList());
-            return _CDI_AmbiguousInstance.of(elements);
-        }
-		
 	}
         
     // -- HELPER
@@ -298,6 +212,8 @@ public final class _CDI {
             return null;
         }
     }
+
+
 	
 
 

@@ -1,5 +1,7 @@
 package org.apache.isis.core.commons.collections;
 
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -33,6 +35,11 @@ final class Bin_Empty<T> implements Bin<T> {
 	@Override
 	public int size() {
 		return 0;
+	}
+
+	@Override
+	public Iterator<T> iterator() {
+		return Collections.<T>emptyList().iterator();
 	}
 
 }

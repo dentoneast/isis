@@ -4,19 +4,17 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Modifier;
 import java.net.URI;
 import java.util.Optional;
-import java.util.UUID;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Vetoed;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.commons.internal.uri._URI.ContainerType;
 import org.apache.isis.commons.internal.uri._URI.ContextType;
+import org.apache.isis.core.commons.collections.Bin;
 import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.metamodel.facets.actions.action.invocation.PersistableTypeGuard;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
@@ -70,7 +68,7 @@ public class MixinContextManager implements ContextHandler {
 	}
 
 	@Override
-	public Instance<ManagedObject> resolve(ObjectSpecId specId, URI objectUri) {
+	public Bin<ManagedObject> resolve(ObjectSpecId specId, URI objectUri) {
 		
 		throw _Exceptions.notImplemented();
 

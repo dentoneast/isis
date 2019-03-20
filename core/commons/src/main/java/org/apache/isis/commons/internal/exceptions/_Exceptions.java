@@ -25,6 +25,7 @@ import static org.apache.isis.commons.internal.base._With.requires;
 import java.io.PrintStream;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -73,7 +74,16 @@ public final class _Exceptions {
         requires(format, "format");
         return new IllegalArgumentException(String.format(format, _case));
     }
+    
+    public static final NoSuchElementException noSuchElement(String msg) {
+        return new NoSuchElementException(msg);
+    }
 
+    public static final NoSuchElementException noSuchElement(String format, Object ...args) {
+        requires(format, "format");
+        return noSuchElement(String.format(format, args));
+    }
+    
     public static final IllegalStateException unexpectedCodeReach() {
         return new IllegalStateException("internal error: code was reached, that is expected unreachable");
     }

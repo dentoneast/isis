@@ -27,7 +27,7 @@ import org.apache.isis.applib.annotation.NatureOfService;
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.fixturescripts.FixtureScript;
 import org.apache.isis.commons.internal.base._Casts;
-import org.apache.isis.config.registry.BeanTypeRegistry;
+import org.apache.isis.config.registry.IsisBeanTypeRegistry;
 import org.apache.isis.core.plugins.classdiscovery.ClassDiscoveryPlugin;
 
 /**
@@ -63,7 +63,7 @@ implements ClassDiscoveryService {
     // -- HELPER
 
     private static <T> Set<Class<? extends T>> getFixtureScriptTypes() {
-        Set<?> fixtureScriptTypes = BeanTypeRegistry.current().getFixtureScriptTypes();
+        Set<?> fixtureScriptTypes = IsisBeanTypeRegistry.current().getFixtureScriptTypes();
         if (fixtureScriptTypes != null) {
             return _Casts.uncheckedCast(fixtureScriptTypes);
         }

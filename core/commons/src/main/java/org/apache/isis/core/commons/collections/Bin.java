@@ -6,11 +6,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
+import javax.enterprise.inject.Instance;
 
 import org.apache.isis.commons.internal.base._NullSafe;
 
@@ -23,7 +26,7 @@ import lombok.val;
  * @param <T>
  * @since 2.0.0-M3
  */
-public interface Bin<T> {
+public interface Bin<T> extends Iterable<T> {
 
 	Cardinality getCardinality();
 	int size();
@@ -79,6 +82,21 @@ public interface Bin<T> {
 		return Bin_Multiple.of(nonNullElements);
 	}
 	
+	public static <T> Bin<T> ofInstance(@Nullable Instance<T> instance) {
+		if(instance==null || instance.isUnsatisfied()) {
+			return empty();
+		}
+		if(instance.isResolvable()) { 
+			return Bin_Singleton.of(instance.get());
+		}
+		val nonNullElements = instance.stream()
+				.collect(Collectors.toCollection(()->new ArrayList<>()));
+		
+		return Bin_Multiple.of(nonNullElements);
+		
+	}
+	
+	
 	// -- OPERATORS
 	
 	public default Bin<T> filter(@Nullable Predicate<? super T> predicate) {
@@ -121,6 +139,29 @@ public interface Bin<T> {
     	return Bin_Multiple.of(union);
     }
 	
+    default <R> Bin<R> map(Function<? super T, R> mapper) {
+    	
+        if(isEmpty()) {
+            return empty();
+        }
+        
+        requires(mapper, "mapper");
+        
+        val mappedElements = 
+        		stream()
+        		.map(mapper)
+        		.filter(_NullSafe::isPresent)
+        		.collect(Collectors.toCollection(ArrayList::new));
+        
+        return ofCollection(mappedElements);
+    }
+	
+	// -- TRAVERSAL
+	
+    default void forEach(Consumer<? super T> action) {
+        requires(action, "action");
+        stream().forEach(action);
+    }
 	
 	// -- SHORTCUTS FOR PREDICATES
 	
@@ -139,12 +180,6 @@ public interface Bin<T> {
 	default boolean isCardinalityMultiple() {
 		return getCardinality().isMultiple();
 	}
-	
-
-	
-	
-	// -- SHORTCUTS FOR ELEMENT ACCESS
-	
 	
 	
 }

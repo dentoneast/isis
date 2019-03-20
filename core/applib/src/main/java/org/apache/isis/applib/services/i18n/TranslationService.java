@@ -58,8 +58,8 @@ public interface TranslationService {
                 ("disable".equalsIgnoreCase(configValue) ||
                         "disabled".equalsIgnoreCase(configValue))),
         READ(configValue->configValue != null &&
-        ("read".equalsIgnoreCase(configValue) ||
-                "reader".equalsIgnoreCase(configValue))),
+        		("read".equalsIgnoreCase(configValue) ||
+        				"reader".equalsIgnoreCase(configValue))),
         // default
         WRITE(configValue->!READ.matches(configValue) && !DISABLED.matches(configValue));
 

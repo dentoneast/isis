@@ -152,7 +152,7 @@ public interface IsisContext {
      * @throws NoSuchElementException - if SpecificationLoader not managed
      */
     public static SpecificationLoader getSpecificationLoader() {
-        return _CDI.getSingleton(SpecificationLoader.class);
+        return _CDI.getSingletonElseFail(SpecificationLoader.class);
     }
 
     /**
@@ -160,7 +160,7 @@ public interface IsisContext {
      * @throws NoSuchElementException - if ServicesInjector not managed
      */
     public static ServiceInjector getServiceInjector() {
-        return _CDI.getSingleton(ServiceInjector.class);
+        return _CDI.getSingletonElseFail(ServiceInjector.class);
     }
     
     /**
@@ -168,7 +168,7 @@ public interface IsisContext {
      * @throws NoSuchElementException - if ServiceRegistry not managed
      */
     public static ServiceRegistry getServiceRegistry() {
-        return _CDI.getSingleton(ServiceRegistry.class);
+        return _CDI.getSingletonElseFail(ServiceRegistry.class);
     }
     
     /**
@@ -176,7 +176,7 @@ public interface IsisContext {
      * @throws NoSuchElementException - if IsisSessionFactory not resolvable
      */
     public static IsisSessionFactory getSessionFactory() {
-        return _CDI.getSingleton(IsisSessionFactory.class);
+        return _CDI.getSingletonElseFail(IsisSessionFactory.class);
     }
     
     /**
@@ -211,7 +211,7 @@ public interface IsisContext {
      * @throws NoSuchElementException - if ServiceRegistry not managed
      */
     public static ObjectAdapterProvider getObjectAdapterProvider() {
-        return _CDI.getSingleton(ObjectAdapterService.class);
+        return _CDI.getSingletonElseFail(ObjectAdapterService.class);
     }
     
     public static Function<Object, ObjectAdapter> pojoToAdapter() {
@@ -232,11 +232,11 @@ public interface IsisContext {
     }
 
     public static AuthenticationManager getAuthenticationManager() {
-        return _CDI.getSingleton(AuthenticationManager.class);
+        return _CDI.getSingletonElseFail(AuthenticationManager.class);
     }
 
     public static AuthorizationManager getAuthorizationManager() {
-        return _CDI.getSingleton(AuthorizationManager.class);
+        return _CDI.getSingletonElseFail(AuthorizationManager.class);
     }
     
     // -- 

@@ -18,7 +18,10 @@
  */
 package org.apache.isis.applib.services.metrics;
 
-import org.apache.isis.applib.annotation.Programmatic;
+import javax.annotation.Priority;
+import javax.enterprise.inject.Alternative;
+import javax.inject.Singleton;
+
 import org.apache.isis.applib.services.iactn.InteractionContext;
 import org.apache.isis.schema.ixn.v1.MemberExecutionDto;
 
@@ -35,7 +38,6 @@ public interface MetricsService {
      *     Is captured within {@link MemberExecutionDto#getMetrics()} (accessible from {@link InteractionContext#getInteraction()}).
      * </p>
      */
-    @Programmatic
     int numberObjectsLoaded();
 
     /**
@@ -50,10 +52,27 @@ public interface MetricsService {
      *     Is captured within {@link MemberExecutionDto#getMetrics()} (accessible from {@link InteractionContext#getInteraction()}).
      * </p>
      */
-    @Programmatic
     int numberObjectsDirtied();
 
 
+    /**
+     * @since 2.0.0-M3
+     */
+    @Singleton @Alternative @Priority(-10)
+    public static class MetricsServiceNoop implements MetricsService {
+
+		@Override
+		public int numberObjectsLoaded() {
+			return 0;
+		}
+
+		@Override
+		public int numberObjectsDirtied() {
+			return 0;
+		}
+    	
+    }
+    
 }
 
 

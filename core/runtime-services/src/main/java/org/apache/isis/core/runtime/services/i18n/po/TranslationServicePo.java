@@ -28,16 +28,13 @@ import org.apache.isis.applib.services.i18n.LocaleProvider;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.i18n.TranslationsResolver;
 import org.apache.isis.commons.internal.context._Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 
 @ApplicationScoped //FIXME [2033] cannot provision with @Singleton
+//@Slf4j
 public class TranslationServicePo implements TranslationService {
-
-    public static Logger LOG = LoggerFactory.getLogger(TranslationServicePo.class);
 
     public static final String KEY_PO_MODE = "isis.services.translation.po.mode";
 

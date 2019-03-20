@@ -1,5 +1,7 @@
 package org.apache.isis.core.commons.collections;
 
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -32,6 +34,11 @@ final class Bin_Singleton<T> implements Bin<T> {
 	@Override
 	public int size() {
 		return 1;
+	}
+
+	@Override
+	public Iterator<T> iterator() {
+		return Collections.singletonList(element).iterator();
 	}
 
 }

@@ -24,14 +24,14 @@ import java.util.function.Predicate;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.inject.Inject;
 
 import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.services.i18n.TranslatableString;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract implementation of {@link ExceptionRecognizer} that looks
@@ -155,7 +155,6 @@ public abstract class ExceptionRecognizerAbstract implements ExceptionRecognizer
         return Recognition.of(category, recognize(ex));
     }
 
-    @javax.inject.Inject
-    protected TranslationService translationService;
+    @Inject protected TranslationService translationService;
     
 }

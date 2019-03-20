@@ -486,7 +486,7 @@ implements FormExecutor {
         // see if the exception is recognized as being a non-serious error
         // (nb: similar code in WebRequestCycleForIsis, as a fallback)
         final Stream<ExceptionRecognizer> exceptionRecognizers = getServiceRegistry()
-                .getInstance(ExceptionRecognizer.class)
+                .select(ExceptionRecognizer.class)
                 .stream();
         String recognizedErrorIfAny = new ExceptionRecognizerComposite(exceptionRecognizers).recognize(ex);
         if (recognizedErrorIfAny != null) {

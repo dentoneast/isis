@@ -40,7 +40,7 @@ import org.apache.isis.commons.internal.base._Strings;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.collections._Maps;
 import org.apache.isis.commons.internal.context._Context;
-import org.apache.isis.config.registry.BeanTypeRegistry;
+import org.apache.isis.config.registry.IsisBeanTypeRegistry;
 import org.apache.isis.core.commons.exceptions.UnknownTypeException;
 import org.apache.isis.core.commons.lang.ClassExtensions;
 import org.apache.isis.core.commons.util.ToString;
@@ -853,7 +853,7 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
             return Collections.emptyList();
         }
 
-        val mixinTypes = BeanTypeRegistry.current().getMixinTypes();
+        val mixinTypes = IsisBeanTypeRegistry.current().getMixinTypes();
         if(_NullSafe.isEmpty(mixinTypes)) {
             return Collections.emptyList();
         }
@@ -1039,7 +1039,7 @@ public abstract class ObjectSpecificationAbstract extends FacetHolderImpl implem
             return Collections.emptyList();
         }
         
-        val mixinTypes = BeanTypeRegistry.current().getMixinTypes();
+        val mixinTypes = IsisBeanTypeRegistry.current().getMixinTypes();
         if(_NullSafe.isEmpty(mixinTypes)) {
             return Collections.emptyList();
         }

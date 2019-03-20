@@ -91,7 +91,7 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
     private final static _Probe probe = _Probe.unlimited().label("WebRequestCycleForIsis");
     
     private _Lazy<RequestContextService> requestContextService = _Lazy.of(()->
-        _CDI.getSingleton(RequestContextService.class));
+        _CDI.getSingletonElseFail(RequestContextService.class));
     
     public final static MetaDataKey<RequestContextHandle> REQUEST_CONTEXT_HANDLE_KEY 
         = new MetaDataKey<RequestContextHandle>() {
@@ -242,7 +242,7 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
 
             // handle recognized exceptions gracefully also
             final Stream<ExceptionRecognizer> exceptionRecognizers = getServiceRegistry()
-                    .getInstance(ExceptionRecognizer.class)
+                    .select(ExceptionRecognizer.class)
                     .stream();
             
             String recognizedMessageIfAny = new ExceptionRecognizerComposite(exceptionRecognizers).recognize(ex);
@@ -324,8 +324,7 @@ public class WebRequestCycleForIsis implements IRequestCycleListener {
 
         if(inIsisSession()) {
             getServiceRegistry()
-                    .getInstance(ExceptionRecognizer.class)
-                    .stream()
+                    .select(ExceptionRecognizer.class)
                     .forEach(exceptionRecognizers::add);
         } else {
             val metaModelDeficiencies = IsisContext.getMetaModelDeficienciesIfAny();

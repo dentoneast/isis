@@ -209,7 +209,7 @@ public abstract class PageAbstract extends WebPage implements ActionPromptProvid
 
             // REVIEW: similar code in WebRequestCycleForIsis
             final Stream<ExceptionRecognizer> exceptionRecognizers = getServiceRegistry()
-                    .getInstance(ExceptionRecognizer.class)
+                    .select(ExceptionRecognizer.class)
                     .stream();
                     
             final String recognizedMessageIfAny = new ExceptionRecognizerComposite(exceptionRecognizers).recognize(ex);

@@ -471,7 +471,7 @@ public class ActionModel extends BookmarkableModel<ObjectAdapter> implements For
         PersistableTypeGuard2.instate(resultAdapter);
         
         final Stream<RoutingService> routingServices = getServiceRegistry()
-                .getInstance(RoutingService.class)
+                .select(RoutingService.class)
                 .stream();
         
         final Object resultPojo = resultAdapter != null ? resultAdapter.getPojo() : null;

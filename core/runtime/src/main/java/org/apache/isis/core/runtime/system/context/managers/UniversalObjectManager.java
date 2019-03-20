@@ -112,15 +112,15 @@ public interface UniversalObjectManager {
 		@Override
 		public ObjectAdapter resolve(URI objectUri) {
 			val contextManager = this.contextManager.get();
-			val instance = contextManager.resolve(UniversalOid.of(objectUri));
+			val bin = contextManager.resolve(UniversalOid.of(objectUri));
 			
-    		if(instance.isResolvable()) {
-    			val managedObject = instance.get();
+    		if(bin.isCardinalityOne()) {
+    			val managedObject = bin.getSingleton().get();
     			val isisSession = IsisSession.currentIfAny();
     			
     			return ResolveResult.of(objectUri, managedObject).toObjectAdapter(isisSession);
     			
-    		} else if(instance.isAmbiguous()) {
+    		} else if(bin.isCardinalityMultiple()) {
     			
     			//FIXME [2033] handle ambiguity
     			throw _Exceptions.notImplemented();

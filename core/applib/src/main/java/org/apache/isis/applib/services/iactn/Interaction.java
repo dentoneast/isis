@@ -38,7 +38,6 @@ import org.apache.isis.applib.events.domain.PropertyDomainEvent;
 import org.apache.isis.applib.services.HasUniqueId;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.services.command.Command;
-import org.apache.isis.applib.services.eventbus.EventBusService;
 import org.apache.isis.applib.services.metrics.MetricsService;
 import org.apache.isis.applib.services.wrapper.WrapperFactory;
 import org.apache.isis.applib.services.xactn.Transaction;

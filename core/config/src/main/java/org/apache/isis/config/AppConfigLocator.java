@@ -32,15 +32,12 @@ import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.commons.internal.context._Plugin;
 import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
-import org.apache.isis.config.registry.BeanTypeRegistry;
 import org.apache.isis.core.commons.exceptions.IsisException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+@Slf4j @Deprecated //TODO [2033] was introduced for refactoring, remove 
 public final class AppConfigLocator {
     
     private AppConfigLocator() { }
@@ -118,7 +115,7 @@ public final class AppConfigLocator {
 			try {
 				val type = _Context.loadClassAndInitialize(serviceClassName);
 				
-				if(!_CDI.getManagedBean(type).isPresent()) {
+				if(_CDI.select(type).isEmpty()) {
 					throw new NoSuchElementException(String.format("No such bean known to CDI."));
 				};
 				
@@ -157,15 +154,6 @@ public final class AppConfigLocator {
         
         AppConfig appConfig;
         
-        appConfig = lookupAppConfig_UsingFrameworkContext();
-        if(appConfig!=null) {
-            log.info(String.format("Located AppConfig on framework's context '%s'.", appConfig.getClass().getName()));
-            
-            // assuming, we need to bootstrap CDI ourself
-            _CDI.init(()->BeanTypeRegistry.current().streamInbox());
-            return appConfig;
-        }
-        
         appConfig = lookupAppConfig_UsingCDI();
         if(appConfig!=null) {
             log.info(String.format("Located AppConfig '%s' via CDI.", appConfig.getClass().getName()));
@@ -201,12 +189,8 @@ public final class AppConfigLocator {
         throw new IsisException("Failed to locate the AppConfig");
     }
     
-    private static AppConfig lookupAppConfig_UsingFrameworkContext() {
-        return _Context.getIfAny(AppConfig.class);
-    }
-    
     private static AppConfig lookupAppConfig_UsingCDI() {
-        return _CDI.getManagedBean(AppConfig.class).orElse(null);
+        return _CDI.select(AppConfig.class).getSingleton().orElse(null);
     }
     
     private static AppConfig lookupAppConfig_UsingServiceLoader() {

@@ -16,11 +16,9 @@
  */
 package org.apache.isis.applib.services.queryresultscache;
 
-import javax.annotation.PostConstruct;
+import javax.enterprise.event.Observes;
 import javax.inject.Singleton;
 
-import org.apache.isis.applib.AbstractSubscriber;
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.fixturescripts.events.FixturesInstalledEvent;
 import org.apache.isis.applib.fixturescripts.events.FixturesInstallingEvent;
 
@@ -29,27 +27,18 @@ import org.apache.isis.applib.fixturescripts.events.FixturesInstallingEvent;
  * In separate class because {@link QueryResultsCache} itself is request-scoped
  */
 @Singleton
-public class QueryResultsCacheControlInternal extends AbstractSubscriber implements QueryResultCacheControl {
+public class QueryResultsCacheControlInternal implements QueryResultCacheControl {
 
-    @PostConstruct
-    @Override
-    public void postConstruct() {
-
-        super.postConstruct();
-
-        eventBusService.addEventListener(FixturesInstallingEvent.class, ev->{
-            fixturesInstalling = true;
-        });
-
-        eventBusService.addEventListener(FixturesInstalledEvent.class, ev->{
-            fixturesInstalling = false;
-        });
-
+    void onFixturesInstalling(@Observes FixturesInstallingEvent event){
+    	fixturesInstalling = true;
+    }
+    
+    void onFixturesInstalled(@Observes FixturesInstalledEvent event){
+    	fixturesInstalling = false;
     }
 
     private boolean fixturesInstalling;
 
-    @Programmatic
     @Override
     public boolean isFixturesInstalling() {
         return fixturesInstalling;

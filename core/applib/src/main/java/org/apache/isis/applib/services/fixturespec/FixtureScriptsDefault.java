@@ -21,9 +21,11 @@ package org.apache.isis.applib.services.fixturespec;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.isis.applib.annotation.Action;
 import org.apache.isis.applib.annotation.ActionLayout;
@@ -41,7 +43,6 @@ import org.apache.isis.applib.fixturescripts.FixtureScript;
 import org.apache.isis.applib.fixturescripts.FixtureScripts;
 import org.apache.isis.applib.fixturescripts.events.FixturesInstalledEvent;
 import org.apache.isis.applib.fixturescripts.events.FixturesInstallingEvent;
-import org.apache.isis.applib.services.eventbus.EventBusService;
 
 /**
  * Default instance of {@link FixtureScripts}, instantiated automatically by the framework if no custom user-defined instance was
@@ -73,6 +74,7 @@ import org.apache.isis.applib.services.eventbus.EventBusService;
         menuBar = DomainServiceLayout.MenuBar.SECONDARY,
         menuOrder = "500.10"
         )
+@Singleton
 public class FixtureScriptsDefault extends FixtureScripts {
 
     // -- constructor, init
@@ -82,6 +84,9 @@ public class FixtureScriptsDefault extends FixtureScripts {
      */
     public static final String PACKAGE_PREFIX = FixtureScriptsDefault.class.getPackage().getName();
 
+    @Inject private Event<FixturesInstallingEvent> fixturesInstallingEvent;
+    @Inject private Event<FixturesInstalledEvent> fixturesInstalledEvent;
+    
     public FixtureScriptsDefault() {
         super(FixtureScriptsSpecification.builder(PACKAGE_PREFIX)
                 .build());
@@ -97,8 +102,7 @@ public class FixtureScriptsDefault extends FixtureScripts {
         setSpecification(fixtureScriptsSpecificationProviders.get().getSpecification());
     }
 
-
-
+    
     // -- runFixtureScript (using choices as the drop-down policy)
     @Action(
             restrictTo = RestrictTo.PROTOTYPING
@@ -118,10 +122,10 @@ public class FixtureScriptsDefault extends FixtureScripts {
             @Parameter(optionality = Optionality.OPTIONAL)
             final String parameters) {
         try {
-            eventBusService.post(new FixturesInstallingEvent(this));
+        	fixturesInstallingEvent.fire(new FixturesInstallingEvent(this));
             return super.runFixtureScript(fixtureScript, parameters);
         } finally {
-            eventBusService.post(new FixturesInstalledEvent(this));
+        	fixturesInstalledEvent.fire(new FixturesInstalledEvent(this));
         }
     }
 
@@ -239,7 +243,6 @@ public class FixtureScriptsDefault extends FixtureScripts {
     // -- injected services
     
     @Inject @Any Instance<FixtureScriptsSpecificationProvider> fixtureScriptsSpecificationProviders;
-    @Inject EventBusService eventBusService;
-
+ 
 
 }

@@ -19,7 +19,6 @@
 package org.apache.isis.core.webapp;
 
 import static org.apache.isis.commons.internal.base._With.acceptIfPresent;
-import static org.apache.isis.commons.internal.resources._Resources.putContextPathIfPresent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,15 +28,20 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebListener;
 
 import org.apache.isis.commons.internal.base._Blackhole;
+import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.context._Context;
+import org.apache.isis.commons.internal.resources._Resources;
 import org.apache.isis.config.AppConfigLocator;
+import org.apache.isis.config.registry.IsisBeanTypeRegistry;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.webapp.modules.WebModule;
 import org.apache.isis.core.webapp.modules.WebModuleContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.val;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
@@ -52,11 +56,12 @@ import org.slf4j.LoggerFactory;
  * @since 2.0.0-M2
  *
  */
-//@WebListener //[ahuber] to support Servlet 3.0 annotations @WebFilter, @WebListener or others 
+@WebListener //[ahuber] to support Servlet 3.0 annotations @WebFilter, @WebListener or others 
 //with skinny war deployment requires additional configuration, so for now we disable this annotation
+// ... but enabled for now, because we are running into this issue
+// https://stackoverflow.com/questions/44389716/spring-boot-embedded-tomcat-weblistener-scanned-by-servletcomponentscan
+@Slf4j
 public class IsisWebAppContextListener implements ServletContextListener {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(IsisWebAppContextListener.class);
     
     private final List<ServletContextListener> activeListeners = new ArrayList<>();
 
@@ -65,30 +70,33 @@ public class IsisWebAppContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent event) {
 
-        final ServletContext servletContext = event.getServletContext();
+        val servletContext = event.getServletContext();
         
         // set the ServletContext initializing thread as preliminary default until overridden by
         // IsisWicketApplication#init() or others that better know what ClassLoader to use as application default.
         _Context.setDefaultClassLoader(Thread.currentThread().getContextClassLoader(), false);
         _Context.putSingleton(ServletContext.class, servletContext);
-        putContextPathIfPresent(servletContext.getContextPath());
+        _Resources.putContextPathIfPresent(servletContext.getContextPath());
         
-        LOG.info("=== PHASE 1 === Setting up IoC from AppManifest");
+        log.info("=== PHASE 1/3 === Setting up embedded CDI");
         
         // finalize the config (build and regard immutable)
         // as a side-effect bootstrap CDI, if the environment we are running on does not already have its own 
         _Blackhole.consume(AppConfigLocator.getAppConfig());
         
-        LOG.info("=== PHASE 2 === Preparing the ServletContext");
+        // expected post-condition: a BeanManager should be available
+        _Blackhole.consume(_CDI.getBeanManager());
         
-        final WebModuleContext webModuleContext = new WebModuleContext(servletContext);
+        log.info("=== PHASE 2/3 === Preparing the ServletContext");
+        
+        val webModuleContext = new WebModuleContext(servletContext);
         
         final List<WebModule> webModules =
                  WebModule.discoverWebModules()
                  .peek(module->module.prepare(webModuleContext)) // prepare context
                  .collect(Collectors.toList());
 
-        LOG.info("=== PHASE 3 === Initializing the ServletContext");
+        log.info("=== PHASE 3/3 === Initializing the ServletContext");
         
         webModules.stream()
         .filter(module->module.isApplicable(webModuleContext)) // filter those WebModules that are applicable
@@ -96,26 +104,26 @@ public class IsisWebAppContextListener implements ServletContextListener {
         
         activeListeners.forEach(listener->listener.contextInitialized(event));
         
-        LOG.info("=== DONE === ServletContext initialized.");
+        log.info("=== DONE === ServletContext initialized.");
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent event) {
-        LOG.info("=== SHUTDOWN === Shutting down ServletContext");
+        log.info("=== SHUTDOWN === Shutting down ServletContext");
         activeListeners.forEach(listener->shutdownListener(event, listener));
         activeListeners.clear();
         IsisContext.clear();
-        LOG.info("=== DESTROYED === ServletContext destroyed");
+        log.info("=== DESTROYED === ServletContext destroyed");
     }
     
     // -- HELPER
     
     private void addListener(ServletContext context, WebModule module) {
-        LOG.info(String.format("Setup ServletContext, adding WebModule '%s'", module.getName()));
+        log.info(String.format("Setup ServletContext, adding WebModule '%s'", module.getName()));
         try {
             acceptIfPresent(module.init(context), activeListeners::add);
         } catch (ServletException e) {
-            LOG.error(String.format("Failed to add WebModule '%s' to the ServletContext.", module.getName()), e);
+            log.error(String.format("Failed to add WebModule '%s' to the ServletContext.", module.getName()), e);
         }  
     }
     
@@ -123,7 +131,7 @@ public class IsisWebAppContextListener implements ServletContextListener {
         try {
             listener.contextDestroyed(event);
         } catch (Exception e) {
-            LOG.error(String.format("Failed to shutdown WebListener '%s'.", listener.getClass().getName()), e);
+            log.error(String.format("Failed to shutdown WebListener '%s'.", listener.getClass().getName()), e);
         }
     }
 

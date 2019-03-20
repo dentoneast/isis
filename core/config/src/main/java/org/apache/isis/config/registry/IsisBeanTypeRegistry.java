@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import org.apache.isis.applib.fixturescripts.FixtureScript;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.commons.internal.context._Context;
+import org.apache.isis.commons.internal.debug._Probe;
 
 import lombok.Getter;
 
@@ -17,14 +18,18 @@ import lombok.Getter;
  * Holds the set of domain services, persistent entities and fixture scripts.services etc.
  * @since 2.0.0-M3
  */
-public final class BeanTypeRegistry implements AutoCloseable {
+public final class IsisBeanTypeRegistry implements AutoCloseable {
 
-    public static BeanTypeRegistry current() {
-        return _Context.computeIfAbsent(BeanTypeRegistry.class, BeanTypeRegistry::new);
+	private final static _Probe probe = _Probe.unlimited().label(IsisBeanTypeRegistry.class.getSimpleName());
+	
+    public static IsisBeanTypeRegistry current() {
+        return _Context.computeIfAbsent(IsisBeanTypeRegistry.class, IsisBeanTypeRegistry::new);
     }
     
     private final Set<Class<?>> inbox = new HashSet<>();
-    
+
+    //TODO replace this getters: don't expose the sets for modification!?
+    @Getter private final Set<Class<?>> cdiManaged = new HashSet<>();
     @Getter private final Set<Class<?>> entityTypes = new HashSet<>();
     @Getter private final Set<Class<?>> mixinTypes = new HashSet<>();
     @Getter private final Set<Class<? extends FixtureScript>> fixtureScriptTypes = new HashSet<>();
@@ -53,7 +58,9 @@ public final class BeanTypeRegistry implements AutoCloseable {
 
 	public Stream<Class<?>> streamAllTypes() {
 
-		return _Lists.of(entityTypes,
+		return _Lists.of(
+				cdiManaged,
+				entityTypes,
 				mixinTypes,
 				fixtureScriptTypes,
 				domainServiceTypes,
@@ -61,6 +68,7 @@ public final class BeanTypeRegistry implements AutoCloseable {
 				viewModelTypes,
 				xmlElementTypes)
 				.stream()
+				.distinct()
 				.flatMap(Collection::stream)
 				;
 	}
@@ -77,7 +85,7 @@ public final class BeanTypeRegistry implements AutoCloseable {
 	 * Implemented as a one-shot, that clears the inbox afterwards.
 	 * @return
 	 */
-    public Stream<Class<?>> streamInbox() {
+    public Stream<Class<?>> streamAndClearInbox() {
         
         final List<Class<?>> defensiveCopy;
         
@@ -86,7 +94,15 @@ public final class BeanTypeRegistry implements AutoCloseable {
             inbox.clear();
         }
         
+        defensiveCopy.forEach(cls->{
+        	probe.println("stream inbox: " + cls.getName());
+        });
+        
         return defensiveCopy.stream();
+    }
+    
+    public Stream<Class<?>> streamCdiManaged() {
+    	return cdiManaged.stream();
     }
     
     // -- FILTER
@@ -95,7 +111,7 @@ public final class BeanTypeRegistry implements AutoCloseable {
     // later processing when the SpecLoader initializes.
     public boolean isManagedType(TypeMetaData typeMetaData) {
         boolean toInbox = false;
-        boolean manage = false;
+        boolean toCdi = false;
         
         if(typeMetaData.hasDomainServiceAnnotation()) {
             //domainServiceTypes.add(typeMetaData.getUnderlyingClass());
@@ -112,12 +128,19 @@ public final class BeanTypeRegistry implements AutoCloseable {
             toInbox = true;
         }
         
-        if(typeMetaData.hasSingletonAnnotation()) {
-            manage = true;
+        if(typeMetaData.hasSingletonAnnotation() || 
+        		typeMetaData.hasRequestScopedAnnotation()) {
+        	toCdi = true;
+        }
+        
+        if(toCdi) {
+        	cdiManaged.add(typeMetaData.getUnderlyingClass());
+            probe.println("addTo CDI: " + typeMetaData.getUnderlyingClass().getName());
         }
         
         if(toInbox) {
             addToInbox(typeMetaData.getUnderlyingClass());
+            probe.println("addTo inbox: " + typeMetaData.getUnderlyingClass().getName());
         }
         
         return false;
@@ -147,7 +170,7 @@ public final class BeanTypeRegistry implements AutoCloseable {
             "org.apache.isis.core.metamodel.MetamodelModule",
             "org.apache.isis.core.runtime.RuntimeModule",
             "org.apache.isis.core.runtime.services.RuntimeServicesModule",
-            "org.apache.isis.jdo.JdoModule",
+//            "org.apache.isis.jdo.JdoModule",
             "org.apache.isis.viewer.restfulobjects.rendering.RendererContext"
             );
 

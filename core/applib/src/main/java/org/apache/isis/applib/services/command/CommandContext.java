@@ -18,33 +18,14 @@ package org.apache.isis.applib.services.command;
 
 import javax.enterprise.context.RequestScoped;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
-import org.apache.isis.applib.annotation.Programmatic;
-
 /**
  * This service (API and implementation) provides access to context information about any {@link Command}.
- *
- * This implementation has no UI and there is only one implementation (this class) in applib, so it is annotated with
- * {@link org.apache.isis.applib.annotation.DomainService}.  This means that it is automatically registered and
- * available for use; no further configuration is required.
  */
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
 @RequestScoped
 public class CommandContext {
 
-    @SuppressWarnings("unused")
-    private static final Logger LOG = LoggerFactory.getLogger(CommandContext.class);
-
     private Command command;
 
-    @Programmatic
     public Command getCommand() {
         return command;
     }
@@ -52,7 +33,6 @@ public class CommandContext {
     /**
      * <b>NOT API</b>: intended to be called only by the framework.
      */
-    @Programmatic
     public void setCommand(final Command command) {
         this.command = command;
     }

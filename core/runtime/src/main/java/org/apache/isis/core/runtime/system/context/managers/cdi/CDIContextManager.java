@@ -4,16 +4,15 @@ import java.net.URI;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal._Constants;
-import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.commons.internal.uri._URI.ContainerType;
 import org.apache.isis.commons.internal.uri._URI.ContextType;
+import org.apache.isis.core.commons.collections.Bin;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ManagedObject.SimpleManagedObject;
 import org.apache.isis.core.metamodel.spec.ManagedObjectState;
@@ -63,21 +62,20 @@ public class CDIContextManager implements ContextHandler {
 	}
 
 	@Override
-	public Instance<ManagedObject> resolve(ObjectSpecId specId, URI objectUri) {
+	public Bin<ManagedObject> resolve(ObjectSpecId specId, URI objectUri) {
 		
 		val spec = specLoader.lookupBySpecId(specId);
 		val id = objectUri.getQuery(); 
 		//TODO [2033] future extension ... to refine, convert id to qualifiers
 		val qualifiers = _Constants.emptyAnnotations;
 		
-		val instance = serviceRegistry.getInstance(spec.getCorrespondingClass(), qualifiers);
+		val bin = serviceRegistry.select(spec.getCorrespondingClass(), qualifiers);
 		
 		probe.println("resolve spec='%s' -> '%s'", 
         		spec.getSpecId().asString(),
-        		instance);
+        		bin);
 		
-		return _CDI.InstanceFactory.mapElements(instance, 
-		        beanPojo->SimpleManagedObject.of(spec, beanPojo));
+		return bin.map(beanPojo->SimpleManagedObject.of(spec, beanPojo));
 	}
 
 	@Override

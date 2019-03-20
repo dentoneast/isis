@@ -35,7 +35,6 @@ import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
-import org.apache.isis.core.commons.ensure.Assert;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.services.ServiceUtil;
@@ -65,51 +64,51 @@ public final class MetaModelContexts {
 
         @Getter(lazy=true) 
         private final ObjectAdapterProvider objectAdapterProvider =
-        _CDI.getSingleton(ObjectAdapterProvider.class);
+        _CDI.getSingletonElseFail(ObjectAdapterProvider.class);
 
         @Getter(lazy=true) 
         private final ServiceInjector serviceInjector =
-        _CDI.getSingleton(ServiceInjector.class);
+        _CDI.getSingletonElseFail(ServiceInjector.class);
 
         @Getter(lazy=true) 
         private final ServiceRegistry serviceRegistry =
-        _CDI.getSingleton(ServiceRegistry.class);
+        _CDI.getSingletonElseFail(ServiceRegistry.class);
 
         @Getter(lazy=true) 
         private final SpecificationLoader specificationLoader = 
-        _CDI.getSingleton(SpecificationLoader.class);
+        _CDI.getSingletonElseFail(SpecificationLoader.class);
 
         @Getter(lazy=true) 
         private final AuthenticationSessionProvider authenticationSessionProvider =
-        _CDI.getSingleton(AuthenticationSessionProvider.class);
+        _CDI.getSingletonElseFail(AuthenticationSessionProvider.class);
 
         @Getter(lazy=true) 
         private final TranslationService translationService =
-        _CDI.getSingleton(TranslationService.class);
+        _CDI.getSingletonElseFail(TranslationService.class);
 
         @Getter(lazy=true) 
         private final AuthorizationManager authorizationManager =
-        _CDI.getSingleton(AuthorizationManager.class); 
+        _CDI.getSingletonElseFail(AuthorizationManager.class); 
 
         @Getter(lazy=true) 
         private final AuthenticationManager authenticationManager =
-        _CDI.getSingleton(AuthenticationManager.class);
+        _CDI.getSingletonElseFail(AuthenticationManager.class);
 
         @Getter(lazy=true) 
         private final TitleService titleService =
-        _CDI.getSingleton(TitleService.class);
+        _CDI.getSingletonElseFail(TitleService.class);
 
         @Getter(lazy=true) 
         private final ObjectAdapterService objectAdapterService =
-        _CDI.getSingleton(ObjectAdapterService.class);
+        _CDI.getSingletonElseFail(ObjectAdapterService.class);
 
         @Getter(lazy=true) 
         private final RepositoryService repositoryService =
-        _CDI.getSingleton(RepositoryService.class);
+        _CDI.getSingletonElseFail(RepositoryService.class);
         
         @Getter(lazy=true) 
         private final TransactionService transactionService =
-        _CDI.getSingleton(TransactionService.class);
+        _CDI.getSingletonElseFail(TransactionService.class);
         
 
         @Override

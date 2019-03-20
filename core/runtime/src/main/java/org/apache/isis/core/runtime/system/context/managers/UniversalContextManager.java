@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.isis.commons.internal.exceptions._Exceptions;
+import org.apache.isis.core.commons.collections.Bin;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ManagedObjectState;
 import org.apache.isis.core.metamodel.spec.ObjectSpecId;
@@ -41,7 +42,7 @@ public class UniversalContextManager implements ContextManager {
 	}
 
 	@Override
-	public Instance<ManagedObject> resolve(ObjectSpecId specId, URI identifier) {
+	public Bin<ManagedObject> resolve(ObjectSpecId specId, URI identifier) {
 		
 		requires(identifier, "identifier");
 		

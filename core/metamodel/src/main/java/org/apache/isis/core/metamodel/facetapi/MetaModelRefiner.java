@@ -45,9 +45,10 @@ public interface MetaModelRefiner extends MetaModelValidatorRefiner {
 		
 		val context = MetaModelContext.current();
 		val serviceRegistry = context.getServiceRegistry();
-		val instance = serviceRegistry.getInstance(MetaModelRefiner.class);
-		val refiners = instance.stream()
-		.collect(Collectors.toList());
+		
+		val refiners = serviceRegistry.select(MetaModelRefiner.class)
+				.stream()
+				.collect(Collectors.toList());
 		
 		return refiners;
 	}

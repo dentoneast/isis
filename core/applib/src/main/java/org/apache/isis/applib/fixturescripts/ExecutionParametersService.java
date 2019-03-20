@@ -18,9 +18,7 @@
  */
 package org.apache.isis.applib.fixturescripts;
 
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
-import org.apache.isis.applib.annotation.Programmatic;
+import javax.inject.Singleton;
 
 
 /**
@@ -34,13 +32,9 @@ import org.apache.isis.applib.annotation.Programmatic;
  * </p>
  * it
  */
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
+@Singleton
 public class ExecutionParametersService {
 
-    @Programmatic
     public ExecutionParameters newExecutionParameters(final String parameters) {
         return new ExecutionParameters(parameters);
     }

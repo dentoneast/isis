@@ -33,6 +33,7 @@ import org.apache.isis.commons.internal._Constants;
 import org.apache.isis.commons.internal.base._Reduction;
 import org.apache.isis.commons.internal.cdi._CDI;
 import org.apache.isis.commons.internal.reflection._Reflect;
+import org.apache.isis.core.commons.collections.Bin;
 
 import lombok.Value;
 import lombok.val;
@@ -59,18 +60,18 @@ public interface ServiceRegistry {
      * @return an optional, empty if passed two instances of the same qualifier type, or an 
      * instance of an annotation that is not a qualifier type
      */
-    default public <T> Instance<T> getInstance(
+    default public <T> Bin<T> select(
             final Class<T> type, Annotation[] qualifiers){
         
-        val optionalInstance = qualifiers!=null
-                ? _CDI.getInstance(type, _CDI.filterQualifiers(qualifiers))
-                    : _CDI.getInstance(type);
+        val bin = qualifiers!=null
+                ? _CDI.select(type, _CDI.filterQualifiers(qualifiers))
+                    : _CDI.select(type);
                 
-        return optionalInstance.orElse(_CDI.InstanceFactory.empty());
+        return bin;
     }
     
-    default public <T> Instance<T> getInstance(final Class<T> type){
-        return getInstance(type, _Constants.emptyAnnotations);
+    default public <T> Bin<T> select(final Class<T> type){
+        return select(type, _Constants.emptyAnnotations);
     }
     
     /**
@@ -94,12 +95,12 @@ public interface ServiceRegistry {
      */
     default public <T> Optional<T> lookupService(final Class<T> serviceClass) {
     	
-    	val instance = getInstance(serviceClass);
-    	if(instance.isUnsatisfied()) {
+    	val bin = select(serviceClass);
+    	if(bin.isEmpty()) {
     		return Optional.empty();
     	}
-    	if(instance.isResolvable()) {
-    		return Optional.of(instance.get());
+    	if(bin.isCardinalityOne()) {
+    		return bin.getSingleton();
     	}
     	// dealing with ambiguity, get the one, with highest priority annotated
     	
@@ -108,7 +109,7 @@ public interface ServiceRegistry {
     			//TODO [2033] not tested yet, whether the 'direction' is correct < vs >
     			_Reduction.<T>of((max, next)-> prioComparator.leftIsHigherThanRight(next, max) ? next : max);
 		
-    	instance.forEach(toMaxPrioReduction);
+    	bin.forEach(toMaxPrioReduction);
     	
     	return toMaxPrioReduction.getResult();
     }
@@ -169,11 +170,9 @@ public interface ServiceRegistry {
         private final Bean<?> bean;
         private final boolean domainService;
         
-        public Instance<?> getInstance() {
+        public Bin<?> getInstance() {
             val type = bean.getBeanClass();
-            val instance = _CDI.getInstance(type, bean.getQualifiers())
-                    .orElse(_CDI.InstanceFactory.empty());
-            return instance;
+            return _CDI.select(type, bean.getQualifiers());
         }
         
         public boolean isCandidateFor(Class<?> requiredType) {

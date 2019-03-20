@@ -21,11 +21,11 @@ package org.apache.isis.core.runtime.system.session;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
 import javax.annotation.PreDestroy;
-import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Vetoed;
 import javax.inject.Inject;
 
@@ -37,6 +37,7 @@ import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.commons.internal.base._Blackhole;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.core.commons.collections.Bin;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.ServiceInitializer;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
@@ -154,8 +155,9 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
             final Stream<Object> domainServices = serviceRegistry.streamRegisteredBeans()
                     .filter(BeanAdapter::isDomainService)
                     .map(BeanAdapter::getInstance)
-                    .filter(Instance::isResolvable)
-                    .map(Instance::get)
+                    .filter(Bin::isCardinalityOne)
+                    .map(Bin::getSingleton)
+                    .map(Optional::get)
                     ;
             
             domainServices.forEach(domainService->{

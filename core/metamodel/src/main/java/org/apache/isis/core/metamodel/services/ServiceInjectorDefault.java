@@ -30,9 +30,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.base._NullSafe;
@@ -42,6 +39,8 @@ import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.commons.util.ToString;
 import org.apache.isis.core.metamodel.exceptions.MetaModelException;
 import org.apache.isis.core.metamodel.spec.InjectorMethodEvaluator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import lombok.val;
 
@@ -120,9 +119,9 @@ public class ServiceInjectorDefault implements ServiceInjector {
             return;
         }
         
-        val instance = serviceRegistry.getInstance(typeToBeInjected, field.getAnnotations());
-        if(instance.isResolvable()) {
-            val bean = instance.get();
+        val beans = serviceRegistry.select(typeToBeInjected, field.getAnnotations());
+        if(beans.isCardinalityOne()) {
+            val bean = beans.getSingleton().get();
             invokeInjectorField(field, targetPojo, bean);    
         }
 
@@ -137,9 +136,9 @@ public class ServiceInjectorDefault implements ServiceInjector {
         final Class<? extends Collection<Object>> collectionTypeToBeInjected =
                 (Class<? extends Collection<Object>>) field.getType();
         
-        val instance = serviceRegistry.getInstance(elementType, field.getAnnotations());
-        if(!instance.isUnsatisfied()) {
-            final Collection<Object> collectionOfServices = instance.stream()
+        val beans = serviceRegistry.select(elementType, field.getAnnotations());
+        if(!beans.isEmpty()) {
+            final Collection<Object> collectionOfServices = beans.stream()
                     .filter(isOfType(elementType))
                     .collect(_Collections.toUnmodifiableOfType(collectionTypeToBeInjected));
 
@@ -167,9 +166,9 @@ public class ServiceInjectorDefault implements ServiceInjector {
             return;
         }
         
-        val instance = serviceRegistry.getInstance(typeToBeInjected, setter.getAnnotations());
-        if(instance.isResolvable()) {
-            val bean = instance.get();
+        val instance = serviceRegistry.select(typeToBeInjected, setter.getAnnotations());
+        if(instance.isCardinalityOne()) {
+            val bean = instance.getSingleton().get();
             invokeInjectorMethod(setter, targetPojo, bean);    
         } 
         

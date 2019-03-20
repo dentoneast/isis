@@ -30,7 +30,6 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.apache.isis.applib.annotation.Programmatic;
 import org.apache.isis.applib.annotation.PublishingChangeKind;
 import org.apache.isis.applib.services.clock.ClockService;
 import org.apache.isis.applib.services.command.Command;
@@ -55,7 +54,6 @@ public class PublishingServiceInternalDefault implements PublishingServiceIntern
 
 
     @Override
-    @Programmatic
     public void publishObjects() {
 
         if(suppress) {
@@ -109,7 +107,6 @@ public class PublishingServiceInternalDefault implements PublishingServiceIntern
 
 
     @Override
-    @Programmatic
     public void publishAction(final Interaction.Execution<?,?> execution) {
 
         if(suppress) {
@@ -145,7 +142,6 @@ public class PublishingServiceInternalDefault implements PublishingServiceIntern
 
     boolean suppress;
 
-    @Programmatic
     @Override
     public <T> T withPublishingSuppressed(final Block<T> block) {
         try {

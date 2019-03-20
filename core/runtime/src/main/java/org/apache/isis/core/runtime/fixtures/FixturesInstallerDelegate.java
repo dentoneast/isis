@@ -26,22 +26,21 @@ import org.apache.isis.applib.fixtures.FixtureType;
 import org.apache.isis.applib.fixtures.InstallableFixture;
 import org.apache.isis.applib.fixturescripts.events.FixturesInstalledEvent;
 import org.apache.isis.applib.fixturescripts.events.FixturesInstallingEvent;
-import org.apache.isis.applib.services.eventbus.EventBusService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.commons.lang.ObjectExtensions;
 import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
+import org.apache.isis.core.runtime.system.context.session.RuntimeEventService;
 import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import lombok.val;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class FixturesInstallerDelegate {
-
-    private static final Logger LOG = LoggerFactory.getLogger(FixturesInstallerDelegate.class);
 
     // -- Constructor, fields
 
@@ -86,17 +85,17 @@ public class FixturesInstallerDelegate {
      * reused across multiple tests (REVIEW: does that make sense?)
      */
     public void installFixtures() {
-        final IsisConfiguration configuration = getConfiguration();
-        final boolean fireEvents = configuration.getBoolean("isis.fixtures.fireEvents", true);
-        final EventBusService eventBusService = getEventBusService();
+        val configuration = getConfiguration();
+        val fireEvents = configuration.getBoolean("isis.fixtures.fireEvents", true);
+        val eventService = getRuntimeEventService();
         try {
             if(fireEvents) {
-                eventBusService.post(new FixturesInstallingEvent(this));
+            	eventService.fireFixturesInstalling(new FixturesInstallingEvent(this));
             }
             installFixtures(getFixtures());
         } finally {
             if(fireEvents) {
-                eventBusService.post(new FixturesInstalledEvent(this));
+            	eventService.fireFixturesInstalled(new FixturesInstalledEvent(this));
             }
         }
     }
@@ -116,17 +115,17 @@ public class FixturesInstallerDelegate {
 
         // now, install the fixture itself
         try {
-            LOG.info("installing fixture: {}", fixture);
+            log.info("installing fixture: {}", fixture);
             getTransactionManager().startTransaction();
             installFixture(fixture);
             getTransactionManager().endTransaction();
-            LOG.info("fixture installed");
+            log.info("fixture installed");
         } catch (final RuntimeException e) {
-            LOG.error("installing fixture {} failed; aborting ", fixture.getClass().getName() , e);
+            log.error("installing fixture {} failed; aborting ", fixture.getClass().getName() , e);
             try {
                 getTransactionManager().abortTransaction();
             } catch (final Exception e2) {
-                LOG.error("failure during abort", e2);
+                log.error("failure during abort", e2);
             }
             throw e;
         }
@@ -162,8 +161,8 @@ public class FixturesInstallerDelegate {
         return IsisContext.getServiceInjector();
     }
 
-    private EventBusService getEventBusService() {
-        return IsisContext.getServiceRegistry().lookupServiceElseFail(EventBusService.class);
+    private RuntimeEventService getRuntimeEventService() {
+        return IsisContext.getServiceRegistry().lookupServiceElseFail(RuntimeEventService.class);
     }
 
     private IsisTransactionManager getTransactionManager() {

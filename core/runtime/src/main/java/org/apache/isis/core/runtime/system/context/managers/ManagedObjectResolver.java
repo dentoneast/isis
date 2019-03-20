@@ -3,8 +3,7 @@ package org.apache.isis.core.runtime.system.context.managers;
 import java.net.URI;
 import java.util.Optional;
 
-import javax.enterprise.inject.Instance;
-
+import org.apache.isis.core.commons.collections.Bin;
 import org.apache.isis.core.metamodel.adapter.oid.UniversalOid;
 import org.apache.isis.core.metamodel.spec.ManagedObject;
 import org.apache.isis.core.metamodel.spec.ManagedObjectState;
@@ -41,7 +40,7 @@ public interface ManagedObjectResolver {
 	 * @param uri
 	 * @return
 	 */
-	Instance<ManagedObject> resolve(ObjectSpecId specId, URI uri);
+	Bin<ManagedObject> resolve(ObjectSpecId specId, URI uri);
 	
 	
 	/**
@@ -50,7 +49,7 @@ public interface ManagedObjectResolver {
 	 * @param universalOid
 	 * @return reference to the ManagedObject as identified by the universalOid
 	 */
-	default Instance<ManagedObject> resolve(UniversalOid universalOid) {
+	default Bin<ManagedObject> resolve(UniversalOid universalOid) {
 		val spec = universalOid.getObjectSpecId();
 		return resolve(spec, universalOid.getObjectUri());
 	}

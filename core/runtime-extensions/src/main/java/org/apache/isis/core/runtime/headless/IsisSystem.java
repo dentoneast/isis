@@ -129,7 +129,7 @@ public final class IsisSystem {
             _Blackhole.consume(AppConfigLocator.getAppConfig());
             
 
-            isisSessionFactory = _CDI.getSingleton(IsisSessionFactory.class);
+            isisSessionFactory = _CDI.getSingletonElseFail(IsisSessionFactory.class);
             // REVIEW: does no harm, but is this required?
             closeSession();
 

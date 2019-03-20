@@ -1,5 +1,7 @@
 package org.apache.isis.core.commons.collections;
 
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -33,6 +35,11 @@ final class Bin_Multiple<T> implements Bin<T> {
 	@Override
 	public int size() {
 		return elements.size();
+	}
+
+	@Override
+	public Iterator<T> iterator() {
+		return Collections.unmodifiableList(elements).iterator();
 	}
 
 }

@@ -35,7 +35,7 @@ import org.apache.isis.applib.services.i18n.TranslationService.Mode;
 import org.apache.isis.applib.services.message.MessageService;
 import org.apache.isis.commons.internal.base._Timing;
 import org.apache.isis.commons.internal.collections._Sets;
-import org.apache.isis.config.registry.BeanTypeRegistry;
+import org.apache.isis.config.registry.IsisBeanTypeRegistry;
 import org.apache.isis.core.metamodel.BeansForTesting;
 import org.apache.isis.core.metamodel.facetapi.Facet;
 import org.apache.isis.core.metamodel.facets.actcoll.typeof.TypeOfFacet;

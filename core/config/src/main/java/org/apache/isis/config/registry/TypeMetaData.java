@@ -25,6 +25,10 @@ public class TypeMetaData {
         return annotationTypes.contains(singletonAnnotation);
     }
     
+    public boolean hasRequestScopedAnnotation() {
+        return annotationTypes.contains(requestScopedAnnotation);
+    }
+    
     public boolean hasDomainServiceAnnotation() {
         return annotationTypes.contains(domainServiceAnnotation);
     }
@@ -53,7 +57,10 @@ public class TypeMetaData {
         }
     }
     
-    private final static String singletonAnnotation = javax.inject.Singleton.class.getName(); 
+    private final static String singletonAnnotation = 
+    		javax.inject.Singleton.class.getName();
+    private final static String requestScopedAnnotation = 
+    		javax.enterprise.context.RequestScoped.class.getName();
     private final static String domainServiceAnnotation = 
             org.apache.isis.applib.annotation.DomainService.class.getName();
     private final static String domainObjectAnnotation = 

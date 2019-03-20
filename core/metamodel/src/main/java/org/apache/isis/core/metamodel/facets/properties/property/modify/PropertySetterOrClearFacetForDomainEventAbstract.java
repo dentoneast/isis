@@ -72,7 +72,7 @@ extends SingleValueFacetAbstract<Class<? extends PropertyDomainEvent<?,?>>> {
         this.getterFacet = getterFacet;
         this.setterFacet = setterFacet;
         this.clearFacet = clearFacet;
-        this.domainEventHelper = new DomainEventHelper(getServiceRegistry());
+        this.domainEventHelper = DomainEventHelper.ofServiceRegistry(getServiceRegistry());
     }
 
     enum Style {
