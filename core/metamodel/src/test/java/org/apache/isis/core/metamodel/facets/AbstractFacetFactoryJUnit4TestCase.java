@@ -62,7 +62,7 @@ public abstract class AbstractFacetFactoryJUnit4TestCase {
     @Mock
     protected FacetHolder mockFacetHolder;
     @Mock
-    protected ServiceInjector mockServicesInjector;
+    protected ServiceInjector mockServiceInjector;
     @Mock
     protected ServiceRegistry mockServiceRegistry;
     

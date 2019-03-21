@@ -524,7 +524,7 @@ public class PropertyAnnotationFacetFactoryTest extends AbstractFacetFactoryJUni
             propertyMethod = findMethod(Customer.class, "getName");
 
             // expecting
-            context.ignoring(mockServicesInjector);
+            context.ignoring(mockServiceInjector);
 
 
             // when

@@ -19,16 +19,16 @@
 
 package org.apache.isis.core.metamodel.facets.actions.action;
 
+import static org.apache.isis.core.commons.matchers.IsisMatchers.classEqualTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.UUID;
-
-import org.jmock.Expectations;
-import org.jmock.auto.Mock;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 
 import org.apache.isis.applib.annotation.Action;
 import org.apache.isis.applib.annotation.CommandExecuteIn;
@@ -68,13 +68,12 @@ import org.apache.isis.core.metamodel.facets.all.hide.HiddenFacet;
 import org.apache.isis.core.metamodel.facets.object.domainobject.domainevents.ActionDomainEventDefaultFacetForDomainObjectAnnotation;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
-
-import static org.apache.isis.core.commons.matchers.IsisMatchers.classEqualTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import org.jmock.Expectations;
+import org.jmock.auto.Mock;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 @SuppressWarnings({"hiding", "serial"})
 public class ActionAnnotationFacetFactoryTest extends AbstractFacetFactoryJUnit4TestCase {
@@ -113,7 +112,7 @@ public class ActionAnnotationFacetFactoryTest extends AbstractFacetFactoryJUnit4
         facetFactory = new ActionAnnotationFacetFactory();
 
         context.checking(new Expectations() {{
-            allowing(mockServicesInjector).lookupServiceElseFail(AuthenticationSessionProvider.class);
+            allowing(mockServiceRegistry).lookupServiceElseFail(AuthenticationSessionProvider.class);
             will(returnValue(mockAuthenticationSessionProvider));
             
             allowing(mockTypeSpec).getFacet(ActionDomainEventDefaultFacetForDomainObjectAnnotation.class);

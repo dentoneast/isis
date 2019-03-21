@@ -147,7 +147,7 @@ public class ParameterAnnotationFacetFactoryTest extends AbstractFacetFactoryJUn
             actionMethod = findMethod(Customer.class, "someAction", new Class[]{String.class} );
 
             // expecting
-            context.ignoring(mockServicesInjector);
+            context.ignoring(mockServiceInjector);
 
 
             // when
