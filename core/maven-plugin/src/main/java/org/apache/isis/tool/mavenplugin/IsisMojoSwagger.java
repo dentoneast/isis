@@ -23,9 +23,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
-
+import org.apache.isis.applib.services.swagger.SwaggerService;
+import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -33,8 +32,10 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
-import org.apache.isis.applib.services.swagger.SwaggerService;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
+
+import lombok.val;
 
 @Mojo(
         name = "swagger",
@@ -75,10 +76,11 @@ public class IsisMojoSwagger extends IsisMojoAbstract {
 
     @Override
     protected void doExecute(
-            final ContextForMojo context, final IsisSessionFactory isisSessionFactory)
+            final ContextForMojo context, 
+            final IsisSession isisSession)
                     throws MojoFailureException, IOException {
 
-        final SwaggerService swaggerService = isisSessionFactory.getServiceInjector().lookupServiceElseFail(SwaggerService.class);
+        val swaggerService = isisSession.getServiceRegistry().lookupServiceElseFail(SwaggerService.class);
 
         final MavenProject mavenProject = context.getMavenProject();
         final File outputDir = determineOutputDir(mavenProject, output);

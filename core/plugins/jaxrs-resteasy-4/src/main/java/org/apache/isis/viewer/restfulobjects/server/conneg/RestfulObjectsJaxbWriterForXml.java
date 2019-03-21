@@ -26,20 +26,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.Provider;
 import javax.xml.bind.Marshaller;
 
-import org.jboss.resteasy.plugins.providers.jaxb.JAXBXmlRootElementProvider;
-
 import org.apache.isis.applib.services.bookmark.BookmarkService;
-import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.core.runtime.system.context.IsisContext;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.schema.utils.jaxbadapters.PersistentEntityAdapter;
+import org.jboss.resteasy.plugins.providers.jaxb.JAXBXmlRootElementProvider;
 
 @Provider
 @Produces({"application/xml", "application/*+xml", "text/*+xml"})
 public class RestfulObjectsJaxbWriterForXml extends JAXBXmlRootElementProvider {
 
     public RestfulObjectsJaxbWriterForXml(){
-        ;
     }
 
     @Override protected boolean isReadWritable(
@@ -58,17 +55,14 @@ public class RestfulObjectsJaxbWriterForXml extends JAXBXmlRootElementProvider {
         marshaller.setAdapter(PersistentEntityAdapter.class, new PersistentEntityAdapter() {
             @Override
             protected BookmarkService getBookmarkService() {
-                return getServicesInjector().lookupServiceElseFail(BookmarkService.class);
+                return getServiceRegistry().lookupServiceElseFail(BookmarkService.class);
             }
         });
         return marshaller;
     }
 
-    ServiceInjector getServicesInjector() {
-        return getIsisSessionFactory().getServiceInjector();
+    ServiceRegistry getServiceRegistry() {
+        return IsisContext.getServiceRegistry();
     }
-
-    IsisSessionFactory getIsisSessionFactory() {
-        return IsisContext.getSessionFactory();
-    }
+    
 }

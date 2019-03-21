@@ -86,9 +86,7 @@ extends ScalarPanelTextFieldAbstract<T> {
     }
 
     private LocaleProvider getLocaleProvider() {
-        return IsisContext.getSessionFactory().getServiceInjector()
-                .lookupService(LocaleProvider.class)
-                .orElse(null);
+        return IsisContext.getServiceRegistry().lookupServiceElseFail(LocaleProvider.class);
     }
 
 }

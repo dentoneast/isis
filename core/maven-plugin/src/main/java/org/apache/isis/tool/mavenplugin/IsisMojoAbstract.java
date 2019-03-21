@@ -27,6 +27,7 @@ import org.apache.isis.core.commons.factory.InstanceUtil;
 import org.apache.isis.core.plugins.environment.IsisSystemEnvironment;
 import org.apache.isis.core.runtime.logging.IsisLoggingConfigurer;
 import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.runtime.system.session.IsisSessionProducerBean;
 import org.apache.isis.tool.mavenplugin.util.MavenProjects;
@@ -78,12 +79,12 @@ public abstract class IsisMojoAbstract extends AbstractMojo {
                 context.throwFailureException(validationErrors.size() + " meta-model problems found.", validationErrors);
                 return;
             }
-            final IsisSessionFactory isisSessionFactoryFinal = isisSessionFactory;
+            
             isisSessionFactory.doInSession(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        doExecute(context, isisSessionFactoryFinal);
+                        doExecute(context, IsisSession.currentIfAny());
                     } catch (IOException e) {
                         ;
                         // ignore
@@ -108,7 +109,7 @@ public abstract class IsisMojoAbstract extends AbstractMojo {
 
     protected abstract void doExecute(
             final ContextForMojo context,
-            final IsisSessionFactory isisSessionFactory)
+            final IsisSession isisSession)
                     throws MojoFailureException, IOException;
 
     // -- Context

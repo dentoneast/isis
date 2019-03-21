@@ -23,7 +23,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import javax.annotation.PostConstruct;
@@ -225,18 +224,6 @@ public class ServiceInjectorDefault implements ServiceInjector {
 
     private static final Predicate<Field> isAnnotatedForInjection() {
         return field->field.getAnnotation(javax.inject.Inject.class) != null;
-    }
-
-    // -- DELEGATIONS
-    
-    @Override
-    public <T> Optional<T> lookupService(Class<T> serviceClass) {
-        return serviceRegistry.lookupService(serviceClass);
-    }
-
-    @Override
-    public <T> T lookupServiceElseFail(Class<T> serviceClass) {
-        return serviceRegistry.lookupServiceElseFail(serviceClass);
     }
 
 

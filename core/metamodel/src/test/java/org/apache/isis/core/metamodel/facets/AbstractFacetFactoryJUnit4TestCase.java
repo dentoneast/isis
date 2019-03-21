@@ -26,6 +26,7 @@ import java.util.Optional;
 import org.apache.isis.applib.Identifier;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facetapi.FeatureType;
@@ -62,6 +63,9 @@ public abstract class AbstractFacetFactoryJUnit4TestCase {
     protected FacetHolder mockFacetHolder;
     @Mock
     protected ServiceInjector mockServicesInjector;
+    @Mock
+    protected ServiceRegistry mockServiceRegistry;
+    
     @Mock
     protected TranslationService mockTranslationService;
 
@@ -108,11 +112,11 @@ public abstract class AbstractFacetFactoryJUnit4TestCase {
         
         context.checking(new Expectations() {{
 
-            allowing(mockServicesInjector).lookupService(TranslationService.class);
+            allowing(mockServiceRegistry).lookupService(TranslationService.class);
             will(returnValue(Optional.of(mockTranslationService)));
 
-            allowing(mockServicesInjector).lookupService(AuthenticationSessionProvider.class);
-            will(returnValue(mockAuthenticationSessionProvider));
+            allowing(mockServiceRegistry).lookupService(AuthenticationSessionProvider.class);
+            will(returnValue(Optional.of(mockAuthenticationSessionProvider)));
 
 //            allowing(mockServicesInjector).lookupServiceElseFail(EventBusService.class);
 //            will(returnValue(mockEventBusService));

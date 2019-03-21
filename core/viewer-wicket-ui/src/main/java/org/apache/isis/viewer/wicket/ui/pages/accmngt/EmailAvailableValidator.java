@@ -18,7 +18,7 @@
  */
 package org.apache.isis.viewer.wicket.ui.pages.accmngt;
 
-import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.userreg.UserRegistrationService;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
@@ -26,12 +26,16 @@ import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.IValidator;
 import org.apache.wicket.validation.ValidationError;
 
+import lombok.val;
+
 /**
  * Validates that an email is or is not already in use by another user
  */
 public class EmailAvailableValidator implements IValidator<String> {
 
-    public static final EmailAvailableValidator EXISTS = new EmailAvailableValidator(true, "noSuchUserByEmail");
+	private static final long serialVersionUID = 1L;
+	
+	public static final EmailAvailableValidator EXISTS = new EmailAvailableValidator(true, "noSuchUserByEmail");
     public static final EmailAvailableValidator DOESNT_EXIST = new EmailAvailableValidator(false, "emailIsNotAvailable");
 
     private final boolean emailExists;
@@ -44,20 +48,21 @@ public class EmailAvailableValidator implements IValidator<String> {
 
     @Override
     public void validate(final IValidatable<String> validatable) {
-        getIsisSessionFactory().doInSession(new Runnable() {
-            @Override
-            public void run() {
-                UserRegistrationService userRegistrationService = getServicesInjector().lookupServiceElseFail(UserRegistrationService.class);
-                String email = validatable.getValue();
-                boolean emailExists1 = userRegistrationService.emailExists(email);
-                if (emailExists1 != emailExists) {
-                    validatable.error(new ValidationError().addKey(resourceKey));
-                }
+    	
+    	val userRegistrationService = getServiceRegistry().lookupServiceElseFail(UserRegistrationService.class);
+    	
+        getIsisSessionFactory().doInSession(() -> {
+            String email = validatable.getValue();
+            boolean emailExists1 = userRegistrationService.emailExists(email);
+            if (emailExists1 != emailExists) {
+                validatable.error(new ValidationError().addKey(resourceKey));
             }
         });
 
-    }ServiceInjector getServicesInjector() {
-        return getIsisSessionFactory().getServiceInjector();
+    }
+    
+    ServiceRegistry getServiceRegistry() {
+        return IsisContext.getServiceRegistry();
     }
 
     IsisSessionFactory getIsisSessionFactory() {

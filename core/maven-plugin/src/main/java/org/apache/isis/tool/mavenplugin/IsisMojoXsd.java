@@ -23,10 +23,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Charsets;
+import org.apache.isis.applib.services.jaxb.JaxbService;
 import org.apache.isis.commons.internal.base._Strings;
-import com.google.common.io.Files;
-
+import org.apache.isis.core.commons.factory.InstanceUtil;
+import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -34,9 +34,10 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
-import org.apache.isis.applib.services.jaxb.JaxbService;
-import org.apache.isis.core.commons.factory.InstanceUtil;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
+
+import lombok.val;
 
 @Mojo(
         name = "xsd",
@@ -78,10 +79,12 @@ public class IsisMojoXsd extends IsisMojoAbstract {
 
     @Override
     protected void doExecute(
-            final ContextForMojo context, final IsisSessionFactory isisSessionFactory)
+            final ContextForMojo context, 
+            final IsisSession isisSession)
                     throws MojoFailureException, IOException {
 
-        final JaxbService jaxbService = isisSessionFactory.getServiceInjector().lookupServiceElseFail(JaxbService.class);
+        val jaxbService = isisSession
+        		.getServiceRegistry().lookupServiceElseFail(JaxbService.class);
 
         final MavenProject mavenProject = context.getMavenProject();
         final File outputDir = determineOutputDir(mavenProject);

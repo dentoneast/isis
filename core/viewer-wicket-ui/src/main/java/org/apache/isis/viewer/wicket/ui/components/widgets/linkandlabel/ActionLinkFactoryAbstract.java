@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 import org.apache.isis.applib.annotation.PromptStyle;
 import org.apache.isis.applib.metamodel.ManagedObjectSort;
 import org.apache.isis.applib.services.metamodel.MetaModelService;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.base._NullSafe;
 import org.apache.isis.commons.internal.collections._Lists;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
@@ -162,7 +163,7 @@ public abstract class ActionLinkFactoryAbstract implements ActionLinkFactory {
             final ActionPromptProvider promptProvider = ActionPromptProvider.Util.getFrom(actionLink.getPage());
             final ObjectSpecification specification = actionModel.getTargetAdapter().getSpecification();
 
-            final MetaModelService metaModelService = getIsisSessionFactory().getServiceInjector()
+            final MetaModelService metaModelService = getServiceRegistry()
                     .lookupServiceElseFail(MetaModelService.class);
             final ManagedObjectSort sort = metaModelService.sortOf(specification.getCorrespondingClass(), MetaModelService.Mode.RELAXED);
             final ActionPrompt prompt = promptProvider.getActionPrompt(promptStyle, sort);
@@ -299,12 +300,12 @@ public abstract class ActionLinkFactoryAbstract implements ActionLinkFactory {
         return ((WicketViewerSettingsAccessor)Application.get()).getSettings();
     }
 
-    protected IsisSessionFactory getIsisSessionFactory() {
-        return IsisContext.getSessionFactory();
+    protected ServiceRegistry getServiceRegistry() {
+        return IsisContext.getServiceRegistry();
     }
 
     private SpecificationLoader getSpecificationLoader() {
-        return getIsisSessionFactory().getSpecificationLoader();
+        return IsisContext.getSpecificationLoader();
     }
 
 

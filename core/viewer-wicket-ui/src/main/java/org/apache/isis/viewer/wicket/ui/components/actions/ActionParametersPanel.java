@@ -116,7 +116,7 @@ public class ActionParametersPanel extends PanelAbstract<ActionModel> {
             ActionResultResponse resultResponse = ActionResultResponseType.OBJECT.interpretResult(this.getActionModel(), targetAdapter, ex);
             resultResponse.getHandlingStrategy().handleResults(resultResponse, getIsisSessionFactory());
 
-            final MessageService messageService = getServiceInjector().lookupServiceElseFail(MessageService.class);
+            final MessageService messageService = getServiceRegistry().lookupServiceElseFail(MessageService.class);
             messageService.warnUser(ex.getMessage());
         }
     }

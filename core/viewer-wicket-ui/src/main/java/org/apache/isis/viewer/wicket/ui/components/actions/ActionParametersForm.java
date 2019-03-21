@@ -173,7 +173,7 @@ class ActionParametersForm extends PromptFormAbstract<ActionModel> {
 
             setResponsePage(entityPage);
 
-            final MessageService messageService = getServicesInjector().lookupServiceElseFail(MessageService.class);
+            final MessageService messageService = getServiceRegistry().lookupServiceElseFail(MessageService.class);
             messageService.warnUser(ex.getMessage());
             return;
         }

@@ -175,10 +175,6 @@ public abstract class PanelAbstract<T extends IModel<?>> extends Panel {
         return IsisContext.getSpecificationLoader();
     }
 
-    protected ServiceInjector getServiceInjector() {
-        return IsisContext.getServiceInjector();
-    }
-
     protected ServiceRegistry getServiceRegistry() {
         return IsisContext.getServiceRegistry();
     }

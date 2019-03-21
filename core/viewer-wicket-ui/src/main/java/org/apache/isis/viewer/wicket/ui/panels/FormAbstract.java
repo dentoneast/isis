@@ -19,7 +19,7 @@
 
 package org.apache.isis.viewer.wicket.ui.panels;
 
-import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 import org.apache.isis.core.runtime.system.context.IsisContext;
@@ -104,11 +104,9 @@ implements ComponentFactoryRegistryAccessor, PageClassRegistryAccessor {
     public SpecificationLoader getSpecificationLoader() {
         return IsisContext.getSpecificationLoader();
     }
-
-    protected ServiceInjector getServicesInjector() {
-        return IsisContext.getServiceInjector();
+   
+    protected ServiceRegistry getServiceRegistry() {
+        return IsisContext.getServiceRegistry();
     }
-
-    
 
 }

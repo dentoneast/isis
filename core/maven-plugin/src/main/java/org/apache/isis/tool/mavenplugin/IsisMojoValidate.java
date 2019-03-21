@@ -20,15 +20,16 @@ package org.apache.isis.tool.mavenplugin;
 
 import java.util.Collection;
 
+import org.apache.isis.core.metamodel.spec.ObjectSpecification;
+import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
+import org.apache.isis.core.metamodel.specloader.validator.ValidationFailures;
+import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-import org.apache.isis.core.metamodel.spec.ObjectSpecification;
-import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
-import org.apache.isis.core.metamodel.specloader.validator.ValidationFailures;
-import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
+import lombok.val;
 
 @Mojo(
         name = "validate",
@@ -48,10 +49,10 @@ public class IsisMojoValidate extends IsisMojoAbstract {
     @Override
     protected void doExecute(
             final ContextForMojo context,
-            final IsisSessionFactory isisSessionFactory)
+            final IsisSession isisSession)
                     throws MojoFailureException {
-        final SpecificationLoader specificationLoader =
-                isisSessionFactory.getSpecificationLoader();
+    	
+        val specificationLoader = isisSession.getSpecificationLoader();
         metaModelProcessor.process(context, specificationLoader);
     }
 
@@ -60,8 +61,9 @@ public class IsisMojoValidate extends IsisMojoAbstract {
 
         @Override
         public void process(
-                final Context context, final SpecificationLoader specificationLoader)
-                        throws MojoFailureException {
+                final Context context, 
+                final SpecificationLoader specificationLoader)
+                		throws MojoFailureException {
 
             final ValidationFailures validationFailures = specificationLoader.validate();
 

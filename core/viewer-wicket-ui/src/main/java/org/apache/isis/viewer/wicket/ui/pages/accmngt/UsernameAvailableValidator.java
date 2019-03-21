@@ -18,7 +18,7 @@
  */
 package org.apache.isis.viewer.wicket.ui.pages.accmngt;
 
-import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.applib.services.userreg.UserRegistrationService;
 import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
@@ -26,35 +26,38 @@ import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.IValidator;
 import org.apache.wicket.validation.ValidationError;
 
+import lombok.val;
+
 /**
  * Validates that an username is or is not already in use by someone else
  */
 public class UsernameAvailableValidator implements IValidator<String> {
 
-    public static final UsernameAvailableValidator INSTANCE = new UsernameAvailableValidator();
+	private static final long serialVersionUID = 1L;
+	public static final UsernameAvailableValidator INSTANCE = new UsernameAvailableValidator();
 
     private UsernameAvailableValidator() {
     }
 
     @Override
     public void validate(final IValidatable<String> validatable) {
-        getIsisSessionFactory().doInSession(new Runnable() {
-            @Override
-            public void run() {
-                UserRegistrationService userRegistrationService = getServicesInjector().lookupServiceElseFail(UserRegistrationService.class);
-
-                final String username = validatable.getValue();
-                boolean usernameExists = userRegistrationService.usernameExists(username);
-                if (usernameExists) {
-                    validatable.error(new ValidationError().addKey("usernameIsNotAvailable"));
-                }
+    	
+    	val userRegistrationService = getServiceRegistry().lookupServiceElseFail(UserRegistrationService.class);
+    	
+        getIsisSessionFactory().doInSession(() -> {
+            
+            final String username = validatable.getValue();
+            boolean usernameExists = userRegistrationService.usernameExists(username);
+            if (usernameExists) {
+                validatable.error(new ValidationError().addKey("usernameIsNotAvailable"));
             }
+            
         });
 
     }
 
-    ServiceInjector getServicesInjector() {
-        return getIsisSessionFactory().getServiceInjector();
+    ServiceRegistry getServiceRegistry() {
+        return IsisContext.getServiceRegistry();
     }
 
     IsisSessionFactory getIsisSessionFactory() {

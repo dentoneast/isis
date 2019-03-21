@@ -54,7 +54,6 @@ public class ActionLayoutXmlLayoutAnnotationFacetFactoryTest extends AbstractFac
     public void testActionLayoutAnnotationPickedUp() {
 
         class Customer {
-            @SuppressWarnings("unused")
             @ActionLayout(position = ActionLayout.Position.PANEL)
             public String foz() {
                 return null;

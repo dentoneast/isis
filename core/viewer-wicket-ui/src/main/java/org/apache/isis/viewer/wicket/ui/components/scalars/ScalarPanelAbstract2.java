@@ -726,7 +726,7 @@ public abstract class ScalarPanelAbstract2 extends PanelAbstract<ScalarModel> im
                 protected void onEvent(AjaxRequestTarget target) {
 
                     final ObjectSpecification specification = scalarModel.getObject().getSpecification();
-                    final MetaModelService metaModelService = getIsisSessionFactory().getServiceInjector()
+                    final MetaModelService metaModelService = getServiceRegistry()
                             .lookupServiceElseFail(MetaModelService.class);
                     final ManagedObjectSort sort = metaModelService.sortOf(specification.getCorrespondingClass(), MetaModelService.Mode.RELAXED);
 
