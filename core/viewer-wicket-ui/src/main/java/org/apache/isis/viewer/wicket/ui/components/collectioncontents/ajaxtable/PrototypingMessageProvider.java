@@ -62,7 +62,7 @@ class PrototypingMessageProvider {
         }
         
         val tookTimingMessage = new StringBuilder();
-        val session = IsisSession.currentIfAny();
+        val session = IsisSession.currentOrElseNull();
         
         if(session!=null) {
         	StopWatch stopWatch = _Timing.atSystemNanos(session.getOpenedAtSystemNanos());    

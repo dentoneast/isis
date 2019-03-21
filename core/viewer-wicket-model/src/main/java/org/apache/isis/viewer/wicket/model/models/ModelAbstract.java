@@ -51,7 +51,7 @@ public abstract class ModelAbstract<T> extends LoadableDetachableModel<T> {
     }
 
     protected IsisSession getCurrentSession() {
-        return IsisSession.currentIfAny();
+        return IsisSession.currentOrElseNull();
     }
 
     public SpecificationLoader getSpecificationLoader() {

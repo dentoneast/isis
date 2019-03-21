@@ -68,7 +68,7 @@ public class IsisSession extends RuntimeContextBase {
 	
 	// -- CURRENT
 	
-	public static IsisSession currentIfAny() {
+	public static IsisSession currentOrElseNull() {
 		return current().orElse(null);
 	}
 	
@@ -78,7 +78,7 @@ public class IsisSession extends RuntimeContextBase {
 	}
 	
 	public static boolean isInSession() {
-		return currentIfAny() != null;
+		return currentOrElseNull() != null;
 	}
 	
 	// -- SHORTCUTS

@@ -197,7 +197,7 @@ public class Memento implements Serializable {
         
         final Oid oid = getOid();
 
-        return IsisSession.currentIfAny().adapterOfMemento(spec, oid, data);
+        return IsisSession.currentOrElseNull().adapterOfMemento(spec, oid, data);
                 
     }
 

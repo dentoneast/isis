@@ -21,6 +21,7 @@ package org.apache.isis.core.runtime.system.session;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
@@ -29,6 +30,7 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.inject.Vetoed;
 import javax.inject.Inject;
 
+import org.apache.isis.applib.services.command.Command;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
@@ -36,6 +38,7 @@ import org.apache.isis.applib.services.registry.ServiceRegistry.BeanAdapter;
 import org.apache.isis.applib.services.title.TitleService;
 import org.apache.isis.commons.internal.base._Blackhole;
 import org.apache.isis.commons.internal.context._Context;
+import org.apache.isis.commons.internal.debug._Probe;
 import org.apache.isis.config.IsisConfiguration;
 import org.apache.isis.core.commons.collections.Bin;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
@@ -136,7 +139,7 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
             // postConstructInSession
             //
 
-            IsisTransactionManager transactionManager = getCurrentSessionTransactionManager();
+            IsisTransactionManager transactionManager = getOrCreateTransactionManager();
             transactionManager.executeWithinTransaction(serviceInitializer::postConstruct);
 
             //
@@ -209,7 +212,7 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
 
         // call @PreDestroy (in a session)
         openSession(new InitialisationSession());
-        IsisTransactionManager transactionManager = getCurrentSessionTransactionManager();
+        IsisTransactionManager transactionManager = getOrCreateTransactionManager();
         try {
             transactionManager.startTransaction();
             try {
@@ -256,13 +259,40 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
         existingSessionIfAny.close();
     }
 
-    private IsisTransactionManager getCurrentSessionTransactionManager() {
-    	return IsisContext.getTransactionManager().get();
-    	
-//        final IsisSession currentSession = getCurrentSession();
-//        Objects.requireNonNull(currentSession);
-//        Objects.requireNonNull(currentSession.getPersistenceSession());
-//        return currentSession.getPersistenceSession().getTransactionManager();
+    private IsisTransactionManager getOrCreateTransactionManager() {
+    	return IsisContext.getTransactionManager()
+    			.orElseGet(this::createTransactionManager);
+    }
+    
+    private final static _Probe probe = _Probe.unlimited().label("IsisTransactionManager(Dummy)");
+    
+    private IsisTransactionManager createTransactionManager() {
+        final IsisSession currentSession = getCurrentSession();
+        Objects.requireNonNull(currentSession);
+        val dummyTxMan = new IsisTransactionManager(null, currentSession.getServiceRegistry()) {
+        	
+        	@Override
+        	public void startTransaction(Command existingCommandIfAny) {
+        		probe.warnNotImplementedYet("startTransaction(Command)");
+        	}
+        	
+        	@Override
+        	public void startTransaction() {
+        		probe.warnNotImplementedYet("startTransaction()");
+        	}
+        	
+        	@Override
+        	public void abortTransaction() {
+        		probe.warnNotImplementedYet("abortTransaction()");
+        	}
+        	
+        	@Override
+        	public void endTransaction() {
+        		probe.warnNotImplementedYet("endTransaction()");
+        	}
+        	
+        };
+        return dummyTxMan;
     }
 
     @Override
@@ -306,11 +336,6 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
     // -- component accessors
 
     @Override
-    public ServiceInjector getServiceInjector() {
-        return serviceInjector;
-    }
-
-    @Override
     public SpecificationLoader getSpecificationLoader() {
         return specificationLoader;
     }
@@ -320,10 +345,7 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
         return authenticationManager;
     }
 
-    @Override
-    public AuthorizationManager getAuthorizationManager() {
-        return authorizationManager;
-    }
+    
 
 
 }

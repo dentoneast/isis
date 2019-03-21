@@ -151,7 +151,7 @@ public class FixturesInstallerDelegate {
         }
         
         //TODO [2033] what, why? only install if already installed?
-        return IsisSession.currentIfAny().getFixturesInstalledState().isInstalled();
+        return IsisSession.currentOrElseNull().getFixturesInstalledState().isInstalled();
     }
 
 

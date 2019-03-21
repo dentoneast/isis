@@ -523,7 +523,7 @@ implements FormExecutor {
 
 
     protected IsisSession getCurrentSession() {
-        return IsisSession.currentIfAny();
+        return IsisSession.currentOrElseNull();
     }
 
     protected ServiceRegistry getServiceRegistry() {

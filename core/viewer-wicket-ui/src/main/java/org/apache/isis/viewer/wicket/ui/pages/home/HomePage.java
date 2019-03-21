@@ -52,7 +52,7 @@ public class HomePage extends PageAbstract {
     }
 
     private void buildGui() {
-    	val isisSession = IsisSession.currentIfAny();
+    	val isisSession = IsisSession.currentOrElseNull();
         val adapterActionPair = isisSession.findHomePageAction();
         if(adapterActionPair != null) {
         	val objectAdapter = adapterActionPair.get_1();

@@ -113,7 +113,7 @@ public class IsisRequestCycle implements AutoCloseable {
 	// -- SUPPORTING FORM EXECUTOR DEFAULT ...
 
 	public static void onResultAdapterObtained() {
-		val isisSession = IsisSession.currentIfAny();
+		val isisSession = IsisSession.currentOrElseNull();
 		if (isisSession==null) {
 			return;
 		}

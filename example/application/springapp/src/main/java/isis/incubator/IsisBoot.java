@@ -60,8 +60,8 @@ public class IsisBoot implements ApplicationContextAware {
 	    			IsisBeanTypeRegistry.current().streamCdiManaged())
 	    );
 	    
-	    System.out.println("!!!!!!!!!!!!!!!!!!! verify core services");
-	    verifyCoreServices();
+//	    System.out.println("!!!!!!!!!!!!!!!!!!! verify core services");
+//	    verifyCoreServices();
 	    
 		// TODO Auto-generated method stub
 		System.out.println("!!!!!!!!!!!!!!!!!!! TODO bootstrap isis from context");
@@ -118,6 +118,9 @@ public class IsisBoot implements ApplicationContextAware {
 		
 		coreServices.stream()
 		.forEach(type->{
+			
+			System.out.println("!!! Core Service check: " + type);
+			
 			val beans = _CDI.select(type);
 			if(!beans.isCardinalityOne()) {
 				throw _Exceptions.unrecoverable("Core Service not known to CDI: " + type );

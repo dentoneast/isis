@@ -90,7 +90,7 @@ public interface UniversalObjectManager {
 		@Override
 		public Stream<ObjectAdapter> resolve(Stream<URI> objectUris) {
 			val contextManager = this.contextManager.get();
-			val isisSession = IsisSession.currentIfAny();
+			val isisSession = IsisSession.currentOrElseNull();
 			
 			probe.println("resolve multiple ...");
 			
@@ -116,7 +116,7 @@ public interface UniversalObjectManager {
 			
     		if(bin.isCardinalityOne()) {
     			val managedObject = bin.getSingleton().get();
-    			val isisSession = IsisSession.currentIfAny();
+    			val isisSession = IsisSession.currentOrElseNull();
     			
     			return ResolveResult.of(objectUri, managedObject).toObjectAdapter(isisSession);
     			
@@ -138,7 +138,7 @@ public interface UniversalObjectManager {
 			
 			// given the specId, try to resolve 'containerType', 'contextType' and 'contextId'
 			val contextManager = this.contextManager.get();
-			val isisSession = IsisSession.currentIfAny();
+			val isisSession = IsisSession.currentOrElseNull();
 			val spec = isisSession.getSpecificationLoader().lookupBySpecId(specId);
 			
 			val authority = contextManager.authorityFor(spec).orElseThrow(()->{

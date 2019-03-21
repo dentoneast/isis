@@ -33,15 +33,12 @@ import org.apache.isis.core.commons.exceptions.IsisException;
 import org.apache.isis.core.runtime.persistence.transaction.PersistenceCommand;
 import org.apache.isis.core.runtime.system.persistence.PersistenceSession;
 import org.apache.isis.core.runtime.system.session.IsisSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import lombok.val;
+import lombok.extern.slf4j.Slf4j;
 
-@Vetoed // held by persistence session 
+@Slf4j @Vetoed // held by persistence session
 public class IsisTransactionManager {
-
-    private static final Logger LOG = LoggerFactory.getLogger(IsisTransactionManager.class);
 
     private int transactionLevel;
 
@@ -74,9 +71,6 @@ public class IsisTransactionManager {
         return persistenceSession;
     }
 
-
-
-
     // -- open, close
 
     public void open() {
@@ -88,7 +82,7 @@ public class IsisTransactionManager {
             try {
                 abortTransaction();
             } catch (final Exception e2) {
-                LOG.error("failure during abort", e2);
+                log.error("failure during abort", e2);
             }
         }
         session = null;
@@ -106,8 +100,6 @@ public class IsisTransactionManager {
     public int getTransactionLevel() {
         return transactionLevel;
     }
-
-
 
 
     // -- Transactional Execution
@@ -148,7 +140,7 @@ public class IsisTransactionManager {
                 try {
                     abortTransaction();
                 } catch (final Exception e) {
-                    LOG.error("Abort failure after exception", e);
+                    log.error("Abort failure after exception", e);
                     throw new IsisTransactionManagerException("Abort failure: " + e.getMessage(), ex);
                 }
             } else {
@@ -248,8 +240,8 @@ public class IsisTransactionManager {
 
         transactionLevel++;
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("startTransaction: level {}->{}{}", (transactionLevel - 1), (transactionLevel), (noneInProgress ? " (no transaction in progress or was previously completed; transaction created)" : ""));
+        if (log.isDebugEnabled()) {
+            log.debug("startTransaction: level {}->{}{}", (transactionLevel - 1), (transactionLevel), (noneInProgress ? " (no transaction in progress or was previously completed; transaction created)" : ""));
         }
     }
 
@@ -258,8 +250,8 @@ public class IsisTransactionManager {
     // -- flushTransaction
     public void flushTransaction() {
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("flushTransaction");
+        if (log.isDebugEnabled()) {
+            log.debug("flushTransaction");
         }
 
         if (getCurrentTransaction() != null) {
@@ -290,22 +282,22 @@ public class IsisTransactionManager {
         if (transaction == null) {
             // allow this method to be called >1 with no adverse affects
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("endTransaction: level {} (no transaction exists)", transactionLevel);
+            if (log.isDebugEnabled()) {
+                log.debug("endTransaction: level {} (no transaction exists)", transactionLevel);
             }
 
             return;
         } else if (transaction.getState().isComplete()) {
             // allow this method to be called >1 with no adverse affects
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("endTransaction: level {} (previous transaction completed)", transactionLevel);
+            if (log.isDebugEnabled()) {
+                log.debug("endTransaction: level {} (previous transaction completed)", transactionLevel);
             }
 
             return;
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("endTransaction: level {}->{}", transactionLevel, transactionLevel - 1);
+            if (log.isDebugEnabled()) {
+                log.debug("endTransaction: level {}->{}", transactionLevel, transactionLevel - 1);
             }
         }
 
@@ -316,7 +308,7 @@ public class IsisTransactionManager {
             final IsisTransaction.State state = getCurrentTransaction().getState();
             int transactionLevel = this.transactionLevel;
             if(transactionLevel == 0 && !state.isComplete()) {
-                LOG.error("endTransaction: inconsistency detected between transactionLevel {} and transactionState '{}'", transactionLevel, state);
+                log.error("endTransaction: inconsistency detected between transactionLevel {} and transactionState '{}'", transactionLevel, state);
             }
         }
     }
@@ -329,8 +321,8 @@ public class IsisTransactionManager {
         RuntimeException abortCause = this.getCurrentTransaction().getThenClearAbortCause();
         if(transaction.getState().mustAbort()) {
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("endTransaction: aborting instead [EARLY TERMINATION], abort cause '{}' has been set", abortCause.getMessage());
+            if (log.isDebugEnabled()) {
+                log.debug("endTransaction: aborting instead [EARLY TERMINATION], abort cause '{}' has been set", abortCause.getMessage());
             }
             try {
                 abortTransaction();
@@ -389,8 +381,8 @@ public class IsisTransactionManager {
 
             if(abortCause == null) {
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("endTransaction: committing");
+                if (log.isDebugEnabled()) {
+                    log.debug("endTransaction: committing");
                 }
 
                 try {
@@ -436,8 +428,8 @@ public class IsisTransactionManager {
             //
             if(abortCause != null) {
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("endTransaction: aborting instead, abort cause has been set");
+                if (log.isDebugEnabled()) {
+                    log.debug("endTransaction: aborting instead, abort cause has been set");
                 }
                 try {
                     abortTransaction();
@@ -456,7 +448,7 @@ public class IsisTransactionManager {
 
         } else {
             // transactionLevel < 0
-            LOG.error("endTransaction: transactionLevel={}", transactionLevel);
+            log.error("endTransaction: transactionLevel={}", transactionLevel);
             transactionLevel = 0;
             IllegalStateException ex = new IllegalStateException(" no transaction running to end (transactionLevel < 0)");
             getCurrentTransaction().setAbortCause(new IsisException(ex));

@@ -582,7 +582,7 @@ final class ObjectAdapterMemento_Legacy implements ObjectAdapterMemento {
 			return objectAdapter; 
 		}
 		// we use de-serialization for the remaining cases
-		val isisSession = IsisSession.currentIfAny();
+		val isisSession = IsisSession.currentOrElseNull();
 		return type.recreateAdapter(this, ConcurrencyChecking.NO_CHECK, isisSession.getSpecificationLoader());
 	}
 

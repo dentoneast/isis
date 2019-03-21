@@ -42,12 +42,12 @@ import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
 @Singleton
 public class IsisSessionProducerBean {
 
-	@Produces @Singleton //XXX note: the resulting singleton is not life-cycle managed by CDI, nor are InjectionPoints resolved by CDI
+	@Produces @Singleton //XXX note: the resulting singleton is not life-cycle managed by CDI, neither are InjectionPoints resolved by CDI
 	public IsisSessionFactory produceIsisSessionFactory() {
 		return _Context.computeIfAbsent(IsisSessionFactory.class, this::newIsisSessionFactory);
 	}
 
-	@Produces @Singleton //XXX note: the resulting singleton is not life-cycle managed by CDI, nor are InjectionPoints resolved by CDI
+	@Produces @Singleton //XXX note: the resulting singleton is not life-cycle managed by CDI, neither are InjectionPoints resolved by CDI
 	public SpecificationLoader produceSpecificationLoader() {
 		return produceIsisSessionFactory().getSpecificationLoader();
 	}

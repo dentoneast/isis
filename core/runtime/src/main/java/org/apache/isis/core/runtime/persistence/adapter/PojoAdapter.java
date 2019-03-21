@@ -61,7 +61,7 @@ public final class PojoAdapter implements ObjectAdapter {
             final Object pojo,
             final Oid oid) {
     	
-        return of(pojo, oid, IsisSession.currentIfAny());
+        return of(pojo, oid, IsisSession.currentOrElseNull());
     }
     
     public static PojoAdapter ofValue(Serializable value) {

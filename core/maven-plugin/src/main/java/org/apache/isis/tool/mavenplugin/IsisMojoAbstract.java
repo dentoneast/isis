@@ -84,7 +84,7 @@ public abstract class IsisMojoAbstract extends AbstractMojo {
                 @Override
                 public void run() {
                     try {
-                        doExecute(context, IsisSession.currentIfAny());
+                        doExecute(context, IsisSession.currentOrElseNull());
                     } catch (IOException e) {
                         ;
                         // ignore

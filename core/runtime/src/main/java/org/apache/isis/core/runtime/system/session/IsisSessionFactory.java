@@ -53,7 +53,7 @@ public interface IsisSessionFactory {
 
     @Deprecated //TODO [2033] replace with IsisSession.current()
     default public IsisSession getCurrentSession() {
-    	return IsisSession.currentIfAny();
+    	return IsisSession.currentOrElseNull();
     }
 
 
@@ -108,12 +108,6 @@ public interface IsisSessionFactory {
     // -- component accessors
 
     /**
-     * The {@link ApplicationScopedComponent application-scoped} {@link ServiceInjector}.
-     * @deprecated use IsisContext instead
-     */
-    public ServiceInjector getServiceInjector();
-
-    /**
      * The {@link ApplicationScopedComponent application-scoped}
      * {@link SpecificationLoader}.
      * @deprecated use IsisContext instead
@@ -128,21 +122,6 @@ public interface IsisSessionFactory {
      * @deprecated use IsisContext instead
      */
     public AuthenticationManager getAuthenticationManager();
-
-    /**
-     * The {@link AuthorizationManager} that will be used to authorize access to
-     * domain objects.
-     * @deprecated use IsisContext instead
-     */
-    public AuthorizationManager getAuthorizationManager();
-
-//    /**
-//     * The {@link org.apache.isis.core.runtime.system.persistence.PersistenceSessionFactory} that will be used to create
-//     * {@link PersistenceSession} {@link IsisSession#getPersistenceSession()
-//     * within} the {@link IsisSession}.
-//     * @deprecated use IsisContext instead
-//     */
-//    public PersistenceSessionFactory getPersistenceSessionFactory();
 
 
 }

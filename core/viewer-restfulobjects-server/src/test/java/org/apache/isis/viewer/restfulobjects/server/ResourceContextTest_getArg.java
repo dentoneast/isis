@@ -85,8 +85,8 @@ public class ResourceContextTest_getArg {
 //                will(returnValue(mockServletContext));
 //                allowing(mockServletContext).getAttribute("org.apache.isis.core.webapp.isisSessionFactory");
 //                will(returnValue(mockIsisSessionFactory));
-                allowing(mockIsisSessionFactory).getServiceInjector();
-                will(returnValue(mockServicesInjector));
+//                allowing(mockIsisSessionFactory).getServiceInjector();
+//                will(returnValue(mockServicesInjector));
 //                allowing(mockIsisSessionFactory).getConfiguration();
 //                will(returnValue(mockConfiguration));
                 allowing(mockIsisSessionFactory).getCurrentSession();
