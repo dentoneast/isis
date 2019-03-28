@@ -166,7 +166,7 @@ public class FixturesInstallerDelegate {
     }
 
     private IsisTransactionManager getTransactionManager() {
-        return IsisContext.getTransactionManager().orElse(null);
+        return IsisSession.transactionManager().orElse(null);
     }
 
 

@@ -18,29 +18,13 @@ package org.apache.isis.applib.services.iactn;
 
 import javax.enterprise.context.RequestScoped;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.isis.applib.annotation.DomainService;
-import org.apache.isis.applib.annotation.NatureOfService;
-import org.apache.isis.applib.annotation.Programmatic;
-
 /**
  * This service (API and implementation) provides access to context information about any {@link Interaction}.
  *
- * This implementation has no UI and there is only one implementation (this class) in applib, so it is annotated with
- * {@link DomainService}.  This means that it is automatically registered and
- * available for use; no further configuration is required.
  */
-@DomainService(
-        nature = NatureOfService.DOMAIN,
-        menuOrder = "" + Integer.MAX_VALUE
-        )
 @RequestScoped
 public class InteractionContext {
 
-    @SuppressWarnings("unused")
-    private static final Logger LOG = LoggerFactory.getLogger(InteractionContext.class);
 
     private Interaction interaction;
 
@@ -48,7 +32,6 @@ public class InteractionContext {
      * Returns the currently active {@link Interaction} for this thread.
      * @return
      */
-    @Programmatic
     public Interaction getInteraction() {
         return interaction;
     }
@@ -56,7 +39,6 @@ public class InteractionContext {
     /**
      * <b>NOT API</b>: intended to be called only by the framework.
      */
-    @Programmatic
     public void setInteraction(final Interaction interaction) {
         this.interaction = interaction;
     }

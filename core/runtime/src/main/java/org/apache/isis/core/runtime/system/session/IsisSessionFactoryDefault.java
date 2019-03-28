@@ -50,6 +50,7 @@ import org.apache.isis.core.runtime.system.context.IsisContext;
 import org.apache.isis.core.runtime.system.context.session.RuntimeEventService;
 import org.apache.isis.core.runtime.system.internal.InitialisationSession;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
+import org.apache.isis.core.runtime.system.transaction.IsisTransactionManagerAbstract;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManagerException;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
 import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
@@ -269,11 +270,13 @@ public class IsisSessionFactoryDefault implements IsisSessionFactory {
     private IsisTransactionManager createTransactionManager() {
         final IsisSession currentSession = getCurrentSession();
         Objects.requireNonNull(currentSession);
-        val dummyTxMan = new IsisTransactionManager(null, currentSession.getServiceRegistry()) {
+        
+        val dummyTxMan = new IsisTransactionManagerAbstract(null, currentSession.getServiceRegistry()) {
         	
         	@Override
         	public void startTransaction(Command existingCommandIfAny) {
-        		probe.warnNotImplementedYet("startTransaction(Command)");
+        		probe.warnNotImplementedYet("startTransaction(Command) cmd=" + existingCommandIfAny);
+                super.commandContext.setCommand(existingCommandIfAny);
         	}
         	
         	@Override

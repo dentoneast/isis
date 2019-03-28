@@ -18,6 +18,7 @@ package org.apache.isis.viewer.wicket.ui.panels;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
@@ -45,6 +46,8 @@ import org.apache.isis.applib.services.message.MessageService;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.base._Casts;
 import org.apache.isis.commons.internal.collections._Lists;
+import org.apache.isis.commons.internal.debug._Probe;
+import org.apache.isis.commons.internal.exceptions._Exceptions;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.concurrency.ConcurrencyChecking;
 import org.apache.isis.core.metamodel.adapter.oid.UniversalOid;
@@ -89,6 +92,8 @@ implements FormExecutor {
         this.formExecutorStrategy = formExecutorStrategy;
     }
 
+    private final static _Probe probe = _Probe.unlimited().label("FormExecutorDefault");
+    
     /**
      *
      * @param page
@@ -125,10 +130,18 @@ implements FormExecutor {
                 return false;
             }
 
-            final CommandContext commandContext = getCommandContext();
+            val commandContext = currentCommandContext().orElse(null);
             if (commandContext != null) {
                 command = commandContext.getCommand();
-                command.internal().setExecutor(Command.Executor.USER);
+                
+                if(command!=null) {
+                	Objects.requireNonNull(command.internal());
+                    command.internal().setExecutor(Command.Executor.USER);	
+                } else {
+                	probe.warnNotImplementedYet("[2033] missing command even though commandContext is present, "
+                			+ "this did not on occure on M2");
+                }
+                
             }
 
 
@@ -550,8 +563,9 @@ implements FormExecutor {
     	return getServiceRegistry().lookupServiceElseFail(WicketViewerSettings.class);
     }
 
-    private CommandContext getCommandContext() {
-    	return getServiceRegistry().lookupService(CommandContext.class).orElse(null);
+    // request-scoped
+    private Optional<CommandContext> currentCommandContext() {
+    	return getServiceRegistry().lookupService(CommandContext.class);
     }
     
 

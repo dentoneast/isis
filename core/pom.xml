@@ -182,7 +182,7 @@
 
         <htmlparser.version>2.1</htmlparser.version>
 
-        <junit.version>5.3.2</junit.version>
+        <junit.version>5.4.1</junit.version>
         <mockito.version>2.23.4</mockito.version>
 
         <junit-legacy.version>4.12</junit-legacy.version>

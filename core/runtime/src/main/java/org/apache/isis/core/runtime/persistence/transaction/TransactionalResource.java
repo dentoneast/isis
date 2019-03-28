@@ -19,8 +19,6 @@
 
 package org.apache.isis.core.runtime.persistence.transaction;
 
-import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
-
 /**
  * Interface for the {@link IsisTransactionManager} to interact with some
  * transactional resource.

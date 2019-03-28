@@ -24,6 +24,7 @@ import javax.inject.Singleton;
 
 import org.apache.isis.applib.services.sessmgmt.SessionManagementService;
 import org.apache.isis.core.runtime.system.context.IsisContext;
+import org.apache.isis.core.runtime.system.session.IsisSession;
 import org.apache.isis.core.runtime.system.session.IsisSessionFactory;
 import org.apache.isis.core.runtime.system.transaction.IsisTransactionManager;
 import org.apache.isis.core.security.authentication.AuthenticationSession;
@@ -53,6 +54,6 @@ public class SessionManagementServiceDefault implements SessionManagementService
     @Inject IsisSessionFactory isisSessionFactory;
     
     IsisTransactionManager isisTransactionManager() {
-    	return IsisContext.getTransactionManager().get();
+    	return IsisSession.transactionManager().orElse(null);
     }
 }

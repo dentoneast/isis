@@ -44,15 +44,15 @@ import org.slf4j.LoggerFactory;
 import lombok.val;
 
 /**
- * Used by the {@link IsisTransactionManager} to captures a set of changes to be
+ * Used by the {@link IsisTransactionManagerAbstract} to captures a set of changes to be
  * applied.
  *
  * <p>
  * Note that methods such as <tt>flush()</tt>, <tt>commit()</tt> and
  * <tt>abort()</tt> are not part of the API. The place to control transactions
- * is through the {@link IsisTransactionManager transaction manager}, because
+ * is through the {@link IsisTransactionManagerAbstract transaction manager}, because
  * some implementations may support nesting and such like. It is also the job of
- * the {@link IsisTransactionManager} to ensure that the underlying persistence
+ * the {@link IsisTransactionManagerAbstract} to ensure that the underlying persistence
  * mechanism (for example, the <tt>ObjectStore</tt>) is also committed.
  */
 public class IsisTransaction implements TransactionScopedComponent, Transaction {
@@ -150,7 +150,7 @@ public class IsisTransaction implements TransactionScopedComponent, Transaction 
     //    private final AuthenticationSession authenticationSession;
 
     private final List<PersistenceCommand> persistenceCommands = _Lists.newArrayList();
-    private final IsisTransactionManager transactionManager;
+    private final IsisTransactionManagerAbstract transactionManager;
     //    private final MessageBroker messageBroker;
     private final PublishingServiceInternal publishingServiceInternal;
     private final AuditingServiceInternal auditingServiceInternal;
@@ -163,7 +163,7 @@ public class IsisTransaction implements TransactionScopedComponent, Transaction 
             final UUID interactionId,
             final int sequence,
             final ServiceRegistry serviceRegistry, 
-            IsisTransactionManager transactionManager) {
+            IsisTransactionManagerAbstract transactionManager) {
 
         this.interactionId = interactionId;
         this.sequence = sequence;

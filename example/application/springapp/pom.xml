@@ -93,6 +93,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 			<version>${spring-boot.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.validation</groupId>
+					<artifactId>validation-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -136,6 +142,12 @@
 		<dependency>
 			<groupId>org.apache.isis.core</groupId>
 			<artifactId>isis-core-plugins-jaxrs-resteasy-4</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.validation</groupId>
+					<artifactId>validation-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- OTHER DEPENDENCIES -->
@@ -145,6 +157,29 @@
             <artifactId>jdo-api</artifactId>
             <version>3.1</version>
         </dependency>
+
+<!-- JDO MODULE -->        
+<dependency>
+    <groupId>org.datanucleus</groupId>
+    <artifactId>javax.jdo</artifactId>
+    <version>3.2.0-m6</version>
+</dependency>
+<dependency>
+    <groupId>org.datanucleus</groupId>
+    <artifactId>datanucleus-core</artifactId>
+    <version>5.1.0-m2</version>
+</dependency>
+<dependency>
+    <groupId>org.datanucleus</groupId>
+    <artifactId>datanucleus-api-jdo</artifactId>
+    <version>5.1.0-m2</version>
+</dependency>
+<dependency>
+    <groupId>org.datanucleus</groupId>
+    <artifactId>datanucleus-rdbms</artifactId>
+    <version>5.1.0-m2</version>
+</dependency>
+        
 
 		<dependency>
 			<groupId>com.h2database</groupId>
