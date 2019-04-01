@@ -7,6 +7,8 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.val;
+
 @Service
 @Transactional
 public class AsyncDemoService {
@@ -14,18 +16,9 @@ public class AsyncDemoService {
 	@Async
 	public CompletableFuture<String> asyncMethodWithReturnType() {
 		
-	    System.out.println("Execute method asynchronously - " + Thread.currentThread().getName());
-	    
-	    try {
-	        Thread.sleep(250);
-	        return new AsyncResult<String>("hello world !!!!")
-	        		.completable();
-	    } catch (InterruptedException e) {
-	        //
-	    }
-	 
-	    return null;
+		val taskResult = new AsyncDemoTask().get();
+		
+		return new AsyncResult<String>(taskResult).completable();
 	}
-	
 	
 }

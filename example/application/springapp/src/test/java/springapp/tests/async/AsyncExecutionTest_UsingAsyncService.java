@@ -11,36 +11,38 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import isis.incubator.async.AsyncExecutionService;
+import isis.incubator.async.AsyncExecutionServiceDefault;
 import lombok.val;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {AsyncDemoService.class})
+@SpringBootTest(classes = {AsyncExecutionServiceDefault.class})
 @EnableAsync
-class AsyncExecutionTest_NativeSpring {
-	
-	@Inject AsyncDemoService asyncDemoService;
+class AsyncExecutionTest_UsingAsyncService {
+
+	@Inject AsyncExecutionService asyncExecutionService;
 
 	@Test
 	void shouldRunAsync() {
-		
+
 		// we expect this to take no longer than ~250ms. (Each demo task sleeps 250ms.)
 		assertTimeout(ofMillis(300), () -> {
 
 			val futures = new Futures<String>();
-			
+
 			for(int i = 0; i < 25; i++) {
-				val completable = asyncDemoService.asyncMethodWithReturnType();
-				
+				val completable = asyncExecutionService.execute(new AsyncDemoTask()); 
+
 				futures.add(completable);
 			}
-			
+
 			val combinedFuture = futures.combine();
-			
+
 			combinedFuture.join();
-			
-	    });
-		
+
+		});
+
 	}
-	
+
 
 }
