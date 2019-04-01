@@ -1,4 +1,4 @@
-package springapp.tests.bootstrapping;
+package springapp.tests.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
