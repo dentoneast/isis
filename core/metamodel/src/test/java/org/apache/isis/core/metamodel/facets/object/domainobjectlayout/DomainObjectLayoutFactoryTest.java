@@ -61,7 +61,8 @@ public class DomainObjectLayoutFactoryTest extends AbstractFacetFactoryJUnit4Tes
         facetFactory = new DomainObjectLayoutFacetFactory();
     }
 
-    @After
+    @Override
+	@After
     public void tearDown() throws Exception {
         facetFactory = null;
         super.tearDown();
@@ -198,7 +199,8 @@ public class DomainObjectLayoutFactoryTest extends AbstractFacetFactoryJUnit4Tes
                 _Config.clear();
             }
 
-            @Before
+            @Override
+			@Before
             public void setUp() throws Exception {
                 _Config.clear();
                 super.setUp();

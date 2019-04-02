@@ -70,7 +70,8 @@ public class DomainObjectAnnotationFacetFactoryTest extends AbstractFacetFactory
         facetFactory = new DomainObjectAnnotationFacetFactory();
     }
 
-    @After
+    @Override
+	@After
     public void tearDown() throws Exception {
         facetFactory = null;
     }
@@ -418,7 +419,8 @@ public class DomainObjectAnnotationFacetFactoryTest extends AbstractFacetFactory
         class CustomerWithDomainObjectButNoAutoCompleteRepository {
         }
 
-        @Before
+        @Override
+		@Before
         public void setUp() throws Exception {
             super.setUp();
             
@@ -515,7 +517,8 @@ public class DomainObjectAnnotationFacetFactoryTest extends AbstractFacetFactory
         class CustomerWithDomainObjectButNoBounded {
         }
 
-        @Before
+        @Override
+		@Before
         public void setUp() throws Exception {
             super.setUp();
             ignoringConfiguration();
@@ -704,7 +707,8 @@ public class DomainObjectAnnotationFacetFactoryTest extends AbstractFacetFactory
         class CustomerWithDomainObjectButNoObjectType {
         }
 
-        @Before
+        @Override
+		@Before
         public void setUp() throws Exception {
             super.setUp();
             ignoringConfiguration();
@@ -777,7 +781,8 @@ public class DomainObjectAnnotationFacetFactoryTest extends AbstractFacetFactory
         class CustomerWithDomainObjectButNoNature {
         }
 
-        @Before
+        @Override
+		@Before
         public void setUp() throws Exception {
             super.setUp();
             ignoringConfiguration();

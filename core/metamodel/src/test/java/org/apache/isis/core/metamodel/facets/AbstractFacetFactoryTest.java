@@ -23,18 +23,22 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import org.jmock.Expectations;
+import org.jmock.auto.Mock;
 import org.junit.Rule;
 
 import org.apache.isis.applib.Identifier;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
+import org.apache.isis.applib.services.registry.ServiceRegistry;
 import org.apache.isis.commons.internal.context._Context;
+import org.apache.isis.config.internal._Config;
 import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facetapi.FacetHolderImpl;
 import org.apache.isis.core.metamodel.facetapi.FeatureType;
 import org.apache.isis.core.metamodel.facetapi.IdentifiedHolder;
+import org.apache.isis.core.metamodel.services.events.MetamodelEventService;
 import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterService;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.specloader.SpecificationLoader;
@@ -62,7 +66,10 @@ public abstract class AbstractFacetFactoryTest extends TestCase {
         }
     }
 
+    @Mock    protected MetamodelEventService mockMetamodelEventService;
+    
     protected ObjectAdapterProvider mockObjectAdapterProvider;
+    protected ServiceRegistry mockServiceRegistry;
     protected ServiceInjector mockServiceInjector;
     protected TranslationService mockTranslationService;
     protected AuthenticationSessionProvider mockAuthenticationSessionProvider;
@@ -97,11 +104,6 @@ public abstract class AbstractFacetFactoryTest extends TestCase {
         
         _Context.clear();
         
-        MetaModelContext.preset(MetaModelContext.builder()
-        		.specificationLoader(mockSpecificationLoader)
-        		.serviceInjector(mockServiceInjector)
-        		.build());
-        
         // PRODUCTION
         
         facetHolder = new IdentifiedHolderImpl(
@@ -122,6 +124,7 @@ public abstract class AbstractFacetFactoryTest extends TestCase {
 
         mockSpecificationLoader = context.mock(SpecificationLoader.class);
         
+        mockServiceRegistry = context.mock(ServiceRegistry.class);
         mockServiceInjector = context.mock(ServiceInjector.class);
         mockObjectAdapterProvider = context.mock(ObjectAdapterProvider.class);
         
@@ -129,7 +132,18 @@ public abstract class AbstractFacetFactoryTest extends TestCase {
 
             allowing(mockAuthenticationSessionProvider).getAuthenticationSession();
             will(returnValue(mockAuthenticationSession));
+            
+            allowing(mockServiceRegistry).lookupServiceElseFail(MetamodelEventService.class);
+            will(returnValue(mockMetamodelEventService));
+            
         }});
+        
+        MetaModelContext.preset(MetaModelContext.builder()
+        		.configuration(_Config.getConfiguration())
+        		.specificationLoader(mockSpecificationLoader)
+        		.serviceRegistry(mockServiceRegistry)
+        		.serviceInjector(mockServiceInjector)
+        		.build());
     }
 
 

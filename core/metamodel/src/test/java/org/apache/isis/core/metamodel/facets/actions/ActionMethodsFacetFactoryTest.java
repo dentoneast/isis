@@ -70,7 +70,8 @@ public class ActionMethodsFacetFactoryTest extends AbstractFacetFactoryTest {
     private final ObjectSpecification stringSpec = new ObjectSpecificationStub("java.lang.String");
     private final ObjectSpecification customerSpec = new ObjectSpecificationStub("Customer");
 
-    public void setUp() throws Exception {
+    @Override
+	public void setUp() throws Exception {
         
         // PRODUCTION
         

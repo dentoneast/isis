@@ -39,7 +39,8 @@ public class BigDecimalValueSemanticsProviderTest extends ValueSemanticsProvider
     private BigDecimal bigDecimal;
     private FacetHolder holder;
 
-    @Before
+    @Override
+	@Before
     public void setUp() throws Exception {
         super.setUp();
         

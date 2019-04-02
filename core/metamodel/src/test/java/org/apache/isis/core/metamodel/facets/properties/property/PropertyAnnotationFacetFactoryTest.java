@@ -116,7 +116,8 @@ public class PropertyAnnotationFacetFactoryTest extends AbstractFacetFactoryJUni
         facetFactory = new PropertyAnnotationFacetFactory();
     }
 
-    @After
+    @Override
+	@After
     public void tearDown() throws Exception {
         facetFactory = null;
     }

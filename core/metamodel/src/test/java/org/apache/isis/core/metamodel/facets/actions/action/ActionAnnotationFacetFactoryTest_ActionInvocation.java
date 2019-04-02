@@ -21,6 +21,7 @@ package org.apache.isis.core.metamodel.facets.actions.action;
 
 import java.lang.reflect.Method;
 
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.facetapi.Facet;
 import org.apache.isis.core.metamodel.facets.AbstractFacetFactoryTest;
 import org.apache.isis.core.metamodel.facets.FacetFactory.ProcessMethodContext;
@@ -36,16 +37,21 @@ import org.apache.isis.core.metamodel.facets.param.choices.methodnum.ActionParam
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.testspec.ObjectSpecificationStub;
 
-public class ActionAnnotationFacetFactoryTest_actionInvocation extends AbstractFacetFactoryTest {
+public class ActionAnnotationFacetFactoryTest_ActionInvocation extends AbstractFacetFactoryTest {
 
     private final ObjectSpecification voidSpec = new ObjectSpecificationStub("VOID");
     private final ObjectSpecification stringSpec = new ObjectSpecificationStub("java.lang.String");
     private final ObjectSpecification customerSpec = new ObjectSpecificationStub("Customer");
     private ActionAnnotationFacetFactory facetFactory;
 
+    @Override
     public void setUp() throws Exception {
         super.setUp();
         this.facetFactory =  new ActionAnnotationFacetFactory();
+        
+        System.out.println("setup " + MetaModelContext.current().getSpecificationLoader());
+        
+        
     }
 
     public void testActionInvocationFacetIsInstalledAndMethodRemoved() {

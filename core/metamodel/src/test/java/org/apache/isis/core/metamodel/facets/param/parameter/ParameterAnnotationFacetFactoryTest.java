@@ -79,7 +79,8 @@ public class ParameterAnnotationFacetFactoryTest extends AbstractFacetFactoryJUn
         facetFactory = new ParameterAnnotationFacetFactory();
     }
 
-    @After
+    @Override
+	@After
     public void tearDown() throws Exception {
         facetFactory = null;
     }

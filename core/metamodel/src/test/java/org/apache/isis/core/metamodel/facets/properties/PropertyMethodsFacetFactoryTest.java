@@ -79,7 +79,8 @@ public class PropertyMethodsFacetFactoryTest extends AbstractFacetFactoryTest {
     private ObjectSpecification mockSpecification;
     
 
-    public void setUp() throws Exception {
+    @Override
+	public void setUp() throws Exception {
         super.setUp();
 
         // expecting

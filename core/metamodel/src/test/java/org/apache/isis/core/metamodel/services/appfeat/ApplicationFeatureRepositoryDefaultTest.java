@@ -260,7 +260,8 @@ public class ApplicationFeatureRepositoryDefaultTest {
 
     public static class AddClassParent extends ApplicationFeatureRepositoryDefaultTest {
 
-        @Before
+        @Override
+		@Before
         public void setUp() throws Exception {
             super.setUp();
 

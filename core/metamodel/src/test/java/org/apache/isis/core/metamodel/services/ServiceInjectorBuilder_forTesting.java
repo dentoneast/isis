@@ -30,6 +30,7 @@ import lombok.val;
 /**
  * @deprecated Only introduced to support existing tests, don't use for new tests
  */
+@Deprecated
 @RequiredArgsConstructor(staticName="of")
 public class ServiceInjectorBuilder_forTesting {
 

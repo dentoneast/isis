@@ -35,6 +35,7 @@ import org.apache.isis.core.metamodel.facetapi.FeatureType;
 import org.apache.isis.core.metamodel.facetapi.IdentifiedHolder;
 import org.apache.isis.core.metamodel.facetapi.MethodRemover;
 import org.apache.isis.core.metamodel.facets.object.domainobject.autocomplete.AutoCompleteFacetForDomainObjectAnnotation;
+import org.apache.isis.core.metamodel.services.events.MetamodelEventService;
 import org.apache.isis.core.metamodel.services.persistsession.ObjectAdapterService;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
 import org.apache.isis.core.metamodel.spec.feature.OneToManyAssociation;
@@ -55,41 +56,28 @@ public abstract class AbstractFacetFactoryJUnit4TestCase {
     @Rule
     public JUnitRuleMockery2 context = JUnitRuleMockery2.createFor(Mode.INTERFACES_AND_CLASSES);
 
-    @Mock
-    protected SpecificationLoader mockSpecificationLoader;
-    @Mock
-    protected ObjectAdapterService mockPersistenceSessionServiceInternal;
-    @Mock
-    protected MethodRemover mockMethodRemover;
-    @Mock
-    protected FacetHolder mockFacetHolder;
-    @Mock
-    protected ServiceInjector mockServiceInjector;
-    @Mock
-    protected ServiceRegistry mockServiceRegistry;
+    @Mock    protected SpecificationLoader mockSpecificationLoader;
+    @Mock    protected ObjectAdapterService mockPersistenceSessionServiceInternal;
+    @Mock    protected MethodRemover mockMethodRemover;
+    @Mock    protected FacetHolder mockFacetHolder;
+    @Mock    protected ServiceInjector mockServiceInjector;
+    @Mock    protected ServiceRegistry mockServiceRegistry;
     
-    @Mock
-    protected TranslationService mockTranslationService;
+    @Mock    protected TranslationService mockTranslationService;
 
-    @Mock
-    protected AuthenticationSessionProvider mockAuthenticationSessionProvider;
+    @Mock    protected AuthenticationSessionProvider mockAuthenticationSessionProvider;
 
     protected IdentifiedHolder facetHolder;
 
-    @Mock
-    protected ObjectSpecification mockOnType;
-    @Mock
-    protected ObjectSpecification mockObjSpec;
-    @Mock
-    protected OneToOneAssociation mockOneToOneAssociation;
-    @Mock
-    protected OneToManyAssociation mockOneToManyAssociation;
-    @Mock
-    protected OneToOneActionParameter mockOneToOneActionParameter;
-//    @Mock
-//    protected EventBusService mockEventBusService;
-    @Mock
-    protected ObjectAdapterProvider mockObjectAdapterProvider;
+    @Mock    protected ObjectSpecification mockOnType;
+    @Mock    protected ObjectSpecification mockObjSpec;
+    @Mock    protected OneToOneAssociation mockOneToOneAssociation;
+    @Mock    protected OneToManyAssociation mockOneToManyAssociation;
+    @Mock    protected OneToOneActionParameter mockOneToOneActionParameter;
+//    @Mock    protected EventBusService mockEventBusService;
+    @Mock    protected ObjectAdapterProvider mockObjectAdapterProvider;
+    
+    @Mock    protected MetamodelEventService mockMetamodelEventService;
     
     protected FacetedMethod facetedMethod;
     protected FacetedMethodParameter facetedMethodParameter;
@@ -113,9 +101,10 @@ public abstract class AbstractFacetFactoryJUnit4TestCase {
         // PRODUCTION
     	
     	MetaModelContext.preset(MetaModelContext.builder()
-        		.specificationLoader(mockSpecificationLoader)
+    			.configuration(_Config.getConfiguration())
+    			.specificationLoader(mockSpecificationLoader)
         		.serviceInjector(mockServiceInjector)
-        		.configuration(_Config.getConfiguration())
+        		.serviceRegistry(mockServiceRegistry)
         		.build());
         
         context.checking(new Expectations() {{
@@ -126,6 +115,9 @@ public abstract class AbstractFacetFactoryJUnit4TestCase {
             allowing(mockServiceRegistry).lookupService(AuthenticationSessionProvider.class);
             will(returnValue(Optional.of(mockAuthenticationSessionProvider)));
 
+            allowing(mockServiceRegistry).lookupServiceElseFail(MetamodelEventService.class);
+            will(returnValue(mockMetamodelEventService));
+            
 //            allowing(mockServicesInjector).lookupServiceElseFail(EventBusService.class);
 //            will(returnValue(mockEventBusService));
 

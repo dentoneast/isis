@@ -98,7 +98,8 @@ public class CollectionAnnotationFacetFactoryTest extends AbstractFacetFactoryJU
         facetFactory = new CollectionAnnotationFacetFactory();
     }
 
-    @After
+    @Override
+	@After
     public void tearDown() throws Exception {
         facetFactory = null;
     }
