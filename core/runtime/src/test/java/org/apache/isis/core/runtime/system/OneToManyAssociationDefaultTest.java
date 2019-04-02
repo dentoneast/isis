@@ -19,15 +19,13 @@
 
 package org.apache.isis.core.runtime.system;
 
-import org.jmock.Expectations;
-import org.jmock.auto.Mock;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 import org.apache.isis.applib.Identifier;
-import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.message.MessageService;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.consent.InteractionInitiatedBy;
 import org.apache.isis.core.metamodel.facets.FacetedMethod;
@@ -42,10 +40,11 @@ import org.apache.isis.core.metamodel.specloader.specimpl.OneToManyAssociationDe
 import org.apache.isis.core.security.authentication.AuthenticationSessionProvider;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2;
 import org.apache.isis.core.unittestsupport.jmocking.JUnitRuleMockery2.Mode;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import org.jmock.Expectations;
+import org.jmock.auto.Mock;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 
 public class OneToManyAssociationDefaultTest {
 
@@ -82,17 +81,21 @@ public class OneToManyAssociationDefaultTest {
     @Mock
     private CollectionAddToFacet mockCollectionAddToFacet;
 
-    private ServiceInjector stubServicesInjector;
 
     private OneToManyAssociation association;
 
     @Before
     public void setUp() {
+    	
+    	MetaModelContext.preset(MetaModelContext.builder()
+        		.specificationLoader(mockSpecificationLoader)
+        		.build());
         
         allowingPeerToReturnCollectionType();
         allowingPeerToReturnIdentifier();
         allowingSpecLoaderToReturnSpecs();
         association = new OneToManyAssociationDefault(mockPeer);
+        
     }
 
     private void allowingSpecLoaderToReturnSpecs() {

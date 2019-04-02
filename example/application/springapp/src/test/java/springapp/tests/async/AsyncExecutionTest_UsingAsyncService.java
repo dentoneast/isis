@@ -3,6 +3,10 @@ package springapp.tests.async;
 import static java.time.Duration.ofMillis;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
 
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import javax.inject.Inject;
 
 import org.junit.jupiter.api.Test;
@@ -39,6 +43,35 @@ class AsyncExecutionTest_UsingAsyncService {
 			val combinedFuture = futures.combine();
 
 			combinedFuture.join();
+
+		});
+
+	}
+
+	@Test
+	void shouldAllowTaskCancellation() {
+
+		// we expect this to take no longer than ~250ms. (Each demo task sleeps 250ms.)
+		assertTimeout(ofMillis(300), () -> {
+
+			val demoTask = new AsyncDemoTask();
+			val completable = asyncExecutionService.execute(demoTask); 
+
+			// wait 50ms
+			try {
+				completable.get(50, TimeUnit.MILLISECONDS);
+			} catch (TimeoutException e) {
+				// always thrown 
+			}
+
+			// cancel execution
+			try {
+				completable.cancel(false);
+			} catch (CancellationException e) {
+				// always thrown
+			}
+
+			completable.join();
 
 		});
 

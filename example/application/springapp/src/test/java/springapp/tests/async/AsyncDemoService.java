@@ -10,10 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.val;
 
 @Service
-@Transactional
 public class AsyncDemoService {
 
-	@Async
+	@Async @Transactional
 	public CompletableFuture<String> asyncMethodWithReturnType() {
 		
 		val taskResult = new AsyncDemoTask().get();

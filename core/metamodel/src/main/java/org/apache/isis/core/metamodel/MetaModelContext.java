@@ -29,6 +29,8 @@ import org.apache.isis.applib.services.xactn.TransactionService;
 import org.apache.isis.applib.services.xactn.TransactionState;
 import org.apache.isis.commons.internal.context._Context;
 import org.apache.isis.config.IsisConfiguration;
+import org.apache.isis.core.metamodel.MetaModelContexts.MetaModelContextBean;
+import org.apache.isis.core.metamodel.MetaModelContexts.MetaModelContextBean.MetaModelContextBeanBuilder;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapter;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.spec.ObjectSpecification;
@@ -90,6 +92,10 @@ public interface MetaModelContext {
     
     static void preset(MetaModelContext metaModelContext) {
         _Context.putSingleton(MetaModelContext.class, metaModelContext);
+    }
+    
+    static MetaModelContextBeanBuilder builder() {
+        return MetaModelContextBean.builder();
     }
     
     // -- DELEGATION - FOR THOSE THAT IMPLEMENT THROUGH DELEGATION

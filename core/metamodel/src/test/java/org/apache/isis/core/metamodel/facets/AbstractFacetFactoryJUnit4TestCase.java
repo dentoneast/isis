@@ -27,6 +27,8 @@ import org.apache.isis.applib.Identifier;
 import org.apache.isis.applib.services.i18n.TranslationService;
 import org.apache.isis.applib.services.inject.ServiceInjector;
 import org.apache.isis.applib.services.registry.ServiceRegistry;
+import org.apache.isis.config.internal._Config;
+import org.apache.isis.core.metamodel.MetaModelContext;
 import org.apache.isis.core.metamodel.adapter.ObjectAdapterProvider;
 import org.apache.isis.core.metamodel.facetapi.FacetHolder;
 import org.apache.isis.core.metamodel.facetapi.FeatureType;
@@ -109,6 +111,12 @@ public abstract class AbstractFacetFactoryJUnit4TestCase {
     public void setUpFacetedMethodAndParameter() throws Exception {
         
         // PRODUCTION
+    	
+    	MetaModelContext.preset(MetaModelContext.builder()
+        		.specificationLoader(mockSpecificationLoader)
+        		.serviceInjector(mockServiceInjector)
+        		.configuration(_Config.getConfiguration())
+        		.build());
         
         context.checking(new Expectations() {{
 

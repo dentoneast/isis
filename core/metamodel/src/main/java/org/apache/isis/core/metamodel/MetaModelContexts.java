@@ -46,6 +46,7 @@ import org.apache.isis.core.security.authentication.AuthenticationSessionProvide
 import org.apache.isis.core.security.authentication.manager.AuthenticationManager;
 import org.apache.isis.core.security.authorization.manager.AuthorizationManager;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.val;
 
@@ -167,5 +168,63 @@ public final class MetaModelContexts {
     final static MetaModelContext usingCDI() {
         return new MetaModelContextUsingCDI();
     }
+    
+    // -- JUNIT TEST SUPPORT
+    
+    @Builder @Getter
+    public final static class MetaModelContextBean implements MetaModelContext {
+    	
+		private IsisConfiguration configuration;
 
+		private ObjectAdapterProvider objectAdapterProvider;
+
+		private ServiceInjector serviceInjector;
+
+		private ServiceRegistry serviceRegistry;
+
+		private SpecificationLoader specificationLoader;
+
+		private AuthenticationSessionProvider authenticationSessionProvider;
+
+		private TranslationService translationService;
+
+		private AuthenticationSession authenticationSession;
+
+		private AuthorizationManager authorizationManager;
+
+		private AuthenticationManager authenticationManager;
+
+		private TitleService titleService;
+
+		private RepositoryService repositoryService;
+
+		private TransactionService transactionService;
+
+		private TransactionState transactionState;
+
+		private Map<String, ObjectAdapter> serviceAdaptersById;
+
+		@Override
+		public ObjectSpecification getSpecification(Class<?> type) {
+			return specificationLoader.loadSpecification(type);
+		}
+
+		@Override
+		public Stream<ObjectAdapter> streamServiceAdapters() {
+			if(serviceAdaptersById==null) {
+				return Stream.empty();
+			}
+			return serviceAdaptersById.values().stream();
+		}
+
+		@Override
+		public ObjectAdapter lookupServiceAdapterById(String serviceId) {
+			if(serviceAdaptersById==null) {
+				return null;
+			}
+			return serviceAdaptersById.get(serviceId);
+		}
+    	
+    }
+    
 }
