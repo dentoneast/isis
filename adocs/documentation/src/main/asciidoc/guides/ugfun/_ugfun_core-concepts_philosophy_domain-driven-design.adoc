@@ -4,10 +4,10 @@
 :_basedir: ../../
 :_imagesdir: images/
 
-There's no doubt that we developers love the challenge of understanding and deploying complex technologies.
+There is no doubt that we developers love the challenge of understanding and deploying complex technologies.
 But understanding the nuances and subtleties of the business domain itself is just as great a challenge, perhaps more so.
 If we devoted our efforts to understanding and addressing those subtleties, we could build better, cleaner, and more maintainable software that did a better job for our stakeholders.
-And there's no doubt that our stakeholders would thank us for it.
+And there is no doubt that our stakeholders would thank us for it.
 
 A couple of years back Eric Evans wrote his book link:http://www.amazon.co.uk/Domain-driven-Design-Tackling-Complexity-Software/dp/0321125215[Domain-Driven Design], which is well on its way to becoming a seminal work.
 In fact, most if not all of the ideas in Evans' book have been expressed before, but what he did was pull those ideas together to show how predominantly object-oriented techniques can be used to develop rich, deep, insightful, and ultimately useful business applications.
@@ -18,20 +18,20 @@ There are two central ideas at the heart of domain-driven design.
 
 * Meanwhile, *_model-driven design_* is about capturing that model in a very straightforward manner in code.
 
-Let's look at each in turn.
+Let us look at each in turn.
 
 
 [[__ugfun_core-concepts_philosophy_domain-driven-design_ubiquitous-language]]
 == Ubiquitous Language
 
-It's no secret that the IT industry is plagued by project failures.
-Too often systems take longer than intended to implement, and when finally implemented, they don't address the real requirements anyway.
+It is no secret that the IT industry is plagued by project failures.
+Too often systems take longer than intended to implement, and when finally implemented, they do not address the real requirements anyway.
 
 Over the years we in IT have tried various approaches to address this failing.
-Using waterfall methodologies, we've asked for requirements to be fully and precisely written down before starting on anything else.
-Or, using agile methodologies, we've realized that requirements are likely to change anyway and have sought to deliver systems incrementally using feedback loops to refine the implementation.
+Using waterfall methodologies, we have asked for requirements to be fully and precisely written down before starting on anything else.
+Or, using agile methodologies, we have realized that requirements are likely to change anyway and have sought to deliver systems incrementally using feedback loops to refine the implementation.
 
-But let's not get distracted talking about methodologies.
+But let us not get distracted talking about methodologies.
 At the end of the day what really matters is communication between the domain experts (that is, the business) who need the system and the techies actually implementing it.
 If the two don't have and cannot evolve a shared understanding of what is required, then the chance of delivering a useful system will be next to nothing.
 
@@ -55,20 +55,20 @@ If an idea cannot be expressed using this set of concepts, then go back and exte
 Creating a  ubiquitous language calls upon everyone involved in the system's development to express what they are doing through the vocabulary provided by the model.
 If this can't be done, then our model is incomplete. Finding the missing words deepens our understanding of the domain being modeled.
 
-This might sound like nothing more than me insisting that the developers shouldn't use jargon when talking to the business.
-Well, that's true enough, but it's not a one-way street.
+This might sound like nothing more than me insisting that the developers should not use jargon when talking to the business.
+Well, that is true enough, but it is not a one-way street.
 A  *ubiquitous language* demands that the developers work hard to understand the problem domain, but it also demands that the business works hard in being  *precise* in its naming and descriptions of those concepts.
 After all, ultimately the developers will have to express those concepts in a computer programming language.
 
-Also, although here I'm talking about the "domain experts" as being a homogeneous group of people, often they may come from different branches of the business. Even if we weren't building a computer system, there's a lot of value in helping the domain experts standardize their own terminology.
+Also, although here I am talking about the "domain experts" as being a homogeneous group of people, often they may come from different branches of the business. Even if we were not building a computer system, there is a lot of value in helping the domain experts standardize their own terminology.
 Is the marketing department's "prospect" the same as sales' "customer," and is that the same as an after-sales "contract"?
 
 The need for precision within the  ubiquitous language also helps us scope the system. Most business processes evolve piecemeal and are often quite ill-defined.
-If the domain experts have a very good idea of what the business process should be, then that's a good candidate for automation, that is, including it in the scope of the system.
-But if the domain experts find it hard to agree, then it's probably best to leave it out.
+If the domain experts have a very good idea of what the business process should be, then it is a good candidate for automation. Therefore, it can be included in the scope of the system.
+But if the domain experts find it hard to agree, then it is probably best to leave it out.
 After all, human beings are rather more capable of dealing with fuzzy situations than computers.
 
-So, if the development team (business and developers together) continually searches to build their  ubiquitous language, then the domain model naturally becomes richer as the nuances of the domain are uncovered.
+So, if the development team (business and developers together) continually searches to build their  ubiquitous language, then the domain model naturally becomes richer as the *nuances of the domain* are uncovered.
 At the same time, the knowledge of the business domain experts also deepens as edge conditions and contradictions that have previously been overlooked are explored.
 
 We use the  ubiquitous language to build up a domain model.
@@ -86,10 +86,10 @@ The domain experts and business analysts will look only to the analysis model, a
 
 What do we mean by  *model* anyway?
 For some, the term will bring to mind UML class or sequence diagrams and the like.
-But this isn't a model; it's a visual  *representation* of some aspect of a model.
+But this is not a model; it is a visual  *representation* of some aspect of a model.
 No, a domain model is a group of related concepts, identifying them, naming them, and defining how they relate.
 What is in the model depends on what our objective is.
-We're not looking to simply model everything that's out there in the real world.
+We are not looking to simply model everything that is out there in the real world.
 Instead, we want to take a relevant abstraction or simplification of it and then make it do something useful for us.
 A model is neither right nor wrong, just more or less useful.
 
@@ -114,7 +114,7 @@ We can express domain concepts using classes and interfaces, and we can express 
 
 So far so good.
 Or maybe, so far so much motherhood and apple pie.
-Understanding the  _DDD_ concepts isn't the same as being able to apply them, and some of the  _DDD_ ideas can be difficult to put into practice.
+Understanding the  _DDD_ concepts is not the same as being able to apply them, and some of the  _DDD_ ideas can be difficult to put into practice.
 Time to discuss the naked objects pattern and how it eases that path by applying these central ideas of _DDD_ in a very concrete way.
 
 
